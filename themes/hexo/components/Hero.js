@@ -3,7 +3,7 @@ import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { loadExternalResource } from '@/lib/utils'
-import { useEffect, useState } from 'react' // 重新加回 useState
+import { useEffect, useState } from 'react' // 必须重新加回 useState
 import CONFIG from '../config'
 import NavButtonGroup from './NavButtonGroup'
 
@@ -14,28 +14,29 @@ let wrapperTop = 0
  * @returns
  */
 const Hero = props => {
-  const [typed, changeType] = useState() // 恢复
+  const [typed, changeType] = useState() // 必须恢复
   const { siteInfo } = props
   const { locale } = useGlobal()
   const scrollToWrapper = () => {
     window.scrollTo({ top: wrapperTop, behavior: 'smooth' })
   }
 
-  const GREETING_WORDS = siteConfig('GREETING_WORDS').split(',') // 恢复
+  const GREETING_WORDS = siteConfig('GREETING_WORDS').split(',') // 必须恢复
   useEffect(() => {
     updateHeaderHeight()
 
-    if (!typed && window && document.getElementById('typed')) { // 恢复打字机逻辑
+    if (!typed && window && document.getElementById('typed')) { // 必须恢复打字机逻辑
       loadExternalResource('/js/typed.min.js', 'js').then(() => {
         if (window.Typed) {
           changeType(
             new window.Typed('#typed', {
               strings: GREETING_WORDS,
-              typeSpeed: 200,
-              backSpeed: 100,
+              typeSpeed: 300,
+              backSpeed: 200,
               backDelay: 400,
               showCursor: true,
-              smartBackspace: true
+              smartBackspace: true,
+              loop: true // 确保它循环播放
             })
           )
         }
@@ -46,7 +47,7 @@ const Hero = props => {
     return () => {
       window.removeEventListener('resize', updateHeaderHeight)
     }
-  }) // 恢复依赖
+  }) 
 
   function updateHeaderHeight() {
     requestAnimationFrame(() => {
