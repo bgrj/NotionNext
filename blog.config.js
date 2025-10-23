@@ -63,10 +63,10 @@ const BLOG = {
   LAYOUT_SIDEBAR_REVERSE:
     process.env.NEXT_PUBLIC_LAYOUT_SIDEBAR_REVERSE || false,
 
-  // 欢迎语打字效果,Hexo,Matery主题支持, 英文逗号隔开多个欢迎语。
+  // 欢迎语打字效果, Hexo, Matery主题支持, 英文逗号隔开多个欢迎语。
   GREETING_WORDS:
     process.env.NEXT_PUBLIC_GREETING_WORDS ||
-    '正是我们被动与主动选择接触、理解、认可的存在，塑造了我们过去现在未来之所是。,It is the existence we passively and actively choose to encounter, to understand, and to affirm, that has shaped who we were, who we are, and who we will be.',
+    '', // 设置为空，禁用打字机
 
   // uuid重定向至 slug
   UUID_REDIRECT: process.env.UUID_REDIRECT || false
