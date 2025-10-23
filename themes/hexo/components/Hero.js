@@ -101,9 +101,9 @@ const Hero = props => {
         className='absolute top-0 left-0 w-full h-full'
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%)',
+            'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%)',
           backgroundSize: '200% 100%',
-          animation: 'moveMist 30s linear infinite',
+          animation: 'moveMist 15s linear infinite',
           zIndex: 2
         }}
       />
