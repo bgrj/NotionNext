@@ -26,7 +26,7 @@ const Hero = props => {
   useEffect(() => {
     updateHeaderHeight()
 
-    // if (!typed && window && document.getElementById('typed')) { ... } 
+    // if (!typed && window && document.getElementById('typed')) { ... }
     // 上面整个打字机逻辑块都已被删除
 
     window.addEventListener('resize', updateHeaderHeight)
@@ -63,7 +63,7 @@ const Hero = props => {
               </p>
               <p style={{ fontFamily: 'Georgia, serif' }}>
                   It is the existence we passively and actively <br />
-                  choose to encounter | to understand | and to affirm <Tbr />
+                  choose to encounter | to understand | and to affirm <br />
                   that has shaped who we were | who we are | and who we will be
               </p>
           </div>
