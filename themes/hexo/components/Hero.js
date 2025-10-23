@@ -96,18 +96,34 @@ const Hero = props => {
         </div>
       </div>
 
-      {/* -------------------- START: 修改点 B (添加动态云雾层) -------------------- */}
+    {/* -------------------- START: 动态云层效果 (两层) -------------------- */}
+
+      {/* 图层 1: 缓慢的背景云 (z-2) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0) 100%)',
+            'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%)',
           backgroundSize: '200% 100%',
-          animation: 'moveMist 15s linear infinite',
-          zIndex: 2
+          animation: 'moveMist 40s linear infinite', // 速度很慢 (40秒)
+          zIndex: 2, // 在底层
+          opacity: 0.6 // 整体 80% 透明度
         }}
       />
-      {/* -------------------- END: 修改点 B -------------------- */}
+
+      {/* 图层 2: 较快的前景云 (z-3) */}
+      <div
+        className='absolute top-0 left-0 w-full h-full'
+        style={{
+          backgroundImage:
+            'linear-gradient(to left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%)', // 渐变方向相反 (to left)
+          backgroundSize: '200% 100%',
+          animation: 'moveMist 18s linear infinite', // 速度较快 (18秒)
+          zIndex: 3 // 在上层 (确保在文字 z-10 之下)
+        }}
+      />
+
+      {/* -------------------- END: 动态云层效果 -------------------- */}
 
 
       {/* -------------------- START: 修改点 C (添加 zIndex: 1) -------------------- */}
