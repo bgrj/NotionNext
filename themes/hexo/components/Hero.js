@@ -96,29 +96,31 @@ const Hero = props => {
         </div>
       </div>
 
-    {/* -------------------- START: 动态云层效果 (两层) -------------------- */}
+   {/* -------------------- START: 动态云层效果 (匹配新背景) -------------------- */}
 
-      {/* 图层 1: 缓慢的背景云 (z-2) */}
+      {/* 图层 1: 缓慢的“暖色高光云” (z-2) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
+          // 使用一种匹配太阳的、温暖的米黄色 (rgba(255, 245, 220, ...))
           backgroundImage:
-            'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0) 100%)',
+            'linear-gradient(to right, rgba(255, 245, 220, 0) 0%, rgba(255, 245, 220, 0.25) 50%, rgba(255, 245, 220, 0) 100%)',
           backgroundSize: '200% 100%',
-          animation: 'moveMist 40s linear infinite', // 速度很慢 (40秒)
+          animation: 'moveMist 50s linear infinite', // 速度非常慢 (50秒)
           zIndex: 2, // 在底层
-          opacity: 0.6 // 整体 80% 透明度
+          opacity: 0.6 // 整体 60% 透明度
         }}
       />
 
-      {/* 图层 2: 较快的前景云 (z-3) */}
+      {/* 图层 2: 较快的“冷色阴影云” (z-3) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
+          // 使用一种匹配天空阴影的、微冷的灰蓝色 (rgba(180, 190, 210, ...))
           backgroundImage:
-            'linear-gradient(to left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0) 100%)', // 渐变方向相反 (to left)
+            'linear-gradient(to left, rgba(180, 190, 210, 0) 0%, rgba(180, 190, 210, 0.15) 50%, rgba(180, 190, 210, 0) 100%)', // 渐变方向相反 (to left)
           backgroundSize: '200% 100%',
-          animation: 'moveMist 18s linear infinite', // 速度较快 (18秒)
+          animation: 'moveMist 22s linear infinite', // 速度较快 (22秒)
           zIndex: 3 // 在上层 (确保在文字 z-10 之下)
         }}
       />
