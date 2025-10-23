@@ -61,7 +61,11 @@ const Hero = props => {
       id='header'
       style={{ zIndex: 1 }}
       className='w-full h-screen relative bg-black'>
-      <div className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
+        
+      {/* -------------------- START: 修改点 A (添加 zIndex: 10) -------------------- */}
+      <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
+      {/* -------------------- END: 修改点 A -------------------- */}
+
         {/* 站点标题 */}
         <div className='font-black text-4xl md:text-5xl shadow-text'>
           {siteInfo?.title || siteConfig('TITLE')}
@@ -92,12 +96,29 @@ const Hero = props => {
         </div>
       </div>
 
+      {/* -------------------- START: 修改点 B (添加动态云雾层) -------------------- */}
+      <div
+        className='absolute top-0 left-0 w-full h-full'
+        style={{
+          backgroundImage:
+            'linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0) 100%)',
+          backgroundSize: '200% 100%',
+          animation: 'moveMist 30s linear infinite',
+          zIndex: 2
+        }}
+      />
+      {/* -------------------- END: 修改点 B -------------------- */}
+
+
+      {/* -------------------- START: 修改点 C (添加 zIndex: 1) -------------------- */}
       <LazyImage
         id='header-cover'
         alt={siteInfo?.title}
         src={siteInfo?.pageCover}
+        style={{ zIndex: 1 }} // <-- 在这里添加 zIndex
         className={`header-cover w-full h-screen object-cover object-center ${siteConfig('HEXO_HOME_NAV_BACKGROUND_IMG_FIXED', null, CONFIG) ? 'fixed' : ''}`}
       />
+      {/* -------------------- END: 修改点 C -------------------- */}
     </header>
   )
 }
