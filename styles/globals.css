@@ -298,3 +298,15 @@ img {
   @keyframes l1 {
   0% {background-position: right}
 }
+
+/* ---- START: 动态云雾效果 ---- */
+@keyframes moveMist {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    /* 将背景位置向右移动200%，实现一个完整的循环 */
+    background-position: 200% 0;
+  }
+}
+/* ---- END: 动态云雾效果 ---- */
