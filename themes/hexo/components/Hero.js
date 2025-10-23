@@ -3,7 +3,8 @@ import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { loadExternalResource } from '@/lib/utils'
-import { useEffect, useState } from 'react'
+// 我们不再需要 useState
+import { useEffect } from 'react'
 import CONFIG from '../config'
 import NavButtonGroup from './NavButtonGroup'
 
@@ -14,39 +15,25 @@ let wrapperTop = 0
  * @returns
  */
 const Hero = props => {
-  const [typed, changeType] = useState()
+  // const [typed, changeType] = useState() // 已删除
   const { siteInfo } = props
   const { locale } = useGlobal()
   const scrollToWrapper = () => {
     window.scrollTo({ top: wrapperTop, behavior: 'smooth' })
   }
 
-  const GREETING_WORDS = siteConfig('GREETING_WORDS').split(',')
+  // const GREETING_WORDS = siteConfig('GREETING_WORDS').split(',') // 已删除
   useEffect(() => {
     updateHeaderHeight()
 
-    if (!typed && window && document.getElementById('typed')) {
-      loadExternalResource('/js/typed.min.js', 'js').then(() => {
-        if (window.Typed) {
-          changeType(
-            new window.Typed('#typed', {
-              strings: GREETING_WORDS,
-              typeSpeed: 200,
-              backSpeed: 100,
-              backDelay: 400,
-              showCursor: true,
-              smartBackspace: true
-            })
-          )
-        }
-      })
-    }
+    // if (!typed && window && document.getElementById('typed')) { ... } 
+    // 上面整个打字机逻辑块都已被删除
 
     window.addEventListener('resize', updateHeaderHeight)
     return () => {
       window.removeEventListener('resize', updateHeaderHeight)
     }
-  })
+  }) // 依赖项数组中的 typed 也已移除
 
   function updateHeaderHeight() {
     requestAnimationFrame(() => {
@@ -65,10 +52,25 @@ const Hero = props => {
         <div className='font-black text-4xl md:text-5xl shadow-text'>
           {siteInfo?.title || siteConfig('TITLE')}
         </div>
+
+        {/* -------------------- START: 这里是修改后的代码 -------------------- */}
         {/* 站点欢迎语 */}
-        <div className='mt-2 h-12 items-center text-center font-medium shadow-text text-lg'>
-          <span id='typed' />
+        <div className='mt-2 items-center text-center font-medium shadow-text text-lg'>
+          {/* START: 你的新静态文本 */}
+          <div className='text-gray-200 text-lg sm:text-xl font-light leading-tight sm:leading-normal'>
+              <p className='mb-3'>
+                  正是我们被动与主动选择接触、理解、认可的存在，塑造了我们过去现在未来之所是。
+              </p>
+              <p style={{ fontFamily: 'Georgia, serif' }}>
+                  It is the existence we passively and actively <br />
+                  choose to encounter | to understand | and to affirm <Tbr />
+                  that has shaped who we were | who we are | and who we will be
+              </p>
+          </div>
+          {/* END: 你的新静态文本 */}
         </div>
+        {/* -------------------- END: 这里是修改后的代码 -------------------- */}
+
 
         {/* 首页导航大按钮 */}
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
