@@ -54,7 +54,7 @@ const SocialButton = () => {
           </a>
         )}
 
-       {/* 3. Threads (使用SVG) */}
+      {/* 3. Threads (使用SVG) */}
       {CONTACT_THREADS && (
         <a
           target='_blank'
