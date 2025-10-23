@@ -31,9 +31,9 @@ const Hero = props => {
           changeType(
             new window.Typed('#typed', {
               strings: GREETING_WORDS,
-              typeSpeed: 300,
-              backSpeed: 200,
-              backDelay: 400,
+              typeSpeed: 80,      // (原 300) 打字速度：80毫秒/字 (总共约 3 秒)
+              backSpeed: 30,      // (原 200) 删除速度：30毫秒/字 (快速删除)
+              backDelay: 5000,    // (原 400) 打完后的停留时间：5000毫秒 (暂停 5 秒，让访客有足够时间阅读)
               showCursor: true,
               smartBackspace: true,
               loop: true // 确保它循环播放
