@@ -56,8 +56,8 @@ const Hero = props => {
         {/* -------------------- START: 这里是修改后的代码 -------------------- */}
         {/* 站点欢迎语 */}
         <div className='mt-2 items-center text-center font-medium shadow-text text-lg'>
-          {/* START: 你的新静态文本 */}
-          <div className='text-gray-200 text-lg sm:text-xl font-light leading-tight sm:leading-normal'>
+         {/* START: 你的新静态文本 */}
+          <div className='text-gray-200 text-lg sm:text-xl font-light leading-tight sm:leading-normal animate-pulse'>
               <p className='mb-3'>
                   正是我们被动与主动选择接触、理解、认可的存在，塑造了我们过去现在未来之所是。
               </p>
