@@ -54,22 +54,22 @@ const SocialButton = () => {
           </a>
         )}
 
-      {/* 3. Threads (使用SVG) */}
-      {CONTACT_THREADS && (
-        <a
-          target='_blank'
-          rel='noreferrer'
-          title={'threads'}
-          href={CONTACT_THREADS}
-          className={'transform hover:scale-125 duration-150'}>
-          {/* 使用 img 标签加载 SVG 图标, 并用 dark:invert 在暗黑模式下反色 */}
-          <img
-            className='w-6 h-6 dark:invert'
-            src='/svg/threads.svg'
-            alt='threads'
-          />
-        </a>
-      )}
+     {/* 3. Threads (使用SVG) */}
+          {CONTACT_THREADS && (
+            <a
+              target='_blank'
+              rel='noreferrer'
+              title={'threads'}
+              href={CONTACT_THREADS}
+              className={'transform hover:scale-125 duration-150'}>
+              {/* 使用 img 标签加载 SVG 图标, 并用 dark:invert 在暗黑模式下反色 */}
+              <img
+                className='w-6 h-6 dark:invert'
+                src='/svg/threads.svg' // <-- 正确指向了你修复好的文件
+                alt='threads'
+              />
+            </a>
+          )}
 
         {/* 4. WhatsApp (新添加) */}
         {CONTACT_WHATSAPP && (
