@@ -54,16 +54,22 @@ const SocialButton = () => {
           </a>
         )}
 
-        {/* 3. Threads (新添加) */}
-        {CONTACT_THREADS && (
-          <a
-            target='_blank'
-            rel='noreferrer'
-            href={CONTACT_THREADS}
-            title={'threads'}>
-            <i className='transform hover:scale-125 duration-150 fa-brands fa-threads dark:hover:text-indigo-400 hover:text-indigo-600' />
-          </a>
-        )}
+       {/* 3. Threads (使用SVG) */}
+      {CONTACT_THREADS && (
+        <a
+          target='_blank'
+          rel='noreferrer'
+          title={'threads'}
+          href={CONTACT_THREADS}
+          className={'transform hover:scale-125 duration-150'}>
+          {/* 使用 img 标签加载 SVG 图标, 并用 dark:invert 在暗黑模式下反色 */}
+          <img
+            className='w-6 h-6 dark:invert'
+            src='/svg/threads.svg'
+            alt='threads'
+          />
+        </a>
+      )}
 
         {/* 4. WhatsApp (新添加) */}
         {CONTACT_WHATSAPP && (
