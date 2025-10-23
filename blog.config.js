@@ -66,7 +66,7 @@ const BLOG = {
   // 欢迎语打字效果, Hexo, Matery主题支持, 英文逗号隔开多个欢迎语。
   GREETING_WORDS:
     process.env.NEXT_PUBLIC_GREETING_WORDS ||
-    '', // 设置为空，禁用打字机
+    '我们所接触、理解并认可的存在,塑造了我们的过去、现在与未来。,We are shaped by the existence we encounter.,By the existence we choose to understand.,And by the existence we choose to affirm.',
 
   // uuid重定向至 slug
   UUID_REDIRECT: process.env.UUID_REDIRECT || false
