@@ -32,16 +32,15 @@ const SocialButton = () => {
         
         {/* --- 3. 按你的顺序重新排列图标 --- */}
 
-        {/* 1. 邮箱 (Email) */}
-        {CONTACT_EMAIL && (
-          <a
-            onClick={e => handleEmailClick(e, emailIcon, CONTACT_EMAIL)}
-            title='email'
-            className='cursor-pointer'
-            ref={emailIcon}>
-            <i className='transform hover:scale-125 duration-150 fas fa-envelope dark:hover:text-indigo-400 hover:text-indigo-600' />
-          </a>
-        )}
+       {/* 1. 邮箱 (Email) - 使用直接 mailto: 链接 */}
+      {CONTACT_EMAIL && (
+        <a
+          href={`mailto:${CONTACT_EMAIL}`} // <-- 直接构造 mailto: 链接
+          title='email'
+          className={'transform hover:scale-125 duration-150'}> {/* <-- 移除了 cursor-pointer 和 ref */}
+          <i className='fas fa-envelope dark:hover:text-indigo-400 hover:text-indigo-600' /> {/* <-- 移除了 transform */}
+        </a>
+      )}
 
         {/* 2. Telegram */}
         {CONTACT_TELEGRAM && (
