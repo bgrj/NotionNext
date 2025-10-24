@@ -62,23 +62,23 @@ const Hero = props => {
       style={{ zIndex: 1 }}
       className='w-full h-screen relative bg-black'>
 
-      {/* --- 主要内容容器 --- */}
+     {/* --- 主要内容容器 --- */}
       <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
 
-        {/* --- START: 新增的文字包裹器，并添加 margin-top --- */}
-        <div className='mt-30'> {/* <<<<< 这里添加 mt-16 (或调整数字) 控制文字下移 */}
+        {/* --- START: 文字包裹器，添加 text-center --- */}
+        <div className='mt-30 text-center'> {/* <<<<< 修改点 1: 添加 text-center */}
             {/* 站点标题 */}
             <div className='font-black text-4xl md:text-5xl shadow-text'>
               {siteInfo?.title || siteConfig('TITLE')}
             </div>
 
             {/* 站点欢迎语 */}
-            <div className='mt-2 h-12 items-center text-center font-medium shadow-text text-lg'>
+            {/* <<<<< 修改点 2: 移除 text-center 和 items-center */}
+            <div className='mt-2 h-12 font-medium shadow-text text-lg'> 
               <span id='typed' />
             </div>
         </div>
-        {/* --- END: 新增的文字包裹器 --- */}
-
+        {/* --- END: 文字包裹器 --- */}
 
         {/* 首页导航大按钮 (现在它在文字包裹器之外) */}
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
