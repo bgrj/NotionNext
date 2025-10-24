@@ -11,6 +11,7 @@ import { handleEmailClick } from '@/lib/plugins/mailEncrypt'
 const SocialButton = () => {
   // --- 1. 只定义你需要的 5 个变量 ---
   const CONTACT_EMAIL = siteConfig('CONTACT_EMAIL')
+  console.log('读取到的 CONTACT_EMAIL 值:', CONTACT_EMAIL)
   const CONTACT_TELEGRAM = siteConfig('CONTACT_TELEGRAM')
   const CONTACT_THREADS = siteConfig('CONTACT_THREADS')
   const CONTACT_WHATSAPP = siteConfig('CONTACT_WHATSAPP')
