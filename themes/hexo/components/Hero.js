@@ -66,7 +66,7 @@ const Hero = props => {
       <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
 
         {/* --- START: 文字包裹器，添加 text-center --- */}
-        <div className='mt-60 text-center'> {/* <<<<< 修改点 1: 添加 text-center */}
+        <div className='mt-90 text-center'> {/* <<<<< 修改点 1: 添加 text-center */}
             {/* 站点标题 */}
             <div className='font-black text-4xl md:text-5xl shadow-text'>
               {siteInfo?.title || siteConfig('TITLE')}
@@ -80,9 +80,11 @@ const Hero = props => {
         </div>
         {/* --- END: 文字包裹器 --- */}
 
-        {/* 首页导航大按钮 (现在它在文字包裹器之外) */}
+       {/* 首页导航大按钮 */}
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
-          <NavButtonGroup {...props} />
+          <div style={{ position: 'relative', top: '-40px' }}> {/* <<<<< 在外面包一层 div 并添加样式 */}
+            <NavButtonGroup {...props} />
+          </div>
         )}
 
         {/* 滚动按钮 */}
