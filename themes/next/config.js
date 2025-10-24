@@ -15,7 +15,7 @@ const CONFIG = {
 
   NEXT_PREVIEW_TAG_COUNT: 16, // 首页最多展示的标签数量，0为不限制
   NEXT_PREVIEW_CATEGORY_COUNT: 16, // 首页最多展示的分类数量，0为不限制
-  NEXT_POST_HEADER_IMAGE_VISIBLE: false, // 文章详情页是否显示封面图
+  NEXT_POST_HEADER_IMAGE_VISIBLE: true, // 文章详情页是否显示封面图
 
   // 右侧组件
   NEXT_RIGHT_BAR: true, // 是否显示右侧栏
@@ -33,12 +33,12 @@ const CONFIG = {
 
   NEXT_WIDGET_TO_TOP: true, // 是否显示回顶
   NEXT_WIDGET_TO_BOTTOM: false, // 显示回底
-  NEXT_WIDGET_DARK_MODE: false, // 显示日间/夜间模式切换
+  NEXT_WIDGET_DARK_MODE: true, // 显示日间/夜间模式切换
   NEXT_WIDGET_TOC: true, // 移动端显示悬浮目录
 
   NEXT_ARTICLE_RELATE_POSTS: true, // 相关文章推荐
   NEXT_ARTICLE_COPYRIGHT: true, // 文章版权声明
-  NEXT_ARTICLE_NOT_BY_AI: false, // 显示非AI写作
+  NEXT_ARTICLE_NOT_BY_AI: true, // 显示非AI写作
   NEXT_ARTICLE_INFO: true // 显示文章信息
 }
 
