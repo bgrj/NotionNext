@@ -62,30 +62,43 @@ const Hero = props => {
       style={{ zIndex: 1 }}
       className='w-full h-screen relative bg-black'>
 
-     {/* --- 主要内容容器 --- */}
-      <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
+    {/* --- 主要内容容器 (现在是绝对定位的上下文) --- */}
+      <div style={{ zIndex: 10 }} className='text-white absolute top-0 left-0 w-full h-full'> {/* 移除了 flex 相关类 */}
 
-        {/* --- START: 文字包裹器，添加 text-center --- */}
-        <div className='mt-90 text-center'> {/* <<<<< 修改点 1: 添加 text-center */}
+        {/* --- 文字块 (绝对定位, 垂直+水平居中) --- */}
+        <div style={{
+          position: 'absolute',
+          top: '50%', // 垂直居中
+          left: '50%', // 水平居中
+          transform: 'translate(-50%, -50%)', // 精确居中校准
+          textAlign: 'center', // 确保内部文字居中
+          width: '90%' // 防止超长标题换行时宽度溢出
+        }}>
             {/* 站点标题 */}
             <div className='font-black text-4xl md:text-5xl shadow-text'>
               {siteInfo?.title || siteConfig('TITLE')}
             </div>
 
             {/* 站点欢迎语 */}
-            {/* <<<<< 修改点 2: 移除 text-center 和 items-center */}
-            <div className='mt-2 h-12 font-medium shadow-text text-lg'> 
+            <div className='mt-2 h-12 font-medium shadow-text text-lg w-full'> {/* 保持 w-full 防止晃动 */}
               <span id='typed' />
             </div>
         </div>
-        {/* --- END: 文字包裹器 --- */}
+        {/* --- END: 文字块 --- */}
 
-       {/* 首页导航大按钮 */}
+
+        {/* --- 首页导航大按钮 (绝对定位, 水平居中, 垂直位置可调) --- */}
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
-          <div style={{ position: 'relative', top: '-40px' }}> {/* <<<<< 在外面包一层 div 并添加样式 */}
+          <div style={{
+            position: 'absolute',
+            top: '65%', // <<<<< 调整这个百分比来控制按钮的垂直位置 (50% = 中心线, 数字越大越靠下)
+            left: '50%', // 水平居中
+            transform: 'translateX(-50%)' // 水平居中校准
+          }}>
             <NavButtonGroup {...props} />
           </div>
         )}
+        {/* --- END: 按钮块 --- */}
 
         {/* 滚动按钮 */}
         <div
