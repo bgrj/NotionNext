@@ -8,7 +8,7 @@ module.exports = {
       btoa(
         unescape(encodeURIComponent(process.env.NEXT_PUBLIC_CONTACT_EMAIL))
       )) ||
-    'Ymdyai5leGlzdGVudGlhbC50aGlua2luZ0BnbWFpbC5jb20=', // 邮箱地址 例如mail@tangly1024.com
+    'bgrj.existential.thinking@gmail.com', // 邮箱地址 例如mail@tangly1024.com
   CONTACT_TELEGRAM: process.env.NEXT_PUBLIC_CONTACT_TELEGRAM || 'https://t.me/+G_DTb1YKTYs3MDE1', // 电报群
   CONTACT_THREADS: process.env.NEXT_PUBLIC_CONTACT_THREADS || 'https://www.threads.com/@bu.guo.ren.jian', // 脆主页
   CONTACT_WHATSAPP: process.env.NEXT_PUBLIC_CONTACT_WHATSAPP || 'https://chat.whatsapp.com/BsQWGqCYYaTCw7khlsq4gx?mode=wwc', // Whatsapp群
