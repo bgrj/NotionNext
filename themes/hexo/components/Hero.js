@@ -91,7 +91,7 @@ const Hero = props => {
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
           <div style={{
             position: 'absolute',
-            top: '65%', // <<<<< 调整这个百分比来控制按钮的垂直位置 (50% = 中心线, 数字越大越靠下)
+            top: '30%', // <<<<< 调整这个百分比来控制按钮的垂直位置 (50% = 中心线, 数字越大越靠下)
             left: '50%', // 水平居中
             transform: 'translateX(-50%)' // 水平居中校准
           }}>
