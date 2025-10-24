@@ -3,7 +3,7 @@ import LazyImage from '@/components/LazyImage'
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { loadExternalResource } from '@/lib/utils'
-import { useEffect, useState } from 'react' // 必须重新加回 useState
+import { useEffect, useState } from 'react'
 import CONFIG from '../config'
 import NavButtonGroup from './NavButtonGroup'
 
@@ -14,29 +14,29 @@ let wrapperTop = 0
  * @returns
  */
 const Hero = props => {
-  const [typed, changeType] = useState() // 必须恢复
+  const [typed, changeType] = useState()
   const { siteInfo } = props
   const { locale } = useGlobal()
   const scrollToWrapper = () => {
     window.scrollTo({ top: wrapperTop, behavior: 'smooth' })
   }
 
-  const GREETING_WORDS = siteConfig('GREETING_WORDS').split(',') // 必须恢复
+  const GREETING_WORDS = siteConfig('GREETING_WORDS').split(',')
   useEffect(() => {
     updateHeaderHeight()
 
-    if (!typed && window && document.getElementById('typed')) { // 必须恢复打字机逻辑
+    if (!typed && window && document.getElementById('typed')) {
       loadExternalResource('/js/typed.min.js', 'js').then(() => {
         if (window.Typed) {
           changeType(
             new window.Typed('#typed', {
               strings: GREETING_WORDS,
-              typeSpeed: 80,      // (原 300) 打字速度：80毫秒/字 (总共约 3 秒)
-              backSpeed: 30,      // (原 200) 删除速度：30毫秒/字 (快速删除)
-              backDelay: 5000,    // (原 400) 打完后的停留时间：5000毫秒 (暂停 5 秒，让访客有足够时间阅读)
+              typeSpeed: 80,
+              backSpeed: 30,
+              backDelay: 5000,
               showCursor: true,
               smartBackspace: true,
-              loop: true // 确保它循环播放
+              loop: true
             })
           )
         }
@@ -47,7 +47,7 @@ const Hero = props => {
     return () => {
       window.removeEventListener('resize', updateHeaderHeight)
     }
-  }) 
+  })
 
   function updateHeaderHeight() {
     requestAnimationFrame(() => {
@@ -61,25 +61,26 @@ const Hero = props => {
       id='header'
       style={{ zIndex: 1 }}
       className='w-full h-screen relative bg-black'>
-        
-      {/* -------------------- START: 修改点 A (添加 zIndex: 10) -------------------- */}
+
+      {/* --- 主要内容容器 --- */}
       <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
-      {/* -------------------- END: 修改点 A -------------------- */}
 
-        {/* 站点标题 */}
-        <div className='font-black text-4xl md:text-5xl shadow-text'>
-          {siteInfo?.title || siteConfig('TITLE')}
+        {/* --- START: 新增的文字包裹器，并添加 margin-top --- */}
+        <div className='mt-16'> {/* <<<<< 这里添加 mt-16 (或调整数字) 控制文字下移 */}
+            {/* 站点标题 */}
+            <div className='font-black text-4xl md:text-5xl shadow-text'>
+              {siteInfo?.title || siteConfig('TITLE')}
+            </div>
+
+            {/* 站点欢迎语 */}
+            <div className='mt-2 h-12 items-center text-center font-medium shadow-text text-lg'>
+              <span id='typed' />
+            </div>
         </div>
-        
-        {/* -------------------- START: 恢复的代码 -------------------- */}
-        {/* 站点欢迎语 */}
-        <div className='mt-2 h-12 items-center text-center font-medium shadow-text text-lg'>
-          <span id='typed' />
-        </div>
-        {/* -------------------- END: 恢复的代码 -------------------- */}
+        {/* --- END: 新增的文字包裹器 --- */}
 
 
-        {/* 首页导航大按钮 */}
+        {/* 首页导航大按钮 (现在它在文字包裹器之外) */}
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
           <NavButtonGroup {...props} />
         )}
@@ -96,47 +97,39 @@ const Hero = props => {
         </div>
       </div>
 
-   {/* -------------------- START: 动态云层效果 (匹配新背景) -------------------- */}
 
+      {/* --- 背景图与云雾效果 (保持不变) --- */}
       {/* 图层 1: 缓慢的“暖色高光云” (z-2) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
-          // 使用一种匹配太阳的、温暖的米黄色 (rgba(255, 245, 220, ...))
           backgroundImage:
             'linear-gradient(to right, rgba(255, 245, 220, 0) 0%, rgba(255, 245, 220, 0.25) 50%, rgba(255, 245, 220, 0) 100%)',
           backgroundSize: '200% 100%',
-          animation: 'moveMist 50s linear infinite', // 速度非常慢 (50秒)
-          zIndex: 2, // 在底层
-          opacity: 0.6 // 整体 60% 透明度
+          animation: 'moveMist 50s linear infinite',
+          zIndex: 2,
+          opacity: 0.6
         }}
       />
-
       {/* 图层 2: 较快的“冷色阴影云” (z-3) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
-          // 使用一种匹配天空阴影的、微冷的灰蓝色 (rgba(180, 190, 210, ...))
           backgroundImage:
-            'linear-gradient(to left, rgba(180, 190, 210, 0) 0%, rgba(180, 190, 210, 0.15) 50%, rgba(180, 190, 210, 0) 100%)', // 渐变方向相反 (to left)
+            'linear-gradient(to left, rgba(180, 190, 210, 0) 0%, rgba(180, 190, 210, 0.15) 50%, rgba(180, 190, 210, 0) 100%)',
           backgroundSize: '200% 100%',
-          animation: 'moveMist 22s linear infinite', // 速度较快 (22秒)
-          zIndex: 3 // 在上层 (确保在文字 z-10 之下)
+          animation: 'moveMist 22s linear infinite',
+          zIndex: 3
         }}
       />
-
-      {/* -------------------- END: 动态云层效果 -------------------- */}
-
-
-      {/* -------------------- START: 修改点 C (添加 zIndex: 1) -------------------- */}
+      {/* 背景图 (z-1) */}
       <LazyImage
         id='header-cover'
         alt={siteInfo?.title}
         src={siteInfo?.pageCover}
-        style={{ zIndex: 1 }} // <-- 在这里添加 zIndex
+        style={{ zIndex: 1 }}
         className={`header-cover w-full h-screen object-cover object-center ${siteConfig('HEXO_HOME_NAV_BACKGROUND_IMG_FIXED', null, CONFIG) ? 'fixed' : ''}`}
       />
-      {/* -------------------- END: 修改点 C -------------------- */}
     </header>
   )
 }
