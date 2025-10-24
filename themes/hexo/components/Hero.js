@@ -33,7 +33,7 @@ const Hero = props => {
               strings: GREETING_WORDS,
               typeSpeed: 80,
               backSpeed: 30,
-              backDelay: 5000,
+              backDelay: 3000,
               showCursor: true,
               smartBackspace: true,
               loop: true
@@ -66,7 +66,7 @@ const Hero = props => {
       <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
 
         {/* --- START: 新增的文字包裹器，并添加 margin-top --- */}
-        <div className='mt-24'> {/* <<<<< 这里添加 mt-16 (或调整数字) 控制文字下移 */}
+        <div className='mt-30'> {/* <<<<< 这里添加 mt-16 (或调整数字) 控制文字下移 */}
             {/* 站点标题 */}
             <div className='font-black text-4xl md:text-5xl shadow-text'>
               {siteInfo?.title || siteConfig('TITLE')}
