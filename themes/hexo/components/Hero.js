@@ -66,7 +66,7 @@ const Hero = props => {
       <div style={{ zIndex: 10 }} className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
 
         {/* --- START: 文字包裹器，添加 text-center --- */}
-        <div className='mt-30 text-center'> {/* <<<<< 修改点 1: 添加 text-center */}
+        <div className='mt-60 text-center'> {/* <<<<< 修改点 1: 添加 text-center */}
             {/* 站点标题 */}
             <div className='font-black text-4xl md:text-5xl shadow-text'>
               {siteInfo?.title || siteConfig('TITLE')}
