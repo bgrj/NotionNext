@@ -103,7 +103,7 @@ const Hero = props => {
         {/* 滚动按钮 */}
         <div
           onClick={scrollToWrapper}
-          className='z-10 cursor-pointer w-full text-center py-4 text-3xl absolute bottom-10 text-white'>
+          className='z-10 cursor-pointer w-full text-center py-4 text-3xl absolute bottom-10 text-white shadow-text'>
           <div className='opacity-70 animate-bounce text-xs'>
             {siteConfig('HEXO_SHOW_START_READING', null, CONFIG) &&
               locale.COMMON.START_READING}
@@ -113,31 +113,39 @@ const Hero = props => {
       </div>
 
 
-      {/* --- 背景图与云雾效果 (保持不变) --- */}
-      {/* 图层 1: 缓慢的“暖色高光云” (z-2) */}
+     {/* --- START: 动态柔和火烧云效果 (两层，与背景图风格统一) --- */}
+
+      {/* 图层 1: 缓慢的“浅橙色暖光云” (z-2) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
+          // 使用更柔和、明亮的浅橙色，模拟背景中的暖光
           backgroundImage:
-            'linear-gradient(to right, rgba(255, 245, 220, 0) 0%, rgba(255, 245, 220, 0.25) 50%, rgba(255, 245, 220, 0) 100%)',
+            'linear-gradient(to right, rgba(255, 192, 128, 0) 0%, rgba(255, 192, 128, 0.15) 50%, rgba(255, 192, 128, 0) 100%)', // 浅橙色 (Peach-Orange), 15% opacity center
           backgroundSize: '200% 100%',
-          animation: 'moveMist 50s linear infinite',
-          zIndex: 2,
-          opacity: 0.6
+          animation: 'moveMist 70s linear infinite', // 速度更慢，更柔和
+          zIndex: 2, // 在底层
+          opacity: 0.8 // 整体 80% 透明度，让光感更明显但不过重
         }}
       />
-      {/* 图层 2: 较快的“冷色阴影云” (z-3) */}
+
+      {/* 图层 2: 较快的“淡粉色高光云” (z-3) */}
       <div
         className='absolute top-0 left-0 w-full h-full'
         style={{
+          // 使用淡粉色，模拟日落时云层边缘被染上的高光和色彩
           backgroundImage:
-            'linear-gradient(to left, rgba(180, 190, 210, 0) 0%, rgba(180, 190, 210, 0.15) 50%, rgba(180, 190, 210, 0) 100%)',
+            'linear-gradient(to left, rgba(255, 220, 220, 0) 0%, rgba(255, 220, 220, 0.20) 50%, rgba(255, 220, 220, 0) 100%)', // 淡粉色 (Pale Pink), 20% opacity center
           backgroundSize: '200% 100%',
-          animation: 'moveMist 22s linear infinite',
-          zIndex: 3
+          animation: 'moveMist 35s linear infinite', // 速度适中，增加流动感
+          zIndex: 3 // 在上层
         }}
       />
-      {/* 背景图 (z-1) */}
+
+      {/* --- END: 动态柔和火烧云效果 --- */}
+
+
+      {/* 背景图 (z-1) - 保持不变 */}
       <LazyImage
         id='header-cover'
         alt={siteInfo?.title}
