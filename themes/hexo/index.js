@@ -141,11 +141,11 @@ const LayoutBase = props => {
             </div>
 
             {/* 右侧栏 */}
-            <SideRight {...props} className="ml-[-80px]" /> {/* 通过负的左外边距让整个右侧栏左移 */}
+            <SideRight {...props} className="ml-[-100px]" /> {/* 通过负的左外边距让整个右侧栏左移 */}
           </div>
         </main>
 
-        <div className='block lg:hidden ml-[-80px]'>
+        <div className='block lg:hidden ml-[-100px]'>
           <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
         </div>
 
