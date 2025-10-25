@@ -64,7 +64,9 @@ export default function SideRight(props) {
           </Card>
         )}
 
+       <div className='sidebar-widget-responsive-shift-left'> {/* <<<<< 添加包裹 div 和新类名 */}
         <InfoCard {...props} />
+      </div>
         {siteConfig('HEXO_WIDGET_ANALYTICS', null, CONFIG) && (
           <AnalyticsCard {...props} />
         )}
@@ -99,13 +101,10 @@ export default function SideRight(props) {
         {siteConfig('COMMENT_WALINE_SERVER_URL') &&
           siteConfig('COMMENT_WALINE_RECENT') && (
            // 添加一个包裹 div 并应用新的响应式类名
-          <div className='recent-comments-responsive-shift'> {/* <<<<< 修改这里 */}
-            {/* (可选) 如果你需要 Card 样式，可以这样写 */}
+         <div className='sidebar-widget-responsive-shift-left'> {/* <<<<< 确保这里也用了新类名 */}
             <Card className='mt-4'> 
               <HexoRecentComments />
             </Card>
-            {/* (可选) 如果不需要 Card 样式，就像这样 */}
-            {/* <HexoRecentComments /> */}
           </div>
           )}
         {/* --- END: 修改“最新评论”位置 --- */}
