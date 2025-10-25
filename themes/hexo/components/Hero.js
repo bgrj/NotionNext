@@ -64,7 +64,7 @@ const Hero = props => {
         {/* --- 文字块 (绝对定位, 垂直+水平居中) --- */}
         <div style={{
           position: 'absolute',
-          top: '45%', // 垂直居中
+          top: '60%', // 垂直居中
           left: '50%', // 水平居中
           transform: 'translate(-50%, -50%)', // 精确居中校准
           textAlign: 'center', // 确保内部文字居中
@@ -92,11 +92,11 @@ const Hero = props => {
         <div
           onClick={scrollToWrapper}
           className='z-10 cursor-pointer w-full text-center py-4 text-3xl absolute bottom-10 text-white shadow-text'>
-          <div className='opacity-70 animate-bounce text-xs'>
+          <div className='opacity-50 animate-bounce text-xs'>
             {siteConfig('HEXO_SHOW_START_READING', null, CONFIG) &&
               locale.COMMON.START_READING}
           </div>
-          <i className='opacity-70 animate-bounce fas fa-angle-down' />
+          <i className='opacity-50 animate-bounce fas fa-angle-down' />
         </div>
       </div>
 
