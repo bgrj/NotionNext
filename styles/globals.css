@@ -309,7 +309,7 @@ img {
 /* 当屏幕宽度大于等于 1024px 时 */
 @media (min-width: 1024px) {
   .sidebar-widget-responsive-shift-left { /* <<< 使用新名称 */
-    right: 30px; /* 统一在这里调整左移距离 (例如 30px) */
+    right: 60px; /* 统一在这里调整左移距离 (例如 30px) */
   }
 }
 /* ---- END: 响应式向左移动侧边栏小部件 ---- */
