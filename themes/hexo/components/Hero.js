@@ -103,7 +103,7 @@ const Hero = props => {
         {/* 滚动按钮 */}
         <div
           onClick={scrollToWrapper}
-          className='z-10 cursor-pointer w-full text-center py-4 text-3xl absolute bottom-10 text-white shadow-text'>
+          className='z-10 cursor-pointer w-full text-center py-4 text-3xl absolute bottom-10 text-yellow-300 shadow-text'>
           <div className='opacity-60 animate-bounce text-xs'>
             {siteConfig('HEXO_SHOW_START_READING', null, CONFIG) &&
               locale.COMMON.START_READING}
