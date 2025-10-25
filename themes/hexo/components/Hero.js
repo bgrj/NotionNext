@@ -64,7 +64,7 @@ const Hero = props => {
         {/* --- 文字块 (绝对定位, 垂直+水平居中) --- */}
         <div style={{
           position: 'absolute',
-          top: '60%', // 垂直居中
+          top: '30%', // 垂直居中
           left: '50%', // 水平居中
           transform: 'translate(-50%, -50%)', // 精确居中校准
           textAlign: 'center', // 确保内部文字居中
