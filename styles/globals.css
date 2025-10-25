@@ -299,6 +299,21 @@ img {
   0% {background-position: right}
 }
 
+/* ---- START: 响应式移动最新评论卡片 ---- */
+.recent-comments-responsive-shift {
+  position: relative; /* 必须启用相对定位 */
+  right: 0; /* 默认状态 (手机端) 不向左移动 */
+  transition: right 0.3s ease; /* 可选：添加平滑过渡效果 */
+}
+
+/* 当屏幕宽度大于等于 1024px 时 (lg 断点，通常是电脑端) */
+@media (min-width: 1024px) {
+  .recent-comments-responsive-shift {
+    right: 30px; /* 在电脑端向左移动 30px (可以调整这个数值) */
+  }
+}
+/* ---- END: 响应式移动最新评论卡片 ---- */
+
 /* ---- START: 动态云雾效果 ---- */
 @keyframes moveMist {
   0% {
