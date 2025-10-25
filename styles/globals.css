@@ -298,30 +298,3 @@ img {
   @keyframes l1 {
   0% {background-position: right}
 }
-
-/* ---- START: 响应式向左移动侧边栏小部件 ---- */
-.sidebar-widget-responsive-shift-left { /* <<< 使用新名称 */
-  position: relative; 
-  right: 0; 
-  transition: right 0.3s ease; 
-}
-
-/* 当屏幕宽度大于等于 1024px 时 */
-@media (min-width: 1024px) {
-  .sidebar-widget-responsive-shift-left { /* <<< 使用新名称 */
-    right: 60px; /* 统一在这里调整左移距离 (例如 30px) */
-  }
-}
-/* ---- END: 响应式向左移动侧边栏小部件 ---- */
-
-/* ---- START: 动态云雾效果 ---- */
-@keyframes moveMist {
-  0% {
-    background-position: 0 0;
-  }
-  100% {
-    /* 将背景位置向右移动200%，实现一个完整的循环 */
-    background-position: 200% 0;
-  }
-}
-/* ---- END: 动态云雾效果 ---- */
