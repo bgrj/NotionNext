@@ -61,14 +61,27 @@ const Hero = props => {
       style={{ zIndex: 1 }}
       className='w-full h-screen relative bg-black'>
       <div className='text-white absolute bottom-0 flex flex-col h-full items-center justify-center w-full '>
-        {/* 站点标题 */}
-        <div className='font-black text-4xl md:text-5xl shadow-text'>
-          {siteInfo?.title || siteConfig('TITLE')}
+        {/* --- 文字块 (绝对定位, 垂直+水平居中) --- */}
+        <div style={{
+          position: 'absolute',
+          top: '45%', // 垂直居中
+          left: '50%', // 水平居中
+          transform: 'translate(-50%, -50%)', // 精确居中校准
+          textAlign: 'center', // 确保内部文字居中
+          width: '90%' // 防止超长标题换行时宽度溢出
+        }}>
+            {/* 站点标题 */}
+            <div className='font-black text-4xl md:text-5xl shadow-text'>
+              {siteInfo?.title || siteConfig('TITLE')}
+            </div>
+
+            {/* 站点欢迎语 */}
+            <div className='mt-2 h-12 font-medium shadow-text text-lg w-full'> {/* 保持 w-full 防止晃动 */}
+              <span id='typed' />
+            </div>
         </div>
-        {/* 站点欢迎语 */}
-        <div className='mt-2 h-12 items-center text-center font-medium shadow-text text-lg'>
-          <span id='typed' />
-        </div>
+        {/* --- END: 文字块 --- */}
+
 
         {/* 首页导航大按钮 */}
         {siteConfig('HEXO_HOME_NAV_BUTTONS', null, CONFIG) && (
