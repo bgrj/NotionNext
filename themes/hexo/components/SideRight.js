@@ -57,63 +57,51 @@ export default function SideRight(props) {
     <div
       id='sideRight'
       className={` lg:w-80 lg:pt-8 ${post ? 'lg:pt-0' : 'lg:pt-4'}`}>
-      
-      {/* --- 将响应式类名应用到这个父容器 --- */}
-      <div className='sticky top-8 space-y-4 sidebar-widget-responsive-shift-left'> {/* <<<<< 在这里添加类名 */}
-        
-        {/* Catalog (如果存在) */}
+      <div className='sticky top-8 space-y-4'>
         {post && post.toc && post.toc.length > 1 && (
           <Card>
             <Catalog toc={post.toc} />
           </Card>
         )}
 
-        {/* InfoCard (移除之前的包裹 div) */}
-        <InfoCard {...props} /> 
-
-        {/* AnalyticsCard (如果启用) */}
+        <InfoCard {...props} />
         {siteConfig('HEXO_WIDGET_ANALYTICS', null, CONFIG) && (
           <AnalyticsCard {...props} />
         )}
 
-        {/* CategoryGroup (如果启用) */}
         {showCategory && (
           <Card>
-            {/* ... category content ... */}
-            <CategoryGroup currentCategory={currentCategory} categories={categories} />
+            <div className='ml-2 mb-1 '>
+              <i className='fas fa-th' /> {locale.COMMON.CATEGORY}
+            </div>
+            <CategoryGroup
+              currentCategory={currentCategory}
+              categories={categories}
+            />
           </Card>
         )}
-        
-        {/* TagGroups (如果启用) */}
         {showTag && (
           <Card>
             <TagGroups tags={tags} currentTag={currentTag} />
           </Card>
         )}
+        {siteConfig('HEXO_WIDGET_LATEST_POSTS', null, CONFIG) &&
+          latestPosts &&
+          latestPosts.length > 0 && (
+            <Card>
+              <LatestPostsGroup {...props} />
+            </Card>
+          )}
 
-        {/* LatestPostsGroup (如果启用) */}
-        {siteConfig('HEXO_WIDGET_LATEST_POSTS', null, CONFIG) && latestPosts && latestPosts.length > 0 && (
-          <Card>
-            <LatestPostsGroup {...props} />
-          </Card>
-        )}
-
-        {/* Announcement */}
         <Announcement post={notice} />
 
-        {/* HexoRecentComments (移除之前的包裹 div) */}
-        {siteConfig('COMMENT_WALINE_SERVER_URL') && siteConfig('COMMENT_WALINE_RECENT') && (
-          // 确保 Card 存在 (如果需要样式)
-          <Card className='mt-4'> 
-            <HexoRecentComments />
-          </Card>
-        )}
+        {siteConfig('COMMENT_WALINE_SERVER_URL') &&
+          siteConfig('COMMENT_WALINE_RECENT') && <HexoRecentComments />}
 
-        {/* 其他组件 */}
         {rightAreaSlot}
         <FaceBookPage />
         <Live2D />
-      </div> {/* --- End of shifted container --- */}
+      </div>
     </div>
   )
 }
