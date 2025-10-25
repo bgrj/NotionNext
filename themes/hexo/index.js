@@ -141,7 +141,7 @@ const LayoutBase = props => {
             </div>
 
             {/* 右侧栏 */}
-            <SideRight {...props} className="ml-[-20px]" /> {/* 通过负的左外边距让整个右侧栏左移 */}
+            <SideRight {...props} className="ml-[-60px]" /> {/* 通过负的左外边距让整个右侧栏左移 */}
           </div>
         </main>
 
