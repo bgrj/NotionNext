@@ -8,8 +8,9 @@ import CONFIG from './config'
  * @returns
  */
 const Style = () => {
-  // 从配置中获取主题色，如果没有配置则使用默认值 #928CEE
-  const themeColor = siteConfig('HEXO_THEME_COLOR', '#928CEE', CONFIG)
+  // --- 修改点 1: 更换主题色 ---
+  // 从配置中获取主题色，如果没有配置则使用新的默认暖米色 #C8A97E (你也可以选择其他暖色调)
+  const themeColor = siteConfig('HEXO_THEME_COLOR', '#C8A97E', CONFIG)
 
   return (
     <style jsx global>{`
@@ -17,15 +18,15 @@ const Style = () => {
         --theme-color: ${themeColor};
       }
 
-      // 底色
+      // 底色 (保持默认)
       #theme-hexo body {
         background-color: #f5f5f5;
       }
       .dark #theme-hexo body {
-        background-color: black;
+        background-color: black; // 暗色模式背景
       }
 
-      /*  菜单下划线动画 */
+      /* 菜单下划线动画 (使用新主题色) */
       #theme-hexo .menu-link {
         text-decoration: none;
         background-image: linear-gradient(
@@ -43,13 +44,15 @@ const Style = () => {
         color: var(--theme-color);
       }
 
-      /* 文章列表中标题行悬浮时的文字颜色 */
+      /* 文章列表中标题行悬浮时的文字颜色 (使用新主题色) */
       #theme-hexo h2:hover .menu-link {
         color: var(--theme-color) !important;
       }
       .dark #theme-hexo h2:hover .menu-link {
         color: var(--theme-color) !important;
       }
+
+      /* --- 以下大部分样式自动继承新主题色，无需修改 --- */
 
       /* 下拉菜单悬浮背景色 */
       #theme-hexo li[class*='hover:bg-indigo-500']:hover {
@@ -94,7 +97,6 @@ const Style = () => {
         background-color: var(--theme-color) !important;
         color: white !important;
       }
-      /* 移动设备下，搜索组件中选中分类的高亮背景色 */
       #theme-hexo div[class*='hover:bg-indigo-400']:hover {
         background-color: var(--theme-color) !important;
       }
@@ -139,24 +141,18 @@ const Style = () => {
       .dark #theme-hexo .dark\:border-indigo-400 {
         border-color: var(--theme-color) !important;
       }
-      .dark #theme-hexo .dark\:border-white {
-        border-color: var(--theme-color) !important;
-      }
-      /* 目录项悬浮时的字体颜色 */
-      #theme-hexo a[class*='hover:text-indigo-800']:hover {
-        color: var(--theme-color) !important;
-      }
-      /* 深色模式下目录项的默认文字颜色和边框线颜色 */
+      /* 调整：暗色模式下目录普通文字和边框使用稍浅的灰色，而不是纯白，会更柔和 */
       .dark #theme-hexo .catalog-item {
-        color: white !important;
-        border-color: white !important;
+        color: #a0aec0 !important; /* gray-400 */
+        border-color: #a0aec0 !important; /* gray-400 */
       }
       .dark #theme-hexo .catalog-item:hover {
         color: var(--theme-color) !important;
       }
-      /* 深色模式下当前高亮标题的边框线颜色 */
+      /* 暗色模式下当前高亮标题的边框线颜色 */
       .dark #theme-hexo .catalog-item.font-bold {
         border-color: var(--theme-color) !important;
+        color: var(--theme-color) !important; // 高亮文字也用主题色
       }
 
       /* 文章底部版权声明组件左侧边框线颜色 */
@@ -173,19 +169,19 @@ const Style = () => {
       #theme-hexo .hover\:bg-blue-600:hover {
         background-color: var(--theme-color) !important;
       }
+       /* 调整：暗色模式下归档页边框和悬停颜色 */
+      .dark #theme-hexo li[class*='dark:border-indigo-400'] {
+         border-color: #718096 !important; /* gray-500 */
+       }
       .dark #theme-hexo li[class*='dark:hover:border-indigo-300']:hover {
         border-color: var(--theme-color) !important;
       }
-      /* 深色模式下，归档页面文章列表项默认状态左侧边框线颜色 */
-      .dark #theme-hexo li[class*='dark:border-indigo-400'] {
-        border-color: var(--theme-color) !important;
-      }
-      /* 深色模式下，归档页面文章标题悬浮时的文字颜色 */
       .dark #theme-hexo a[class*='dark:hover:text-indigo-300']:hover {
         color: var(--theme-color) !important;
       }
 
-      /* 设置了从上到下的渐变黑色 */
+
+      /* --- 修改点 2: 减弱顶部图片的遮罩 --- */
       #theme-hexo .header-cover::before {
         content: '';
         position: absolute;
@@ -193,14 +189,15 @@ const Style = () => {
         left: 0;
         width: 100%;
         height: 100%;
+        /* 使用非常淡的暗色渐变，稍微突出文字即可 */
         background: linear-gradient(
           to bottom,
-          rgba(0, 0, 0, 0.5) 0%,
-          rgba(0, 0, 0, 0.2) 10%,
-          rgba(0, 0, 0, 0) 25%,
-          rgba(0, 0, 0, 0.2) 75%,
-          rgba(0, 0, 0, 0.5) 100%
+          rgba(0, 0, 0, 0.15) 0%, /* 顶部 15% 暗度 */
+          rgba(0, 0, 0, 0) 20%,   /* 快速过渡到透明 */
+          rgba(0, 0, 0, 0) 80%,   /* 中间大部分保持透明 */
+          rgba(0, 0, 0, 0.20) 100% /* 底部 20% 暗度 */
         );
+        pointer-events: none; /* 确保遮罩不影响鼠标交互 */
       }
 
       /* Custem */
@@ -208,12 +205,12 @@ const Style = () => {
         opacity: 0;
       }
 
-      // 选中字体颜色
+      // 选中字体颜色 (使用新主题色)
       ::selection {
-        background: color-mix(in srgb, var(--theme-color) 30%, transparent);
+        background: color-mix(in srgb, var(--theme-color) 40%, transparent); /* 加深一点选中色 */
       }
 
-      // 自定义滚动条
+      // 自定义滚动条 (使用新主题色)
       ::-webkit-scrollbar {
         width: 5px;
         height: 5px;
@@ -225,6 +222,7 @@ const Style = () => {
 
       ::-webkit-scrollbar-thumb {
         background-color: var(--theme-color);
+        border-radius: 5px; // 圆角滚动条
       }
 
       * {
