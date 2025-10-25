@@ -98,13 +98,15 @@ export default function SideRight(props) {
         {/* --- START: 修改“最新评论”位置 --- */}
         {siteConfig('COMMENT_WALINE_SERVER_URL') &&
           siteConfig('COMMENT_WALINE_RECENT') && (
-            // 添加一个包裹 div 并应用样式
-            <div style={{ position: 'relative', right: '55px' }}> {/* <<<<< 调整 '30px' 控制左移距离 */}
-              {/* (可选) 如果 HexoRecentComments 本身没有卡片样式，可以在这里加 Card */}
-              {/* <Card className='mt-4'> */}
-                <HexoRecentComments />
-              {/* </Card> */}
-            </div>
+           // 添加一个包裹 div 并应用新的响应式类名
+          <div className='recent-comments-responsive-shift'> {/* <<<<< 修改这里 */}
+            {/* (可选) 如果你需要 Card 样式，可以这样写 */}
+            <Card className='mt-4'> 
+              <HexoRecentComments />
+            </Card>
+            {/* (可选) 如果不需要 Card 样式，就像这样 */}
+            {/* <HexoRecentComments /> */}
+          </div>
           )}
         {/* --- END: 修改“最新评论”位置 --- */}
 
