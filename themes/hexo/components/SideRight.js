@@ -93,10 +93,20 @@ export default function SideRight(props) {
             </Card>
           )}
 
-        <Announcement post={notice} />
+       <Announcement post={notice} />
 
+        {/* --- START: 修改“最新评论”位置 --- */}
         {siteConfig('COMMENT_WALINE_SERVER_URL') &&
-          siteConfig('COMMENT_WALINE_RECENT') && <HexoRecentComments />}
+          siteConfig('COMMENT_WALINE_RECENT') && (
+            // 添加一个包裹 div 并应用样式
+            <div style={{ position: 'relative', right: '60px' }}> {/* <<<<< 调整 '30px' 控制左移距离 */}
+              {/* (可选) 如果 HexoRecentComments 本身没有卡片样式，可以在这里加 Card */}
+              {/* <Card className='mt-4'> */}
+                <HexoRecentComments />
+              {/* </Card> */}
+            </div>
+          )}
+        {/* --- END: 修改“最新评论”位置 --- */}
 
         {rightAreaSlot}
         <FaceBookPage />
