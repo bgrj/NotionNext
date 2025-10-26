@@ -33,6 +33,7 @@ import TocDrawer from './components/TocDrawer'
 import TocDrawerButton from './components/TocDrawerButton'
 import CONFIG from './config'
 import { Style } from './style'
+import FloatingOrbs from '@/components/FloatingOrbs' // <-- 1. 在这里添加了 import
 
 const AlgoliaSearchModal = dynamic(
   () => import('@/components/AlgoliaSearchModal'),
@@ -90,6 +91,9 @@ const LayoutBase = props => {
       <div
         id='theme-hexo'
         className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth`}>
+
+        <FloatingOrbs /> {/* <-- 2. 在这里添加了特效组件 */}
+
         <Style />
 
         {/* 顶部导航 */}
