@@ -119,10 +119,10 @@ const LayoutBase = props => {
               (JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
                 ? 'flex-row-reverse'
                 : '') +
-              ' w-full mx-auto lg:flex lg:space-x-4 justify-center relative z-10'
+              ' w-full mx-auto lg:flex lg:items-start justify-center relative z-10'
             }>
             <div
-              className={`${className || ''} w-full ${fullWidth ? '' : 'max-w-4xl'} h-full overflow-hidden lg:ml-12`}>
+              className={`${className || ''} w-full ${fullWidth ? '' : 'max-w-4xl'} h-full overflow-hidden lg:ml-12 mb-10 lg:mb-0`}>
               <Transition
                 show={!onLoading}
                 appear={true}
