@@ -28,7 +28,7 @@ export const ArticleLock = props => {
   }, [])
 
   return <div id='container' className='w-full flex justify-center lg:justify-start items-center h-96 '>
-    <div className='text-center space-y-3 lg:ml-48'>
+    <div className='text-center space-y-3 lg:ml-60'>
       <div className='font-bold dark:text-gray-300 text-black'>{locale.COMMON.ARTICLE_LOCK_TIPS}</div>
       <div className='flex mx-4'>
         <input id="password" type='password'
