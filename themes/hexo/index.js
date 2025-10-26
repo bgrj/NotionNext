@@ -146,11 +146,8 @@ const LayoutBase = props => {
 
             </div>
 
-            {/* 右侧栏 - 添加了 sticky 效果的包裹器 */}
-            <div className='lg:sticky lg:top-16'>
-              <SideRight {...props} />
-            </div>
-
+            {/* 右侧栏 */}
+            <SideRight {...props} />
           </div>
         </main>
 
