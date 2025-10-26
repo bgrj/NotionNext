@@ -16,7 +16,7 @@ const ORB_COLORS = [
 
 /**
  * 浮光微粒特效组件
- * 它不会渲染任何可见的HTML，只负责在全局添加鼠标特效
+ * 它不会渲染任何可见的HTML，只负责在全局添加鼠标和触摸特效
  */
 const FloatingOrbs = () => {
   // 使用ref来存储粒子数组和动画帧ID，避免不必要的重渲染
@@ -31,7 +31,49 @@ const FloatingOrbs = () => {
 
     const particles = particlesRef.current
 
-    // 动画循环
+    /**
+     * 核心函数：在指定坐标创建一颗粒子
+     */
+    const createParticle = (x, y) => {
+      // 随机节流，避免产生过多粒子
+      if (Math.random() > 0.6) return // 只有40%的几率产生粒子
+
+      const orb = document.createElement('div')
+      document.body.appendChild(orb)
+
+      const color = ORB_COLORS[Math.floor(Math.random() * ORB_COLORS.length)]
+      const size = Math.random() * 6 + 3 // 粒子大小 (3px 到 9px)
+      const velocity = Math.random() * 0.5 + 0.2 // 漂浮速度
+
+      // 设置粒子的样式
+      orb.style.position = 'fixed' // 使用 fixed，不受页面滚动影响
+      orb.style.width = `${size}px`
+      orb.style.height = `${size}px`
+      orb.style.backgroundColor = `rgba(${color}, 1)`
+      orb.style.borderRadius = '50%'
+      orb.style.pointerEvents = 'none' // 穿透鼠标事件
+      orb.style.zIndex = '9999'
+      orb.style.boxShadow = `0 0 8px 2px rgba(${color}, 0.7)` // 柔和的光晕
+      orb.style.opacity = '1'
+      
+      // 初始位置
+      const initialX = x - size / 2
+      const initialY = y - size / 2
+      orb.style.transform = `translate(${initialX}px, ${initialY}px)`
+
+      // 存储粒子信息
+      particles.push({
+        element: orb,
+        x: initialX,
+        y: initialY,
+        opacity: 1,
+        velocity: velocity
+      })
+    }
+
+    /**
+     * 动画循环：更新所有粒子的状态
+     */
     const animateParticles = () => {
       // 倒序遍历，方便在循环中删除粒子
       for (let i = particles.length - 1; i >= 0; i--) {
@@ -55,47 +97,34 @@ const FloatingOrbs = () => {
       animationFrameIdRef.current = requestAnimationFrame(animateParticles)
     }
 
-    // 鼠标移动事件处理
+    // --- 事件监听 ---
+
+    // 1. 桌面端：鼠标移动事件
     const handleMouseMove = (e) => {
-      // 随机节流，避免产生过多粒子
-      if (Math.random() > 0.6) return // 只有40%的几率产生粒子
+      createParticle(e.clientX, e.clientY)
+    }
 
-      const orb = document.createElement('div')
-      document.body.appendChild(orb)
-
-      const color = ORB_COLORS[Math.floor(Math.random() * ORB_COLORS.length)]
-      const size = Math.random() * 6 + 3 // 粒子大小 (3px 到 9px)
-      const velocity = Math.random() * 0.5 + 0.2 // 漂浮速度
-
-      // 设置粒子的样式
-      orb.style.position = 'fixed' // 使用 fixed，不受页面滚动影响
-      orb.style.width = `${size}px`
-      orb.style.height = `${size}px`
-      orb.style.backgroundColor = `rgba(${color}, 1)`
-      orb.style.borderRadius = '50%'
-      orb.style.pointerEvents = 'none' // 穿透鼠标事件
-      orb.style.zIndex = '9999'
-      orb.style.boxShadow = `0 0 8px 2px rgba(${color}, 0.7)` // 柔和的光晕
-
-      // 存储粒子信息
-      particles.push({
-        element: orb,
-        x: e.clientX - size / 2, // 初始X坐标 (居中)
-        y: e.clientY - size / 2, // 初始Y坐标 (居中)
-        opacity: 1,
-        velocity: velocity
-      })
+    // 2. 移动端：手指滑动事件
+    const handleTouchMove = (e) => {
+      // e.touches 是一个数组，我们只关心第一个触点
+      if (e.touches.length > 0) {
+        createParticle(e.touches[0].clientX, e.touches[0].clientY)
+      }
     }
 
     // 启动动画循环
     animationFrameIdRef.current = requestAnimationFrame(animateParticles)
-    // 监听鼠标移动
+    
+    // 绑定事件
     window.addEventListener('mousemove', handleMouseMove)
+    window.addEventListener('touchmove', handleTouchMove) // <-- 新增的移动端监听
 
     // React组件卸载时执行清理
     return () => {
       window.removeEventListener('mousemove', handleMouseMove)
+      window.removeEventListener('touchmove', handleTouchMove) // <-- 清理移动端监听
       cancelAnimationFrame(animationFrameIdRef.current)
+      
       // 清理所有剩余的粒子
       particles.forEach(p => p.element.remove())
       particles.length = 0
