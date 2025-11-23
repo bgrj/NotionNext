@@ -17,7 +17,7 @@ export default function PoweredBy(props) {
       <span className='justify-start'>
         不过人间·EのT
       </span>
-      .
+      
     </div>
   )
 }
