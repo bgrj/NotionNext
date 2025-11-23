@@ -53,11 +53,11 @@ const Footer = ({ title }) => {
           <span>联系方式：</span> {/* 纯文本标签 */}
           
           {/* 1. 邮箱 */}
-          <a href={`mailto:${siteConfig('CONTACT_EMAIL')}`} className='hover:underline hover:text-indigo-600 ml-1'>邮箱</a>
+          <a href={`mailto:${siteConfig('CONTACT_EMAIL')}`} className='hover:underline hover:text-indigo-600 ml-1'>Mail</a>
           <span className='mx-2 text-gray-300'>/</span>
           
           {/* 2. 电报 (Telegram) */}
-          <a href='https://t.me/BGRJETSZ' target='_blank' rel='noreferrer' className='hover:underline hover:text-indigo-600'>电报</a>
+          <a href='https://t.me/BGRJETSZ' target='_blank' rel='noreferrer' className='hover:underline hover:text-indigo-600'>Telegram</a>
           <span className='mx-2 text-gray-300'>/</span>
 
           {/* 3. Threads (请记得替换下面的链接) */}
@@ -66,6 +66,10 @@ const Footer = ({ title }) => {
 
           {/* 4. WhatsApp (请记得替换下面的链接) */}
           <a href='https://chat.whatsapp.com/BsQWGqCYYaTCw7khlsq4gx?mode=wwc' target='_blank' rel='noreferrer' className='hover:underline hover:text-indigo-600'>WhatsApp</a>
+      
+          {/* 5. Official Account (请记得替换下面的链接) */}
+          <a href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzk0MDQ5NTg3Nw==#wechat_redirect' target='_blank' rel='noreferrer' className='hover:underline hover:text-indigo-600'>Official Account</a>
+
 
       </div>
 
