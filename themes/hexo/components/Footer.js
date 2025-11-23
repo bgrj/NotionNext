@@ -65,7 +65,7 @@ const Footer = ({ title }) => {
           <span className='mx-1.5 text-gray-300'>/</span>
       
           {/* 5. 微信公众号 (新增) */}
-          <a href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzk0MDQ5NTg3Nw==#wechat_redirect' target='_blank' rel='noreferrer' className='hover:underline hover:text-indigo-600'>OfficialAcount</a>
+          <a href='https://mp.weixin.qq.com/mp/profile_ext?action=home&__biz=Mzk0MDQ5NTg3Nw==#wechat_redirect' target='_blank' rel='noreferrer' className='hover:underline hover:text-indigo-600'>OfficialAccount</a>
 
       </div>
 
