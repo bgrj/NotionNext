@@ -4,14 +4,14 @@
  */
 module.exports = {
   // START ************网站字体*****************
-  // ['font-serif','font-sans'] 
-  // 建议保持默认 'font-sans'，因为我们在下面把行楷加到了 sans 列表中
-  FONT_STYLE: process.env.NEXT_PUBLIC_FONT_STYLE || 'font-sans font-light',
+  
+  // 【修复1】移除了 'font-light'。行楷字体在标准粗细下显示效果最好，强制细体可能导致不显示。
+  FONT_STYLE: process.env.NEXT_PUBLIC_FONT_STYLE || 'font-sans',
 
   // 字体CSS 
   FONT_URL: [
-    // 1. 【核心修改】这里取消了注释，引入霞鹜文楷字体文件
-    'https://npm.elemecdn.com/lxgw-wenkai-webfont@1.6.0/style.css',
+    // 【修复2】使用了 "LXGW WenKai Screen" (屏幕优化版) 的较新CDN地址
+    'https://npm.elemecdn.com/lxgw-wenkai-screen-webfont/style.css',
     'https://fonts.googleapis.com/css?family=Bitter:300,400,700&display=swap',
     'https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&display=swap',
     'https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;500;700&display=swap'
@@ -24,8 +24,8 @@ module.exports = {
 
   // 无衬线字体
   FONT_SANS: [
-    // 2. 【核心修改】将 '"LXGW WenKai"' 放在第一位，优先使用
-    '"LXGW WenKai"', 
+    // 【修复3】注意：这里必须用 "LXGW WenKai Screen" 才能匹配上面的CSS
+    '"LXGW WenKai Screen"', 
     '"PingFang SC"',
     '-apple-system',
     'BlinkMacSystemFont',
@@ -44,10 +44,9 @@ module.exports = {
     '"Apple Color Emoji"'
   ],
   
-  // 衬线字体 
+  // 衬线字体
   FONT_SERIF: [
-    // 2. 【核心修改】同时也加在这里，以防万一你也想在衬线模式下用
-    '"LXGW WenKai"',
+    '"LXGW WenKai Screen"',
     'Bitter',
     '"Noto Serif SC"',
     'SimSun',
@@ -61,7 +60,7 @@ module.exports = {
   
   FONT_AWESOME:
     process.env.NEXT_PUBLIC_FONT_AWESOME_PATH ||
-    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css' 
+    'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css'
 
   // END ************网站字体*****************
 }
