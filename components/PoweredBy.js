@@ -15,7 +15,7 @@ export default function PoweredBy(props) {
           3. 删掉了 className 里的 'underline' (下划线)
       */}
       <span className='justify-start'>
-        不过人间·EのT
+        NotionNext
       </span>
       .
     </div>
