@@ -1,10 +1,14 @@
 import Card from './Card'
+import { useGlobal } from '@/lib/global' // 1. 引入这个
 
 export function AnalyticsCard (props) {
   const { postCount } = props
+  const { locale } = useGlobal() // 2. 获取语言包
+
   return <Card>
     <div className='ml-2 mb-3 '>
-      <i className='fas fa-chart-area' /> 统计
+      {/* 3. 使用变量替换写死的汉字 */}
+      <i className='fas fa-chart-area' /> {locale.COMMON.ANALYTICS}
     </div>
     <div className='text-xs  font-light justify-center mx-7'>
       <div className='inline'>
