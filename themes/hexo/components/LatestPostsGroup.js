@@ -24,7 +24,8 @@ const LatestPostsGroup = ({ latestPosts, siteInfo }) => {
       <div className=' mb-2 px-1 flex flex-nowrap justify-between'>
         <div>
           <i className='mr-2 fas fas fa-history' />
-          {locale.COMMON.LATEST_POSTS}
+          {/* 修改：直接写死中文 '最新发布' */}
+          最新发布
         </div>
       </div>
       {latestPosts.map(post => {
