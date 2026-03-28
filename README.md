@@ -1,79 +1,119 @@
-# 帮助教程
+# Our beings
 
-访问帮助：[NotionNext帮助手册](https://docs.tangly1024.com/)
+> 是个人，社会里的。
 
-> 本项目教程为免费、公开资源，仅限个人学习使用，禁止利用本教程建立的博客发布非法内容、进行违法犯罪活动。严禁任何个人或组织将本教程用于商业用途，包括但不限于直接售卖、间接收费、或其他变相盈利行为。转载、复制或介绍本教程内容时，须保留作者信息并明确注明来源。 
-> 本项目仅提供由作者团队授权的付费咨询服务，请注意辨别，谨防诈骗行为。任何未经授权的收费服务均可能存在法律风险。
+一个人活着，先要与自己周旋，随后与他人相处，再慢慢学会如何安放自己在世界中的位置。  
+**Our beings** 想写的，正是这件事。
 
-Notion是一个能让效率暴涨的生产力引擎，可以帮你书写文档、管理笔记，搭建知识库，甚至可以为你规划项目、时间管理、组织团队、提高生产力、还有当前最强大的AI技术加持。
+这里不是单一意义上的个人博客，也不是把链接堆叠起来的导航页。  
+它更像一个缓慢生长的内容站：一边保留我自己的写作、思考与创作，一边收集那些值得反复进入、反复阅读、反复使用的外部资源。
 
-> 若希望进一步探索Notion的功能，欢迎购买《[Notion笔记从入门到精通进阶课程](https://docs.tangly1024.com/article/notion-tutorial)》
+“是个人，社会里的。”  
+这句话没有什么宏大立场，只是承认一个朴素事实：我们从来不是孤立存在的。  
+对工具的理解，对思想的追问，对语言的学习，最后都通向同一件事——更清楚地看见自己，也更诚实地理解世界。
 
-> 若希望获得稳定、高速、不限设备数量的VPN科学上网服务，欢迎使用[飞鸟VPN](https://fbinv02.fbaff.cc/auth/register?code=kaA7t4kh)，这是我目前在用的VPN，仅作友情推广
+---
 
-# NotionNext
+## 内容方向
 
-<p>
-  <a aria-label="GitHub commit activity" href="https://github.com/tangly1024/NotionNext/commits/main" title="GitHub commit activity">
-    <img src="https://img.shields.io/github/commit-activity/m/tangly1024/NotionNext?style=for-the-badge"/>
-  </a>
-  <a aria-label="GitHub contributors" href="https://github.com/tangly1024/NotionNext/graphs/contributors" title="GitHub contributors">
-    <img src="https://img.shields.io/github/contributors/tangly1024/NotionNext?color=orange&style=for-the-badge"/>
-  </a>
-  <a aria-label="Build status" href="#" title="Build status">
-    <img src="https://img.shields.io/github/deployments/tangly1024/NotionNext/Production?logo=Vercel&style=for-the-badge"/>
-  </a>
-  <a aria-label="Powered by Vercel" href="https://vercel.com?utm_source=Craigary&utm_campaign=oss" title="Powered by Vercel">
-    <img src="https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg" height="28"/>
-  </a>
-</p>
+网站目前分为四个板块，彼此相邻，但不过度混杂。
 
-中文文档 | [README in English](./README_EN.md)
+### 术器基础
 
-<hr/>
+这里放与工具、方法、效率、系统化实践有关的内容。  
+它关心的是“怎么做”——如何整理信息，如何建立工作流，如何让日常学习与创作少一点耗损，多一点秩序。
 
-一个使用 NextJS + Notion API 实现的，部署在 Vercel 上的静态博客系统。为Notion和所有创作者设计。
+这部分不会追逐新奇工具本身，而更看重它们是否真的改善了人的思考与行动。  
+能留下来的，应当是经得起长期使用的办法，而不是一时兴起的技巧。
 
-支持多种部署方案
+### 思想成长
 
-## 预览效果
+这里是网站更核心的一层。  
+内容会围绕阅读、哲学、人文、自我认知，以及个体如何理解社会与自身处境展开。
 
-在线演示：[https://preview.tangly1024.com/](https://preview.tangly1024.com/) ，点击左下角挂件可以切换主题，没找到喜欢的主题？[贡献](/CONTRIBUTING.md)一个吧~
+它不提供现成答案，也不急于输出态度。  
+相比“立场”，我更在意一个问题是如何被提出、如何被展开、又如何在经验中慢慢沉淀下来的。
 
-| Next                                                                                                  | Medium                                                                                                      | Hexo                                                                                                  | Fukasawa                                                                                                          |
-| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| <img src='./docs/theme-next.png' width='300'/> [预览NEXT](https://preview.tangly1024.com/?theme=next) | <img src='./docs/theme-medium.png' width='300'/> [预览MEDIUM](https://preview.tangly1024.com/?theme=medium) | <img src='./docs/theme-hexo.png' width='300'/> [预览HEXO](https://preview.tangly1024.com/?theme=hexo) | <img src='./docs/theme-fukasawa.png' width='300'/> [预览FUKASAWA](https://preview.tangly1024.com/?theme=fukasawa) |
+### 外语学习
 
-## 致谢
+语言对我而言，不只是技能，也是一种重新组织世界的方式。  
+这个板块主要记录语言学习的方法、材料、路径与资源整理。
 
-感谢Craig Hart发起的Nobelium项目
+这里会尽量区分“能短期见效的训练”与“需要长期浸泡的积累”。  
+与其追求速成，我更愿意保留那些真正能帮助理解、表达与阅读的做法。
 
-<table><tr align="left">
-  <td align="center"><a href="https://github.com/craigary" title="Craig Hart"><img src="https://avatars.githubusercontent.com/u/10571717" width="64px;"alt="Craig Hart"/></a><br/><a href="https://github.com/craigary" title="Craig Hart">Craig Hart</a></td>
-</tr></table>
+### 博客闲谈
 
-## 贡献者
+并非所有内容都适合写成结构严整的长文。  
+这里会放一些随笔、日常观察、阅读边角、阶段性念头，以及较为轻松的非正式写作。
 
-致敬每一位开发者！
+它更接近日记的外缘，也更允许未完成。  
+有些想法不需要立即得出结论，只需要被准确地写下来。
 
-[![Contributors](https://contrib.rocks/image?repo=tangly1024/NotionNext)](https://github.com/tangly1024/NotionNext/graphs/contributors)
+---
 
-## 引用技术
+## 网站结构
 
-- **框架**: [Next.js](https://nextjs.org)
-- **样式**: [Tailwind CSS](https://www.tailwindcss.cn/)
-- **渲染**: [React-notion-x](https://github.com/NotionX/react-notion-x)
-- **评论**: [Twikoo](https://github.com/imaegoo/twikoo), [Giscus](https://giscus.app/zh-CN), [Gitalk](https://gitalk.github.io), [Cusdis](https://cusdis.com), [Utterances](https://utteranc.es)
-- **图标**: [Fontawesome](https://fontawesome.com/v6/icons/)
+这个网站沿着两条线同时展开。
 
-## 🔗 友情链接
+### 1. 自有内容输出
 
-- [Elog](https://github.com/LetTTGACO/elog) Markdown 批量导出工具、开放式跨平台博客解决方案，随意组合写作平台(语雀/Notion/FlowUs/飞书)和博客平台(Hexo/Vitepress/Halo/Confluence/WordPress等)
+我会持续在这里放置自己的写作、笔记、专题整理，以及可能延伸出的音频或相关创作。  
+这些内容构成网站的内部骨架，也是整个站点最稳定的部分。
 
-## License
+### 2. 外部资源富集
 
-The MIT License.
+除了原创内容，这里也会整理并推荐来自外部的优质网站、文章、工具与学习资源。  
+它们不是附属装饰，而是网站的一部分：好的链接本身，就是一种表达与判断。
 
-## Star History
+因此，**Our beings** 既写东西，也做筛选。  
+一部分是个人声音，一部分是公开知识的重新编排。
 
-[![Star History Chart](https://api.star-history.com/svg?repos=tangly1024/NotionNext&type=Date)](https://star-history.com/#tangly1024/NotionNext&Date)
+---
+
+## 技术说明
+
+网站基于 **NotionNext + Vercel** 搭建。
+
+之所以采用这套方案，是因为它足够轻，也足够稳：  
+内容维护放在 Notion，前端展示交给站点本身，部署与更新流程尽量简化。  
+技术不是这里的主角，但它应当安静、可靠，不妨碍表达。
+
+---
+
+## 使用声明
+
+本站内容以个人学习、研究、记录与非商业分享为主。
+
+若无特别说明，原创内容的版权归作者本人所有。  
+转载、引用或二次传播时，请保留原始出处，并注明链接来源。  
+外部链接与资源的版权归其原作者或原平台所有，本站仅作整理、索引与推荐，不主张替代原始发布渠道。
+
+若站内内容或所引资源涉及版权、链接失效或其他问题，请通过合适方式联系说明。  
+核实后会尽快处理。
+
+---
+
+## 友情链接
+
+> 下面预留常用填写格式；可直接替换为你的实际链接。
+
+- [网站名称](https://example.com) - 一句话说明这个网站为什么值得被放在这里
+- [网站名称](https://example.com) - 可写内容方向、气质，或你与对方网站的关联
+
+---
+
+## 资源推荐
+
+> 这里适合放长期保留型资源，而不是一次性资讯。
+
+- [资源名称](https://example.com) - 简短说明：适合谁、解决什么问题、为什么推荐
+- [资源名称](https://example.com) - 可写工具、资料库、学习站点、专题页面等
+
+---
+
+## Notes
+
+这个站点会持续增补，也会缓慢改写。  
+有些页面是成稿，有些仍在途中。  
+若你偶然来到这里，希望你看到的，不只是信息本身，还有一个人如何在信息之中安顿自己。
