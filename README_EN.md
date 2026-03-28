@@ -98,19 +98,19 @@ Necessary revisions will be made after verification.
 
 ## Links
 
-> Replace the placeholders below with actual sites and a brief note.
+> pending.
 
-- [Site Name](https://example.com) - A short note on why this site belongs here
-- [Site Name](https://example.com) - You can describe its focus, tone, or relevance
+- [Site Name](https://example.com) - why this site belongs here
+- [Site Name](https://example.com) -  why this site belongs here
 
 ---
 
 ## Resources
 
-> Best used for durable references rather than short-lived news.
+> pending.
 
-- [Resource Name](https://example.com) - Brief note on what it offers and why it is worth keeping
-- [Resource Name](https://example.com) - Suitable for tools, archives, study materials, or curated pages
+- [Resource Name](https://example.com) -  why this site belongs here
+- [Resource Name](https://example.com) -  why this site belongs here
 
 ---
 
