@@ -6,3 +6,36 @@
 .fa-info:before {
     content: "\f05a";
 }
+/* 文字弹出特效容器 */
+.text-popup {
+    /* 动画时间稍微放慢一点点，显得更优雅 */
+    animation: textPopup 1.2s ease-out forwards;
+    /* 强制使用你网站全局的霞鹜文楷，保持文艺感 */
+    font-family: 'LXGW WenKai', sans-serif;
+    font-size: 1.1rem;
+    font-weight: bold;
+    user-select: none;
+    white-space: nowrap;
+    position: absolute;
+    z-index: 9999;
+    /* 【最核心的优化】点击穿透：防止疯狂点击时，新弹出的文字挡住了下一次点击，尤其在手机端很关键 */
+    pointer-events: none; 
+    /* 增加一层极其微弱的暗色阴影，保证文字即使飘到天空亮部边缘也能清晰可见 */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* 呼吸感漂浮动画 */
+@keyframes textPopup {
+    0% {
+        opacity: 0;
+        transform: translateY(0) scale(0.8);
+    }
+    15% {
+        opacity: 1;
+        transform: translateY(-10px) scale(1.1); /* 刚点击时微微放大弹出，有反馈感 */
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-60px) scale(1);  /* 向上轻轻漂浮并慢慢消散 */
+    }
+}
