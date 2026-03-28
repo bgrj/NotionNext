@@ -1,71 +1,121 @@
-# Free Installation and Usage Guide
+# Our beings
 
-Click here to access the help documentation: NotionNext Help Manual - (Completely Free)
+> A person, in the midst of society.
 
-## Rights Statement
+A life is shaped twice: once in solitude, and once among others.  
+**Our beings** is built around that tension.
 
-This project's tutorial is a free and open resource intended solely for personal learning use. It is strictly prohibited for any individual or organization to use this tutorial for commercial purposes, including but not limited to direct sales, indirect charges, or any other forms of profit. When reproducing, copying, or sharing this tutorial, the author's information must be retained, and the source clearly cited.
+This is not exactly a personal blog, and not quite a directory either.  
+It is a content-rich site: part original writing, part carefully gathered references from elsewhere.  
+What holds it together is a simple belief — tools, thought, and language are not separate interests, but different ways of learning how to live with clarity.
 
-This project only offers paid consultation services authorized by the author's team. Please be vigilant against fraud. Any unauthorized paid services may be subject to legal risks.
+The subtitle, *A person, in the midst of society*, says what the site assumes from the start:  
+no one thinks in a vacuum, and no inner life stays untouched by the world around it.  
+So this place keeps a record of both directions — inward reflection and outward attention.
 
-You can set up your personal website in just a few minutes. Here is the link to my free tutorial:
+---
 
-# NotionNext
+## Sections
 
-<p>
-  <a aria-label="GitHub commit activity" href="https://github.com/tangly1024/NotionNext/commits/main" title="GitHub commit activity">
-    <img src="https://img.shields.io/github/commit-activity/m/tangly1024/NotionNext?style=for-the-badge"/>
-  </a>
-  <a aria-label="GitHub contributors" href="https://github.com/tangly1024/NotionNext/graphs/contributors" title="GitHub contributors">
-    <img src="https://img.shields.io/github/contributors/tangly1024/NotionNext?color=orange&style=for-the-badge"/>
-  </a>
-  <a aria-label="Build status" href="#" title="Build status">
-    <img src="https://img.shields.io/github/deployments/tangly1024/NotionNext/Production?logo=Vercel&style=for-the-badge"/>
-  </a>
-  <a aria-label="Powered by Vercel" href="https://vercel.com?utm_source=Craigary&utm_campaign=oss" title="Powered by Vercel">
-    <img src="https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg" height="28"/>
-  </a>
-</p>
+The site is organized into four areas.  
+They speak to one another, but each keeps its own shape.
 
+### Craft & Tools
 
-[中文文档](./README.md) | README in English
+This section is about methods, tools, systems, and practical habits.  
+It is concerned with how work gets done, how knowledge is arranged, and how daily effort becomes more deliberate.
 
-<hr/>
+I am less interested in novelty for its own sake than in usefulness that survives repetition.  
+A tool matters here only when it helps thought move more cleanly.
 
-A static blog system built with NextJS and Notion API, deployed on Vercel. Designed for Notion and all creators.
+### Thought & Growth
 
+This is the quieter center of the site.  
+It gathers writing on reading, philosophy, the humanities, self-knowledge, and the ways a person learns to understand both the self and the social world.
 
-## Preview
+The point is not to manufacture conclusions too quickly.  
+Some questions deserve structure, patience, and a longer stay.
 
-Live Demo：[https://preview.tangly1024.com/](https://preview.tangly1024.com/) ，Project supports switching between multiple themes. Can't find a theme you like? How about [contributing](/CONTRIBUTING.md) one?~
+### Language Learning
 
-| Next | Medium | Hexo | Fukasawa |
-|--|--|--|--|
-| <img src='./docs/theme-next.png' width='300'/> [NEXT](https://preview.tangly1024.com/?theme=next)  | <img src='./docs/theme-medium.png' width='300'/> [MEDIUM](https://preview.tangly1024.com/?theme=medium) | <img src='./docs/theme-hexo.png' width='300'/> [HEXO](https://preview.tangly1024.com/?theme=hexo) | <img src='./docs/theme-fukasawa.png' width='300'/> [FUKASAWA](https://preview.tangly1024.com/?theme=fukasawa) |
+Language is more than a skill.  
+It changes attention, pace, and even the way a sentence meets the world.
 
-## Acknowledgements
+This section collects learning methods, study paths, notes, and selected resources for foreign languages.  
+Some materials are practical; others are here because they deepen comprehension rather than merely improve performance.
 
-Special thanks to Craig Hart for initiating the Nobelium project.
+### Blog & Fragments
 
-<table><tr align="left">
-  <td align="center"><a href="https://github.com/craigary" title="Craig Hart"><img src="https://avatars.githubusercontent.com/u/10571717" width="64px;"alt="Craig Hart"/></a><br/><a href="https://github.com/craigary" title="Craig Hart">Craig Hart</a></td>
-</tr></table>
+Not everything needs the weight of an essay.  
+This section keeps room for brief notes, passing observations, informal writing, and unfinished thoughts that are still worth keeping.
 
-## Contributors
+It is lighter in form, though not always lighter in substance.  
+Sometimes a fragment tells the truth more honestly than a finished piece.
 
-This project exists thanks to all the people who contribute.
+---
 
-[![Contributors](https://contrib.rocks/image?repo=tangly1024/NotionNext)](https://github.com/tangly1024/NotionNext/graphs/contributors)
+## What the site does
 
-## Technologies Used
+The site moves along two lines at once.
 
-- **Technical Framework**: [Next.js](https://nextjs.org)
-- **Styles**: [Tailwind CSS](https://www.tailwindcss.cn/)
-- **Rendering Tool**: [React-notion-x](https://github.com/NotionX/react-notion-x)
-- **COMMENT**: [Twikoo](https://github.com/imaegoo/twikoo), [Giscus](https://giscus.app/zh-CN), [Gitalk](https://gitalk.github.io), [Cusdis](https://cusdis.com), [Utterances](https://utteranc.es)
-- **ICON**: [Fontawesome](https://fontawesome.com/v6/icons/)
+### Original work
 
+My own essays, notes, thematic writing, and related creative work are published here over time.  
+These pieces form the inner structure of the site.
 
-## License
+### Curated references
 
-The MIT License.
+Alongside original work, the site gathers links to useful websites, tools, articles, and learning materials from elsewhere.  
+These are not filler.  
+A good reference is already a kind of editorial choice, and curation is part of authorship.
+
+So **Our beings** is both a place to publish and a place to point.  
+One part is voice; the other is selection.
+
+---
+
+## Tech notes
+
+This site is built with **NotionNext** and **Vercel**.
+
+The reason is straightforward: the setup stays relatively light, writing can remain separate from presentation, and maintenance does not need to become a second project.  
+The stack is here to support the work, not to ask for attention.
+
+---
+
+## Usage
+
+This repository and the content published through it are intended mainly for personal learning, reading, and non-commercial sharing.
+
+Unless noted otherwise, original content remains the author's work.  
+If you quote, reproduce, or reference material from this site, please keep the source visible and link back where appropriate.  
+External links and collected resources belong to their original authors or platforms; they are included here for citation, access, and recommendation, not for replacement.
+
+If any content or linked material raises copyright or attribution concerns, please reach out through an appropriate channel.  
+Necessary revisions will be made after verification.
+
+---
+
+## Links
+
+> Replace the placeholders below with actual sites and a brief note.
+
+- [Site Name](https://example.com) - A short note on why this site belongs here
+- [Site Name](https://example.com) - You can describe its focus, tone, or relevance
+
+---
+
+## Resources
+
+> Best used for durable references rather than short-lived news.
+
+- [Resource Name](https://example.com) - Brief note on what it offers and why it is worth keeping
+- [Resource Name](https://example.com) - Suitable for tools, archives, study materials, or curated pages
+
+---
+
+## Notes
+
+This site will remain unfinished in the ordinary sense.  
+Some pages are settled; others are still becoming.  
+That seems right for a place concerned with thought, language, and the changing shape of a person in the world.
