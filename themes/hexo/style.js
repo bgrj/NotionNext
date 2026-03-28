@@ -8,8 +8,8 @@ import CONFIG from './config'
  * @returns
  */
 const Style = () => {
-  // 从配置中获取主题色，如果没有配置则使用默认值 #928CEE
-  const themeColor = siteConfig('HEXO_THEME_COLOR', '#928CEE', CONFIG)
+  // 【关键修改】将原本冷艳的紫色替换为温暖的落日陶土色 #C18A62
+  const themeColor = siteConfig('HEXO_THEME_COLOR', '#C18A62', CONFIG)
 
   return (
     <style jsx global>{`
@@ -25,7 +25,7 @@ const Style = () => {
         background-color: black;
       }
 
-      /*  菜单下划线动画 */
+      /* 菜单下划线动画 */
       #theme-hexo .menu-link {
         text-decoration: none;
         background-image: linear-gradient(
@@ -213,10 +213,10 @@ const Style = () => {
         background: color-mix(in srgb, var(--theme-color) 30%, transparent);
       }
 
-      // 自定义滚动条
+      // 【关键修改】自定义滚动条优化
       ::-webkit-scrollbar {
-        width: 5px;
-        height: 5px;
+        width: 6px; /* 稍微加宽1px，视觉和手感更好 */
+        height: 6px;
       }
 
       ::-webkit-scrollbar-track {
@@ -225,6 +225,7 @@ const Style = () => {
 
       ::-webkit-scrollbar-thumb {
         background-color: var(--theme-color);
+        border-radius: 10px; /* 给直角滚动条加一点圆角，显得更现代、柔和 */
       }
 
       * {
