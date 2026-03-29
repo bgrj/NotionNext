@@ -1,121 +1,54 @@
-# Our beings
+# Our beings | Individuals within Society
 
-> A person, in the midst of society.
+<p>
+  <a aria-label="Build status" href="#" title="Build status">
+    <img src="https://img.shields.io/github/deployments/bgrj/NotionNext/Production?logo=Vercel&style=for-the-badge&color=C18A62"/>
+  </a>
+  <a aria-label="Powered by Vercel" href="https://vercel.com" title="Powered by Vercel">
+    <img src="https://img.shields.io/badge/Powered_by-Vercel-black?style=for-the-badge&logo=vercel"/>
+  </a>
+  <a aria-label="Notion" href="https://www.notion.so/" title="Database by Notion">
+    <img src="https://img.shields.io/badge/Database-Notion-white?style=for-the-badge&logo=notion"/>
+  </a>
+</p>
 
-A life is shaped twice: once in solitude, and once among others.  
-**Our beings** is built around that tension.
+> "May our thoughts be echoed through the ages, may our souls achieve immortality, and may our existence endure alongside the world."
 
-This is not exactly a personal blog, and not quite a directory either.  
-It is a content-rich site: part original writing, part carefully gathered references from elsewhere.  
-What holds it together is a simple belief — tools, thought, and language are not separate interests, but different ways of learning how to live with clarity.
+Operating on the Vercel network, **Our beings** is more than just a static blog. It is a "digital epitaph" attempting to resist time and oblivion—an open cyber garden for seeking the inner self and connecting with others outwardly.
 
-The subtitle, *A person, in the midst of society*, says what the site assumes from the start:  
-no one thinks in a vacuum, and no inner life stays untouched by the world around it.  
-So this place keeps a record of both directions — inward reflection and outward attention.
+## 📜 Manifesto
 
----
+Someone once enlightened me with the concept of "helping others within one's capacity," making me realize that the continuation of life relies not only on biological genes but on the *memes* of thought and the transmission of goodwill.
 
-## Sections
+We are never isolated. The original intention of building this site is to complete an "open-sourcing of consciousness." Here, I will unreservedly share my chewed-over life experiences and polished survival tools.
 
-The site is organized into four areas.  
-They speak to one another, but each keeps its own shape.
+If you gain some strength, find a clear direction, or simply save precious time using a tool found here—I have one small request: **Please take this strength and help the next person within your capacity.** When this dandelion seed floats to a farther place with you, our existence will truly be with the world.
 
-### Craft & Tools
+## 🧭 Core Architecture: The Dao & The Shu
 
-This section is about methods, tools, systems, and practical habits.  
-It is concerned with how work gets done, how knowledge is arranged, and how daily effort becomes more deliberate.
+The content ecosystem of this site revolves around the two poles of human existence:
 
-I am less interested in novelty for its own sake than in usefulness that survives repetition.  
-A tool matters here only when it helps thought move more cleanly.
+### 【The Dao】 The Sanctuary of Thoughts
+- **The Undertone of Humanity**: Centered around birth, aging, sickness, death, love, hate, greed, and ignorance. Documenting the struggles and epiphanies beneath these eternal life propositions.
+- **The Sociological Gaze**: Exploring self-reconciliation and the tearing of an "individual" within the torrents of the times and social structures. Providing emotional value and seeking resonance of the soul.
 
-### Thought & Growth
+### 【The Shu】 The Survival Toolkit for the Era
+- **Curated Resources**: Breaking information barriers by systematically collecting and filtering high-value productivity tools, study materials, and cognitive maps across the web.
+- **Open-source Experience**: Methods for language learning, insights on website building, and practical paths for self-growth. This is the "lantern" empowering others to become super individuals.
 
-This is the quieter center of the site.  
-It gathers writing on reading, philosophy, the humanities, self-knowledge, and the ways a person learns to understand both the self and the social world.
+## ⚙️ Tech Stack
 
-The point is not to manufacture conclusions too quickly.  
-Some questions deserve structure, patience, and a longer stay.
+This project stands on the shoulders of giants, featuring deep refactoring and visual customization based on open-source frameworks:
+- **Core Framework**: [Next.js](https://nextjs.org) + [NotionNext](https://github.com/tangly1024/NotionNext)
+- **Content Hub**: [Notion API](https://developers.notion.com/) (For instant content synchronization)
+- **Deployment**: [Vercel](https://vercel.com/) (Global Edge Network Acceleration)
+- **Visual Interaction**: [Tailwind CSS](https://www.tailwindcss.cn/) (Customized warm sunset tones with philosophical click effects)
 
-### Language Learning
+## 🤝 License & Sharing
 
-Language is more than a skill.  
-It changes attention, pace, and even the way a sentence meets the world.
+This site adopts the **CC BY-NC-SA 4.0 (Attribution-NonCommercial-ShareAlike)** license.
 
-This section collects learning methods, study paths, notes, and selected resources for foreign languages.  
-Some materials are practical; others are here because they deepen comprehension rather than merely improve performance.
+I highly encourage you to copy, spread, and even modify the thoughts and tools here. As long as you do not use them for evil or direct profit, and as long as you allow others to continue spreading them for free, you can take away everything here.
 
-### Blog & Fragments
-
-Not everything needs the weight of an essay.  
-This section keeps room for brief notes, passing observations, informal writing, and unfinished thoughts that are still worth keeping.
-
-It is lighter in form, though not always lighter in substance.  
-Sometimes a fragment tells the truth more honestly than a finished piece.
-
----
-
-## What the site does
-
-The site moves along two lines at once.
-
-### Original work
-
-My own essays, notes, thematic writing, and related creative work are published here over time.  
-These pieces form the inner structure of the site.
-
-### Curated references
-
-Alongside original work, the site gathers links to useful websites, tools, articles, and learning materials from elsewhere.  
-These are not filler.  
-A good reference is already a kind of editorial choice, and curation is part of authorship.
-
-So **Our beings** is both a place to publish and a place to point.  
-One part is voice; the other is selection.
-
----
-
-## Tech notes
-
-This site is built with **NotionNext** and **Vercel**.
-
-The reason is straightforward: the setup stays relatively light, writing can remain separate from presentation, and maintenance does not need to become a second project.  
-The stack is here to support the work, not to ask for attention.
-
----
-
-## Usage
-
-This repository and the content published through it are intended mainly for personal learning, reading, and non-commercial sharing.
-
-Unless noted otherwise, original content remains the author's work.  
-If you quote, reproduce, or reference material from this site, please keep the source visible and link back where appropriate.  
-External links and collected resources belong to their original authors or platforms; they are included here for citation, access, and recommendation, not for replacement.
-
-If any content or linked material raises copyright or attribution concerns, please reach out through an appropriate channel.  
-Necessary revisions will be made after verification.
-
----
-
-## Links
-
-> pending.
-
-- [Site Name](https://example.com) - why this site belongs here
-- [Site Name](https://example.com) -  why this site belongs here
-
----
-
-## Resources
-
-> pending.
-
-- [Resource Name](https://example.com) -  why this site belongs here
-- [Resource Name](https://example.com) -  why this site belongs here
-
----
-
-## Notes
-
-This site will remain unfinished in the ordinary sense.  
-Some pages are settled; others are still becoming.  
-That seems right for a place concerned with thought, language, and the changing shape of a person in the world.
+**Our beings, individuals within society.**
+May you find your "Dao" and take your "Shu" here.
