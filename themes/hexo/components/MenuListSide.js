@@ -35,6 +35,12 @@ export const MenuListSide = props => {
       name: locale.COMMON.TAGS,
       href: '/tag',
       show: siteConfig('HEXO_MENU_TAG', null, CONFIG)
+    },
+    {
+      icon: 'fas fa-user',
+      name: siteConfig('HEXO_MENU_ABOUT_TEXT', null, CONFIG) || locale.NAV.ABOUT,
+      href: siteConfig('HEXO_MENU_ABOUT_URL', null, CONFIG) || '/about',
+      show: siteConfig('HEXO_MENU_ABOUT', null, CONFIG)
     }
   ]
 

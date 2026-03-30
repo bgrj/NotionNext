@@ -83,7 +83,7 @@ const BlogPostListScroll = ({
             onClick={() => {
               handleGetMore()
             }}
-            className='w-full my-4 py-4 text-center cursor-pointer rounded-xl dark:text-gray-200'>
+            className='w-full my-4 py-4 px-6 text-center cursor-pointer rounded-xl font-medium text-gray-600 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors duration-200 text-sm tracking-wider'>
             {' '}
             {hasMore ? locale.COMMON.MORE : `${locale.COMMON.NO_MORE}`}{' '}
           </div>
