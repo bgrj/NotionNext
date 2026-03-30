@@ -18,6 +18,9 @@ const CONFIG = {
   HEXO_MENU_ARCHIVE: true, // 显示归档
   HEXO_MENU_SEARCH: true, // 显示搜索
   HEXO_MENU_RANDOM: true, // 显示随机跳转按钮
+  HEXO_MENU_ABOUT: true, // 显示关于Our beings链接
+  HEXO_MENU_ABOUT_TEXT: '关于Our beings',
+  HEXO_MENU_ABOUT_URL: '/about-our-beings',
 
   HEXO_POST_LIST_COVER: true, // 列表显示文章封面
   HEXO_POST_LIST_COVER_HOVER_ENLARGE: true, // 列表鼠标悬停放大
