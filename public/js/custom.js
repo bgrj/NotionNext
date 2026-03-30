@@ -14,6 +14,9 @@ const fnTextPopup = function (arr) {
   document.documentElement.addEventListener('click', function (event) {
     // 【优化点2】排除点击按钮或链接时的触发，防止干扰正常网页操作
     const target = event.target;
+    // TypeScript/VSCode 的 DOM 类型为 EventTarget，EventTarget 上没有 tagName/closest。
+    // 在运行时确认 target 是 Element（或 HTMLElement），再使用其属性/方法：
+    if (!(target instanceof Element)) return;
     if (target.tagName.toLowerCase() === 'a' || target.tagName.toLowerCase() === 'button' || target.closest('a') || target.closest('button')) {
       return;
     }
