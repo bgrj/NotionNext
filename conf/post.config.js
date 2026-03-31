@@ -4,6 +4,11 @@
 module.exports = {
   // 文章URL前缀
   POST_URL_PREFIX: process.env.NEXT_PUBLIC_POST_URL_PREFIX ?? 'article',
+  // 将分类名前缀映射为固定英文路径，用于 %category% 场景
+  POST_URL_PREFIX_MAPPING_CATEGORY: {
+    道: 'philosophy',
+    术: 'tool',
+  },
   // POST类型文章的默认路径前缀，例如默认POST类型的路径是  /article/[slug]
   // 如果此项配置为 '' 空， 则文章将没有前缀路径
   // 支援類似 WP 可自訂文章連結格式的功能：https://wordpress.org/documentation/article/customize-permalinks/，目前只先實作 %year%/%month%/%day%
