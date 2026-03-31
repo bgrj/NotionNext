@@ -1,5 +1,4 @@
 import BLOG from '@/blog.config'
-import { getDataFromCache } from '@/lib/cache/cache_manager'
 import { siteConfig } from '@/lib/config'
 import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
@@ -66,6 +65,8 @@ export function getStaticPaths() {
  * @returns
  */
 async function filterByMemCache(allPosts, keyword) {
+  const { getDataFromCache } = await import('@/lib/cache/cache_manager')
+
   const filterPosts = []
   if (keyword) {
     keyword = keyword.trim().toLowerCase()
