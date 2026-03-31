@@ -17,7 +17,7 @@ const Footer = ({ title }) => {
         {/* 左栏：版权 + 统计 */}
         <div className='flex flex-col gap-3 text-center md:text-left text-black dark:text-gray-300'>
           <a
-            href='https://ourbeings.com'
+            href='https://ourbeings.com/philosophy/2026/04/01/about'
             className='text-sm font-light tracking-wide text-black dark:text-gray-300 hover:text-[#C18A62] dark:hover:text-[#C18A62] transition-colors duration-300'>
             © 2026-2027 · Our beings
           </a>
