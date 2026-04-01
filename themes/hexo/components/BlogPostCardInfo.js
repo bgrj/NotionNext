@@ -27,9 +27,9 @@ export const BlogPostCardInfo = ({
             <SmartLink
               href={post?.href}
               passHref
-              className={`line-clamp-2 replace cursor-pointer text-2xl ${
+              className={`line-clamp-2 replace cursor-pointer text-[2rem] sm:text-2xl ${
                 showPreview ? 'text-center' : ''
-              } leading-tight font-normal text-gray-600 dark:text-gray-100 hover:text-indigo-700 dark:hover:text-indigo-400`}>
+              } leading-[1.25] sm:leading-tight font-normal text-gray-600 dark:text-gray-100 hover:text-indigo-700 dark:hover:text-indigo-400`}>
               {siteConfig('POST_TITLE_ICON') && (
                 <NotionIcon icon={post.pageIcon} />
               )}
@@ -61,7 +61,7 @@ export const BlogPostCardInfo = ({
 
         {/* 摘要 */}
         {(!showPreview || showSummary) && !post.results && (
-          <main className='line-clamp-2 replace my-3 text-gray-700  dark:text-gray-300 text-sm font-light leading-7'>
+          <main className='line-clamp-2 replace my-4 text-gray-700  dark:text-gray-300 text-sm font-light leading-8 sm:leading-7'>
             {post.summary}
           </main>
         )}
