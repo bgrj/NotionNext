@@ -24,7 +24,7 @@ export default function PostHero({ post, siteInfo }) {
   const headerImage = post?.pageCover ? post.pageCover : siteInfo?.pageCover
 
   return (
-    <div id='header' className='w-full h-96 relative md:flex-shrink-0 z-10'>
+    <div id='header' className='w-full h-96 relative md:flex-shrink-0 z-10 overflow-hidden'>
       <LazyImage
         priority={true}
         src={headerImage}
@@ -34,7 +34,7 @@ export default function PostHero({ post, siteInfo }) {
       <header
         id='article-header-cover'
         className='bg-black bg-opacity-70 absolute top-0 w-full h-96 py-10 flex justify-center items-center '>
-        <div className='mt-10'>
+        <div className='mt-10 w-full max-w-4xl px-4 sm:px-6'>
           <div className='mb-3 flex justify-center'>
             {post.category && (
               <>
@@ -51,11 +51,14 @@ export default function PostHero({ post, siteInfo }) {
           </div>
 
           {/* 文章Title */}
-          <div className='leading-snug font-bold xs:text-4xl sm:text-4xl md:text-5xl md:leading-snug text-4xl shadow-text-md flex justify-center text-center text-white'>
+          <div className='w-full text-[2.1rem] sm:text-4xl md:text-5xl leading-[1.25] md:leading-snug font-bold shadow-text-md text-center text-white whitespace-normal break-words'>
             {siteConfig('POST_TITLE_ICON') && (
-              <NotionIcon icon={post.pageIcon} className='text-4xl mx-1' />
+              <NotionIcon
+                icon={post.pageIcon}
+                className='inline-block text-3xl sm:text-4xl mr-1 align-text-bottom'
+              />
             )}
-            {post.title}
+            <span>{post.title}</span>
           </div>
 
           <section className='flex-wrap shadow-text-md flex text-sm justify-center mt-4 text-white dark:text-gray-400 font-light leading-8'>
@@ -83,9 +86,9 @@ export default function PostHero({ post, siteInfo }) {
             )}
           </section>
 
-          <div className='mt-4 mb-1'>
+          <div className='mt-4 mb-1 w-full'>
             {post.tagItems && (
-              <div className='flex justify-center flex-nowrap overflow-x-auto'>
+              <div className='flex justify-start sm:justify-center flex-nowrap overflow-x-auto'>
                 {post.tagItems.map(tag => (
                   <TagItemMini key={tag.name} tag={tag} />
                 ))}
