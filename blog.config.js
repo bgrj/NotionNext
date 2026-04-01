@@ -19,7 +19,10 @@ const BLOG = {
   BIO: process.env.NEXT_PUBLIC_BIO || 'A being in the society', // 作者简介
   LINK: process.env.NEXT_PUBLIC_LINK || 'https://ourbeings.com', // 网站地址
   KEYWORDS: process.env.NEXT_PUBLIC_KEYWORD || 'Thinking,Writing & Sharing', // 网站关键词 英文逗号隔开
-  BLOG_FAVICON: process.env.NEXT_PUBLIC_FAVICON || '/favicon.ico', // blog favicon 配置, 默认使用 /public/favicon.ico，支持在线图片，如 https://img.imesong.com/favicon.png
+  BLOG_FAVICON:
+    process.env.BLOG_FAVICON ||
+    process.env.NEXT_PUBLIC_FAVICON ||
+    'https://raw.githubusercontent.com/bgrj/bgrj-images/refs/heads/main/faction2.ico', // blog favicon 配置，支持在线图片
   BEI_AN_CUSTOM: process.env.NEXT_PUBLIC_BEI_AN_CUSTOM || '存在者ICP备：2026033100号-01', // 自定义ICP备案信息（例如：存在者ICP备：2026033100号-01）
   BEI_AN_CUSTOM_LINK: process.env.NEXT_PUBLIC_BEI_AN_CUSTOM_LINK || 'https://ourbeings.com', // 自定义ICP备案链接
   BEI_AN: process.env.NEXT_PUBLIC_BEI_AN || '', // 中国大陆ICP备案号 例如：闽ICP备XXXXXX
