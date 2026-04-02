@@ -3,7 +3,12 @@ import { useEffect, useState } from 'react'
 
 const STATS_CACHE = new Map()
 const VIEW_DEDUPLICATION_WINDOW = 30 * 60 * 1000
-let isPostStatsApiAvailable = true
+
+/**
+ * 服务端是否明确禁用了文章统计（API 返回 enabled:false）。
+ * 仅当服务端 *主动* 告知关闭时才置 true，网络/超时等瞬态错误不影响。
+ */
+let isServerDisabled = false
 
 const getViewCacheKey = postId => `post-stats:viewed:${postId}`
 
@@ -17,11 +22,17 @@ export default function PostStats({
   visitorsLabel = '访客数'
 }) {
   const [stats, setStats] = useState(() => STATS_CACHE.get(postId) || null)
-  const [isUnavailable, setIsUnavailable] = useState(() => !isPostStatsApiAvailable)
+  const [showFallback, setShowFallback] = useState(false)
   const postStatsEnabled = siteConfig('POST_STATS_ENABLE')
 
   useEffect(() => {
-    if (!postStatsEnabled || !postId || !isPostStatsApiAvailable) {
+    if (!postStatsEnabled || !postId) {
+      return
+    }
+
+    // 服务端已明确禁用，直接走 fallback
+    if (isServerDisabled) {
+      setShowFallback(true)
       return
     }
 
@@ -55,9 +66,10 @@ export default function PostStats({
           return
         }
 
-        if (!data?.enabled) {
-          isPostStatsApiAvailable = false
-          setIsUnavailable(true)
+        // 服务端明确禁用（Redis 未配置等）
+        if (data?.status === 'disabled') {
+          isServerDisabled = true
+          setShowFallback(true)
           return
         }
 
@@ -74,11 +86,10 @@ export default function PostStats({
         }
       })
       .catch(error => {
+        // 网络或服务端瞬态错误——不全局禁用，只让本实例展示 fallback
         console.error('load post stats failed', error)
-
         if (!cancelled) {
-          isPostStatsApiAvailable = false
-          setIsUnavailable(true)
+          setShowFallback(true)
         }
       })
 
@@ -91,7 +102,7 @@ export default function PostStats({
     return null
   }
 
-  if (isUnavailable) {
+  if (showFallback && !stats) {
     return typeof fallback === 'function' ? fallback() : fallback
   }
 
