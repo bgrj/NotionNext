@@ -14,6 +14,17 @@
 
 > "May our thoughts be sung by the times, may our souls be immortal, and may our existence be with the world."
 
+## Local Development
+
+```bash
+nvm use
+npm install
+npm run dev
+```
+
+- Use npm for local development.
+- Avoid `yarn dev`: Yarn Classic can cause the Next.js dev server to exit unexpectedly in this environment.
+
 ## About Our Beings
 
 **Our Beings** is not a blog in the conventional sense.

@@ -18,13 +18,16 @@ To contribute to NotionNext, follow these steps:
 5. Commit your modifications and push the branch.
 6. [Create a PR][pr] from the branch in your fork to NotionNext' `main` branch.
 
-This project is built with [Next.js][next.js] and `yarn` as the package manager.
+This project is built with [Next.js][next.js] and uses npm for local development.
 Here are some commands that you can use:
 
-- `yarn`: install dependencies
-- `yarn dev`: compile and hot-reload for development
-- `yarn build`: compile and minify for production
-- `yarn start`: serve the compiled build in production mode
+- `npm install`: install dependencies
+- `npm run dev`: compile and hot-reload for development
+- `npm run build`: compile and minify for production
+- `npm run start`: serve the compiled build in production mode
+
+Use `nvm use` first so local development runs on the Node version declared in `.nvmrc`.
+Avoid `yarn dev`: Yarn Classic can cause `next dev` to exit unexpectedly in this environment.
 
 ## Creating new themes
 

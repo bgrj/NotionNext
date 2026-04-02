@@ -16,6 +16,7 @@
     "url": "http://tangly1024.com"
   },
   "scripts": {
+    "predev": "node scripts/ensure-stable-dev-runner.js",
     "dev": "next dev",
     "build": "cross-env BUILD_MODE=true next build",
     "start": "next start",

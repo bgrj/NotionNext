@@ -4,9 +4,14 @@
 
 ### 环境要求
 
-- Node.js >= 16.0.0
-- npm >= 8.0.0
+- Node.js 20 LTS（仓库内提供 `.nvmrc`）
+- npm >= 10.0.0
 - Git
+
+### 包管理器约定
+
+- 本地开发统一使用 npm
+- 不要使用 `yarn dev`，Yarn 1 在当前环境下可能会让 `next dev` 启动后直接退出
 
 ### 初始化开发环境
 
@@ -14,6 +19,9 @@
 # 克隆项目
 git clone <repository-url>
 cd NotionNext
+
+# 切换到仓库建议的 Node 版本
+nvm use
 
 # 初始化开发环境
 npm run init-dev

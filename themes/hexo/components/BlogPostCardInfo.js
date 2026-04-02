@@ -1,5 +1,6 @@
 import NotionIcon from '@/components/NotionIcon'
 import NotionPage from '@/components/NotionPage'
+import PostStats from '@/components/PostStats'
 import TwikooCommentCount from '@/components/TwikooCommentCount'
 import { siteConfig } from '@/lib/config'
 import { formatDateFmt } from '@/lib/utils/formatDate'
@@ -17,6 +18,8 @@ export const BlogPostCardInfo = ({
   showPageCover,
   showSummary
 }) => {
+  const showPostStats = siteConfig('POST_STATS_ENABLE')
+
   return (
     <article
       className={`flex flex-col justify-between lg:p-6 p-4  ${showPageCover && !showPreview ? 'md:w-7/12 w-full md:max-h-60' : 'w-full'}`}>
@@ -38,18 +41,28 @@ export const BlogPostCardInfo = ({
           </h2>
 
           {/* 分类 */}
-          {post?.category && (
+          {(post?.category || showPostStats) && (
             <div
               className={`flex mt-2 items-center ${
                 showPreview ? 'justify-center' : 'justify-start'
               } flex-wrap dark:text-gray-500 text-gray-400 `}>
-              <SmartLink
-                href={`/category/${post.category}`}
-                passHref
-                className='cursor-pointer font-light text-sm menu-link hover:text-indigo-700 dark:hover:text-indigo-400 transform'>
-                <i className='mr-1 far fa-folder' />
-                {post.category}
-              </SmartLink>
+              {post?.category && (
+                <SmartLink
+                  href={`/category/${post.category}`}
+                  passHref
+                  className='cursor-pointer font-light text-sm menu-link hover:text-indigo-700 dark:hover:text-indigo-400 transform'>
+                  <i className='mr-1 far fa-folder' />
+                  {post.category}
+                </SmartLink>
+              )}
+
+              {showPostStats && (
+                <PostStats
+                  postId={post.id}
+                  className={`${post?.category ? 'ml-3 ' : ''}flex items-center flex-wrap gap-x-3 gap-y-1 text-sm`}
+                  itemClassName='inline-flex items-center gap-1 whitespace-nowrap font-light'
+                />
+              )}
 
               <TwikooCommentCount
                 className='text-sm hover:text-indigo-700 dark:hover:text-indigo-400'

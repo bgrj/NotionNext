@@ -1,5 +1,6 @@
 import LazyImage from '@/components/LazyImage'
 import NotionIcon from '@/components/NotionIcon'
+import PostStats from '@/components/PostStats'
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { formatDateFmt } from '@/lib/utils/formatDate'
@@ -11,6 +12,8 @@ import TagItemMini from './TagItemMini'
  */
 export default function PostHero({ post, siteInfo }) {
   const { locale, fullWidth } = useGlobal()
+  const showBusuanzi = siteConfig('ANALYTICS_BUSUANZI_ENABLE')
+  const showPostStats = siteConfig('POST_STATS_ENABLE')
 
   if (!post) {
     return <></>
@@ -78,11 +81,20 @@ export default function PostHero({ post, siteInfo }) {
               </div>
             </div>
 
-            {JSON.parse(siteConfig('ANALYTICS_BUSUANZI_ENABLE')) && (
+            {!showPostStats && showBusuanzi && (
               <div className='busuanzi_container_page_pv font-light mr-2'>
                 <span className='mr-2 busuanzi_value_page_pv' />
                 {locale.COMMON.VIEWS}
               </div>
+            )}
+
+            {showPostStats && (
+              <PostStats
+                postId={post.id}
+                trackView
+                className='flex items-center flex-wrap gap-x-3 gap-y-1 font-light mr-2'
+                itemClassName='inline-flex items-center gap-1 whitespace-nowrap'
+              />
             )}
           </section>
 
