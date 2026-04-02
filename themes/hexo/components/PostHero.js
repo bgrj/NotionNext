@@ -101,7 +101,7 @@ export default function PostHero({ post, siteInfo }) {
                 postId={post.id}
                 trackView
                 fallback={busuanziFallback}
-                visitorsLabel='访问人数'
+                visitorsLabel='访客数'
                 className='flex items-center flex-wrap gap-x-3 gap-y-1 font-light mr-2'
                 itemClassName='inline-flex items-center gap-1 whitespace-nowrap'
               />
