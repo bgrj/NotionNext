@@ -12,7 +12,7 @@ export async function getStaticProps({ params: { tag, page }, locale }) {
   const from = 'tag-page-props'
   const props = await fetchGlobalAllData({ from, locale })
   // 过滤状态、标签
-  props.posts = props.allPages
+  props.posts = (props.allPages || [])
     ?.filter(page => page.type === 'Post' && page.status === 'Published')
     .filter(post => post && post?.tags && post?.tags.includes(tag))
   // 处理文章数
@@ -43,9 +43,12 @@ export async function getStaticPaths() {
   const from = 'tag-page-static-path'
   const { tagOptions, allPages, NOTION_CONFIG } = await fetchGlobalAllData({ from })
   const paths = []
-  tagOptions?.forEach(tag => {
+  const tags = Array.isArray(tagOptions) ? tagOptions : []
+  const pages = Array.isArray(allPages) ? allPages : []
+
+  tags.forEach(tag => {
     // 过滤状态类型
-    const tagPosts = allPages
+    const tagPosts = pages
       ?.filter(page => page.type === 'Post' && page.status === 'Published')
       .filter(post => post && post?.tags && post?.tags.includes(tag.name))
     // 处理文章页数

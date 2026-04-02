@@ -12,7 +12,9 @@ export default function PostStats({
   trackView = false,
   className = '',
   itemClassName = '',
-  fallback = null
+  fallback = null,
+  viewsLabel = '访问量',
+  visitorsLabel = '访客数'
 }) {
   const [stats, setStats] = useState(() => STATS_CACHE.get(postId) || null)
   const [isUnavailable, setIsUnavailable] = useState(() => !isPostStatsApiAvailable)
@@ -74,7 +76,7 @@ export default function PostStats({
       .catch(error => {
         console.error('load post stats failed', error)
 
-        if (!cancelled && trackView) {
+        if (!cancelled) {
           isPostStatsApiAvailable = false
           setIsUnavailable(true)
         }
@@ -97,12 +99,12 @@ export default function PostStats({
     <div className={className}>
       <span className={itemClassName}>
         <i className='fas fa-eye' />
-        <span>访问量</span>
+        <span>{viewsLabel}</span>
         <span>{stats?.views ?? '—'}</span>
       </span>
       <span className={itemClassName}>
         <i className='fas fa-users' />
-        <span>访客数</span>
+        <span>{visitorsLabel}</span>
         <span>{stats?.visitors ?? '—'}</span>
       </span>
     </div>

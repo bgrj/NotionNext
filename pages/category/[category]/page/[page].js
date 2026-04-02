@@ -19,7 +19,7 @@ export async function getStaticProps({ params: { category, page } }) {
   let props = await fetchGlobalAllData({ from })
 
   // 过滤状态类型
-  props.posts = props.allPages
+  props.posts = (props.allPages || [])
     ?.filter(page => page.type === 'Post' && page.status === 'Published')
     .filter(post => post && post.category && post.category.includes(category))
   // 处理文章页数
@@ -54,10 +54,12 @@ export async function getStaticPaths() {
     from
   })
   const paths = []
+  const categoryList = Array.isArray(categoryOptions) ? categoryOptions : []
+  const pages = Array.isArray(allPages) ? allPages : []
 
-  categoryOptions?.forEach(category => {
+  categoryList.forEach(category => {
     // 过滤状态类型
-    const categoryPosts = allPages
+    const categoryPosts = pages
       ?.filter(page => page.type === 'Post' && page.status === 'Published')
       .filter(
         post => post && post.category && post.category.includes(category.name)

@@ -18,7 +18,7 @@ export async function getStaticProps({ params: { category }, locale }) {
   let props = await fetchGlobalAllData({ from, locale })
 
   // 过滤状态
-  props.posts = props.allPages?.filter(
+  props.posts = (props.allPages || []).filter(
     page => page.type === 'Post' && page.status === 'Published'
   )
   // 处理过滤
@@ -56,10 +56,14 @@ export async function getStaticProps({ params: { category }, locale }) {
 export async function getStaticPaths() {
   const from = 'category-paths'
   const { categoryOptions } = await fetchGlobalAllData({ from })
+  const categoryList = Array.isArray(categoryOptions) ? categoryOptions : []
+
   return {
-    paths: Object.keys(categoryOptions).map(category => ({
-      params: { category: categoryOptions[category]?.name }
-    })),
+    paths: categoryList
+      .filter(category => category?.name)
+      .map(category => ({
+        params: { category: category.name }
+      })),
     fallback: true
   }
 }

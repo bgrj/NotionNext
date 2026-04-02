@@ -18,7 +18,7 @@ export async function getStaticProps({ params: { tag }, locale }) {
   const props = await fetchGlobalAllData({ from, locale })
 
   // 过滤状态
-  props.posts = props.allPages
+  props.posts = (props.allPages || [])
     ?.filter(page => page.type === 'Post' && page.status === 'Published')
     .filter(post => post && post?.tags && post?.tags.includes(tag))
 
@@ -55,6 +55,10 @@ export async function getStaticProps({ params: { tag }, locale }) {
  * @param tags
  */
 function getTagNames(tags) {
+  if (!Array.isArray(tags)) {
+    return []
+  }
+
   const tagNames = []
   tags.forEach(tag => {
     tagNames.push(tag.name)
