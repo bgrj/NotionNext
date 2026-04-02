@@ -73,6 +73,11 @@ export default function PostStats({
       })
       .catch(error => {
         console.error('load post stats failed', error)
+
+        if (!cancelled && trackView) {
+          isPostStatsApiAvailable = false
+          setIsUnavailable(true)
+        }
       })
 
     return () => {
