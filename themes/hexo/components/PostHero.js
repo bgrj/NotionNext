@@ -14,6 +14,14 @@ export default function PostHero({ post, siteInfo }) {
   const { locale, fullWidth } = useGlobal()
   const showBusuanzi = siteConfig('ANALYTICS_BUSUANZI_ENABLE')
   const showPostStats = siteConfig('POST_STATS_ENABLE')
+  const busuanziFallback = showBusuanzi
+    ? () => (
+        <div className='busuanzi_container_page_pv font-light mr-2'>
+          <span className='mr-2 busuanzi_value_page_pv' />
+          {locale.COMMON.VIEWS}
+        </div>
+      )
+    : null
 
   if (!post) {
     return <></>
@@ -92,6 +100,7 @@ export default function PostHero({ post, siteInfo }) {
               <PostStats
                 postId={post.id}
                 trackView
+                fallback={busuanziFallback}
                 className='flex items-center flex-wrap gap-x-3 gap-y-1 font-light mr-2'
                 itemClassName='inline-flex items-center gap-1 whitespace-nowrap'
               />

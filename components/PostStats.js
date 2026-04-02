@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 
 const STATS_CACHE = new Map()
 const VIEW_DEDUPLICATION_WINDOW = 30 * 60 * 1000
+let isPostStatsApiAvailable = true
 
 const getViewCacheKey = postId => `post-stats:viewed:${postId}`
 
@@ -10,13 +11,15 @@ export default function PostStats({
   postId,
   trackView = false,
   className = '',
-  itemClassName = ''
+  itemClassName = '',
+  fallback = null
 }) {
   const [stats, setStats] = useState(() => STATS_CACHE.get(postId) || null)
+  const [isUnavailable, setIsUnavailable] = useState(() => !isPostStatsApiAvailable)
   const postStatsEnabled = siteConfig('POST_STATS_ENABLE')
 
   useEffect(() => {
-    if (!postStatsEnabled || !postId) {
+    if (!postStatsEnabled || !postId || !isPostStatsApiAvailable) {
       return
     }
 
@@ -46,7 +49,13 @@ export default function PostStats({
         return response.json()
       })
       .then(data => {
-        if (cancelled || !data?.enabled) {
+        if (cancelled) {
+          return
+        }
+
+        if (!data?.enabled) {
+          isPostStatsApiAvailable = false
+          setIsUnavailable(true)
           return
         }
 
@@ -73,6 +82,10 @@ export default function PostStats({
 
   if (!postStatsEnabled || !postId) {
     return null
+  }
+
+  if (isUnavailable) {
+    return typeof fallback === 'function' ? fallback() : fallback
   }
 
   return (
