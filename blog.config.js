@@ -53,6 +53,16 @@ const BLOG = {
   ...require('./conf/notion.config'), // 读取notion数据库相关的扩展配置，例如自定义表头
   ...require('./conf/dev.config'), // 开发、调试时需要关注的配置
 
+  // 全局自定义 CSS，会注入到所有页面
+  GLOBAL_CSS: process.env.NEXT_PUBLIC_GLOBAL_CSS ||
+    `#wrapper {
+  background-image: url('https://raw.githubusercontent.com/bgrj/bgrj-images/refs/heads/main/web-mainpage-uphand.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+}`,
+
   // 自定义外部脚本，外部样式
   CUSTOM_EXTERNAL_JS: [''], // e.g. ['http://xx.com/script.js','http://xx.com/script.js']
   CUSTOM_EXTERNAL_CSS: [''], // e.g. ['http://xx.com/style.css','http://xx.com/style.css']
