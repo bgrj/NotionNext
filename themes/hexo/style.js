@@ -203,31 +203,64 @@ const Style = () => {
         );
       }
 
-      /* 公告横幅动画 */
-      .announcement-banner {
-        animation: announcementFadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      /* 公告遮罩层 - 固定居中 */
+      .announcement-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0, 0, 0, 0.35);
+        backdrop-filter: blur(2px);
       }
-      @keyframes announcementFadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(-12px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+      /* 弹出动画：由大变小 */
+      .announcement-scale-in {
+        animation: announcementScaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
       }
-      /* 公告内容文字白色、紧凑 */
+      .announcement-scale-in > section {
+        animation: announcementBoxScaleIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes announcementScaleIn {
+        from { opacity: 0; }
+        to   { opacity: 1; }
+      }
+      @keyframes announcementBoxScaleIn {
+        from { opacity: 0; transform: scale(1.35); }
+        to   { opacity: 1; transform: scale(1); }
+      }
+      /* 淡出动画 */
+      .announcement-fade-out {
+        animation: announcementFadeOut 0.4s ease forwards;
+      }
+      .announcement-fade-out > section {
+        animation: announcementBoxFadeOut 0.4s ease forwards;
+      }
+      @keyframes announcementFadeOut {
+        from { opacity: 1; }
+        to   { opacity: 0; }
+      }
+      @keyframes announcementBoxFadeOut {
+        from { opacity: 1; transform: scale(1); }
+        to   { opacity: 0; transform: scale(0.9); }
+      }
+      /* 公告内容文字 */
       #announcement-wrapper #announcement-content .notion {
         font-size: 0.875rem;
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(55, 65, 81, 0.95);
         line-height: 1.5;
+      }
+      .dark #announcement-wrapper #announcement-content .notion {
+        color: rgba(229, 231, 235, 0.95);
       }
       #announcement-wrapper #announcement-content .notion-blank {
         display: none;
       }
       #announcement-wrapper #announcement-content .notion-page-link {
-        color: rgba(255, 255, 255, 0.9);
+        color: rgba(55, 65, 81, 0.95);
+      }
+      .dark #announcement-wrapper #announcement-content .notion-page-link {
+        color: rgba(229, 231, 235, 0.95);
       }
 
       /* Custem */

@@ -63,7 +63,7 @@ const LayoutBase = props => {
     <PostHero {...props} />
   ) : router.route === '/' &&
     siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
-    <Hero {...props} announcement={announcementSlot} />
+    <Hero {...props} />
   ) : null
 
   const drawerRight = useRef(null)
@@ -95,6 +95,9 @@ const LayoutBase = props => {
         id='theme-hexo'
         className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth`}>
         <Style />
+
+        {/* 公告弹窗 */}
+        {announcementSlot}
 
         {/* 顶部导航 */}
         <Header {...props} />
