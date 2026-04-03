@@ -21,6 +21,7 @@ import BlogPostListScroll from './components/BlogPostListScroll'
 import ButtonJumpToComment from './components/ButtonJumpToComment'
 import ButtonRandomPostMini from './components/ButtonRandomPostMini'
 import Card from './components/Card'
+import Announcement from './components/Announcement'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import Hero from './components/Hero'
@@ -95,6 +96,9 @@ const LayoutBase = props => {
 
         {/* 顶部导航 */}
         <Header {...props} />
+
+        {/* 首页顶部居中公告 */}
+        {router.route === '/' && <Announcement post={props.notice} />}
 
         {/* 顶部嵌入 */}
         <Transition

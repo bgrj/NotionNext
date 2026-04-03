@@ -203,6 +203,28 @@ const Style = () => {
         );
       }
 
+      /* 公告浮窗动画 */
+      .announcement-float-banner {
+        animation: announcementSlideDown 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      }
+      @keyframes announcementSlideDown {
+        from {
+          opacity: 0;
+          transform: translate(-50%, -20px);
+        }
+        to {
+          opacity: 1;
+          transform: translate(-50%, 0);
+        }
+      }
+      /* 公告内容区域紧凑 */
+      #announcement-wrapper #announcement-content .notion {
+        font-size: 0.95rem;
+      }
+      #announcement-wrapper #announcement-content .notion-blank {
+        display: none;
+      }
+
       /* Custem */
       .tk-footer {
         opacity: 0;
