@@ -13,28 +13,26 @@ const Announcement = ({ post, className }) => {
   }
 
   return (
-    <div className={`announcement-float-banner fixed z-40
-      top-20 left-1/2 -translate-x-1/2
-      w-[88%] max-w-sm
-      md:top-20 md:w-auto md:min-w-[320px] md:max-w-md
-      ${className || ''}`}>
+    <div className={`announcement-banner mb-6 ${className || ''}`}>
       <section
         id='announcement-wrapper'
-        className='relative backdrop-blur-xl bg-white/80 dark:bg-gray-900/80
-          border border-white/50 dark:border-gray-600/40
-          rounded-2xl shadow-lg
-          px-5 pt-4 pb-3'>
+        className='relative inline-flex flex-col items-center
+          backdrop-blur-md bg-white/15 dark:bg-black/25
+          border border-white/30 dark:border-white/15
+          rounded-xl shadow-sm
+          px-6 py-2.5 pr-9
+          max-w-xs md:max-w-sm'>
         {/* 关闭按钮 */}
         <button
           onClick={() => setVisible(false)}
-          className='absolute top-2.5 right-3 text-gray-400 hover:text-gray-600
-            dark:hover:text-gray-200 transition-colors duration-200 p-1'
+          className='absolute top-2 right-2.5 text-white/50 hover:text-white/90
+            transition-colors duration-200 p-0.5'
           aria-label='关闭公告'>
           <i className='fas fa-times text-xs' />
         </button>
         {/* 标题行 */}
-        <div className='flex items-center text-sm font-medium text-gray-600 dark:text-gray-300 mb-0.5'>
-          <i className='mr-2 fas fa-bullhorn text-gray-400 dark:text-gray-500' />
+        <div className='flex items-center text-xs font-medium text-white/70 tracking-wide mb-0.5'>
+          <i className='mr-1.5 fas fa-bullhorn text-[0.65rem]' />
           {locale.COMMON.ANNOUNCEMENT}
         </div>
         {/* 公告内容 */}

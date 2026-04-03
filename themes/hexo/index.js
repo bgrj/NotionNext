@@ -57,11 +57,13 @@ const LayoutBase = props => {
   const router = useRouter()
   const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
 
+  const announcementSlot = router.route === '/' ? <Announcement post={props.notice} /> : null
+
   const headerSlot = post ? (
     <PostHero {...props} />
   ) : router.route === '/' &&
     siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
-    <Hero {...props} />
+    <Hero {...props} announcement={announcementSlot} />
   ) : null
 
   const drawerRight = useRef(null)
@@ -96,9 +98,6 @@ const LayoutBase = props => {
 
         {/* 顶部导航 */}
         <Header {...props} />
-
-        {/* 首页顶部居中公告 */}
-        {router.route === '/' && <Announcement post={props.notice} />}
 
         {/* 顶部嵌入 */}
         <Transition
