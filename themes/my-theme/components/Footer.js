@@ -46,8 +46,15 @@ const SectionTitle = ({ children }) => (
   </div>
 )
 
-const FooterLink = ({ href, children, external = false, title, gold = false }) => {
-  const className = `ob-link${gold ? ' ob-link-gold' : ''}`
+const FooterLink = ({
+  href,
+  children,
+  external = false,
+  title,
+  gold = false,
+  extraClass = ''
+}) => {
+  const className = `ob-link${gold ? ' ob-link-gold' : ''}${extraClass ? ` ${extraClass}` : ''}`
   if (external) {
     return (
       <a
@@ -407,11 +414,16 @@ const Footer = () => {
           0% { transform: scale(1); opacity: 1; }
           100% { transform: scale(4.5); opacity: 0; }
         }
+        .ob-icp {
+          white-space: nowrap;
+          letter-spacing: 0.02em;
+        }
         .ob-motto-row {
           display: flex;
+          flex-direction: column;
           align-items: center;
           justify-content: center;
-          gap: 10px;
+          gap: 8px;
         }
         .ob-motto {
           letter-spacing: 0.16em;
@@ -457,9 +469,13 @@ const Footer = () => {
           .ob-east { align-items: stretch; }
           .ob-east-cols {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 48px;
+            grid-template-columns: minmax(0, 1fr) max-content;
+            gap: 40px;
             align-items: start;
+          }
+          .ob-motto-row {
+            flex-direction: row;
+            gap: 10px;
           }
           .ob-nav, .ob-section-title { align-items: flex-start; }
           .ob-dots { justify-content: flex-start; }
@@ -591,7 +607,9 @@ const Footer = () => {
                     </span>
                   </div>
                   {icpText && (
-                    <FooterLink href={icpUrl}>{icpText}</FooterLink>
+                    <FooterLink href={icpUrl} extraClass='ob-icp'>
+                      {icpText}
+                    </FooterLink>
                   )}
                 </div>
               </div>
