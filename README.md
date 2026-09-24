@@ -43,7 +43,7 @@
 
 ---
 
-## NotionNext 是什么？
+## NotionNext 是什么呢？
 
 NotionNext 是一个基于 **Next.js + Notion API** 的开源站点系统。你继续用 Notion 管理文章、分类、标签、菜单和页面，NotionNext 负责把这些内容发布成可访问、可搜索、可运营的独立网站。
 
