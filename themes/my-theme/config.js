@@ -54,7 +54,8 @@ const CONFIG = {
   FOOTER_BRAND_SUBTITLE: '吾在',
   FOOTER_TAGLINE: 'A being in the society',
   FOOTER_SLOGAN: '让我们的思想为时代所传唱',
-  FOOTER_SLOGAN_ALT: '让我们的存在与世界同在',
+  FOOTER_SLOGAN_2: '让我们的灵魂永世不朽',
+  FOOTER_SLOGAN_3: '让我们的存在与世界同在',
   FOOTER_MOTTO: '做 你 · 认 为 · 正 确 · 的 事',
   FOOTER_FAVICON:
     'https://raw.githubusercontent.com/bgrj/bgrj-images/refs/heads/main/faction2.ico',
