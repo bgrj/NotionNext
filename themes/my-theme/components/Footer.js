@@ -232,7 +232,7 @@ const Footer = () => {
           flex-direction: column;
           align-items: center;
           text-align: center;
-          gap: 2rem;
+          gap: 2.25rem;
         }
         .ob-lockup {
           display: inline-flex;
@@ -252,14 +252,15 @@ const Footer = () => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 1.75rem;
+          gap: 2.25rem;
           width: 100%;
+          min-width: 0;
         }
         .ob-east-cols {
           display: flex;
           flex-direction: column;
           align-items: center;
-          gap: 1.75rem;
+          gap: 2.25rem;
           width: 100%;
         }
         .ob-nav {
@@ -289,7 +290,7 @@ const Footer = () => {
           display: flex;
           flex-direction: column;
           align-items: center;
-          margin-bottom: 14px;
+          margin-bottom: 16px;
         }
         .ob-section-label {
           font-size: 13px;
@@ -305,7 +306,7 @@ const Footer = () => {
           align-items: center;
           justify-content: center;
           gap: 8px;
-          padding: 5px 0;
+          padding: 6px 0;
           min-height: 44px;
           letter-spacing: 0.04em;
           color: var(--ob-muted);
@@ -439,7 +440,7 @@ const Footer = () => {
           50% { opacity: 1; }
         }
         .ob-copy-wrap {
-          margin-top: 2rem;
+          margin-top: 2.35rem;
           border-top: 1px solid var(--ob-line);
         }
         .ob-copy {
@@ -458,8 +459,9 @@ const Footer = () => {
           .ob-shell { padding: 3.5rem 3rem 0; }
           .ob-grid {
             display: grid;
-            grid-template-columns: 1.15fr 0.7fr 2.4fr;
-            gap: 40px 36px;
+            grid-template-columns: minmax(13.5rem, 1.05fr) minmax(10rem, 0.62fr) minmax(0, 2.55fr);
+            column-gap: 3rem;
+            row-gap: 2.5rem;
             align-items: start;
             text-align: left;
           }
@@ -472,13 +474,15 @@ const Footer = () => {
           }
           .ob-slogan { margin-top: 7px; letter-spacing: 0.06em; }
           .ob-tagline { letter-spacing: 0.06em; }
-          .ob-east { align-items: stretch; }
+          .ob-east { align-items: stretch; gap: 2.35rem; }
           .ob-east-cols {
             display: grid;
             grid-template-columns: max-content max-content max-content;
-            gap: 32px 36px;
+            column-gap: 2.75rem;
+            row-gap: 2rem;
             align-items: start;
-            justify-content: start;
+            justify-content: space-between;
+            width: 100%;
           }
           .ob-motto-row {
             flex-direction: row;
@@ -504,8 +508,19 @@ const Footer = () => {
             letter-spacing: 0.28em;
             font-size: 11px;
           }
-          .ob-copy { padding: 1.125rem 3rem 1.75rem; }
+          .ob-copy { padding: 1.25rem 3rem 1.85rem; }
           .ob-icp { white-space: nowrap; max-width: none; }
+        }
+        @media (min-width: 1280px) {
+          .ob-shell { padding: 3.75rem 3.25rem 0; }
+          .ob-grid {
+            grid-template-columns: minmax(14rem, 1fr) minmax(10rem, 0.55fr) minmax(0, 2.9fr);
+            column-gap: 3.5rem;
+          }
+          .ob-east-cols {
+            column-gap: 4rem;
+          }
+          .ob-copy { padding: 1.25rem 3.25rem 1.85rem; }
         }
         @media (prefers-reduced-motion: reduce) {
           .ob-wave-char,
