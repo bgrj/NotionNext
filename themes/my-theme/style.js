@@ -304,6 +304,34 @@ const Style = () => {
       #theme-my-theme #home-nav-button a:hover {
         color: #000 !important;
       }
+
+      /* 左右栏拉开，避免 flex-row-reverse + space-x 贴死 */
+      #theme-my-theme #container-inner {
+        gap: 0;
+      }
+      @media (min-width: 1024px) {
+        #theme-my-theme #container-inner {
+          gap: 2.5rem;
+        }
+      }
+
+      /* 公告 / 侧栏与页脚分离；文章页、上锁页共用 */
+      #theme-my-theme #wrapper {
+        padding-bottom: 3.5rem;
+      }
+      @media (min-width: 768px) {
+        #theme-my-theme #wrapper {
+          padding-bottom: 4.5rem;
+        }
+      }
+      @media (max-width: 1023px) {
+        #theme-my-theme #sideRight {
+          margin-top: 1.5rem;
+          margin-bottom: 0.25rem;
+          padding-left: 0.5rem;
+          padding-right: 0.5rem;
+        }
+      }
   `}</style>
   )
 }
