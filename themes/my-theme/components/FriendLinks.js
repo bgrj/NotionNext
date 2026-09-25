@@ -166,6 +166,13 @@ const FriendLinks = () => {
           font-weight: 700;
           cursor: pointer;
         }
+        .ob-fl-toc-kicker {
+          display: none;
+          font-size: 11px;
+          letter-spacing: 0.22em;
+          color: var(--ob-gold);
+          font-weight: 700;
+        }
         .ob-fl-toc-nav {
           display: none;
           padding: 4px 0 6px;
@@ -194,7 +201,7 @@ const FriendLinks = () => {
         }
         .ob-fl-section {
           margin-top: 1.75rem;
-          scroll-margin-top: 5.5rem;
+          scroll-margin-top: 8rem;
         }
         .ob-fl-section:first-child {
           margin-top: 0;
@@ -213,7 +220,7 @@ const FriendLinks = () => {
         }
         .ob-fl-group {
           margin-top: 1.35rem;
-          scroll-margin-top: 5.5rem;
+          scroll-margin-top: 8rem;
         }
         .ob-fl-group-title {
           font-size: 0.95rem;
@@ -315,6 +322,10 @@ const FriendLinks = () => {
           .ob-fl-toc-toggle {
             display: none;
           }
+          .ob-fl-toc-kicker {
+            display: block;
+            margin-bottom: 10px;
+          }
           .ob-fl-toc-nav,
           .ob-fl-toc-nav.is-open {
             display: block;
@@ -322,17 +333,10 @@ const FriendLinks = () => {
             overflow: visible;
             padding: 0;
           }
-          .ob-fl-toc-kicker {
-            display: block;
-            margin-bottom: 10px;
+          .ob-fl-section,
+          .ob-fl-group {
+            scroll-margin-top: 5.5rem;
           }
-        }
-        .ob-fl-toc-kicker {
-          display: none;
-          font-size: 11px;
-          letter-spacing: 0.22em;
-          color: var(--ob-gold);
-          font-weight: 700;
         }
         @media (prefers-reduced-motion: reduce) {
           .ob-fl-card { transition: none; }
