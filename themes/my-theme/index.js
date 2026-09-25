@@ -22,6 +22,7 @@ import ButtonRandomPostMini from '@/themes/hexo/components/ButtonRandomPostMini'
 import Card from '@/themes/hexo/components/Card'
 import Footer from './components/Footer'
 import Header from './components/Header'
+import FriendLinks from './components/FriendLinks'
 import Hero from '@/themes/hexo/components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
@@ -276,6 +277,12 @@ const LayoutArchive = props => {
 const LayoutSlug = props => {
   const { post, lock, validPassword } = props
   const router = useRouter()
+  const path = (router.asPath || '').split('?')[0].replace(/\/$/, '')
+  const slug = String(post?.slug || '')
+    .replace(/^\/+/, '')
+    .split('/')[0]
+  const isFriendLinksPage =
+    slug === 'links' || slug === 'link' || path === '/links'
   const waiting404 = siteConfig('POST_WAITING_TIME_FOR_404') * 1000
   useEffect(() => {
     // 404
@@ -307,7 +314,11 @@ const LayoutSlug = props => {
               className='subpixel-antialiased overflow-y-hidden'>
               {/* Notion文章主体 */}
               <section className='px-5 justify-center mx-auto max-w-2xl lg:max-w-full'>
-                {post && <NotionPage post={post} />}
+                {isFriendLinksPage ? (
+                  <FriendLinks />
+                ) : (
+                  post && <NotionPage post={post} />
+                )}
               </section>
 
               {/* 分享 */}

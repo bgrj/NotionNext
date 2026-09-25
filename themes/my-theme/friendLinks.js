@@ -175,7 +175,7 @@ export const FRIEND_LINK_SECTIONS = [
         color: C.olive
       },
       {
-        name: '李子柜',
+        name: '李子柒',
         url: 'https://www.youtube.com/@cnliziqi',
         desc: '田园生活的记录',
         domain: 'youtube.com',
@@ -296,7 +296,7 @@ export const FRIEND_LINK_SECTIONS = [
       {
         name: '希腊海岸',
         url: 'https://b23.tv/AXv9dOg',
-        desc: '海边餐厅和懒懒的比雷埃夫斯',
+        desc: '海边餐厅和慵懒的比雷埃夫斯',
         domain: 'b23.tv',
         color: C.slate
       },
@@ -368,7 +368,7 @@ export const FRIEND_LINK_SECTIONS = [
     title: '爱与教育',
     items: [
       {
-        name: '李玛瑾谈送礼乱象',
+        name: '李玫瑾谈送礼乱象',
         url: 'https://b23.tv/rgn2V5v',
         desc: '拍老师马屁与送礼的根子',
         domain: 'b23.tv',
