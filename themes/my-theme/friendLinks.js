@@ -24,7 +24,7 @@ const C = {
 export const FRIEND_LINK_SECTIONS = [
   {
     id: 'sites',
-    title: '站点与工具',
+    title: '站点',
     lead: '日常会打开的入口。',
     items: [
       {
@@ -81,7 +81,7 @@ export const FRIEND_LINK_SECTIONS = [
   {
     id: 'podcasts',
     title: '播客',
-    lead: '可以慢慢听的声音。',
+    lead: '声音都在 Spotify，可以慢慢听。',
     items: [
       {
         name: '维生素E',
@@ -121,8 +121,8 @@ export const FRIEND_LINK_SECTIONS = [
     ]
   },
   {
-    id: 'channels',
-    title: '频道与创作者',
+    id: 'youtube',
+    title: 'YouTube',
     lead: '长期在看的人。',
     items: [
       {
@@ -187,214 +187,252 @@ export const FRIEND_LINK_SECTIONS = [
         desc: '八年，一百个国家',
         domain: 'youtube.com',
         color: C.rust
-      },
-      {
-        name: '蕾儿乔什看世界 · B站',
-        url: 'https://space.bilibili.com/324086342',
-        desc: '旅行纪录的 B 站空间',
-        domain: 'bilibili.com',
-        color: C.rust
-      },
-      {
-        name: 'Yooupi食途',
-        url: 'https://space.bilibili.com/452412746',
-        desc: '山海之间的食途',
-        domain: 'bilibili.com',
-        color: C.clay
       }
     ]
   },
   {
-    id: 'life',
-    title: '生活百态，万般滋味儿',
-    lead: '寻找在路上。',
-    items: [
+    id: 'bilibili',
+    title: 'B站',
+    lead: '同一平台里，再按主题分开。',
+    groups: [
       {
-        name: '人生一串',
-        url: 'https://b23.tv/ep234533',
-        desc: '烟火气里的烧烤江湖',
-        domain: 'b23.tv',
-        color: C.clay
+        id: 'bili-creators',
+        title: '创作者',
+        tocTitle: '创作者',
+        items: [
+          {
+            name: '蕾儿乔什看世界 · B站',
+            url: 'https://space.bilibili.com/324086342',
+            desc: '旅行纪录的 B 站空间',
+            domain: 'bilibili.com',
+            color: C.rust
+          },
+          {
+            name: 'Yooupi食途',
+            url: 'https://space.bilibili.com/452412746',
+            desc: '山海之间的食途',
+            domain: 'bilibili.com',
+            color: C.clay
+          }
+        ]
       },
       {
-        name: '人生第一次',
-        url: 'https://b23.tv/ep320332',
-        desc: '那些不得不经历的第一次',
-        domain: 'b23.tv',
-        color: C.olive
+        id: 'life',
+        title: '生活百态，万般滋味儿',
+        tocTitle: '生活百态',
+        lead: '寻找在路上。',
+        items: [
+          {
+            name: '人生一串',
+            url: 'https://b23.tv/ep234533',
+            desc: '烟火气里的烧烤江湖',
+            domain: 'b23.tv',
+            color: C.clay
+          },
+          {
+            name: '人生第一次',
+            url: 'https://b23.tv/ep320332',
+            desc: '那些不得不经历的第一次',
+            domain: 'b23.tv',
+            color: C.olive
+          },
+          {
+            name: '人生第二次',
+            url: 'https://b23.tv/ep511533',
+            desc: '重来一次会怎样',
+            domain: 'b23.tv',
+            color: C.moss
+          },
+          {
+            name: '人生七年',
+            url: 'https://b23.tv/ep378729',
+            desc: '七年一次，看见时间',
+            domain: 'b23.tv',
+            color: C.tea
+          },
+          {
+            name: '如是生活',
+            url: 'https://b23.tv/ep406511',
+            desc: '如是，便是生活',
+            domain: 'b23.tv',
+            color: C.ink
+          },
+          {
+            name: '去你家吃饭好吗',
+            url: 'https://b23.tv/ep384836',
+            desc: '到别人家里，看见日子',
+            domain: 'b23.tv',
+            color: C.rust
+          },
+          {
+            name: '你好生活',
+            url: 'https://b23.tv/ep303388',
+            desc: '向生活打一声招呼',
+            domain: 'b23.tv',
+            color: C.plum
+          },
+          {
+            name: '世界上的另一个我',
+            url: 'https://b23.tv/hGNKelX',
+            desc: 'Another Me in the World',
+            domain: 'b23.tv',
+            color: C.slate
+          },
+          {
+            name: '我住在这里的理由',
+            url: 'https://b23.tv/ep292589',
+            desc: '第一季：为何停在此地',
+            domain: 'b23.tv',
+            color: C.clay
+          },
+          {
+            name: '我宁可痛苦，不要麻木',
+            url: 'https://b23.tv/QIDI2PS',
+            desc: '痛着，也要清醒',
+            domain: 'b23.tv',
+            color: C.ink
+          },
+          {
+            name: '北漂清洁工王柳云',
+            url: 'https://b23.tv/CJ1gcOz',
+            desc: '扫厕所养活自己，画画养活灵魂',
+            domain: 'b23.tv',
+            color: C.tea
+          },
+          {
+            name: '离家的女孩与卖诗的少女',
+            url: 'https://b23.tv/pkQ482X',
+            desc: '他们说我是小姐，他们说我在要饭',
+            domain: 'b23.tv',
+            color: C.plum
+          },
+          {
+            name: '希腊海岸',
+            url: 'https://b23.tv/AXv9dOg',
+            desc: '海边餐厅和慵懒的比雷埃夫斯',
+            domain: 'b23.tv',
+            color: C.slate
+          },
+          {
+            name: '中华土地上的茶',
+            url: 'https://b23.tv/9qas6pY',
+            desc: '深深扎根，历久弥新',
+            domain: 'b23.tv',
+            color: C.moss
+          },
+          {
+            name: '狸解小王子',
+            url: 'https://b23.tv/XZl4TVx',
+            desc: '把小王子再读一遍',
+            domain: 'b23.tv',
+            color: C.olive
+          }
+        ]
       },
       {
-        name: '人生第二次',
-        url: 'https://b23.tv/ep511533',
-        desc: '重来一次会怎样',
-        domain: 'b23.tv',
-        color: C.moss
+        id: 'existence',
+        title: '观众生之相，寻生活之义',
+        tocTitle: '众生',
+        items: [
+          {
+            name: '香巴拉深处',
+            url: 'https://b23.tv/ep192435',
+            desc: '往深处走',
+            domain: 'b23.tv',
+            color: C.tea
+          },
+          {
+            name: '众神之地',
+            url: 'https://b23.tv/ep516011',
+            desc: '神在人间留下的痕迹',
+            domain: 'b23.tv',
+            color: C.plum
+          }
+        ]
       },
       {
-        name: '人生七年',
-        url: 'https://b23.tv/ep378729',
-        desc: '七年一次，看见时间',
-        domain: 'b23.tv',
-        color: C.tea
+        id: 'nature',
+        title: '人与自然',
+        tocTitle: '自然',
+        items: [
+          {
+            name: '虫师',
+            url: 'https://b23.tv/KLKVKXe',
+            desc: '虫师与 OST',
+            domain: 'b23.tv',
+            color: C.moss
+          }
+        ]
       },
       {
-        name: '如是生活',
-        url: 'https://b23.tv/ep406511',
-        desc: '如是，便是生活',
-        domain: 'b23.tv',
-        color: C.ink
+        id: 'law',
+        title: '敬畏与秩序',
+        tocTitle: '秩序',
+        lead: '理性思考，控制情绪，不触公序良俗的底线。',
+        items: [
+          {
+            name: '守护解放西',
+            url: 'https://b23.tv/ep780461',
+            desc: '街头执法里的日常秩序',
+            domain: 'b23.tv',
+            color: C.slate
+          }
+        ]
       },
       {
-        name: '去你家吃饭好吗',
-        url: 'https://b23.tv/ep384836',
-        desc: '到别人家里，看见日子',
-        domain: 'b23.tv',
-        color: C.rust
-      },
-      {
-        name: '你好生活',
-        url: 'https://b23.tv/ep303388',
-        desc: '向生活打一声招呼',
-        domain: 'b23.tv',
-        color: C.plum
-      },
-      {
-        name: '世界上的另一个我',
-        url: 'https://b23.tv/hGNKelX',
-        desc: 'Another Me in the World',
-        domain: 'b23.tv',
-        color: C.slate
-      },
-      {
-        name: '我住在这里的理由',
-        url: 'https://b23.tv/ep292589',
-        desc: '第一季：为何停在此地',
-        domain: 'b23.tv',
-        color: C.clay
-      },
-      {
-        name: '我宁可痛苦，不要麻木',
-        url: 'https://b23.tv/QIDI2PS',
-        desc: '痛着，也要清醒',
-        domain: 'b23.tv',
-        color: C.ink
-      },
-      {
-        name: '北漂清洁工王柳云',
-        url: 'https://b23.tv/CJ1gcOz',
-        desc: '扫厕所养活自己，画画养活灵魂',
-        domain: 'b23.tv',
-        color: C.tea
-      },
-      {
-        name: '离家的女孩与卖诗的少女',
-        url: 'https://b23.tv/pkQ482X',
-        desc: '他们说我是小姐，他们说我在要饭',
-        domain: 'b23.tv',
-        color: C.plum
-      },
-      {
-        name: '希腊海岸',
-        url: 'https://b23.tv/AXv9dOg',
-        desc: '海边餐厅和慵懒的比雷埃夫斯',
-        domain: 'b23.tv',
-        color: C.slate
-      },
-      {
-        name: '中华土地上的茶',
-        url: 'https://b23.tv/9qas6pY',
-        desc: '深深扎根，历久弥新',
-        domain: 'b23.tv',
-        color: C.moss
-      },
-      {
-        name: '狸解小王子',
-        url: 'https://b23.tv/XZl4TVx',
-        desc: '把小王子再读一遍',
-        domain: 'b23.tv',
-        color: C.olive
-      }
-    ]
-  },
-  {
-    id: 'existence',
-    title: '观众生之相，寻生活之义',
-    items: [
-      {
-        name: '香巴拉深处',
-        url: 'https://b23.tv/ep192435',
-        desc: '往深处走',
-        domain: 'b23.tv',
-        color: C.tea
-      },
-      {
-        name: '众神之地',
-        url: 'https://b23.tv/ep516011',
-        desc: '神在人间留下的痕迹',
-        domain: 'b23.tv',
-        color: C.plum
-      }
-    ]
-  },
-  {
-    id: 'nature',
-    title: '人与自然',
-    items: [
-      {
-        name: '虫师',
-        url: 'https://b23.tv/KLKVKXe',
-        desc: '虫师与 OST',
-        domain: 'b23.tv',
-        color: C.moss
-      }
-    ]
-  },
-  {
-    id: 'law',
-    title: '敬畏与秩序',
-    lead: '理性思考，控制情绪，不触公序良俗的底线。',
-    items: [
-      {
-        name: '守护解放西',
-        url: 'https://b23.tv/ep780461',
-        desc: '街头执法里的日常秩序',
-        domain: 'b23.tv',
-        color: C.slate
-      }
-    ]
-  },
-  {
-    id: 'love',
-    title: '爱与教育',
-    items: [
-      {
-        name: '李玫瑾谈送礼乱象',
-        url: 'https://b23.tv/rgn2V5v',
-        desc: '拍老师马屁与送礼的根子',
-        domain: 'b23.tv',
-        color: C.rust
-      },
-      {
-        name: '同妻的困局',
-        url: 'https://b23.tv/8hJaECP',
-        desc: '如何破解骗婚',
-        domain: 'b23.tv',
-        color: C.plum
-      },
-      {
-        name: '年轻人的爱情观',
-        url: 'https://b23.tv/AaJLjFF',
-        desc: '2023，爱正在怎样改变',
-        domain: 'b23.tv',
-        color: C.clay
-      },
-      {
-        name: '性别印象是天然的吗',
-        url: 'https://b23.tv/Npq9imi',
-        desc: '我们以为天生的那些印象',
-        domain: 'b23.tv',
-        color: C.olive
+        id: 'love',
+        title: '爱与教育',
+        tocTitle: '爱与教育',
+        items: [
+          {
+            name: '李玫瑾谈送礼乱象',
+            url: 'https://b23.tv/rgn2V5v',
+            desc: '拍老师马屁与送礼的根子',
+            domain: 'b23.tv',
+            color: C.rust
+          },
+          {
+            name: '同妻的困局',
+            url: 'https://b23.tv/8hJaECP',
+            desc: '如何破解骗婚',
+            domain: 'b23.tv',
+            color: C.plum
+          },
+          {
+            name: '年轻人的爱情观',
+            url: 'https://b23.tv/AaJLjFF',
+            desc: '2023，爱正在怎样改变',
+            domain: 'b23.tv',
+            color: C.clay
+          },
+          {
+            name: '性别印象是天然的吗',
+            url: 'https://b23.tv/Npq9imi',
+            desc: '我们以为天生的那些印象',
+            domain: 'b23.tv',
+            color: C.olive
+          }
+        ]
       }
     ]
   }
 ]
+
+export const getFriendLinkToc = (sections = FRIEND_LINK_SECTIONS) => {
+  const toc = []
+  sections.forEach(section => {
+    toc.push({
+      id: section.id,
+      title: section.tocTitle || section.title,
+      level: 1
+    })
+    ;(section.groups || []).forEach(group => {
+      toc.push({
+        id: group.id,
+        title: group.tocTitle || group.title,
+        level: 2
+      })
+    })
+  })
+  return toc
+}
