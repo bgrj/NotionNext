@@ -297,7 +297,7 @@ const Footer = () => {
           font-weight: 700;
           letter-spacing: 0.16em;
           color: var(--ob-ink);
-          line-height: 1;
+          line-height: 1.3;
           white-space: nowrap;
         }
         .ob-link {
@@ -616,7 +616,7 @@ const Footer = () => {
                 </div>
               </div>
               <div>
-                <SectionTitle>友链</SectionTitle>
+                <SectionTitle>友情链接</SectionTitle>
                 <div className='ob-nav'>
                   {FOOTER_FRIEND_LINKS.map(item => (
                     <FooterLink key={item.url} href={item.url} external>
@@ -624,7 +624,7 @@ const Footer = () => {
                     </FooterLink>
                   ))}
                   <FooterLink href={linksUrl} gold>
-                    全部友链 →
+                    全部友情链接 →
                   </FooterLink>
                 </div>
               </div>
