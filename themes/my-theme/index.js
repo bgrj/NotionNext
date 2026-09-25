@@ -45,12 +45,33 @@ const AlgoliaSearchModal = dynamic(
 const ThemeGlobalHexo = createContext()
 export const useHexoGlobal = () => useContext(ThemeGlobalHexo)
 
-const isFriendLinksPath = asPath => {
-  const path = String(asPath || '')
+const normalizeSitePath = asPath =>
+  String(asPath || '')
+    .split('#')[0]
     .split('?')[0]
-    .replace(/\/$/, '')
+    .replace(/\/+$/, '')
+
+const isFriendLinksPath = asPath => {
+  const path = normalizeSitePath(asPath)
   return path === '/links' || path === '/link'
 }
+
+const isFriendLinksSlug = slug => {
+  const s = String(slug || '')
+    .replace(/^\/+/, '')
+    .split('/')[0]
+    .toLowerCase()
+  return s === 'links' || s === 'link'
+}
+
+const slugFromRouter = router => {
+  const raw = router?.query?.slug
+  if (Array.isArray(raw)) return raw[0]
+  return raw
+}
+
+const isFriendLinksView = ({ asPath, slug } = {}) =>
+  isFriendLinksPath(asPath) || isFriendLinksSlug(slug)
 
 /**
  * 基础布局 采用左右两侧布局，移动端使用顶部导航栏
@@ -64,22 +85,36 @@ const LayoutBase = props => {
   const router = useRouter()
   const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
   const isArticleSlugPage = router.pathname === '/[prefix]/[slug]'
-  const isFriendLinksPage = isFriendLinksPath(router.asPath)
+  const friendLinks = isFriendLinksView({
+    asPath: router.asPath,
+    slug: post?.slug || slugFromRouter(router)
+  })
   const hexoArticleRouteLoading = siteConfig(
     'HEXO_ARTICLE_ROUTE_LOADING',
     true,
     CONFIG
   )
   const showArticleSwitchPlaceholder =
-    hexoArticleRouteLoading && isArticleSlugPage && onLoading
-  const wideMain = fullWidth || isFriendLinksPage
+    hexoArticleRouteLoading && isArticleSlugPage && onLoading && !friendLinks
+  const wideMain = fullWidth || friendLinks
+  const sidebarReverse =
+    !friendLinks && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
+  const wrapperTop = friendLinks
+    ? 'pt-16'
+    : post
+      ? 'pt-6 md:pt-8'
+      : siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG)
+        ? 'pt-0'
+        : 'pt-16'
 
-  const headerSlot = post ? (
-    <PostHero {...props} />
-  ) : router.route === '/' &&
-    siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
-    <Hero {...props} />
-  ) : null
+  const headerSlot = friendLinks
+    ? null
+    : post ? (
+        <PostHero {...props} />
+      ) : router.route === '/' &&
+        siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
+          <Hero {...props} />
+        ) : null
 
   const drawerRight = useRef(null)
   const tocRef = isBrowser ? document.getElementById('article-wrapper') : null
@@ -87,7 +122,7 @@ const LayoutBase = props => {
   // 悬浮按钮内容
   const floatSlot = (
     <>
-      {post?.toc?.length > 1 && !isFriendLinksPage && (
+      {post?.toc?.length > 1 && !friendLinks && (
         <div className='block lg:hidden'>
           <TocDrawerButton
             onClick={() => {
@@ -96,7 +131,7 @@ const LayoutBase = props => {
           />
         </div>
       )}
-      {post && <ButtonJumpToComment />}
+      {post && !friendLinks && <ButtonJumpToComment />}
       {showRandomButton && <ButtonRandomPostMini {...props} />}
     </>
   )
@@ -108,7 +143,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth`}>
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}`}>
         <Style />
 
         {/* 顶部导航 */}
@@ -131,17 +166,15 @@ const LayoutBase = props => {
         {/* 主区块 */}
         <main
           id='wrapper'
-          className={`${post ? 'pt-6 md:pt-8' : siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? 'pt-0' : 'pt-16'} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${isFriendLinksPage ? 'lg:px-10' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
+          className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${friendLinks ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
           <div
             id='container-inner'
             className={
-              (JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
-                ? 'flex-row-reverse'
-                : '') +
+              (sidebarReverse ? 'flex-row-reverse' : '') +
               ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
             }>
             <div
-              className={`${className || ''} w-full ${wideMain ? '' : 'max-w-4xl'} h-full ${isFriendLinksPage ? '' : 'overflow-x-hidden'}`}>
+              className={`${className || ''} w-full ${wideMain ? '' : 'max-w-4xl'} h-full ${friendLinks ? '' : 'overflow-x-hidden'}`}>
               {showArticleSwitchPlaceholder ? (
                 <ArticleSwitchPlaceholder />
               ) : (
@@ -163,12 +196,12 @@ const LayoutBase = props => {
               )}
             </div>
 
-            {/* 右侧栏：友链页让位给左侧目录 */}
-            {!isFriendLinksPage && <SideRight {...props} />}
+            {/* 友情链接页不渲染网站信息 / 最近更新 / 公告 / 正文目录 */}
+            {!friendLinks && <SideRight {...props} />}
           </div>
         </main>
 
-        {!isFriendLinksPage && (
+        {!friendLinks && (
           <div className='block lg:hidden'>
             <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
           </div>
@@ -288,16 +321,14 @@ const LayoutArchive = props => {
 const LayoutSlug = props => {
   const { post, lock, validPassword } = props
   const router = useRouter()
-  const path = (router.asPath || '').split('?')[0].replace(/\/$/, '')
-  const slug = String(post?.slug || '')
-    .replace(/^\/+/, '')
-    .split('/')[0]
-  const isFriendLinksPage =
-    slug === 'links' || slug === 'link' || path === '/links'
+  const friendLinks = isFriendLinksView({
+    asPath: router.asPath,
+    slug: post?.slug || slugFromRouter(router)
+  })
   const waiting404 = siteConfig('POST_WAITING_TIME_FOR_404') * 1000
   useEffect(() => {
     // 404
-    if (!post) {
+    if (!post && !friendLinks) {
       setTimeout(
         () => {
           if (isBrowser) {
@@ -312,26 +343,30 @@ const LayoutSlug = props => {
         waiting404
       )
     }
-  }, [post])
+  }, [post, friendLinks])
+
+  if (friendLinks) {
+    return (
+      <>
+        {lock && <ArticleLock validPassword={validPassword} />}
+        {!lock && <FriendLinks />}
+      </>
+    )
+  }
+
   return (
     <>
       <div className='w-full lg:hover:shadow lg:border rounded-t-xl lg:rounded-xl lg:px-2 lg:py-4 bg-white dark:bg-hexo-black-gray dark:border-black article'>
         {lock && <ArticleLock validPassword={validPassword} />}
 
         {!lock && post && (
-          <div
-            className={`${isFriendLinksPage ? '' : 'overflow-x-auto '}flex-grow mx-auto md:w-full md:px-5`}>
+          <div className='overflow-x-auto flex-grow mx-auto md:w-full md:px-5'>
             <article
               id='article-wrapper'
-              className={`subpixel-antialiased${isFriendLinksPage ? '' : ' overflow-y-hidden'}`}>
+              className='subpixel-antialiased overflow-y-hidden'>
               {/* Notion文章主体 */}
-              <section
-                className={`px-5 justify-center mx-auto ${isFriendLinksPage ? 'w-full max-w-6xl' : 'max-w-2xl lg:max-w-full'}`}>
-                {isFriendLinksPage ? (
-                  <FriendLinks />
-                ) : (
-                  post && <NotionPage post={post} />
-                )}
+              <section className='px-5 justify-center mx-auto max-w-2xl lg:max-w-full'>
+                {post && <NotionPage post={post} />}
               </section>
 
               {/* 分享 */}
