@@ -350,6 +350,19 @@ const Style = () => {
           top: auto;
         }
       }
+
+      /* 友情链接页：去掉默认侧栏，主栏铺满剩余宽度 */
+      #theme-my-theme.ob-fl-layout #sideRight {
+        display: none !important;
+      }
+      #theme-my-theme.ob-fl-layout #container-inner {
+        max-width: none;
+        justify-content: stretch;
+      }
+      #theme-my-theme.ob-fl-layout #container-inner > div {
+        max-width: none;
+        overflow: visible;
+      }
   `}</style>
   )
 }
