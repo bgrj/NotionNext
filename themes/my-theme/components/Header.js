@@ -8,7 +8,7 @@ import CONFIG from '../config'
 import ButtonRandomPost from '@/themes/hexo/components/ButtonRandomPost'
 import CategoryGroup from '@/themes/hexo/components/CategoryGroup'
 import Logo from '@/themes/hexo/components/Logo'
-import { MenuListTop } from '@/themes/hexo/components/MenuListTop'
+import { MenuListTop } from './MenuListTop'
 import SearchButton from './SearchButton'
 import SearchDrawer from '@/themes/hexo/components/SearchDrawer'
 import SideBar from '@/themes/hexo/components/SideBar'
@@ -160,8 +160,7 @@ const Header = props => {
 
           {/* 右侧功能 */}
           <div className='mr-1 flex justify-end items-center '>
-            <div className='hidden lg:flex'>
-              {' '}
+            <div className='hidden lg:flex ob-top-nav items-center'>
               <MenuListTop {...props} />
             </div>
             <div
