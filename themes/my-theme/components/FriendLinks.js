@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react'
-import { FRIEND_LINK_SECTIONS, getFriendLinkToc } from '../friendLinks'
+import {
+  FRIEND_LINK_SECTIONS,
+  FRIEND_LINKS_MOTTO,
+  getFriendLinkToc
+} from '../friendLinks'
 
 const TOC = getFriendLinkToc()
 
@@ -53,9 +57,27 @@ const FriendCard = ({ item }) => (
 
 const CardGrid = ({ items, sectionId }) => (
   <div className='ob-fl-grid'>
-    {items.map(item => (
+    {(items || []).map(item => (
       <FriendCard key={`${sectionId}-${item.url}`} item={item} />
     ))}
+  </div>
+)
+
+const GroupBlock = ({ group }) => (
+  <div className='ob-fl-group' key={group.id} id={group.id}>
+    <h3 className='ob-fl-group-title'>{group.title}</h3>
+    {group.lead && <p className='ob-fl-group-lead'>{group.lead}</p>}
+    {group.groups ? (
+      group.groups.map(sub => (
+        <div className='ob-fl-subgroup' key={sub.id} id={sub.id}>
+          <h4 className='ob-fl-subgroup-title'>{sub.title}</h4>
+          {sub.lead && <p className='ob-fl-group-lead'>{sub.lead}</p>}
+          <CardGrid items={sub.items} sectionId={sub.id} />
+        </div>
+      ))
+    ) : (
+      <CardGrid items={group.items} sectionId={group.id} />
+    )}
   </div>
 )
 
@@ -142,6 +164,16 @@ const FriendLinks = () => {
           font-weight: 700;
           line-height: 1.3;
         }
+        .ob-fl-motto {
+          margin: 0.7rem 0 0.9rem;
+          padding: 0.9rem 0 0.9rem 1.05rem;
+          border-left: 3px solid var(--ob-gold);
+          font-size: 1.08rem;
+          font-weight: 700;
+          line-height: 1.6;
+          letter-spacing: 0.03em;
+          max-width: 28em;
+        }
         .ob-fl-lead {
           margin: 0 0 0.35rem;
           color: var(--ob-muted);
@@ -157,6 +189,16 @@ const FriendLinks = () => {
           backdrop-filter: blur(8px);
           border: 1px solid var(--ob-line);
           border-radius: 10px;
+        }
+        .ob-fl-toc-motto {
+          display: none;
+          margin: 0 0 1.1rem;
+          padding: 0 0 1rem;
+          border-bottom: 1px solid var(--ob-line);
+          font-size: 12px;
+          line-height: 1.65;
+          font-weight: 700;
+          letter-spacing: 0.02em;
         }
         .ob-fl-toc-toggle {
           width: 100%;
@@ -177,7 +219,7 @@ const FriendLinks = () => {
         .ob-fl-toc-kicker {
           display: none;
           font-size: 11px;
-          letter-spacing: 0.22em;
+          letter-spacing: 0.28em;
           color: var(--ob-gold);
           font-weight: 700;
         }
@@ -192,16 +234,25 @@ const FriendLinks = () => {
         }
         .ob-fl-toc a {
           display: block;
-          padding: 7px 0 7px 10px;
+          padding: 8px 0 8px 12px;
           color: var(--ob-muted);
-          border-left: 1px solid var(--ob-line);
+          border-left: 2px solid transparent;
           font-size: 13px;
           letter-spacing: 0.06em;
           line-height: 1.35;
         }
+        .ob-fl-toc a.lv1 {
+          color: var(--ob-ink);
+          font-size: 15px;
+          font-weight: 700;
+          letter-spacing: 0.22em;
+          padding: 11px 0 8px 12px;
+        }
         .ob-fl-toc a.lv2 {
-          padding-left: 1.25rem;
-          font-size: 12px;
+          padding: 6px 0 6px 1.35rem;
+          font-size: 13px;
+          font-weight: 500;
+          letter-spacing: 0.08em;
         }
         .ob-fl-toc a.is-active {
           color: var(--ob-gold);
@@ -215,8 +266,8 @@ const FriendLinks = () => {
           margin-top: 1.15rem;
         }
         .ob-fl-section-title {
-          font-size: 1.05rem;
-          letter-spacing: 0.12em;
+          font-size: 1.2rem;
+          letter-spacing: 0.18em;
           font-weight: 700;
           margin: 0 0 6px;
         }
@@ -231,10 +282,21 @@ const FriendLinks = () => {
           scroll-margin-top: 8rem;
         }
         .ob-fl-group-title {
-          font-size: 0.95rem;
+          font-size: 0.98rem;
+          letter-spacing: 0.12em;
+          font-weight: 700;
+          margin: 0 0 8px;
+        }
+        .ob-fl-subgroup {
+          margin-top: 1.05rem;
+          scroll-margin-top: 8rem;
+        }
+        .ob-fl-subgroup-title {
+          font-size: 0.88rem;
           letter-spacing: 0.1em;
           font-weight: 700;
           margin: 0 0 8px;
+          color: var(--ob-ink);
         }
         .ob-fl-grid {
           display: grid;
@@ -308,10 +370,11 @@ const FriendLinks = () => {
             gap: 14px;
           }
           .ob-fl-title { font-size: 2rem; }
+          .ob-fl-motto { font-size: 1.18rem; }
         }
         @media (min-width: 1024px) {
           .ob-fl-shell {
-            grid-template-columns: 15rem minmax(0, 1fr);
+            grid-template-columns: 15.5rem minmax(0, 1fr);
             grid-template-areas:
               'toc hero'
               'toc main';
@@ -324,7 +387,7 @@ const FriendLinks = () => {
           .ob-fl-toc {
             top: 5.25rem;
             margin: 0;
-            padding: 0.2rem 1.15rem 2.5rem 0;
+            padding: 0.35rem 1.25rem 2.5rem 0;
             background: transparent;
             border: 0;
             border-right: 1px solid var(--ob-line);
@@ -338,7 +401,10 @@ const FriendLinks = () => {
           }
           .ob-fl-toc-kicker {
             display: block;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+          }
+          .ob-fl-toc-motto {
+            display: block;
           }
           .ob-fl-toc-nav,
           .ob-fl-toc-nav.is-open {
@@ -348,7 +414,8 @@ const FriendLinks = () => {
             padding: 0;
           }
           .ob-fl-section,
-          .ob-fl-group {
+          .ob-fl-group,
+          .ob-fl-subgroup {
             scroll-margin-top: 5.5rem;
           }
           .ob-fl-section:first-child {
@@ -357,7 +424,7 @@ const FriendLinks = () => {
         }
         @media (min-width: 1280px) {
           .ob-fl-shell {
-            grid-template-columns: 16rem minmax(0, 1fr);
+            grid-template-columns: 16.5rem minmax(0, 1fr);
           }
           .ob-fl-grid {
             grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -377,13 +444,15 @@ const FriendLinks = () => {
         <header className='ob-fl-hero'>
           <div className='ob-fl-kicker'>FRIENDS</div>
           <h1 className='ob-fl-title'>友情链接</h1>
+          <blockquote className='ob-fl-motto'>{FRIEND_LINKS_MOTTO}</blockquote>
           <p className='ob-fl-lead'>
-            彼此看见的站点、声音与影像。不是交换流量，只是把长期打开的入口放在一处。先按平台，再按主题。
+            重道轻术。先问处境，再假物为用。这里是门口，不是校园导航墙。
           </p>
         </header>
 
         <aside className='ob-fl-toc' aria-label='目录'>
           <div className='ob-fl-toc-kicker'>目录</div>
+          <p className='ob-fl-toc-motto'>{FRIEND_LINKS_MOTTO}</p>
           <button
             type='button'
             className='ob-fl-toc-toggle'
@@ -397,7 +466,7 @@ const FriendLinks = () => {
               <a
                 key={item.id}
                 href={`#${item.id}`}
-                className={`${item.level === 2 ? 'lv2' : ''}${active === item.id ? ' is-active' : ''}`}
+                className={`${item.level === 2 ? 'lv2' : 'lv1'}${active === item.id ? ' is-active' : ''}`}
                 onClick={event => onTocClick(event, item.id)}>
                 {item.title}
               </a>
@@ -418,13 +487,7 @@ const FriendLinks = () => {
               {section.lead && <p className='ob-fl-section-lead'>{section.lead}</p>}
               {section.groups ? (
                 section.groups.map(group => (
-                  <div className='ob-fl-group' key={group.id} id={group.id}>
-                    <h3 className='ob-fl-group-title'>{group.title}</h3>
-                    {group.lead && (
-                      <p className='ob-fl-group-lead'>{group.lead}</p>
-                    )}
-                    <CardGrid items={group.items} sectionId={group.id} />
-                  </div>
+                  <GroupBlock key={group.id} group={group} />
                 ))
               ) : (
                 <CardGrid items={section.items} sectionId={section.id} />
