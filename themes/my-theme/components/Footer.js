@@ -1,6 +1,7 @@
 import { siteConfig } from '@/lib/config'
 import { useEffect, useRef, useState } from 'react'
 import CONFIG from '../config'
+import { FOOTER_FRIEND_LINKS } from '../friendLinks'
 
 const WaveText = ({
   text,
@@ -177,7 +178,7 @@ const Footer = () => {
     'https://ourbeings.com/copyright',
     CONFIG
   )
-  const linksUrl = siteConfig('FOOTER_LINKS_URL', siteConfig('LINK'), CONFIG)
+  const linksUrl = siteConfig('FOOTER_LINKS_URL', '/links', CONFIG)
   const email = siteConfig('FOOTER_EMAIL', 'hsz@ourbeings.com', CONFIG)
   const wechatAlbum = siteConfig('FOOTER_WECHAT_ALBUM', '', CONFIG)
   const afdianUrl = siteConfig(
@@ -296,6 +297,7 @@ const Footer = () => {
           letter-spacing: 0.16em;
           color: var(--ob-ink);
           line-height: 1;
+          white-space: nowrap;
         }
         .ob-link {
           position: relative;
@@ -304,6 +306,7 @@ const Footer = () => {
           justify-content: center;
           gap: 8px;
           padding: 5px 0;
+          min-height: 44px;
           letter-spacing: 0.04em;
           color: var(--ob-muted);
           transition: color 0.25s ease, transform 0.25s ease;
@@ -448,12 +451,15 @@ const Footer = () => {
           color: var(--ob-muted);
           letter-spacing: 0.06em;
         }
+        @media (max-width: 1023px) {
+          .ob-icp { white-space: normal; max-width: 14em; }
+        }
         @media (min-width: 1024px) {
           .ob-shell { padding: 3.5rem 3rem 0; }
           .ob-grid {
             display: grid;
-            grid-template-columns: 1.2fr 0.9fr 1.9fr;
-            gap: 40px 48px;
+            grid-template-columns: 1.15fr 0.7fr 2.4fr;
+            gap: 40px 36px;
             align-items: start;
             text-align: left;
           }
@@ -469,9 +475,10 @@ const Footer = () => {
           .ob-east { align-items: stretch; }
           .ob-east-cols {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) max-content;
-            gap: 40px;
+            grid-template-columns: max-content max-content max-content;
+            gap: 32px 36px;
             align-items: start;
+            justify-content: start;
           }
           .ob-motto-row {
             flex-direction: row;
@@ -479,7 +486,7 @@ const Footer = () => {
           }
           .ob-nav, .ob-section-title { align-items: flex-start; }
           .ob-dots { justify-content: flex-start; }
-          .ob-link { justify-content: flex-start; }
+          .ob-link { justify-content: flex-start; min-height: 0; }
           .ob-link::after {
             left: 0;
             transform: none;
@@ -498,6 +505,7 @@ const Footer = () => {
             font-size: 11px;
           }
           .ob-copy { padding: 1.125rem 3rem 1.75rem; }
+          .ob-icp { white-space: nowrap; max-width: none; }
         }
         @media (prefers-reduced-motion: reduce) {
           .ob-wave-char,
@@ -554,7 +562,6 @@ const Footer = () => {
             <nav className='ob-nav'>
               <FooterLink href={aboutUrl}>About</FooterLink>
               <FooterLink href={copyrightUrl}>版权声明</FooterLink>
-              <FooterLink href={linksUrl}>友链</FooterLink>
               {email && (
                 <FooterLink href={`mailto:${email}`} gold>
                   {email}
@@ -591,6 +598,19 @@ const Footer = () => {
                       icon={<i className='fab fa-weixin' />}
                     />
                   )}
+                </div>
+              </div>
+              <div>
+                <SectionTitle>友链</SectionTitle>
+                <div className='ob-nav'>
+                  {FOOTER_FRIEND_LINKS.map(item => (
+                    <FooterLink key={item.url} href={item.url} external>
+                      {item.name}
+                    </FooterLink>
+                  ))}
+                  <FooterLink href={linksUrl} gold>
+                    全部友链 →
+                  </FooterLink>
                 </div>
               </div>
               <div>
