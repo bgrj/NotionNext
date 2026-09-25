@@ -121,14 +121,14 @@ const LayoutBase = props => {
         {/* 主区块 */}
         <main
           id='wrapper'
-          className={`${siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? 'pt-0' : 'pt-16'} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 lg:px-24 pb-14 md:pb-16 min-h-screen relative`}>
+          className={`${post ? 'pt-6 md:pt-8' : siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? 'pt-0' : 'pt-16'} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 lg:px-24 pb-14 md:pb-16 min-h-screen relative`}>
           <div
             id='container-inner'
             className={
               (JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
                 ? 'flex-row-reverse'
                 : '') +
-              ' w-full mx-auto lg:flex lg:gap-10 lg:items-start justify-center relative z-10'
+              ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
             }>
             <div
               className={`${className || ''} w-full ${fullWidth ? '' : 'max-w-4xl'} h-full overflow-x-hidden`}>

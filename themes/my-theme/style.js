@@ -312,6 +312,7 @@ const Style = () => {
       @media (min-width: 1024px) {
         #theme-my-theme #container-inner {
           gap: 2.5rem;
+          align-items: stretch; /* 侧栏拉满主栏高度，sticky 才站得住 */
         }
       }
 
@@ -324,12 +325,29 @@ const Style = () => {
           padding-bottom: 4.5rem;
         }
       }
+
+      /* 桌面：左侧栏随正文滚动时钉在顶栏下方，不跟着文章滑没 */
+      @media (min-width: 1024px) {
+        #theme-my-theme #sideRight {
+          align-self: stretch;
+        }
+        #theme-my-theme #sideRight > div {
+          position: sticky;
+          top: 5rem; /* 避开固定页眉，避免板块贴着顶栏 */
+        }
+      }
+
+      /* 手机：侧栏改堆在正文下方，不悬浮遮挡阅读 */
       @media (max-width: 1023px) {
         #theme-my-theme #sideRight {
           margin-top: 1.5rem;
           margin-bottom: 0.25rem;
           padding-left: 0.5rem;
           padding-right: 0.5rem;
+        }
+        #theme-my-theme #sideRight > div {
+          position: static;
+          top: auto;
         }
       }
   `}</style>
