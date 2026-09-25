@@ -46,7 +46,8 @@ export const FRIEND_LINK_SECTIONS = [
           L('斯坦福哲学百科', 'https://plato.stanford.edu/', '当代哲学的开放辞书', 'plato.stanford.edu', C.plum),
           L('爱思想', 'https://www.aisixiang.com/', '思想与学术的公共仓库', 'aisixiang.com', C.tea),
           L('TED', 'https://www.ted.com/', 'Ideas worth spreading', 'ted.com', C.rust),
-          L('中国大百科全书', 'https://www.zgbk.com/', '国家级百科全书', 'zgbk.com', C.olive)
+          L('中国大百科全书', 'https://www.zgbk.com/', '国家级百科全书', 'zgbk.com', C.olive),
+          L('MBA智库', 'https://www.mbalib.com/', '管理与社会的词条', 'mbalib.com', C.clay)
         ]
       },
       {
@@ -58,12 +59,14 @@ export const FRIEND_LINK_SECTIONS = [
           L('古文岛', 'https://www.gushiwen.cn/', '诗词与古文', 'gushiwen.cn', C.olive),
           L('维基文库', 'https://zh.wikisource.org/', '自由的在线图书馆', 'zh.wikisource.org', C.moss),
           L('国学大师', 'https://www.guoxuedashi.com/', '经典、小学与古籍', 'guoxuedashi.com', C.tea),
+          L('书格', 'https://new.shuge.org/', '公共版权领域的古籍善本', 'new.shuge.org', C.olive),
           L('Internet Archive', 'https://archive.org/', '书籍、影像与网页的公共记忆', 'archive.org', C.slate),
           L('Project Gutenberg', 'https://www.gutenberg.org/', '过了版权保护期的自由书籍', 'gutenberg.org', C.ink),
           L('世界数字图书馆', 'https://www.loc.gov/collections/world-digital-library/', '多语种原始文献', 'loc.gov', C.plum),
           L('中国国家图书馆', 'https://www.nlc.cn/', '国家总书库', 'nlc.cn', C.plum),
           L('文津搜索', 'https://find.nlc.cn/', '国图与地方馆的检索', 'find.nlc.cn', C.slate),
-          L('国家哲学社会科学文献中心', 'https://www.ncpssd.org/', '哲学社会科学文献', 'ncpssd.org', C.ink)
+          L('国家哲学社会科学文献中心', 'https://www.ncpssd.org/', '哲学社会科学文献', 'ncpssd.org', C.ink),
+          L('OpenStax', 'https://openstax.org/', '开放教材', 'openstax.org', C.moss)
         ]
       },
       {
@@ -75,7 +78,9 @@ export const FRIEND_LINK_SECTIONS = [
           L('田间小站', 'https://www.tjxz.cc/', '高级英语学习', 'tjxz.cc', C.moss),
           L('欧路词典', 'https://dict.eudic.net/', '词典、听力与翻译', 'dict.eudic.net', C.clay),
           L('金山词霸', 'https://www.iciba.com/', '多语种词典', 'iciba.com', C.plum),
-          L('可可英语', 'https://www.kekenet.com/', '听力与阅读', 'kekenet.com', C.olive)
+          L('可可英语', 'https://www.kekenet.com/', '听力与阅读', 'kekenet.com', C.olive),
+          L('LingoHut', 'https://www.lingohut.com/', '四十多种语言入门', 'lingohut.com', C.tea),
+          L('中国日报', 'https://www.chinadaily.com.cn/', '英文报道', 'chinadaily.com.cn', C.ink)
         ]
       },
       {
@@ -100,7 +105,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('十三邀', 'https://www.youtube.com/@THIRTEENTALKS', '许知远与对话者', 'youtube.com', C.tea),
           L('Existential Zone', 'https://www.youtube.com/@ExistentialZone', '把日子过得更有勇气', 'youtube.com', C.moss),
           L('英语兔', 'https://www.youtube.com/@yingyutu', '把英语讲清楚', 'youtube.com', C.olive),
-          L('李子柚', 'https://www.youtube.com/@cnliziqi', '田园生活的记录', 'youtube.com', C.moss),
+          L('李子柒', 'https://www.youtube.com/@cnliziqi', '田园生活的记录', 'youtube.com', C.moss),
           L('蕾儿乔什看世界', 'https://www.youtube.com/@leiandjosh1646', '八年，一百个国家', 'youtube.com', C.rust)
         ]
       }
@@ -120,15 +125,26 @@ export const FRIEND_LINK_SECTIONS = [
           L('通义千问', 'https://tongyi.aliyun.com/', '阿里巴巴', 'tongyi.aliyun.com', C.olive),
           L('智谱清言', 'https://chatglm.cn/', 'ChatGLM', 'chatglm.cn', C.moss),
           L('文心一言', 'https://yiyan.baidu.com/', '百度', 'yiyan.baidu.com', C.slate),
+          L('讯飞星火', 'https://xinghuo.xfyun.cn/', '科大讯飞', 'xinghuo.xfyun.cn', C.tea),
+          L('腾讯元宝', 'https://yuanbao.tencent.com/', '腾讯', 'yuanbao.tencent.com', C.olive),
+          L('纳米AI', 'https://www.n.cn/', '360', 'n.cn', C.clay),
+          L('知乎直答', 'https://zhida.zhihu.com/', '知乎', 'zhida.zhihu.com', C.ink),
+          L('天工', 'https://www.tiangong.cn/', '昆仑万维', 'tiangong.cn', C.moss),
+          L('问小白', 'https://www.wenxiaobai.com/', '元石科技', 'wenxiaobai.com', C.plum),
           L('ChatGPT', 'https://chatgpt.com/', 'OpenAI', 'chatgpt.com', C.ink),
           L('Claude', 'https://claude.ai/', 'Anthropic', 'claude.ai', C.tea),
           L('Gemini', 'https://gemini.google.com/', 'Google', 'gemini.google.com', C.olive),
           L('Copilot', 'https://copilot.microsoft.com/', 'Microsoft', 'copilot.microsoft.com', C.slate),
           L('Grok', 'https://grok.com/', 'xAI', 'grok.com', C.ink),
           L('Cursor', 'https://cursor.com/', 'AI 代码编辑器', 'cursor.com', C.plum),
+          L('TRAE', 'https://www.trae.ai/', '字节跳动', 'trae.ai', C.clay),
           L('通义灵码', 'https://lingma.aliyun.com/', '智能编码助手', 'lingma.aliyun.com', C.olive),
+          L('CodeGeeX', 'https://codegeex.cn/', '智谱', 'codegeex.cn', C.moss),
           L('即梦', 'https://jimeng.jianying.com/', '字节跳动 · 剪映', 'jimeng.jianying.com', C.rust),
+          L('可灵', 'https://klingai.com/', '快手', 'klingai.com', C.tea),
+          L('海螺', 'https://hailuoai.com/', 'MiniMax', 'hailuoai.com', C.plum),
           L('Runway', 'https://runwayml.com/', 'AI 视频', 'runwayml.com', C.clay),
+          L('Pika', 'https://pika.art/', 'AI 视频', 'pika.art', C.olive),
           L('秘塔AI', 'https://metaso.cn/', 'AI 搜索', 'metaso.cn', C.tea)
         ]
       },
@@ -144,13 +160,20 @@ export const FRIEND_LINK_SECTIONS = [
           L('万方数据', 'https://www.wanfangdata.com.cn/', '期刊、学位与会议', 'wanfangdata.com.cn', C.tea),
           L('百度学术', 'https://xueshu.baidu.com/', '中文学术入口', 'xueshu.baidu.com', C.olive),
           L('ScienceDirect', 'https://www.sciencedirect.com/', 'Elsevier 全文', 'sciencedirect.com', C.plum),
+          L('Web of Science', 'https://www.webofscience.com/', '引文索引', 'webofscience.com', C.ink),
           L('DOAJ', 'https://doaj.org/', '开放获取期刊目录', 'doaj.org', C.moss),
           L('Unpaywall', 'https://unpaywall.org/', '开放全文', 'unpaywall.org', C.slate),
           L('Papers with Code', 'https://paperswithcode.com/', '论文与代码', 'paperswithcode.com', C.ink),
+          L('X-MOL', 'https://www.x-mol.com/', '科学知识平台', 'x-mol.com', C.olive),
+          L('爱科学', 'https://www.iikx.com/', '科研导航', 'iikx.com', C.clay),
+          L('国家自然科学基金', 'https://www.nsfc.gov.cn/', '资助与成果', 'nsfc.gov.cn', C.plum),
+          L('中国工程科技知识中心', 'https://www.ckcest.cn/', '工程科技文献', 'ckcest.cn', C.tea),
+          L('Academia.edu', 'https://www.academia.edu/', '论文分享', 'academia.edu', C.moss),
           L('Zotero', 'https://www.zotero.org/', '收集、引用、保存文献', 'zotero.org', C.clay),
           L('Z-Library', 'https://zh.zlib.li/', '电子书与文献入口', 'zh.zlib.li', C.slate),
           L('Google Patents', 'https://patents.google.com/', '全球专利全文', 'patents.google.com', C.olive),
-          L('WIPO', 'https://www.wipo.int/', '世界知识产权组织', 'wipo.int', C.plum)
+          L('WIPO', 'https://www.wipo.int/', '世界知识产权组织', 'wipo.int', C.plum),
+          L('中国专利公布公告', 'https://epub.cnipa.gov.cn/', '国家知识产权局', 'epub.cnipa.gov.cn', C.ink)
         ]
       },
       {
@@ -162,9 +185,12 @@ export const FRIEND_LINK_SECTIONS = [
           L('DuckDuckGo', 'https://duckduckgo.com/', '不追踪的搜索', 'duckduckgo.com', C.olive),
           L('百度', 'https://www.baidu.com/', '中文搜索', 'baidu.com', C.clay),
           L('搜狗', 'https://www.sogou.com/', '中文搜索', 'sogou.com', C.tea),
+          L('360搜索', 'https://www.so.com/', '中文搜索', 'so.com', C.olive),
+          L('中国搜索', 'https://www.chinaso.com/', '国家搜索', 'chinaso.com', C.ink),
           L('Ecosia', 'https://www.ecosia.org/', '种树的搜索引擎', 'ecosia.org', C.moss),
           L('Yandex', 'https://yandex.com/', '俄语检索', 'yandex.com', C.plum),
-          L('GitHub', 'https://github.com/', '代码与项目检索', 'github.com', C.ink)
+          L('GitHub', 'https://github.com/', '代码与项目检索', 'github.com', C.ink),
+          L('CSDN', 'https://www.csdn.net/', '开发者社区', 'csdn.net', C.slate)
         ]
       },
       {
@@ -177,7 +203,9 @@ export const FRIEND_LINK_SECTIONS = [
           L('Coursera', 'https://www.coursera.org/', '世界大学公开课', 'coursera.org', C.clay),
           L('网易公开课', 'https://open.163.com/', '名校公开课', 'open.163.com', C.plum),
           L('Open Yale Courses', 'https://oyc.yale.edu/', '耶鲁开放课程', 'oyc.yale.edu', C.ink),
+          L('腾讯课堂', 'https://ke.qq.com/', '职业课程', 'ke.qq.com', C.olive),
           L('菜鸟教程', 'https://www.runoob.com/', '编程入门', 'runoob.com', C.moss),
+          L('w3cschool', 'https://www.w3cschool.cn/', '编程狮', 'w3cschool.cn', C.slate),
           L('廖雪峰', 'https://www.liaoxuefeng.com/', 'Python / Java / JS', 'liaoxuefeng.com', C.olive),
           L('慕课网', 'https://www.imooc.com/', 'IT 职业课程', 'imooc.com', C.slate),
           L('默沙东诊疗手册', 'https://www.msdmanuals.com/zh/', '医学通识', 'msdmanuals.com', C.tea)
@@ -193,12 +221,15 @@ export const FRIEND_LINK_SECTIONS = [
           L('Typora', 'https://typora.io/', 'Markdown 编辑器', 'typora.io', C.clay),
           L('语雀', 'https://www.yuque.com/', '云端知识库', 'yuque.com', C.tea),
           L('flomo', 'https://flomoapp.com/', '卡片笔记', 'flomoapp.com', C.moss),
+          L('wolai', 'https://www.wolai.com/', '云端笔记', 'wolai.com', C.olive),
+          L('Markdown Nice', 'https://editor.mdnice.com/', '公众号排版', 'editor.mdnice.com', C.rust),
           L('GitHub', 'https://github.com/', '源码与协作', 'github.com', C.ink),
           L('Gitee', 'https://gitee.com/', '国内代码托管', 'gitee.com', C.rust),
           L('Git', 'https://git-scm.com/', '版本控制', 'git-scm.com', C.slate),
           L('Vercel', 'https://vercel.com/', '站点发布', 'vercel.com', C.slate),
           L('Hexo', 'https://hexo.io/zh-cn/', '静态博客', 'hexo.io', C.olive),
           L('docsify', 'https://docsify.js.org/', '文档站点', 'docsify.js.org', C.plum),
+          L('MkDocs', 'https://www.mkdocs.org/', 'Markdown 文档站', 'mkdocs.org', C.tea),
           L('Regery', 'https://regery.com/en/signup?returnUrl=%2Fcontrol', '域名与证书', 'regery.com', C.moss),
           L('Creative Commons', 'https://creativecommons.org/licenses/', '知识共享许可', 'creativecommons.org', C.tea)
         ]
@@ -208,9 +239,13 @@ export const FRIEND_LINK_SECTIONS = [
         title: '翻译',
         items: [
           L('DeepL', 'https://www.deepl.com/translator', '尽量保住句子的意思', 'deepl.com', C.olive),
+          L('Google 翻译', 'https://translate.google.com/', '多语种', 'translate.google.com', C.ink),
           L('有道翻译', 'https://fanyi.youdao.com/', '多语种在线翻译', 'fanyi.youdao.com', C.clay),
           L('彩云小译', 'https://fanyi.caiyunapp.com/', '对照阅读', 'fanyi.caiyunapp.com', C.plum),
           L('必应翻译', 'https://www.bing.com/translator', '网页与句子', 'bing.com', C.slate),
+          L('腾讯翻译', 'https://fanyi.qq.com/', '句子与文档', 'fanyi.qq.com', C.olive),
+          L('搜狗翻译', 'https://fanyi.sogou.com/', '多语种', 'fanyi.sogou.com', C.tea),
+          L('火山翻译', 'https://translate.volcengine.cn/translate', '字节跳动', 'translate.volcengine.cn', C.moss),
           L('CNKI翻译助手', 'https://dict.cnki.net/', '学术用语', 'dict.cnki.net', C.tea),
           L('百度翻译', 'https://fanyi.baidu.com/', '多语种', 'fanyi.baidu.com', C.olive)
         ]
@@ -223,7 +258,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('diagrams.net', 'https://app.diagrams.net/', '流程图与结构图', 'app.diagrams.net', C.ink),
           L('123apps', 'https://123apps.com/cn/', '音视频与 PDF', '123apps.com', C.clay),
           L('TinyPNG', 'https://tinypng.com/', '压缩图片', 'tinypng.com', C.olive),
-          L('remove.bg', 'https://www.remove.bg/', '掠图', 'remove.bg', C.plum),
+          L('remove.bg', 'https://www.remove.bg/', '抠图', 'remove.bg', C.plum),
           L('草料二维码', 'https://cli.im/', '生成二维码', 'cli.im', C.tea),
           L('uTools', 'https://u.tools/', '本地工具箱', 'u.tools', C.moss),
           L('中国色', 'http://zhongguose.com/', '传统色', 'zhongguose.com', C.rust),
@@ -240,9 +275,12 @@ export const FRIEND_LINK_SECTIONS = [
           L('iconfont', 'https://www.iconfont.cn/', '矢量图标', 'iconfont.cn', C.clay),
           L('Unsplash', 'https://unsplash.com/', '免费摄影', 'unsplash.com', C.ink),
           L('Pexels', 'https://www.pexels.com/zh-cn/', '免费图库', 'pexels.com', C.olive),
+          L('Pixabay', 'https://pixabay.com/zh/', '图片与视频', 'pixabay.com', C.tea),
           L('Canva', 'https://www.canva.cn/', '在线设计', 'canva.cn', C.plum),
           L('undraw', 'https://undraw.co/illustrations', '插画', 'undraw.co', C.tea),
-          L('Coolors', 'https://coolors.co/', '配色', 'coolors.co', C.moss)
+          L('Coolors', 'https://coolors.co/', '配色', 'coolors.co', C.moss),
+          L('Mixkit', 'https://mixkit.co/', '免费视频素材', 'mixkit.co', C.slate),
+          L('FreeImages', 'https://www.freeimages.com/cn', '免版税图片', 'freeimages.com', C.olive)
         ]
       },
       {
@@ -251,9 +289,16 @@ export const FRIEND_LINK_SECTIONS = [
         items: [
           L('学信网', 'https://www.chsi.com.cn/', '学历与学籍', 'chsi.com.cn', C.ink),
           L('研招网', 'https://yz.chsi.com.cn/', '硕士研究生招生', 'yz.chsi.com.cn', C.olive),
+          L('中国教育考试网', 'https://www.neea.edu.cn/', '教育部考试中心', 'neea.edu.cn', C.tea),
+          L('学位网', 'https://www.chinadegrees.cn/cn/', '学位认证', 'chinadegrees.cn', C.plum),
+          L('英语四六级', 'https://cet-bm.neea.edu.cn/', 'CET 报名', 'cet-bm.neea.edu.cn', C.clay),
+          L('计算机等级考试', 'https://ncre.neea.edu.cn/', 'NCRE', 'ncre.neea.edu.cn', C.moss),
+          L('中国人事考试网', 'https://www.cpta.com.cn/', '专业资格考试', 'cpta.com.cn', C.slate),
           L('国家公派留学', 'https://www.csc.edu.cn/', '国家留学基金委', 'csc.edu.cn', C.plum),
           L('中小学教师资格', 'https://ntce.neea.edu.cn/', '教资考试', 'ntce.neea.edu.cn', C.tea),
           L('国家公务员局', 'https://www.scs.gov.cn/', '公务员考试', 'scs.gov.cn', C.slate),
+          L('软科', 'https://www.shanghairanking.cn/', '大学排名', 'shanghairanking.cn', C.olive),
+          L('考研论坛', 'https://bbs.kaoyan.com/', '考研交流', 'bbs.kaoyan.com', C.ink),
           L('应届生求职', 'https://www.yingjiesheng.com/', '校园招聘', 'yingjiesheng.com', C.clay),
           L('BOSS直聘', 'https://www.zhipin.com/', '招聘', 'zhipin.com', C.moss),
           L('智联招聘', 'https://www.zhaopin.com/', '招聘', 'zhaopin.com', C.olive)
@@ -273,19 +318,24 @@ export const FRIEND_LINK_SECTIONS = [
         items: [
           L('DAC导航', 'https://dacdh.top/', '校园导航原站', 'dacdh.top', C.clay),
           L('Dac AI助手导航', 'https://ai.dacdh.top/', 'DAC 的 AI 入口', 'ai.dacdh.top', C.plum),
-          L('高校课程资源', 'https://github.com/nwuzmedoutlook/university', '课程资料整理', 'github.com', C.ink)
+          L('高校课程资源', 'https://github.com/nwuzmedoutlook/university', '课程资料整理', 'github.com', C.ink),
+          L('飞跃手册', 'https://github.com/nwuzmedoutlook/career-plan', '留学、保研、考研与就业', 'github.com', C.olive)
         ]
       }
     ]
   }
 ]
 
+const countItems = group => (group.items || []).length
+
 export const getFriendLinkToc = (sections = FRIEND_LINK_SECTIONS) =>
   sections.map(section => ({
     id: section.id,
     title: section.tocTitle || section.title,
+    count: (section.groups || []).reduce((n, group) => n + countItems(group), 0),
     groups: (section.groups || []).map(group => ({
       id: group.id,
-      title: group.tocTitle || group.title
+      title: group.tocTitle || group.title,
+      count: countItems(group)
     }))
   }))
