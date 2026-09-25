@@ -58,7 +58,7 @@ const CONFIG = {
   FOOTER_SLOGAN_3: '让我们的存在与世界同在',
   FOOTER_MOTTO: '做 你 · 认 为 · 正 确 · 的 事',
   FOOTER_FAVICON:
-    'https://raw.githubusercontent.com/bgrj/bgrj-images/refs/heads/main/faction2.ico',
+    'https://cdn.jsdelivr.net/gh/bgrj/bgrj-images@main/faction2.ico',
   FOOTER_COPYRIGHT: '© 2026-2028 ourbeings.com',
   FOOTER_ABOUT_URL: 'https://ourbeings.com/philosophy/2026/04/01/about',
   FOOTER_COPYRIGHT_URL: 'https://ourbeings.com/copyright',
