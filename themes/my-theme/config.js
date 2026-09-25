@@ -62,7 +62,7 @@ const CONFIG = {
   FOOTER_COPYRIGHT: '© 2026-2028 ourbeings.com',
   FOOTER_ABOUT_URL: 'https://ourbeings.com/philosophy/2026/04/01/about',
   FOOTER_COPYRIGHT_URL: 'https://ourbeings.com/copyright',
-  FOOTER_LINKS_URL: 'https://ourbeings.com/',
+  FOOTER_LINKS_URL: '/links',
   FOOTER_EMAIL: 'hsz@ourbeings.com',
   FOOTER_WECHAT_ALBUM:
     'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzk0MDQ5NTg3Nw==&action=getalbum&album_id=3925629808377479169#wechat_redirect',
