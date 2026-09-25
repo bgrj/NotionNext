@@ -45,6 +45,13 @@ const AlgoliaSearchModal = dynamic(
 const ThemeGlobalHexo = createContext()
 export const useHexoGlobal = () => useContext(ThemeGlobalHexo)
 
+const isFriendLinksPath = asPath => {
+  const path = String(asPath || '')
+    .split('?')[0]
+    .replace(/\/$/, '')
+  return path === '/links' || path === '/link'
+}
+
 /**
  * 基础布局 采用左右两侧布局，移动端使用顶部导航栏
  * @param props
@@ -57,6 +64,7 @@ const LayoutBase = props => {
   const router = useRouter()
   const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
   const isArticleSlugPage = router.pathname === '/[prefix]/[slug]'
+  const isFriendLinksPage = isFriendLinksPath(router.asPath)
   const hexoArticleRouteLoading = siteConfig(
     'HEXO_ARTICLE_ROUTE_LOADING',
     true,
@@ -64,6 +72,7 @@ const LayoutBase = props => {
   )
   const showArticleSwitchPlaceholder =
     hexoArticleRouteLoading && isArticleSlugPage && onLoading
+  const wideMain = fullWidth || isFriendLinksPage
 
   const headerSlot = post ? (
     <PostHero {...props} />
@@ -78,7 +87,7 @@ const LayoutBase = props => {
   // 悬浮按钮内容
   const floatSlot = (
     <>
-      {post?.toc?.length > 1 && (
+      {post?.toc?.length > 1 && !isFriendLinksPage && (
         <div className='block lg:hidden'>
           <TocDrawerButton
             onClick={() => {
@@ -122,7 +131,7 @@ const LayoutBase = props => {
         {/* 主区块 */}
         <main
           id='wrapper'
-          className={`${post ? 'pt-6 md:pt-8' : siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? 'pt-0' : 'pt-16'} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 lg:px-24 pb-14 md:pb-16 min-h-screen relative`}>
+          className={`${post ? 'pt-6 md:pt-8' : siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? 'pt-0' : 'pt-16'} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${isFriendLinksPage ? 'lg:px-10' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
           <div
             id='container-inner'
             className={
@@ -132,7 +141,7 @@ const LayoutBase = props => {
               ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
             }>
             <div
-              className={`${className || ''} w-full ${fullWidth ? '' : 'max-w-4xl'} h-full overflow-x-hidden`}>
+              className={`${className || ''} w-full ${wideMain ? '' : 'max-w-4xl'} h-full ${isFriendLinksPage ? '' : 'overflow-x-hidden'}`}>
               {showArticleSwitchPlaceholder ? (
                 <ArticleSwitchPlaceholder />
               ) : (
@@ -154,14 +163,16 @@ const LayoutBase = props => {
               )}
             </div>
 
-            {/* 右侧栏 */}
-            <SideRight {...props} />
+            {/* 右侧栏：友链页让位给左侧目录 */}
+            {!isFriendLinksPage && <SideRight {...props} />}
           </div>
         </main>
 
-        <div className='block lg:hidden'>
-          <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
-        </div>
+        {!isFriendLinksPage && (
+          <div className='block lg:hidden'>
+            <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
+          </div>
+        )}
 
         {/* 悬浮菜单 */}
         <RightFloatArea floatSlot={floatSlot} />
@@ -308,12 +319,14 @@ const LayoutSlug = props => {
         {lock && <ArticleLock validPassword={validPassword} />}
 
         {!lock && post && (
-          <div className='overflow-x-auto flex-grow mx-auto md:w-full md:px-5 '>
+          <div
+            className={`${isFriendLinksPage ? '' : 'overflow-x-auto '}flex-grow mx-auto md:w-full md:px-5`}>
             <article
               id='article-wrapper'
-              className='subpixel-antialiased overflow-y-hidden'>
+              className={`subpixel-antialiased${isFriendLinksPage ? '' : ' overflow-y-hidden'}`}>
               {/* Notion文章主体 */}
-              <section className='px-5 justify-center mx-auto max-w-2xl lg:max-w-full'>
+              <section
+                className={`px-5 justify-center mx-auto ${isFriendLinksPage ? 'w-full max-w-6xl' : 'max-w-2xl lg:max-w-full'}`}>
                 {isFriendLinksPage ? (
                   <FriendLinks />
                 ) : (
