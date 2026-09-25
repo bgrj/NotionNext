@@ -107,14 +107,28 @@ const FriendLinks = () => {
           --ob-ink: #38302A;
           --ob-muted: #8F7E6A;
           --ob-line: rgba(56, 48, 42, 0.10);
+          --ob-card: #fff;
           color: var(--ob-ink);
-          padding: 0.25rem 0 1.5rem;
+          width: 100%;
+          padding: 0.15rem 0 2rem;
         }
         .dark .ob-fl {
           --ob-ink: #F3EEE6;
           --ob-muted: #B5A898;
           --ob-line: rgba(243, 238, 230, 0.12);
+          --ob-card: #1c1a17;
         }
+        .ob-fl-shell {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          grid-template-areas:
+            'hero'
+            'toc'
+            'main';
+        }
+        .ob-fl-hero { grid-area: hero; }
+        .ob-fl-toc { grid-area: toc; }
+        .ob-fl-main { grid-area: main; min-width: 0; }
         .ob-fl-kicker {
           font-size: 12px;
           letter-spacing: 0.22em;
@@ -129,26 +143,20 @@ const FriendLinks = () => {
           line-height: 1.3;
         }
         .ob-fl-lead {
-          margin: 0 0 1.25rem;
+          margin: 0 0 0.35rem;
           color: var(--ob-muted);
-          max-width: 36em;
-        }
-        .ob-fl-shell {
-          display: block;
+          max-width: 42em;
         }
         .ob-fl-toc {
           position: sticky;
-          top: 3.35rem;
+          top: 4.25rem;
           z-index: 16;
-          margin: 0 0 1.25rem;
+          margin: 1rem 0 1.15rem;
           padding: 0.35rem 0.6rem 0.55rem;
-          background: color-mix(in srgb, var(--ob-card, #fff) 88%, transparent);
+          background: color-mix(in srgb, var(--ob-card) 88%, transparent);
           backdrop-filter: blur(8px);
           border: 1px solid var(--ob-line);
           border-radius: 10px;
-        }
-        .dark .ob-fl-toc {
-          background: color-mix(in srgb, #1c1a17 88%, transparent);
         }
         .ob-fl-toc-toggle {
           width: 100%;
@@ -184,7 +192,7 @@ const FriendLinks = () => {
         }
         .ob-fl-toc a {
           display: block;
-          padding: 6px 0 6px 10px;
+          padding: 7px 0 7px 10px;
           color: var(--ob-muted);
           border-left: 1px solid var(--ob-line);
           font-size: 13px;
@@ -192,7 +200,7 @@ const FriendLinks = () => {
           line-height: 1.35;
         }
         .ob-fl-toc a.lv2 {
-          padding-left: 1.2rem;
+          padding-left: 1.25rem;
           font-size: 12px;
         }
         .ob-fl-toc a.is-active {
@@ -200,11 +208,11 @@ const FriendLinks = () => {
           border-left-color: var(--ob-gold);
         }
         .ob-fl-section {
-          margin-top: 1.75rem;
+          margin-top: 1.85rem;
           scroll-margin-top: 8rem;
         }
         .ob-fl-section:first-child {
-          margin-top: 0;
+          margin-top: 1.15rem;
         }
         .ob-fl-section-title {
           font-size: 1.05rem;
@@ -230,7 +238,7 @@ const FriendLinks = () => {
         }
         .ob-fl-grid {
           display: grid;
-          grid-template-columns: 1fr;
+          grid-template-columns: minmax(0, 1fr);
           gap: 12px;
         }
         .ob-fl-card {
@@ -238,14 +246,12 @@ const FriendLinks = () => {
           align-items: center;
           gap: 14px;
           min-height: 72px;
+          min-width: 0;
           padding: 12px 14px;
           border: 1px solid var(--ob-line);
           border-radius: 10px;
-          background: rgba(255,255,255,0.72);
+          background: color-mix(in srgb, var(--ob-card) 72%, transparent);
           transition: border-color 0.2s ease, transform 0.2s ease;
-        }
-        .dark .ob-fl-card {
-          background: rgba(28, 26, 23, 0.72);
         }
         .ob-fl-card:hover,
         .ob-fl-card:focus-visible {
@@ -296,35 +302,43 @@ const FriendLinks = () => {
           overflow: hidden;
           text-overflow: ellipsis;
         }
-        @media (min-width: 720px) {
+        @media (min-width: 640px) {
           .ob-fl-grid {
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
             gap: 14px;
           }
           .ob-fl-title { font-size: 2rem; }
         }
         @media (min-width: 1024px) {
           .ob-fl-shell {
-            display: grid;
-            grid-template-columns: 11.5rem minmax(0, 1fr);
-            column-gap: 2.25rem;
+            grid-template-columns: 15rem minmax(0, 1fr);
+            grid-template-areas:
+              'toc hero'
+              'toc main';
+            column-gap: 2.5rem;
             align-items: start;
+          }
+          .ob-fl-hero {
+            padding-top: 0.15rem;
           }
           .ob-fl-toc {
             top: 5.25rem;
             margin: 0;
-            padding: 0.15rem 0 0;
+            padding: 0.2rem 1.15rem 2.5rem 0;
             background: transparent;
             border: 0;
+            border-right: 1px solid var(--ob-line);
             border-radius: 0;
             backdrop-filter: none;
+            max-height: calc(100vh - 6rem);
+            overflow: auto;
           }
           .ob-fl-toc-toggle {
             display: none;
           }
           .ob-fl-toc-kicker {
             display: block;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
           }
           .ob-fl-toc-nav,
           .ob-fl-toc-nav.is-open {
@@ -337,21 +351,37 @@ const FriendLinks = () => {
           .ob-fl-group {
             scroll-margin-top: 5.5rem;
           }
+          .ob-fl-section:first-child {
+            margin-top: 0.35rem;
+          }
+        }
+        @media (min-width: 1280px) {
+          .ob-fl-shell {
+            grid-template-columns: 16rem minmax(0, 1fr);
+          }
+          .ob-fl-grid {
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+          }
+        }
+        @media (min-width: 1536px) {
+          .ob-fl-grid {
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+          }
         }
         @media (prefers-reduced-motion: reduce) {
           .ob-fl-card { transition: none; }
         }
       `}</style>
 
-      <header className='ob-fl-hero'>
-        <div className='ob-fl-kicker'>FRIENDS</div>
-        <h1 className='ob-fl-title'>友情链接</h1>
-        <p className='ob-fl-lead'>
-          彼此看见的站点、声音与影像。不是交换流量，只是把长期打开的入口放在一处。先按平台，再按主题。
-        </p>
-      </header>
-
       <div className='ob-fl-shell'>
+        <header className='ob-fl-hero'>
+          <div className='ob-fl-kicker'>FRIENDS</div>
+          <h1 className='ob-fl-title'>友情链接</h1>
+          <p className='ob-fl-lead'>
+            彼此看见的站点、声音与影像。不是交换流量，只是把长期打开的入口放在一处。先按平台，再按主题。
+          </p>
+        </header>
+
         <aside className='ob-fl-toc' aria-label='目录'>
           <div className='ob-fl-toc-kicker'>目录</div>
           <button
