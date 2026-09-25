@@ -180,7 +180,7 @@ const FriendLinks = () => {
 
       <header>
         <div className='ob-fl-kicker'>FRIENDS</div>
-        <h1 className='ob-fl-title'>友链</h1>
+        <h1 className='ob-fl-title'>友情链接</h1>
         <p className='ob-fl-lead'>
           彼此看见的站点、声音与影像。不是交换流量，只是把长期打开的入口放在一处。
         </p>
