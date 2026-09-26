@@ -1,50 +1,36 @@
 import { siteConfig } from '@/lib/config'
-import { useGlobal } from '@/lib/global'
 import { useEffect, useId, useRef, useState } from 'react'
-import dynamic from 'next/dynamic'
 import CONFIG from '../config'
+import { NOTICE, NOTICE_VERSION } from '../noticeContent'
 
-const NotionPage = dynamic(() => import('@/components/NotionPage'), {
-  ssr: false
-})
-
-const STORAGE_KEY = 'ourbeings.notice.dismissed'
-
-const noticeVersion = notice =>
-  String(notice?.lastEditedDate || notice?.lastEditedDay || notice?.title || '1')
+const STORAGE_KEY = `ourbeings.notice.dismissed.${NOTICE_VERSION}`
 
 /**
- * 首次访问全站弹窗公告。
- * 关闭后写入 localStorage；同一浏览器不再弹出。
- * 公告页在 Notion 更新后（lastEditedDate 变化）会再弹一次。
+ * 首次访问全站弹窗。文案以仓库 noticeContent.js 为准，避免 Notion 缓存把旧稿弹出来。
  */
-const NoticeModal = ({ notice }) => {
-  const { locale } = useGlobal()
+const NoticeModal = () => {
   const titleId = useId()
   const closeRef = useRef(null)
   const [open, setOpen] = useState(false)
-  const version = noticeVersion(notice)
 
   useEffect(() => {
-    if (!notice?.blockMap) return undefined
-
     let dismissed = ''
     try {
       dismissed = window.localStorage.getItem(STORAGE_KEY) || ''
     } catch (error) {
       dismissed = ''
     }
-    if (dismissed === version) return undefined
+    if (dismissed === NOTICE_VERSION) return undefined
 
     const timer = window.setTimeout(() => setOpen(true), 280)
     return () => window.clearTimeout(timer)
-  }, [notice, version])
+  }, [])
 
   const dismiss = () => {
     try {
-      window.localStorage.setItem(STORAGE_KEY, version)
+      window.localStorage.setItem(STORAGE_KEY, NOTICE_VERSION)
     } catch (error) {
-      // 无痕模式等写不进 storage 时，仍关闭本次弹窗
+      // 无痕模式写不进 storage 时，仍关闭本次
     }
     setOpen(false)
   }
@@ -64,11 +50,10 @@ const NoticeModal = ({ notice }) => {
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', onKey)
     }
-  }, [open, version])
+  }, [open])
 
-  if (!open || !notice?.blockMap) return null
+  if (!open) return null
 
-  const title = notice?.title || locale.COMMON.ANNOUNCEMENT
   const primary = siteConfig('HEXO_COLOR_PRIMARY', '#C9A66B', CONFIG)
 
   return (
@@ -87,7 +72,7 @@ const NoticeModal = ({ notice }) => {
         <div className='ob-notice-head'>
           <div id={titleId} className='ob-notice-kicker'>
             <i className='fas fa-bullhorn' aria-hidden='true' />
-            <span>{title}</span>
+            <span>{NOTICE.title}</span>
           </div>
           <button
             ref={closeRef}
@@ -100,7 +85,24 @@ const NoticeModal = ({ notice }) => {
         </div>
 
         <div className='ob-notice-body'>
-          <NotionPage post={notice} className='ob-notice-notion' />
+          <p className='ob-notice-motto'>
+            🫰🏻{NOTICE.motto}🫰🏻
+          </p>
+          <p className='ob-notice-stamp'>{NOTICE.updatedAt}</p>
+          <p className='ob-notice-lead'>{NOTICE.lead}</p>
+          {NOTICE.body.map(paragraph => (
+            <p key={paragraph}>{paragraph}</p>
+          ))}
+          <p>
+            <span className='ob-notice-label'>{NOTICE.recentLabel}</span>
+            {NOTICE.recent.date}，发布《
+            <a href={NOTICE.recent.href}>{NOTICE.recent.title}</a>
+            》
+          </p>
+          <p>
+            <span className='ob-notice-label'>{NOTICE.aboutLabel}</span>
+            <a href={NOTICE.about.href}>{NOTICE.about.title}</a>
+          </p>
         </div>
 
         <div className='ob-notice-foot'>

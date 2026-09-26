@@ -217,8 +217,8 @@ const LayoutBase = props => {
         {/* 页脚 */}
         <Footer title={siteConfig('TITLE')} />
 
-        {/* 首次访问公告弹窗：任意页面只弹一次 */}
-        <NoticeModal notice={props.notice} />
+        {/* 首次访问公告弹窗：任意页面只弹一次；文案在 noticeContent.js */}
+        <NoticeModal />
       </div>
     </ThemeGlobalHexo.Provider>
   )

@@ -459,6 +459,44 @@ const Style = () => {
         line-height: 1.75;
       }
 
+      .ob-notice-motto {
+        margin: 0.4rem 0 0.75rem;
+        text-align: center;
+        font-size: 1.02rem;
+        line-height: 1.7;
+        color: var(--hexo-color-title, #4b5563);
+      }
+
+      .ob-notice-stamp {
+        margin: 0 0 0.9rem;
+        font-size: 13px;
+        letter-spacing: 0.02em;
+        color: var(--hexo-color-text-secondary, #9ca3af);
+      }
+
+      .ob-notice-lead {
+        font-weight: 600;
+      }
+
+      .ob-notice-body p {
+        margin: 0 0 0.75rem;
+      }
+
+      .ob-notice-label {
+        display: block;
+        margin-bottom: 0.15rem;
+        font-size: 12px;
+        letter-spacing: 0.12em;
+        color: var(--hexo-color-text-secondary, #9ca3af);
+      }
+
+      .ob-notice-body a {
+        color: var(--ob-notice-accent, var(--theme-color, #C9A66B));
+        text-decoration: underline;
+        text-underline-offset: 0.18em;
+        word-break: break-word;
+      }
+
       .ob-notice-body #notion-article.ob-notice-notion {
         margin: 0;
         overflow: visible;
