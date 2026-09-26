@@ -5,8 +5,37 @@ import { NOTICE, NOTICE_VERSION } from '../noticeContent'
 
 const STORAGE_KEY = `ourbeings.notice.dismissed.${NOTICE_VERSION}`
 
+const readSeen = () => {
+  try {
+    if (window.localStorage.getItem(STORAGE_KEY) === NOTICE_VERSION) return true
+  } catch (error) {
+    // 无痕模式可能读不了 localStorage
+  }
+  try {
+    if (window.sessionStorage.getItem(STORAGE_KEY) === NOTICE_VERSION) return true
+  } catch (error) {
+    // 无痕模式可能读不了 sessionStorage
+  }
+  return false
+}
+
+const persistSeen = ({ rememberAcrossVisits } = {}) => {
+  try {
+    window.sessionStorage.setItem(STORAGE_KEY, NOTICE_VERSION)
+  } catch (error) {
+    // 本次标签页记不住时，仍继续
+  }
+  if (!rememberAcrossVisits) return
+  try {
+    window.localStorage.setItem(STORAGE_KEY, NOTICE_VERSION)
+  } catch (error) {
+    // 无痕模式写不进 storage 时，仍关闭本次
+  }
+}
+
 /**
  * 首次访问全站弹窗。文案以仓库 noticeContent.js 为准，避免 Notion 缓存把旧稿弹出来。
+ * 同一标签页只弹一次；点弹窗内链接视为进入网站，之后也不再弹。
  */
 const NoticeModal = () => {
   const titleId = useId()
@@ -14,24 +43,24 @@ const NoticeModal = () => {
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
-    let dismissed = ''
-    try {
-      dismissed = window.localStorage.getItem(STORAGE_KEY) || ''
-    } catch (error) {
-      dismissed = ''
-    }
-    if (dismissed === NOTICE_VERSION) return undefined
+    if (readSeen()) return undefined
 
-    const timer = window.setTimeout(() => setOpen(true), 280)
+    const timer = window.setTimeout(() => {
+      persistSeen({ rememberAcrossVisits: false })
+      setOpen(true)
+    }, 280)
     return () => window.clearTimeout(timer)
   }, [])
 
   const dismiss = () => {
-    try {
-      window.localStorage.setItem(STORAGE_KEY, NOTICE_VERSION)
-    } catch (error) {
-      // 无痕模式写不进 storage 时，仍关闭本次
-    }
+    persistSeen({ rememberAcrossVisits: true })
+    setOpen(false)
+  }
+
+  const onNoticeClick = event => {
+    const link = event.target.closest?.('a')
+    if (!link) return
+    persistSeen({ rememberAcrossVisits: true })
     setOpen(false)
   }
 
@@ -84,9 +113,12 @@ const NoticeModal = () => {
           </button>
         </div>
 
-        <div className='ob-notice-body'>
+        <div
+          className='ob-notice-body'
+          onClick={onNoticeClick}
+          onAuxClick={onNoticeClick}>
           <p className='ob-notice-motto'>
-            🫰🏻{NOTICE.motto}🫰🏻
+            🫶{NOTICE.motto}🫶
           </p>
           <p className='ob-notice-stamp'>{NOTICE.updatedAt}</p>
           <p className='ob-notice-lead'>{NOTICE.lead}</p>
