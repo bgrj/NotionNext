@@ -118,7 +118,7 @@ const NoticeModal = () => {
           onClick={onNoticeClick}
           onAuxClick={onNoticeClick}>
           <p className='ob-notice-motto'>
-            🤲🏻{NOTICE.motto}🤲🏻
+            🫰🏻{NOTICE.motto}🫰🏻
           </p>
           <p className='ob-notice-stamp'>{NOTICE.updatedAt}</p>
           <p className='ob-notice-lead'>{NOTICE.lead}</p>
