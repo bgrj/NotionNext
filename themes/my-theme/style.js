@@ -363,6 +363,168 @@ const Style = () => {
         max-width: none;
         overflow: visible;
       }
+
+      /* 公告改为弹窗后，侧栏卡片不再出现 */
+      #theme-my-theme #announcement-wrapper {
+        display: none !important;
+      }
+
+      .ob-notice-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 90;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: max(12px, env(safe-area-inset-top, 0px))
+          max(16px, env(safe-area-inset-right, 0px))
+          max(16px, env(safe-area-inset-bottom, 0px))
+          max(16px, env(safe-area-inset-left, 0px));
+      }
+
+      .ob-notice-backdrop {
+        position: absolute;
+        inset: 0;
+        border: 0;
+        padding: 0;
+        margin: 0;
+        cursor: pointer;
+        background: rgba(20, 16, 12, 0.48);
+        backdrop-filter: blur(4px);
+      }
+
+      .ob-notice-panel {
+        position: relative;
+        z-index: 1;
+        width: min(36rem, 100%);
+        max-height: min(88dvh, 40rem);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+        background: var(--hexo-color-card, #fff);
+        color: var(--hexo-color-text, #374151);
+        border: 1px solid var(--hexo-color-border, #e5e7eb);
+        border-radius: 1rem;
+        box-shadow: 0 24px 64px rgba(28, 22, 16, 0.22);
+      }
+
+      .ob-notice-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 14px 16px 10px;
+        border-bottom: 1px solid var(--hexo-color-border, #e5e7eb);
+      }
+
+      .ob-notice-kicker {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        color: var(--hexo-color-title, #4b5563);
+      }
+
+      .ob-notice-kicker i {
+        color: var(--ob-notice-accent, var(--theme-color, #C9A66B));
+      }
+
+      .ob-notice-x {
+        width: 40px;
+        height: 40px;
+        flex: none;
+        border: 0;
+        border-radius: 999px;
+        background: transparent;
+        color: var(--hexo-color-text-secondary, #9ca3af);
+        cursor: pointer;
+      }
+
+      .ob-notice-x:focus-visible,
+      .ob-notice-enter:focus-visible {
+        outline: 2px solid var(--ob-notice-accent, #C9A66B);
+        outline-offset: 2px;
+      }
+
+      .ob-notice-body {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        padding: 8px 18px 6px;
+        font-size: 16px;
+        line-height: 1.75;
+      }
+
+      .ob-notice-body #notion-article.ob-notice-notion {
+        margin: 0;
+        overflow: visible;
+      }
+
+      .ob-notice-body .notion-page,
+      .ob-notice-body .notion {
+        width: 100% !important;
+        padding: 0 !important;
+        margin: 0 !important;
+      }
+
+      .ob-notice-body h1,
+      .ob-notice-body h2,
+      .ob-notice-body h3 {
+        font-size: 1.05rem !important;
+        margin: 1rem 0 0.4rem !important;
+      }
+
+      .ob-notice-body p,
+      .ob-notice-body li {
+        font-size: 15.5px !important;
+        line-height: 1.75 !important;
+      }
+
+      .ob-notice-foot {
+        flex: none;
+        padding: 10px 16px 14px;
+        border-top: 1px solid var(--hexo-color-border, #e5e7eb);
+        background: var(--hexo-color-card, #fff);
+      }
+
+      .ob-notice-enter {
+        display: block;
+        width: 100%;
+        min-height: 44px;
+        border: 0;
+        border-radius: 999px;
+        cursor: pointer;
+        font-size: 15px;
+        letter-spacing: 0.08em;
+        color: #fff;
+        background: var(--ob-notice-accent, var(--theme-color, #C9A66B));
+      }
+
+      @media (max-width: 640px) {
+        .ob-notice-panel {
+          max-height: min(92dvh, 100%);
+          border-radius: 0.9rem;
+        }
+        .ob-notice-body {
+          padding: 4px 14px 4px;
+          font-size: 15.5px;
+        }
+        .ob-notice-x {
+          width: 44px;
+          height: 44px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .ob-notice-backdrop,
+        .ob-notice-panel {
+          transition: none !important;
+        }
+      }
   `}</style>
   )
 }

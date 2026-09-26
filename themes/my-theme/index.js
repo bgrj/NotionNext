@@ -23,6 +23,7 @@ import Card from '@/themes/hexo/components/Card'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
+import NoticeModal from './components/NoticeModal'
 import Hero from '@/themes/hexo/components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
@@ -196,8 +197,8 @@ const LayoutBase = props => {
               )}
             </div>
 
-            {/* 友情链接页不渲染网站信息 / 最近更新 / 公告 / 正文目录 */}
-            {!friendLinks && <SideRight {...props} />}
+            {/* 友情链接页不渲染网站信息 / 最近更新 / 正文目录；公告改为全站弹窗 */}
+            {!friendLinks && <SideRight {...props} notice={null} />}
           </div>
         </main>
 
@@ -215,6 +216,9 @@ const LayoutBase = props => {
 
         {/* 页脚 */}
         <Footer title={siteConfig('TITLE')} />
+
+        {/* 首次访问公告弹窗：任意页面只弹一次 */}
+        <NoticeModal notice={props.notice} />
       </div>
     </ThemeGlobalHexo.Provider>
   )
