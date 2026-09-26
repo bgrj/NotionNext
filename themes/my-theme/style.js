@@ -460,11 +460,17 @@ const Style = () => {
       }
 
       .ob-notice-motto {
-        margin: 0.4rem 0 0.75rem;
+        margin: 0.3rem 0 0.7rem;
         text-align: center;
-        font-size: 1.02rem;
-        line-height: 1.7;
+        font-size: 0.95rem;
+        line-height: 1.55;
+        letter-spacing: 0.01em;
         color: var(--hexo-color-title, #4b5563);
+      }
+
+      .ob-notice-motto span {
+        display: block;
+        white-space: nowrap;
       }
 
       .ob-notice-stamp {
@@ -550,6 +556,12 @@ const Style = () => {
         .ob-notice-body {
           padding: 4px 14px 4px;
           font-size: 15.5px;
+        }
+        .ob-notice-motto {
+          margin: 0.2rem 0 0.55rem;
+          font-size: 0.84rem;
+          line-height: 1.45;
+          letter-spacing: 0;
         }
         .ob-notice-x {
           width: 44px;

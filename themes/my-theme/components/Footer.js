@@ -420,7 +420,8 @@ const Footer = () => {
         }
         .ob-icp {
           white-space: nowrap;
-          letter-spacing: 0.02em;
+          flex-wrap: nowrap;
+          letter-spacing: 0.01em;
         }
         .ob-motto-row {
           display: flex;
@@ -453,7 +454,12 @@ const Footer = () => {
           letter-spacing: 0.06em;
         }
         @media (max-width: 1023px) {
-          .ob-icp { white-space: normal; max-width: 14em; }
+          .ob-icp {
+            white-space: nowrap;
+            max-width: none;
+            font-size: 12px;
+            letter-spacing: 0;
+          }
         }
         @media (min-width: 1024px) {
           .ob-shell { padding: 3.5rem 3rem 0; }

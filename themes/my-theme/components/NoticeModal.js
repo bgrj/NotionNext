@@ -84,6 +84,7 @@ const NoticeModal = () => {
   if (!open) return null
 
   const primary = siteConfig('HEXO_COLOR_PRIMARY', '#C9A66B', CONFIG)
+  const mottoLines = NOTICE.mottoLines || [NOTICE.motto]
 
   return (
     <div
@@ -118,7 +119,13 @@ const NoticeModal = () => {
           onClick={onNoticeClick}
           onAuxClick={onNoticeClick}>
           <p className='ob-notice-motto'>
-            🫰🏻{NOTICE.motto}🫰🏻
+            {mottoLines.map((line, index) => (
+              <span key={line}>
+                {index === 0 ? '🫰🏻' : ''}
+                {line}
+                {index === mottoLines.length - 1 ? '🫰🏻' : ''}
+              </span>
+            ))}
           </p>
           <p className='ob-notice-stamp'>{NOTICE.updatedAt}</p>
           <p className='ob-notice-lead'>{NOTICE.lead}</p>
@@ -131,6 +138,11 @@ const NoticeModal = () => {
             <a href={NOTICE.recent.href}>{NOTICE.recent.title}</a>
             》
           </p>
+          {NOTICE.album && (
+            <p>
+              <a href={NOTICE.album.href}>{NOTICE.album.title}</a>
+            </p>
+          )}
           <p>
             <span className='ob-notice-label'>{NOTICE.aboutLabel}</span>
             <a href={NOTICE.about.href}>{NOTICE.about.title}</a>
