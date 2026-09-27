@@ -85,7 +85,7 @@ const BLOG = {
 
   // 欢迎语打字效果类型速度
   GREETING_WORDS_TYPE_SPEED:
-    process.env.NEXT_PUBLIC_GREETING_WORDS_TYPE_SPEED || 100,
+    process.env.NEXT_PUBLIC_GREETING_WORDS_TYPE_SPEED || 180,
 
   // 欢迎语打字效果回退速度
   GREETING_WORDS_BACK_SPEED:
