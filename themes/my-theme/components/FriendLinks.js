@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import {
+  FRIEND_LINK_AXES,
   FRIEND_LINK_SECTIONS,
   FRIEND_LINKS_MOTTO,
   getFriendLinkToc
@@ -48,9 +49,18 @@ const CardIcon = ({ item }) => {
   )
 }
 
+const weightClass = item => {
+  if ((item.weight || 0) >= 5) return ' is-core'
+  if ((item.weight || 0) >= 4) return ' is-strong'
+  return ''
+}
+
+const sortedItems = items =>
+  [...(items || [])].sort((a, b) => (b.weight || 0) - (a.weight || 0))
+
 const FriendCard = ({ item }) => (
   <a
-    className='ob-fl-card'
+    className={`ob-fl-card${weightClass(item)}`}
     href={item.url}
     target='_blank'
     rel='noreferrer noopener'
@@ -67,7 +77,7 @@ const FriendCard = ({ item }) => (
 
 const CardGrid = ({ items, sectionId }) => (
   <div className='ob-fl-grid'>
-    {(items || []).map(item => (
+    {sortedItems(items).map(item => (
       <FriendCard key={`${sectionId}-${item.url}`} item={item} />
     ))}
   </div>
@@ -135,9 +145,10 @@ const FriendLinks = () => {
       <style>{`
         .ob-fl {
           --ob-gold: #C9A66B;
-          --ob-ink: #38302A;
-          --ob-muted: #8F7E6A;
-          --ob-line: rgba(56, 48, 42, 0.10);
+          --ob-gold-deep: #8A5A1F;
+          --ob-ink: #2C241C;
+          --ob-muted: #5A4D40;
+          --ob-line: rgba(44, 36, 28, 0.16);
           --ob-card: #fff;
           color: var(--ob-ink);
           width: 100%;
@@ -146,9 +157,10 @@ const FriendLinks = () => {
           padding: 0.15rem 0 2rem;
         }
         .dark .ob-fl {
+          --ob-gold-deep: #E2C48A;
           --ob-ink: #F3EEE6;
-          --ob-muted: #B5A898;
-          --ob-line: rgba(243, 238, 230, 0.12);
+          --ob-muted: #C9B8A4;
+          --ob-line: rgba(243, 238, 230, 0.16);
           --ob-card: #1c1a17;
         }
         .ob-fl-shell {
@@ -178,6 +190,22 @@ const FriendLinks = () => {
           line-height: 1.65;
           letter-spacing: 0.03em;
           max-width: 28em;
+          color: var(--ob-ink);
+        }
+        .ob-fl-axes {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px;
+          margin: 0.9rem 0 0.15rem;
+        }
+        .ob-fl-axis {
+          font-size: 12px;
+          letter-spacing: 0.18em;
+          color: var(--ob-ink);
+          border: 1px solid var(--ob-line);
+          padding: 5px 11px;
+          border-radius: 999px;
+          background: color-mix(in srgb, var(--ob-card) 72%, transparent);
         }
         .ob-fl-toc {
           position: sticky;
@@ -199,6 +227,7 @@ const FriendLinks = () => {
           line-height: 1.7;
           font-weight: 700;
           letter-spacing: 0.02em;
+          color: var(--ob-ink);
         }
         .ob-fl-toc-toggle {
           width: 100%;
@@ -226,10 +255,13 @@ const FriendLinks = () => {
         }
         .ob-fl-toc-kicker {
           display: none;
-          font-size: 11px;
-          letter-spacing: 0.32em;
-          color: var(--ob-gold);
+          font-size: 13px;
+          letter-spacing: 0.28em;
+          color: var(--ob-ink);
           font-weight: 700;
+          width: max-content;
+          padding-bottom: 6px;
+          border-bottom: 2px solid var(--ob-gold-deep);
         }
         .ob-fl-toc-nav {
           display: none;
@@ -267,21 +299,21 @@ const FriendLinks = () => {
           align-items: center;
           padding: 8px 8px 8px 0.85rem;
           font-size: 13px;
-          font-weight: 500;
+          font-weight: 600;
           letter-spacing: 0.08em;
           border-left: 2px solid transparent;
         }
         .ob-fl-toc a.is-active {
-          color: var(--ob-gold);
+          color: var(--ob-gold-deep);
         }
         .ob-fl-toc a.lv2.is-active {
-          border-left-color: var(--ob-gold);
+          border-left-color: var(--ob-gold-deep);
         }
         .ob-fl-toc-count {
           flex-shrink: 0;
           color: var(--ob-muted);
           font-size: 11px;
-          font-weight: 500;
+          font-weight: 600;
           letter-spacing: 0;
           font-variant-numeric: tabular-nums;
         }
@@ -338,9 +370,16 @@ const FriendLinks = () => {
           background: color-mix(in srgb, var(--ob-card) 72%, transparent);
           transition: border-color 0.2s ease, transform 0.2s ease;
         }
+        .ob-fl-card.is-strong {
+          box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ob-gold) 42%, transparent);
+        }
+        .ob-fl-card.is-core {
+          border-left: 3px solid var(--ob-gold-deep);
+          background: color-mix(in srgb, var(--ob-card) 88%, transparent);
+        }
         .ob-fl-card:hover,
         .ob-fl-card:focus-visible {
-          border-color: color-mix(in srgb, var(--ob-gold) 70%, var(--ob-line));
+          border-color: color-mix(in srgb, var(--ob-gold-deep) 70%, var(--ob-line));
           transform: translateY(-1px);
         }
         .ob-fl-icon {
@@ -411,14 +450,16 @@ const FriendLinks = () => {
           .ob-fl-toc {
             top: 5.25rem;
             margin: 0;
-            padding: 0.2rem 1.15rem 2.2rem 0;
-            background: transparent;
-            border: 0;
-            border-right: 1px solid var(--ob-line);
-            border-radius: 0;
-            backdrop-filter: none;
+            padding: 0.85rem 1rem 1.5rem 0.9rem;
+            background: color-mix(in srgb, #F4EDE1 82%, transparent);
+            border: 1px solid var(--ob-line);
+            border-radius: 12px;
+            backdrop-filter: blur(8px);
             max-height: calc(100vh - 6rem);
             overflow: auto;
+          }
+          .dark .ob-fl-toc {
+            background: color-mix(in srgb, #1c1a17 82%, transparent);
           }
           .ob-fl-toc-toggle { display: none; }
           .ob-fl-toc-kicker {
@@ -477,6 +518,11 @@ const FriendLinks = () => {
         <header className='ob-fl-hero'>
           <h1 className='ob-fl-title'>友情链接</h1>
           <blockquote className='ob-fl-motto'>{FRIEND_LINKS_MOTTO}</blockquote>
+          <div className='ob-fl-axes' aria-label='相关轴'>
+            {FRIEND_LINK_AXES.map(axis => (
+              <span className='ob-fl-axis' key={axis.id}>{axis.label}</span>
+            ))}
+          </div>
         </header>
 
         <aside className='ob-fl-toc' aria-label='目录'>
