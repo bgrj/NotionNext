@@ -401,6 +401,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('高校课程资源', 'https://github.com/nwuzmedoutlook/university', '课程资料整理', 'github.com', C.ink, 2, []),
           L('飞跃手册', 'https://github.com/nwuzmedoutlook/career-plan', '留学、保研、考研与就业', 'github.com', C.olive, 2, []),
           L('十年之约', 'https://www.foreverblog.cn/', '独立博客还在写', 'foreverblog.cn', C.tea, 3, ['time', 'info']),
+          L('大佬论坛 'https://www.dalao.net/', '技术交流, 'dalao.net', C.tea, 3, ['time', 'info']),
           L('HelloGitHub', 'https://hellogithub.com/', '发现有趣的开源', 'hellogithub.com', C.ink, 3, ['tech']),
           L('Neal.fun', 'https://neal.fun/', '把技术做成可玩的东西', 'neal.fun', C.plum, 3, ['tech'])
         ]
