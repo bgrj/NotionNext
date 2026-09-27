@@ -56,52 +56,67 @@ function getNodesWithAdsByGoogleClass(node) {
   return adsNodes
 }
 
+const bindAdsenseObservers = () => {
+  // 页面加载完成后加载一次广告
+  const ads = document.querySelectorAll('ins.adsbygoogle')
+  if (window.adsbygoogle && ads.length > 0) {
+    requestAd(Array.from(ads))
+  }
+
+  // 创建一个 MutationObserver 实例，监听页面上新出现的广告单元
+  const observer = new MutationObserver(mutations => {
+    mutations.forEach(mutation => {
+      // 检查每个添加到DOM中的节点
+      mutation.addedNodes.forEach(node => {
+        // 如果节点是adsbygoogle元素，则请求广告
+        if (node.nodeType === Node.ELEMENT_NODE) {
+          const adsNodes = getNodesWithAdsByGoogleClass(node)
+          if (adsNodes.length > 0) {
+            requestAd(adsNodes)
+          }
+        }
+      })
+    })
+  })
+
+  // 配置 MutationObserver 监听特定类型的 DOM 变化
+  const observerConfig = {
+    childList: true, // 观察目标子节点的变化
+    subtree: true // 包括目标节点的所有后代节点
+  }
+
+  // 启动 MutationObserver
+  observer.observe(
+    document.querySelector('#article-wrapper #notion-article') || document.body,
+    observerConfig
+  )
+}
+
 /**
  * 初始化谷歌广告
  * @returns
  */
 export const initGoogleAdsense = ADSENSE_GOOGLE_ID => {
   console.log('Load Adsense')
-  loadExternalResource(
-    `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_GOOGLE_ID}`,
-    'js'
-  ).then(url => {
+  const src = `https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_GOOGLE_ID}`
+  const alreadyInHead = Boolean(
+    document.querySelector(
+      'script[src*="pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"]'
+    )
+  )
+  const start = () => {
     setTimeout(() => {
-      // 页面加载完成后加载一次广告
-      const ads = document.querySelectorAll('ins.adsbygoogle')
-      if (window.adsbygoogle && ads.length > 0) {
-        requestAd(Array.from(ads))
-      }
-
-      // 创建一个 MutationObserver 实例，监听页面上新出现的广告单元
-      const observer = new MutationObserver(mutations => {
-        mutations.forEach(mutation => {
-          // 检查每个添加到DOM中的节点
-          mutation.addedNodes.forEach(node => {
-            // 如果节点是adsbygoogle元素，则请求广告
-            if (node.nodeType === Node.ELEMENT_NODE) {
-              const adsNodes = getNodesWithAdsByGoogleClass(node)
-              if (adsNodes.length > 0) {
-                requestAd(adsNodes)
-              }
-            }
-          })
-        })
-      })
-
-      // 配置 MutationObserver 监听特定类型的 DOM 变化
-      const observerConfig = {
-        childList: true, // 观察目标子节点的变化
-        subtree: true // 包括目标节点的所有后代节点
-      }
-
-      // 启动 MutationObserver
-      observer.observe(
-        document.querySelector('#article-wrapper #notion-article') ||
-          document.body,
-        observerConfig
-      )
+      bindAdsenseObservers()
     }, 100)
+  }
+
+  if (alreadyInHead) {
+    start()
+    return
+  }
+
+  loadExternalResource(src, 'js').then(() => {
+    start()
   })
 }
 
