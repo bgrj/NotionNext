@@ -1,5 +1,6 @@
 import { siteConfig } from '@/lib/config'
 import { useEffect, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import CONFIG from '../config'
 import { FOOTER_FRIEND_LINKS } from '../friendLinks'
 
@@ -77,48 +78,64 @@ const FooterLink = ({
 
 const QrItem = ({ label, icon, src }) => {
   const [open, setOpen] = useState(false)
-  const ref = useRef(null)
+  const closeRef = useRef(null)
 
   useEffect(() => {
-    const onPointerDown = e => {
-      if (ref.current && !ref.current.contains(e.target)) {
-        setOpen(false)
-      }
+    if (!open) return undefined
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    closeRef.current?.focus?.()
+    const onKey = event => {
+      if (event.key === 'Escape') setOpen(false)
     }
-    document.addEventListener('pointerdown', onPointerDown)
-    return () => document.removeEventListener('pointerdown', onPointerDown)
-  }, [])
+    document.addEventListener('keydown', onKey)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      document.removeEventListener('keydown', onKey)
+    }
+  }, [open])
 
   return (
-    <div
-      ref={ref}
-      className='ob-qr relative'
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}>
+    <div className='ob-qr'>
       <button
         type='button'
-        aria-label={label}
+        aria-label={`查看${label}收款码`}
+        aria-haspopup='dialog'
         aria-expanded={open}
-        onClick={e => {
-          e.stopPropagation()
-          setOpen(v => !v)
-        }}
+        onClick={() => setOpen(true)}
         className='ob-link ob-link-btn'>
         {icon}
         <span>{label}</span>
       </button>
-      <div
-        className={
-          (open ? 'visible opacity-100 ' : 'invisible opacity-0 ') +
-          'ob-qr-pop absolute bottom-full z-40 mb-2 transition-all duration-200'
-        }>
-        <div className='rounded-md bg-white p-2 shadow-xl dark:bg-hexo-black-gray'>
-          {open && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={src} alt={label} className='h-36 w-36 object-contain' />
-          )}
-        </div>
-      </div>
+      {open &&
+        createPortal(
+          <div className='ob-qr-overlay' role='presentation'>
+            <button
+              type='button'
+              className='ob-qr-backdrop'
+              aria-label='关闭收款码'
+              onClick={() => setOpen(false)}
+            />
+            <div
+              className='ob-qr-dialog'
+              role='dialog'
+              aria-modal='true'
+              aria-label={`${label}收款码`}>
+              <button
+                ref={closeRef}
+                type='button'
+                className='ob-qr-close'
+                aria-label='关闭'
+                onClick={() => setOpen(false)}>
+                <i className='fas fa-times' aria-hidden='true' />
+              </button>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={src} alt={`${label}收款码`} />
+              <p className='ob-qr-caption'>{label}</p>
+            </div>
+          </div>,
+          document.body
+        )}
     </div>
   )
 }
@@ -339,9 +356,73 @@ const Footer = () => {
           font: inherit;
           text-align: inherit;
         }
-        .ob-qr-pop {
-          left: 50%;
-          transform: translateX(-50%);
+        .ob-qr-overlay {
+          position: fixed;
+          inset: 0;
+          z-index: 95;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: max(16px, env(safe-area-inset-top, 0px))
+            max(16px, env(safe-area-inset-right, 0px))
+            max(16px, env(safe-area-inset-bottom, 0px))
+            max(16px, env(safe-area-inset-left, 0px));
+        }
+        .ob-qr-backdrop {
+          position: absolute;
+          inset: 0;
+          border: 0;
+          padding: 0;
+          margin: 0;
+          cursor: pointer;
+          background: rgba(20, 16, 12, 0.52);
+          backdrop-filter: blur(6px);
+        }
+        .ob-qr-dialog {
+          position: relative;
+          z-index: 1;
+          width: min(86vw, 22rem);
+          max-height: min(88dvh, 40rem);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          overflow: auto;
+          -webkit-overflow-scrolling: touch;
+          overscroll-behavior: contain;
+          padding: 2.5rem 1.15rem 1.25rem;
+          background: #fff;
+          border-radius: 1rem;
+          box-shadow: 0 24px 64px rgba(28, 22, 16, 0.24);
+        }
+        .ob-qr-dialog img {
+          display: block;
+          width: 100%;
+          height: auto;
+          max-height: min(70dvh, 32rem);
+          object-fit: contain;
+          background: #fff;
+        }
+        .ob-qr-caption {
+          margin: 0.85rem 0 0;
+          font-size: 13px;
+          letter-spacing: 0.16em;
+          color: #38302A;
+        }
+        .ob-qr-close {
+          position: absolute;
+          top: 8px;
+          right: 8px;
+          width: 40px;
+          height: 40px;
+          border: 0;
+          border-radius: 999px;
+          background: transparent;
+          color: #8F7E6A;
+          cursor: pointer;
+        }
+        .ob-qr-close:focus-visible {
+          outline: 2px solid #D4A35C;
+          outline-offset: 2px;
         }
         .ob-title {
           font-size: 18px;
@@ -460,6 +541,10 @@ const Footer = () => {
             font-size: 12px;
             letter-spacing: 0;
           }
+          .ob-qr-close {
+            width: 44px;
+            height: 44px;
+          }
         }
         @media (min-width: 1024px) {
           .ob-shell { padding: 3.5rem 3rem 0; }
@@ -505,9 +590,9 @@ const Footer = () => {
           .ob-link:focus-visible {
             transform: translateX(3px);
           }
-          .ob-qr-pop {
-            left: 0;
-            transform: none;
+          .ob-qr-dialog {
+            width: min(24rem, 86vw);
+            padding: 2.75rem 1.5rem 1.5rem;
           }
           .ob-stats { justify-content: flex-start; }
           .ob-motto {
