@@ -89,6 +89,12 @@ const SEO = props => {
     NOTION_CONFIG
   )
 
+  const ADSENSE_GOOGLE_ID = siteConfig(
+    'ADSENSE_GOOGLE_ID',
+    null,
+    NOTION_CONFIG
+  )
+
   const BLOG_FAVICON = siteConfig('BLOG_FAVICON', null, NOTION_CONFIG)
   const pwaEnabled = siteConfig('PWA_ENABLE', false, NOTION_CONFIG)
   const pwaConfig = pwaEnabled
@@ -161,6 +167,21 @@ const SEO = props => {
           name='baidu-site-verification'
           content={SEO_BAIDU_SITE_VERIFICATION}
         />
+      )}
+      {ADSENSE_GOOGLE_ID && (
+        <>
+          <meta name='google-adsense-account' content={ADSENSE_GOOGLE_ID} />
+          <link
+            rel='preconnect'
+            href='https://pagead2.googlesyndication.com'
+            crossOrigin='anonymous'
+          />
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_GOOGLE_ID}`}
+            crossOrigin='anonymous'
+          />
+        </>
       )}
 
       {/* 基础SEO元数据 */}
