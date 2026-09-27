@@ -182,12 +182,8 @@ const NoticeModal = ({ latestPosts } = {}) => {
           onClick={onNoticeClick}
           onAuxClick={onNoticeClick}>
           <p className='ob-notice-motto'>
-            {mottoLines.map((line, index) => (
-              <span key={line}>
-                {index === 0 ? '🫰🏻' : ''}
-                {line}
-                {index === mottoLines.length - 1 ? '🫰🏻' : ''}
-              </span>
+            {mottoLines.map(line => (
+              <span key={line}>{line}</span>
             ))}
           </p>
           <p className='ob-notice-stamp'>{NOTICE.updatedAt}</p>
