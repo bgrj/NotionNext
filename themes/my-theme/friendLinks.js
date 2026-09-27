@@ -104,6 +104,8 @@ export const FRIEND_LINK_SECTIONS = [
           L('Engsence', 'https://engsence.now-then.dev/', '把英语练到能用', 'engsence.now-then.dev', C.moss, 4, ['language']),
           L('Engsence 周报', 'https://engsence.now-then.dev/?category=life&week=032', '真实语境英语阅读与积累', 'engsence.now-then.dev', C.moss, 4, ['language']),
           L('日语语法指南', 'http://res.wokanxing.info/jpgramma/index.html', '从日语本身讲语法', 'res.wokanxing.info', C.plum, 3, ['language'])
+          L('澳洲 WHV 462 签证官网', 'https://immi.homeaffairs.gov.au/visas/getting-a-visa/visa-listing/work-holiday-462/first-work-holiday-462', '澳大利亚打工度假签证（462类别）官方申请入口', 'homeaffairs.gov.au', C.emerald, 5, ['life', 'travel', 'official']),
+          L('Te Ara 新西兰百科全书', 'https://teara.govt.nz/en/search/teara?keys=social+security', '新西兰官方国家百科 - 社会保障与政策专区', 'teara.govt.nz', C.teal, 4, ['academic', 'life', 'official']),
         ]
       },
       {
@@ -226,6 +228,17 @@ export const FRIEND_LINK_SECTIONS = [
           L('SciSpace', 'https://typeset.io/', '读论文的助手', 'typeset.io', C.tea, 3, ['info', 'tech']),
           L('Mendeley', 'https://www.mendeley.com/', '参考文献管理', 'mendeley.com', C.moss, 3, ['info']),
           L('JabRef', 'https://www.jabref.org/', '开源文献管理', 'jabref.org', C.ink, 3, ['info', 'tech'])
+          L('安娜的档案', 'https://annas-archive.gl/', '全球最大的开放电子书与学术文献搜索引擎', 'annas-archive.gl', C.purple, 5, ['book', 'academic', 'search']),
+          L('LibGen', 'https://libgen.la/', '海量学术论文与各类书籍检索与免费下载平台', 'libgen.la', C.rose, 5, ['book', 'academic']),
+          L('PDF Drive', 'https://www.pdfdrive.com/', '免费 PDF 电子书搜索引擎与下载平台', 'pdfdrive.com', C.amber, 5, ['book', 'search']),
+          L('马克思主义文库', 'https://www.marxists.org/', '多语言马克思主义与经典哲学社科文献库', 'marxists.org', C.rust, 5, ['thought', 'academic']),
+          L('无产者图书馆', 'https://library.proletarian.me/ebook_map.php', '电子书地图与数字人文社科文献汇总', 'proletarian.me', C.rust, 4, ['book', 'thought']),
+          L('苦瓜书房', 'https://kgbook.com/', '适合电子阅读器的 EPUB/MOBI 格式电子书下载', 'kgbook.com', C.moss, 4, ['book', 'reading']),
+          L('板书匠', 'http://banshujiang.cn/', '专注于计算机与 IT 技术类电子书分享', 'banshujiang.cn', C.ink, 4, ['tech', 'book']),
+          L('经管之家资料下载', 'https://down.pinggu.org/', '原人大经济论坛，经济/管理/金融类学术资料库', 'pinggu.org', C.amber, 4, ['academic', 'finance']),
+          L('Sci-Hub 中文讨论社区', 'https://discuss.sci-hub.org.cn/d/2579', '学术文献获取与 Sci-Hub 镜像交流论坛', 'sci-hub.org.cn', C.teal, 4, ['academic', 'community']),
+          L('1762 网社科图书馆', 'http://www.1762.net/lit/tsg/', '汉译世界学术名著与人文社科电子书库', '1762.net', C.slate, 3, ['book', 'classic']),
+          L('墨比图书', 'https://www.mobitushu.cn/', 'Kindle 与电子书资源免费下载分享', 'mobitushu.cn', C.slate, 3, ['book', 'reading']),
         ]
       },
       {
@@ -373,6 +386,8 @@ export const FRIEND_LINK_SECTIONS = [
         items: [
           L('Soxo', 'https://w1.soxo.top/auth/register?code=nLf5', '网络访问服务', 'w1.soxo.top', C.plum, 2, []),
           L('iosapp', 'https://free.iosapp.icu/', '共享 Apple ID / 小火箭', 'free.iosapp.icu', C.rust, 2, [])
+          L('代理服务面板 A', 'https://xn--9kqz23b19z.com/#/login', '网络代理与订阅管理登录节点', 'xn--9kqz23b19z.com', C.indigo, 3, ['network', 'tool']),
+          L('代理服务面板 B', 'https://fffa.cc/#/login', '网络代理与订阅管理登录节点', 'fffa.cc', C.indigo, 3, ['network', 'tool']),
         ]
       },
       {
@@ -380,6 +395,8 @@ export const FRIEND_LINK_SECTIONS = [
         title: '综合入口',
         items: [
           L('DAC导航', 'https://dacdh.top/', '校园导航原站', 'dacdh.top', C.clay, 3, ['info']),
+          L('TBox 宝盒', 'https://www.tboxn.com/', '实用宝藏软件与精选优质网站导航平台', 'tboxn.com', C.teal, 4, ['tool', 'navigation']),
+          L('百科在线', 'https://h.bkzx.cn/', '电子书资源与综合资讯导航平台', 'bkzx.cn', C.sky, 3, ['tool', 'book']),
           L('Dac AI助手导航', 'https://ai.dacdh.top/', 'DAC 的 AI 入口', 'ai.dacdh.top', C.plum, 2, []),
           L('高校课程资源', 'https://github.com/nwuzmedoutlook/university', '课程资料整理', 'github.com', C.ink, 2, []),
           L('飞跃手册', 'https://github.com/nwuzmedoutlook/career-plan', '留学、保研、考研与就业', 'github.com', C.olive, 2, []),
