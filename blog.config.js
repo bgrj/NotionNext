@@ -89,7 +89,7 @@ const BLOG = {
 
   // 欢迎语打字效果回退速度
   GREETING_WORDS_BACK_SPEED:
-    process.env.NEXT_PUBLIC_GREETING_WORDS_BACK_SPEED || 150,
+    process.env.NEXT_PUBLIC_GREETING_WORDS_BACK_SPEED || 155,
 
   // uuid重定向至 slug
   UUID_REDIRECT: process.env.UUID_REDIRECT || true,
