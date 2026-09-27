@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import {
-  FRIEND_LINK_AXES,
   FRIEND_LINK_SECTIONS,
   FRIEND_LINKS_MOTTO,
   getFriendLinkToc
@@ -518,11 +517,7 @@ const FriendLinks = () => {
         <header className='ob-fl-hero'>
           <h1 className='ob-fl-title'>友情链接</h1>
           <blockquote className='ob-fl-motto'>{FRIEND_LINKS_MOTTO}</blockquote>
-          <div className='ob-fl-axes' aria-label='相关轴'>
-            {FRIEND_LINK_AXES.map(axis => (
-              <span className='ob-fl-axis' key={axis.id}>{axis.label}</span>
-            ))}
-          </div>
+  
         </header>
 
         <aside className='ob-fl-toc' aria-label='目录'>
