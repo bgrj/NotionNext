@@ -1,6 +1,7 @@
 /**
  * 首次访问弹窗文案。
- * 与 Notion「公告」页同步；改这里并推送后，访客立刻看到新稿。
+ * 定位、箴言、关于页链接写在这里。
+ * 「最近」一篇由 NoticeModal 按站点已发布 Post 自动取最新，不需每次发文再改仓库。
  */
 export const NOTICE_VERSION = '2026-09-26-21'
 
@@ -16,9 +17,9 @@ export const NOTICE = {
   ],
   recentLabel: '最近',
   recent: {
-    date: '2026年9月26日',
-    title: '2025.4.30 周三',
-    href: 'https://ourbeings.com/philosophy/2025/04/30/r35'
+    date: '2026年9月27日',
+    title: '把一本英文小说拆成学习资料以后：怎样读，什么才能卖',
+    href: 'https://ourbeings.com/philosophy/2026/09/27/diy2'
   },
   album: {
     title: '微信公众号合集',
@@ -30,3 +31,5 @@ export const NOTICE = {
     href: 'https://ourbeings.com/philosophy/2026/04/01/about'
   }
 }
+
+export const NOTICE_RECENT_EXCLUDE_SLUGS = ['about']
