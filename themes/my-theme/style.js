@@ -371,19 +371,43 @@ const Style = () => {
 
       .ob-notice-modal {
         position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
         inset: 0;
-        z-index: 90;
+        z-index: 2147483000;
         display: flex;
         align-items: center;
         justify-content: center;
+        padding: 12px 16px;
         padding: max(12px, env(safe-area-inset-top, 0px))
           max(16px, env(safe-area-inset-right, 0px))
           max(16px, env(safe-area-inset-bottom, 0px))
           max(16px, env(safe-area-inset-left, 0px));
+        --hexo-color-card: ${surface};
+        --hexo-color-text: ${text};
+        --hexo-color-title: ${title};
+        --hexo-color-border: ${border};
+        --hexo-color-text-secondary: ${textSecondary};
+        --theme-color: ${primary};
+      }
+
+      .dark .ob-notice-modal {
+        --hexo-color-card: ${surfaceDark};
+        --hexo-color-text: ${textDark};
+        --hexo-color-title: ${titleDark};
+        --hexo-color-border: ${borderDark};
+        --hexo-color-text-secondary: ${textSecondaryDark};
+        --theme-color: ${primaryDark};
       }
 
       .ob-notice-backdrop {
         position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
         inset: 0;
         border: 0;
         padding: 0;
@@ -397,6 +421,7 @@ const Style = () => {
         position: relative;
         z-index: 1;
         width: min(36rem, 100%);
+        max-height: 88vh;
         max-height: min(88dvh, 40rem);
         display: flex;
         flex-direction: column;
@@ -550,6 +575,7 @@ const Style = () => {
 
       @media (max-width: 640px) {
         .ob-notice-panel {
+          max-height: 92vh;
           max-height: min(92dvh, 100%);
           border-radius: 0.9rem;
         }

@@ -1,5 +1,6 @@
 import { siteConfig } from '@/lib/config'
 import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import CONFIG from '../config'
 import {
   NOTICE,
@@ -11,29 +12,17 @@ const STORAGE_KEY = `ourbeings.notice.dismissed.${NOTICE_VERSION}`
 
 const readSeen = () => {
   try {
-    if (window.localStorage.getItem(STORAGE_KEY) === NOTICE_VERSION) return true
+    return window.localStorage.getItem(STORAGE_KEY) === NOTICE_VERSION
   } catch (error) {
-    // 无痕模式可能读不了 localStorage
+    return false
   }
-  try {
-    if (window.sessionStorage.getItem(STORAGE_KEY) === NOTICE_VERSION) return true
-  } catch (error) {
-    // 无痕模式可能读不了 sessionStorage
-  }
-  return false
 }
 
-const persistSeen = ({ rememberAcrossVisits } = {}) => {
-  try {
-    window.sessionStorage.setItem(STORAGE_KEY, NOTICE_VERSION)
-  } catch (error) {
-    // 本次标签页记不住时，仍继续
-  }
-  if (!rememberAcrossVisits) return
+const persistSeen = () => {
   try {
     window.localStorage.setItem(STORAGE_KEY, NOTICE_VERSION)
   } catch (error) {
-    // 无痕模式写不进 storage 时，仍关闭本次
+    // 无痕 / 微信写不进 storage 时，仍关闭本次
   }
 }
 
@@ -46,10 +35,10 @@ const postTime = post => {
 }
 
 const formatZhDate = post => {
-  const time = postTime(post) || (typeof post?.publishDate === 'number' ? post.publishDate : 0)
-  const stamp = time || (post?.publishDate ? new Date(post.publishDate).getTime() : 0)
-  const usable = stamp || postTime({ lastEditedDate: post?.publishDate })
-  const date = usable ? new Date(usable) : null
+  const stamp =
+    (typeof post?.publishDate === 'number' ? post.publishDate : 0) ||
+    postTime(post)
+  const date = stamp ? new Date(stamp) : null
   if (date && !Number.isNaN(date.getTime())) {
     const parts = Object.fromEntries(
       new Intl.DateTimeFormat('zh-CN', {
@@ -89,33 +78,30 @@ export const pickLatestPublishedPost = latestPosts => {
 }
 
 /**
- * 首次访问全站弹窗。定位文案以仓库为准；最近一篇跟站点已发布 Post 走。
- * 同一标签页只弹一次；点弹窗内链接视为进入网站，之后也不再弹。
+ * 任意页面首次进入弹出。只在关闭 / 点弹窗内链接后记住，避免微信二次加载把「看过」写进去。
  */
 const NoticeModal = ({ latestPosts } = {}) => {
   const titleId = useId()
   const closeRef = useRef(null)
+  const [mounted, setMounted] = useState(false)
   const [open, setOpen] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
     if (readSeen()) return undefined
-
-    const timer = window.setTimeout(() => {
-      persistSeen({ rememberAcrossVisits: false })
-      setOpen(true)
-    }, 280)
-    return () => window.clearTimeout(timer)
+    setOpen(true)
+    return undefined
   }, [])
 
   const dismiss = () => {
-    persistSeen({ rememberAcrossVisits: true })
+    persistSeen()
     setOpen(false)
   }
 
   const onNoticeClick = event => {
     const link = event.target.closest?.('a')
     if (!link) return
-    persistSeen({ rememberAcrossVisits: true })
+    persistSeen()
     setOpen(false)
   }
 
@@ -129,14 +115,17 @@ const NoticeModal = ({ latestPosts } = {}) => {
     const onKey = event => {
       if (event.key === 'Escape') dismiss()
     }
+    const onLeave = () => persistSeen()
     document.addEventListener('keydown', onKey)
+    window.addEventListener('pagehide', onLeave)
     return () => {
       document.body.style.overflow = previousOverflow
       document.removeEventListener('keydown', onKey)
+      window.removeEventListener('pagehide', onLeave)
     }
   }, [open])
 
-  if (!open) return null
+  if (!mounted || !open) return null
 
   const primary = siteConfig('HEXO_COLOR_PRIMARY', '#C9A66B', CONFIG)
   const mottoLines = NOTICE.mottoLines || [NOTICE.motto]
@@ -149,8 +138,9 @@ const NoticeModal = ({ latestPosts } = {}) => {
       }
     : NOTICE.recent
 
-  return (
+  const node = (
     <div
+      id='ob-notice-modal'
       className='ob-notice-modal'
       role='dialog'
       aria-modal='true'
@@ -218,6 +208,9 @@ const NoticeModal = ({ latestPosts } = {}) => {
       </div>
     </div>
   )
+
+  if (typeof document === 'undefined' || !document.body) return node
+  return createPortal(node, document.body)
 }
 
 export default NoticeModal

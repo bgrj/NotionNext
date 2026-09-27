@@ -3,7 +3,7 @@
  * 定位、箴言、关于页链接写在这里。
  * 「最近」一篇由 NoticeModal 按站点已发布 Post 自动取最新，不需每次发文再改仓库。
  */
-export const NOTICE_VERSION = '2026-09-26-21'
+export const NOTICE_VERSION = '2026-09-27-18'
 
 export const NOTICE = {
   title: '公告',
@@ -19,7 +19,7 @@ export const NOTICE = {
   recent: {
     date: '2026年9月27日',
     title: '把一本英文小说拆成学习资料以后：怎样读，什么才能卖',
-    href: 'https://ourbeings.com/philosophy/2026/09/27/diy2'
+    href: 'https://ourbeings.com/tools/2026/09/27/diy2'
   },
   album: {
     title: '微信公众号合集',
