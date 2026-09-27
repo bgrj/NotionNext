@@ -24,14 +24,6 @@ const C = {
   tea: '#6e5a3c'
 }
 
-export const FRIEND_LINK_AXES = [
-  { id: 'time', label: '时间' },
-  { id: 'space', label: '空间' },
-  { id: 'info', label: '信息' },
-  { id: 'language', label: '语言' },
-  { id: 'tech', label: '技术' }
-]
-
 const L = (name, url, desc, domain, color, weight = 2, axes = []) => ({
   name,
   url,
@@ -110,6 +102,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('Crash Course', 'https://crashcourse.club/', '中文字幕的速成课', 'crashcourse.club', C.olive, 3, ['language', 'info']),
           L('YouZack', 'https://www.youzack.com/', '精听与单词', 'youzack.com', C.tea, 3, ['language']),
           L('Engsence', 'https://engsence.now-then.dev/', '把英语练到能用', 'engsence.now-then.dev', C.moss, 4, ['language']),
+          L('Engsence 周报', 'https://engsence.now-then.dev/?category=life&week=032', '真实语境英语阅读与积累', 'engsence.now-then.dev', C.moss, 4, ['language']),
           L('日语语法指南', 'http://res.wokanxing.info/jpgramma/index.html', '从日语本身讲语法', 'res.wokanxing.info', C.plum, 3, ['language'])
         ]
       },
@@ -129,6 +122,10 @@ export const FRIEND_LINK_SECTIONS = [
         id: 'dao-image',
         title: '影像',
         items: [
+          L('动漫巴士', 'https://dmbus.cc', '动漫资源与在线播放', 'dmbus.cc', C.slate, 3, ['info']),
+          L('小鸭看看', 'https://xiaoyakankan.com/', '影视视频在线播放', 'xiaoyakankan.com', C.olive, 3, ['info']),
+          L('努努影院', 'https://www.nunuyy5.com', '免费高清影视在线观看', 'nunuyy5.com', C.tea, 3, ['info']),
+          L('爱一帆视频', 'https://www.yfsp.tv/', '海外高清影视在线观影', 'yfsp.tv', C.plum, 3, ['info']),
           L('柴静', 'https://www.youtube.com/@chaijing2023', '记录与看见', 'youtube.com', C.ink, 4, ['info', 'space']),
           L('FearNation 世界苦茶', 'https://www.youtube.com/@flipradio_fearnation', '贴近恐惧的肌理', 'youtube.com', C.plum, 4, ['info']),
           L('零下56', 'https://www.youtube.com/@56BelowTV', '华人移民，百味人生', 'youtube.com', C.slate, 3, ['space']),
@@ -146,6 +143,7 @@ export const FRIEND_LINK_SECTIONS = [
         id: 'dao-frontier',
         title: '前沿与交叉',
         items: [
+          L('Sci-Hub 讨论社区', 'https://discuss.sci-hub.org.cn/', '学术文献检索与交流讨论', 'discuss.sci-hub.org.cn', C.ink, 4, ['info', 'tech']),
           L('Quanta Magazine', 'https://www.quantamagazine.org/', '物理、数学与计算的交界', 'quantamagazine.org', C.ink, 5, ['info', 'tech']),
           L('MIT Technology Review', 'https://www.technologyreview.com/', '技术如何改写生活边界', 'technologyreview.com', C.plum, 4, ['tech', 'info']),
           L('Scientific American Mind', 'https://www.scientificamerican.com/mind-and-brain/', '心智与脑的研究', 'scientificamerican.com', C.tea, 4, ['info']),
