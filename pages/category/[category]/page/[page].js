@@ -4,6 +4,7 @@ import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import {
   EXISTENCE_CATEGORY,
+  existenceRevalidateSeconds,
   isExistenceCategory,
   slimExistencePosts
 } from '@/themes/my-theme/existence'
@@ -45,15 +46,25 @@ export async function getStaticProps({ params: { category, page } }) {
 
   props = { ...props, category, page }
 
-  return {
-    props,
-    revalidate: process.env.EXPORT
-      ? undefined
+  const revalidate = process.env.EXPORT
+    ? undefined
+    : isExistenceCategory(category) || category === EXISTENCE_CATEGORY
+      ? existenceRevalidateSeconds(
+          siteConfig(
+            'NEXT_REVALIDATE_SECOND',
+            BLOG.NEXT_REVALIDATE_SECOND,
+            props.NOTION_CONFIG
+          )
+        )
       : siteConfig(
           'NEXT_REVALIDATE_SECOND',
           BLOG.NEXT_REVALIDATE_SECOND,
           props.NOTION_CONFIG
         )
+
+  return {
+    props,
+    revalidate
   }
 }
 

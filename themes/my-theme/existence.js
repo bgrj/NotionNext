@@ -3,6 +3,13 @@ export const EXISTENCE_CATEGORY = '我的存在'
 export const isExistenceCategory = category =>
   String(category || '') === EXISTENCE_CATEGORY
 
+/** Next ISR only accepts a number. Notion/env values often arrive as strings. */
+export const existenceRevalidateSeconds = raw => {
+  const n = Number(raw)
+  if (!Number.isFinite(n) || n <= 0) return 60
+  return Math.min(60, Math.max(30, Math.floor(n)))
+}
+
 export const EXISTENCE_DEFAULTS = {
   birth: '2001-10-19',
   years: 80,
