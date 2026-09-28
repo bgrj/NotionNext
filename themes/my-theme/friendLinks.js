@@ -52,15 +52,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('MBA智库', 'https://www.mbalib.com/', '管理与社会的词条', 'mbalib.com', C.clay, 2, ['info']),
           L('PhilPapers', 'https://philpapers.org/', '哲学论文的总目录', 'philpapers.org', C.plum, 5, ['info']),
           L('AskPhilosophers', 'https://www.askphilosophers.org/', '哲学家当场回答', 'askphilosophers.org', C.tea, 4, ['info']),
-          L('哲学中国网', 'http://www.philosophy.org.cn/', '哲学研究的公共入口', 'philosophy.org.cn', C.ink, 4, ['info']),
-          L('五毛研究', 'https://github.com/zmike1993/hello-world/wiki/五毛研究', '舆论操控如何被识别', 'github.com', C.ink, 5, ['info']),
-          L('专访五毛党', 'https://github.com/zmike1993/hello-world/wiki/专访五毛党', '网络评论员自己怎么说', 'github.com', C.tea, 4, ['info']),
-          L('如何获取信息', 'https://github.com/zmike1993/hello-world/issues/25', '信息被筛选之后怎么自处', 'github.com', C.plum, 5, ['info']),
-          L('获取信息操作指南', 'https://github.com/zmike1993/hello-world/issues/83', '渠道、媒体参与度与判断', 'github.com', C.olive, 4, ['info']),
-          L('如何提升认知能力', 'https://github.com/zmike1993/hello-world/issues/53', '批判性思维与多元渠道', 'github.com', C.clay, 4, ['info']),
-          L('国产教育的内卷', 'https://github.com/zmike1993/hello-world/issues/54', '封闭系统里的孩子与家长', 'github.com', C.moss, 4, ['info']),
-          L('一封初二女生的遗书', 'https://github.com/zmike1993/hello-world/issues/36', '毁掉一个人，只需毁掉童年', 'github.com', C.rust, 4, ['info']),
-          L('一个贪官写给儿子的忠告', 'https://github.com/zmike1993/hello-world/issues/19', '官场生存术作为反面教材', 'github.com', C.slate, 3, ['info'])
+          L('哲学中国网', 'http://www.philosophy.org.cn/', '哲学研究的公共入口', 'philosophy.org.cn', C.ink, 4, ['info'])
         ]
       },
       {
@@ -281,8 +273,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('w3cschool', 'https://www.w3cschool.cn/', '编程狮', 'w3cschool.cn', C.slate, 2, []),
           L('廖雪峰', 'https://www.liaoxuefeng.com/', 'Python / Java / JS', 'liaoxuefeng.com', C.olive, 2, []),
           L('慕课网', 'https://www.imooc.com/', 'IT 职业课程', 'imooc.com', C.slate, 2, []),
-          L('默沙东诊疗手册', 'https://www.msdmanuals.com/zh/', '医学通识', 'msdmanuals.com', C.tea, 2, []),
-          L('高性价比人生指南', 'https://github.com/eternity4719/HowToLiveBetter', '循证的过日子备选单', 'github.com', C.olive, 4, ['info'])
+          L('默沙东诊疗手册', 'https://www.msdmanuals.com/zh/', '医学通识', 'msdmanuals.com', C.tea, 2, [])
         ]
       },
       {
@@ -410,7 +401,7 @@ export const FRIEND_LINK_SECTIONS = [
           L('高校课程资源', 'https://github.com/nwuzmedoutlook/university', '课程资料整理', 'github.com', C.ink, 2, []),
           L('飞跃手册', 'https://github.com/nwuzmedoutlook/career-plan', '留学、保研、考研与就业', 'github.com', C.olive, 2, []),
           L('十年之约', 'https://www.foreverblog.cn/', '独立博客还在写', 'foreverblog.cn', C.tea, 3, ['time', 'info']),
-          L('大佬论坛 'https://www.dalao.net/', '技术交流, 'dalao.net', C.tea, 3, ['time', 'info']),
+          L('大佬论坛', 'https://www.dalao.net/', '技术交流', 'dalao.net', C.tea, 3, ['tech']),
           L('HelloGitHub', 'https://hellogithub.com/', '发现有趣的开源', 'hellogithub.com', C.ink, 3, ['tech']),
           L('Neal.fun', 'https://neal.fun/', '把技术做成可玩的东西', 'neal.fun', C.plum, 3, ['tech'])
         ]
