@@ -32,28 +32,30 @@ const STATE = {
 const colorsOf = dark =>
   dark
     ? {
-        ink: '#F3EEE6',
-        muted: '#C9B8A4',
-        line: 'rgba(243, 238, 230, 0.14)',
-        mengmei: 'rgba(201, 184, 164, 0.28)',
-        awake: 'rgba(201, 166, 107, 0.55)',
-        written: '#E2C48A',
-        future: 'rgba(243, 238, 230, 0.08)',
-        gold: '#C9A66B',
-        goldDeep: '#E2C48A',
-        card: '#1c1a17'
+        ink: '#F6F1E8',
+        muted: '#D2C4B0',
+        line: 'rgba(246, 241, 232, 0.22)',
+        mengmei: 'rgba(210, 196, 176, 0.52)',
+        awake: 'rgba(226, 196, 138, 0.88)',
+        written: '#F0D9A0',
+        future: 'rgba(246, 241, 232, 0.16)',
+        gold: '#E2C48A',
+        goldDeep: '#F0D9A0',
+        card: '#1a1714',
+        labelShadow: 'rgba(0, 0, 0, 0.65)'
       }
     : {
         ink: '#2C241C',
         muted: '#5A4D40',
-        line: 'rgba(44, 36, 28, 0.14)',
-        mengmei: 'rgba(56, 48, 42, 0.22)',
-        awake: 'rgba(201, 166, 107, 0.55)',
-        written: '#C9A66B',
-        future: 'rgba(44, 36, 28, 0.055)',
+        line: 'rgba(44, 36, 28, 0.18)',
+        mengmei: 'rgba(56, 48, 42, 0.42)',
+        awake: 'rgba(160, 112, 40, 0.78)',
+        written: '#8A5A1F',
+        future: 'rgba(44, 36, 28, 0.12)',
         gold: '#C9A66B',
         goldDeep: '#8A5A1F',
-        card: '#fff'
+        card: '#fff',
+        labelShadow: 'rgba(255, 255, 255, 0.7)'
       }
 
 const isDarkNow = () =>
@@ -237,13 +239,18 @@ const ExistenceLife = props => {
 
       ctx.textAlign = 'right'
       ctx.textBaseline = 'middle'
-      for (let year = YEAR_START; year < YEAR_START + yearCount; year += 1) {
-        const special = year === YEAR_START || year === 2025 || year === YEAR_START + yearCount - 1
+      const lastYear = YEAR_START + yearCount - 1
+      for (let year = YEAR_START; year <= lastYear; year += 1) {
+        const special = year === YEAR_START || year === 2025 || year === lastYear
         const every = year % 5 === 0
+        if (year === lastYear - 1 && lastYear % 5 === 1) continue
         if (!special && !every) continue
         const y = topH + (year - YEAR_START) * rowH + rowH / 2
-        ctx.fillStyle = year === 2025 ? pal.goldDeep : pal.muted
         ctx.font = `${special ? 10 : 9}px ui-sans-serif, system-ui, sans-serif`
+        ctx.lineWidth = 3
+        ctx.strokeStyle = pal.labelShadow
+        ctx.strokeText(String(year), labelW - 6, y)
+        ctx.fillStyle = year === 2025 ? pal.goldDeep : pal.ink
         ctx.fillText(String(year), labelW - 6, y)
       }
 
@@ -312,18 +319,21 @@ const ExistenceLife = props => {
           --ob-ink: #2C241C;
           --ob-muted: #5A4D40;
           --ob-line: rgba(44, 36, 28, 0.16);
-          --ob-card: #fff;
+          --ob-card: rgba(255, 252, 247, 0.86);
+          --ob-panel: rgba(255, 252, 247, 0.78);
           color: var(--ob-ink);
           width: 100%;
           max-width: 100%;
           padding: 0.2rem 0 2.5rem;
         }
         .dark .ob-ex {
-          --ob-gold-deep: #E2C48A;
-          --ob-ink: #F3EEE6;
-          --ob-muted: #C9B8A4;
-          --ob-line: rgba(243, 238, 230, 0.16);
-          --ob-card: #1c1a17;
+          --ob-gold: #E2C48A;
+          --ob-gold-deep: #F0D9A0;
+          --ob-ink: #F6F1E8;
+          --ob-muted: #D2C4B0;
+          --ob-line: rgba(246, 241, 232, 0.18);
+          --ob-card: rgba(26, 23, 20, 0.82);
+          --ob-panel: rgba(22, 19, 16, 0.78);
         }
         .ob-ex-title {
           margin: 0 0 8px;
@@ -359,7 +369,8 @@ const ExistenceLife = props => {
           padding: 0.85rem 1rem 0.95rem;
           border: 1px solid var(--ob-line);
           border-radius: 12px;
-          background: color-mix(in srgb, var(--ob-card) 88%, transparent);
+          background: var(--ob-card);
+          backdrop-filter: blur(10px);
         }
         .ob-ex-phase.is-awake {
           border-left: 3px solid var(--ob-gold-deep);
@@ -398,6 +409,11 @@ const ExistenceLife = props => {
         .ob-ex-bar .is-future { background: transparent; }
         .ob-ex-chart {
           margin-top: 0.15rem;
+          padding: 0.95rem 0.9rem 1.05rem;
+          border: 1px solid var(--ob-line);
+          border-radius: 14px;
+          background: var(--ob-panel);
+          backdrop-filter: blur(12px);
         }
         .ob-ex-chart-head {
           margin: 0 0 0.7rem;
@@ -464,6 +480,7 @@ const ExistenceLife = props => {
           padding: 6px 8px;
           border-radius: 8px;
           background: var(--ob-card);
+          backdrop-filter: blur(10px);
           color: var(--ob-ink);
           border: 1px solid var(--ob-line);
           font-size: 12px;
