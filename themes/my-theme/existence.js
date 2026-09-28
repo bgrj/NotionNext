@@ -99,3 +99,26 @@ export const mottoLines = motto => {
   const parts = text.split(/(?<=。|？|！)/).map(s => s.trim()).filter(Boolean)
   return parts.length ? parts : [text]
 }
+
+export const parseSearchQuery = q => {
+  const text = String(q || '').trim()
+  if (!text) return { date: '', text: '' }
+  const m = text.match(/(\d{4})[-/.年\s]+(\d{1,2})[-/.月\s]+(\d{1,2})/)
+  if (m) {
+    return {
+      date: `${m[1]}-${m[2].padStart(2, '0')}-${m[3].padStart(2, '0')}`,
+      text
+    }
+  }
+  return { date: '', text }
+}
+
+export const weekdaySun0 = iso => {
+  const { y, m, d } = parseIso(iso)
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay()
+}
+
+export const dimOfMonth = (year, month) => {
+  const dim = [31, isLeap(year) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
+  return dim[month - 1]
+}

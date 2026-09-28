@@ -1,20 +1,24 @@
 import SmartLink from '@/components/SmartLink'
 import { siteConfig } from '@/lib/config'
+import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import CONFIG from '../config'
 import {
   EXISTENCE_DEFAULTS,
   addYearsIso,
   daysBetween,
+  dimOfMonth,
   formatDotDate,
   isoDay,
   mottoLines,
   ordinalInYear,
   parseIso,
+  parseSearchQuery,
   postMapFrom,
   shanghaiToday,
   shiftIso,
-  slimExistencePosts
+  slimExistencePosts,
+  weekdaySun0
 } from '../existence'
 
 const YEAR_START = Number(EXISTENCE_DEFAULTS.birth.slice(0, 4))
@@ -109,7 +113,111 @@ const isLeapYear = year =>
 
 const nf = n => n.toLocaleString('zh-CN')
 
+const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六']
+const pad2 = n => String(n).padStart(2, '0')
+
+const isoOf = (y, m, d) => `${y}-${pad2(m)}-${pad2(d)}`
+
+const phaseLabel = state =>
+  state === STATE.MENGMEI
+    ? '蒙昧'
+    : state === STATE.AWAKE
+      ? '不断摆脱蒙昧'
+      : state === STATE.WRITTEN
+        ? '已留下'
+        : '尚未到来'
+
+const YearSheet = ({
+  year,
+  minYear,
+  maxYear,
+  meta,
+  focusIso,
+  onPick,
+  onClose,
+  onShift
+}) => {
+  const months = []
+  for (let m = 1; m <= 12; m += 1) {
+    const days = []
+    const dim = dimOfMonth(year, m)
+    const first = weekdaySun0(isoOf(year, m, 1))
+    for (let i = 0; i < first; i += 1) days.push(null)
+    for (let d = 1; d <= dim; d += 1) {
+      const iso = isoOf(year, m, d)
+      const state = dayState(iso, meta)
+      days.push({ iso, d, state, post: state ? meta.postMap[iso] : null })
+    }
+    months.push({ m, days })
+  }
+  return (
+    <div className='ob-ex-sheet' role='dialog' aria-label={`${year} 年`}>
+      <div className='ob-ex-sheet-bar'>
+        <button
+          type='button'
+          className='ob-ex-sheet-nav'
+          disabled={year <= minYear}
+          onClick={() => onShift(-1)}
+          aria-label='上一年'>
+          ‹
+        </button>
+        <div className='ob-ex-sheet-year'>{year}</div>
+        <button
+          type='button'
+          className='ob-ex-sheet-nav'
+          disabled={year >= maxYear}
+          onClick={() => onShift(1)}
+          aria-label='下一年'>
+          ›
+        </button>
+        <button type='button' className='ob-ex-sheet-close' onClick={onClose}>
+          收起
+        </button>
+      </div>
+      <p className='ob-ex-sheet-hint'>点某一天。亮着的可以进去。</p>
+      <div className='ob-ex-months'>
+        {months.map(month => (
+          <div className='ob-ex-month' key={month.m}>
+            <div className='ob-ex-month-name'>{month.m} 月</div>
+            <div className='ob-ex-cal'>
+              {WEEKDAYS.map(w => (
+                <span className='ob-ex-wd' key={w}>
+                  {w}
+                </span>
+              ))}
+              {month.days.map((day, i) =>
+                day ? (
+                  <button
+                    key={day.iso}
+                    type='button'
+                    disabled={!day.state}
+                    className={`ob-ex-day is-${day.state || 'out'}${
+                      focusIso === day.iso ? ' is-focus' : ''
+                    }${day.post ? ' is-link' : ''}`}
+                    title={
+                      day.post
+                        ? day.post.title
+                        : day.state
+                          ? `${formatDotDate(day.iso)} ${phaseLabel(day.state)}`
+                          : ''
+                    }
+                    onClick={() => day.state && onPick(day)}>
+                    {day.d}
+                  </button>
+                ) : (
+                  <span className='ob-ex-day is-pad' key={`p-${month.m}-${i}`} />
+                )
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 const ExistenceLife = props => {
+  const router = useRouter()
   const birth = isoDay(
     siteConfig('EXISTENCE_BIRTH', EXISTENCE_DEFAULTS.birth, CONFIG)
   ) || EXISTENCE_DEFAULTS.birth
@@ -156,13 +264,44 @@ const ExistenceLife = props => {
   const totalDays = daysBetween(birth, shiftIso(end, -1))
   const writtenDays = written.length
   const lines = mottoLines(motto)
-
+  const lastYear = YEAR_START + yearCount - 1
   const wrapRef = useRef(null)
   const canvasRef = useRef(null)
+  const layoutRef = useRef(null)
+  const sheetRef = useRef(null)
+  const composingRef = useRef(false)
   const [dark, setDark] = useState(false)
   const [tip, setTip] = useState(null)
   const [links, setLinks] = useState([])
-  const layoutRef = useRef(null)
+  const [draft, setDraft] = useState('')
+  const [query, setQuery] = useState('')
+  const [expandedYear, setExpandedYear] = useState(null)
+  const [focusIso, setFocusIso] = useState(null)
+  const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
+  const hits = useMemo(() => {
+    const q = query.trim().toLowerCase()
+    if (!q) return []
+    const byText = written.filter(post => {
+      const hay = `${post.title} ${post.date} ${formatDotDate(post.date)}`.toLowerCase()
+      return hay.includes(q) || (parsedQuery.date && post.date === parsedQuery.date)
+    })
+    if (parsedQuery.date && !byText.some(post => post.date === parsedQuery.date)) {
+      const state = dayState(parsedQuery.date, meta)
+      if (state) {
+        return [
+          {
+            id: parsedQuery.date,
+            date: parsedQuery.date,
+            title: `${formatDotDate(parsedQuery.date)} · ${phaseLabel(state)}`,
+            href: '',
+            state
+          },
+          ...byText
+        ]
+      }
+    }
+    return byText.slice(0, 8)
+  }, [query, parsedQuery, written, meta])
 
   useEffect(() => {
     setDark(isDarkNow())
@@ -254,11 +393,22 @@ const ExistenceLife = props => {
         ctx.fillText(String(year), labelW - 6, y)
       }
 
+      if (focusIso) {
+        const { y, m, d } = parseIso(focusIso)
+        const fx = labelW + (ordinalInYear(y, m, d) - 1) * colW + colW / 2
+        const fy = topH + (y - YEAR_START) * rowH + rowH / 2
+        ctx.strokeStyle = pal.goldDeep
+        ctx.lineWidth = 1.5
+        ctx.beginPath()
+        ctx.arc(fx, fy, Math.max(writtenR + 2.5, 5), 0, Math.PI * 2)
+        ctx.stroke()
+      }
+
       const nextLinks = written.map(post => {
         const { y, m, d } = parseIso(post.date)
         const x = labelW + (ordinalInYear(y, m, d) - 1) * colW + colW / 2
         const cy = topH + (y - YEAR_START) * rowH + rowH / 2
-        const hit = Math.max(10, writtenR * 3)
+        const hit = Math.max(width < 640 ? 18 : 12, writtenR * 3)
         return {
           ...post,
           left: x - hit / 2,
@@ -273,7 +423,7 @@ const ExistenceLife = props => {
     const ro = new ResizeObserver(paint)
     ro.observe(wrap)
     return () => ro.disconnect()
-  }, [cells, dark, yearCount, written])
+  }, [cells, dark, yearCount, written, focusIso])
 
   const onMove = event => {
     const layout = layoutRef.current
@@ -307,6 +457,55 @@ const ExistenceLife = props => {
       x: event.clientX - rect.left,
       y: event.clientY - rect.top,
       text: `${formatDotDate(cell.iso)}  ${phase}`
+    })
+  }
+
+  const openYear = year => {
+    const y = Math.min(lastYear, Math.max(YEAR_START, year))
+    setExpandedYear(y)
+  }
+
+  const onCanvasClick = event => {
+    const layout = layoutRef.current
+    const canvas = canvasRef.current
+    if (!layout || !canvas) return
+    const rect = canvas.getBoundingClientRect()
+    const y = event.clientY - rect.top
+    const row = Math.floor((y - layout.topH) / layout.rowH)
+    if (row < 0 || row >= yearCount) return
+    const year = YEAR_START + row
+    const col = Math.floor((event.clientX - rect.left - layout.labelW) / layout.colW)
+    const cell = cellIndex.get(`${year}-${col}`)
+    if (cell) setFocusIso(cell.iso)
+    openYear(year)
+  }
+
+  useEffect(() => {
+    if (expandedYear == null) return undefined
+    sheetRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    return undefined
+  }, [expandedYear])
+
+  const pickDay = day => {
+    setFocusIso(day.iso)
+    openYear(parseIso(day.iso).y)
+    if (day.post?.href) router.push(day.post.href)
+  }
+
+  const commitQuery = value => setQuery(value)
+
+  const onSearchPick = item => {
+    setDraft(item.title)
+    setQuery('')
+    setDraft('')
+    if (item.href) {
+      router.push(item.href)
+      return
+    }
+    pickDay({
+      iso: item.date,
+      post: null,
+      state: item.state
     })
   }
 
@@ -502,10 +701,105 @@ const ExistenceLife = props => {
           white-space: nowrap;
           border: 0;
         }
+        .ob-ex-sheet {
+          margin-top: 0.9rem;
+          padding-top: 0.9rem;
+          border-top: 1px solid var(--ob-line);
+        }
+        .ob-ex-sheet-bar {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+        }
+        .ob-ex-sheet-year {
+          font-weight: 700;
+          letter-spacing: 0.14em;
+          min-width: 3.5rem;
+          text-align: center;
+        }
+        .ob-ex-sheet-nav,
+        .ob-ex-sheet-close {
+          border: 1px solid var(--ob-line);
+          background: transparent;
+          color: var(--ob-ink);
+          border-radius: 8px;
+          min-height: 40px;
+          min-width: 40px;
+          cursor: pointer;
+          font: inherit;
+        }
+        .ob-ex-sheet-close {
+          margin-left: auto;
+          padding: 0 12px;
+          letter-spacing: 0.08em;
+        }
+        .ob-ex-sheet-nav:disabled { opacity: 0.35; cursor: default; }
+        .ob-ex-sheet-hint {
+          margin: 8px 0 12px;
+          font-size: 12px;
+          color: var(--ob-muted);
+        }
+        .ob-ex-months {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 1rem 1.25rem;
+        }
+        .ob-ex-month-name {
+          font-size: 12px;
+          letter-spacing: 0.12em;
+          margin-bottom: 6px;
+          font-weight: 700;
+        }
+        .ob-ex-cal {
+          display: grid;
+          grid-template-columns: repeat(7, minmax(0, 1fr));
+          gap: 3px;
+        }
+        .ob-ex-wd {
+          text-align: center;
+          font-size: 10px;
+          color: var(--ob-muted);
+          letter-spacing: 0.08em;
+        }
+        .ob-ex-day {
+          min-height: 36px;
+          border: 0;
+          border-radius: 8px;
+          background: transparent;
+          color: var(--ob-ink);
+          font: inherit;
+          font-size: 12px;
+          font-variant-numeric: tabular-nums;
+          cursor: pointer;
+        }
+        .ob-ex-day.is-pad,
+        .ob-ex-day:disabled {
+          cursor: default;
+          opacity: 0.25;
+        }
+        .ob-ex-day.is-mengmei { background: color-mix(in srgb, var(--ob-ink) 10%, transparent); }
+        .ob-ex-day.is-awake { background: color-mix(in srgb, var(--ob-gold) 28%, transparent); }
+        .ob-ex-day.is-written,
+        .ob-ex-day.is-link {
+          background: var(--ob-gold);
+          color: #2C241C;
+          font-weight: 700;
+        }
+        .ob-ex-day.is-future {
+          box-shadow: inset 0 0 0 1px var(--ob-line);
+        }
+        .ob-ex-day.is-focus {
+          outline: 2px solid var(--ob-gold-deep);
+          outline-offset: 1px;
+        }
         @media (min-width: 640px) {
           .ob-ex-title { font-size: 2rem; }
           .ob-ex-motto { font-size: 1.12rem; }
           .ob-ex-phases { grid-template-columns: 1fr 1fr; gap: 16px; }
+          .ob-ex-months { grid-template-columns: 1fr 1fr; }
+        }
+        @media (min-width: 1024px) {
+          .ob-ex-months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
         @media (min-width: 1024px) {
           .ob-ex { padding-top: 0.35rem; }
@@ -551,8 +845,70 @@ const ExistenceLife = props => {
       <section className='ob-ex-chart' aria-label='生命点图'>
       <div className='ob-ex-chart-head'>
         <p className='ob-ex-note'>
-          按 {years} 岁计，从 {formatDotDate(birth)} 到 {formatDotDate(shiftIso(end, -1))}，共 {nf(totalDays)} 日。每一个点是一天。亮着的日子，可以进去。
+          按 {years} 岁计，从 {formatDotDate(birth)} 到 {formatDotDate(shiftIso(end, -1))}，共 {nf(totalDays)} 日。每一个点是一天。亮着的日子，可以进去。点一行年份，可以按月点开那一年。
         </p>
+        <form
+          className='ob-ex-search'
+          role='search'
+          onSubmit={event => event.preventDefault()}>
+          <label className='sr-only' htmlFor='ob-ex-search-input'>
+            找一天
+          </label>
+          <div className='ob-ex-search-box'>
+            <i className='fa-solid fa-magnifying-glass' aria-hidden='true' />
+            <input
+              id='ob-ex-search-input'
+              type='text'
+              name='q'
+              value={draft}
+              autoComplete='off'
+              spellCheck='false'
+              enterKeyHint='search'
+              placeholder='找一天，例如 2025.4.30'
+              onChange={event => {
+                const value = event.target.value
+                setDraft(value)
+                if (!composingRef.current) commitQuery(value)
+              }}
+              onCompositionStart={() => {
+                composingRef.current = true
+              }}
+              onCompositionEnd={event => {
+                composingRef.current = false
+                const value = event.target.value
+                setDraft(value)
+                commitQuery(value)
+              }}
+            />
+          </div>
+          {query.trim() ? (
+            <ul className='ob-ex-search-hits'>
+              {hits.length ? (
+                hits.map(item => (
+                  <li key={item.id || item.date}>
+                    <button type='button' onClick={() => onSearchPick(item)}>
+                      {item.title}
+                    </button>
+                  </li>
+                ))
+              ) : (
+                <li>
+                  <button type='button' disabled>
+                    没有这一天的留下
+                  </button>
+                </li>
+              )}
+            </ul>
+          ) : null}
+        </form>
+        {focusIso ? (
+          <p className='ob-ex-focusline'>
+            {formatDotDate(focusIso)}
+            {' · '}
+            {phaseLabel(dayState(focusIso, meta) || STATE.FUTURE)}
+            {postMap[focusIso] ? ` · ${postMap[focusIso].title}` : ''}
+          </p>
+        ) : null}
       </div>
       <div className='ob-ex-legend' aria-hidden='true'>
         <span>
@@ -578,6 +934,7 @@ const ExistenceLife = props => {
           ref={canvasRef}
           onMouseMove={onMove}
           onMouseLeave={() => setTip(null)}
+          onClick={onCanvasClick}
           aria-hidden='true'
         />
         {links.map(link => (
@@ -600,6 +957,20 @@ const ExistenceLife = props => {
           </div>
         ) : null}
       </div>
+      {expandedYear ? (
+        <div ref={sheetRef}>
+          <YearSheet
+            year={expandedYear}
+            minYear={YEAR_START}
+            maxYear={lastYear}
+            meta={meta}
+            focusIso={focusIso}
+            onPick={pickDay}
+            onClose={() => setExpandedYear(null)}
+            onShift={delta => openYear(expandedYear + delta)}
+          />
+        </div>
+      ) : null}
       </section>
 
       <nav className='sr-only' aria-label='已留下的日子'>
