@@ -668,11 +668,6 @@ const Footer = () => {
             <nav className='ob-nav'>
               <FooterLink href={aboutUrl}>About</FooterLink>
               <FooterLink href={copyrightUrl}>版权声明</FooterLink>
-              {email && (
-                <FooterLink href={`mailto:${email}`} gold>
-                  {email}
-                </FooterLink>
-              )}
               {wechatAlbum && (
                 <FooterLink href={wechatAlbum} external>
                   公众号
