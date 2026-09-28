@@ -60,7 +60,8 @@ export const FRIEND_LINK_SECTIONS = [
           L('如何提升认知能力', 'https://github.com/zmike1993/hello-world/issues/53', '批判思维、多元渠道与读书', 'github.com', C.clay, 4, ['info']),
           L('国产教育的内卷', 'https://github.com/zmike1993/hello-world/issues/54', '封闭系统如何卷穿家庭', 'github.com', C.slate, 3, ['info']),
           L('一封初二女生的遗书', 'https://github.com/zmike1993/hello-world/issues/36', '毁掉一个人，往往从童年开始', 'github.com', C.rust, 4, ['info']),
-          L('一个贪官写给儿子的忠告', 'https://github.com/zmike1993/hello-world/issues/19', '官场生存术如何扭曲人', 'github.com', C.ink, 3, ['info'])
+          L('一个贪官写给儿子的忠告', 'https://github.com/zmike1993/hello-world/issues/19', '官场生存术如何扭曲人', 'github.com', C.ink, 3, ['info']),
+          L('禁闻网', 'https://www.bannedbook.org/', '被挡住的新闻与书', 'bannedbook.org', C.ink, 4, ['info'])
         ]
       },
       {
