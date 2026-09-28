@@ -127,7 +127,7 @@ const phaseLabel = state =>
     : state === STATE.AWAKE
       ? '不断摆脱蒙昧'
       : state === STATE.WRITTEN
-        ? '已留下'
+        ? '不断摆脱蒙昧'
         : '尚未到来'
 
 const YearSheet = ({
@@ -505,7 +505,7 @@ const ExistenceLife = props => {
         : cell.state === STATE.AWAKE
           ? '不断摆脱蒙昧'
           : cell.state === STATE.WRITTEN
-            ? post?.title || '已留下'
+            ? post?.title || '不断摆脱蒙昧'
             : '尚未到来'
     const extra = post?.note ? ` · ${post.note}` : ''
     setTip({
@@ -1228,7 +1228,7 @@ const ExistenceLife = props => {
         </span>
         <span>
           <b className='dot-w' />
-          已留下
+          不断摆脱蒙昧
         </span>
         <span>
           <b className='dot-f' />
@@ -1291,7 +1291,7 @@ const ExistenceLife = props => {
       ) : null}
       </section>
 
-      <nav className='sr-only' aria-label='已留下的日子'>
+      <nav className='sr-only' aria-label='不断摆脱蒙昧的日子'>
         <ul>
           {written.map(post => (
             <li key={post.id || post.date}>
