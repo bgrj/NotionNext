@@ -6,12 +6,21 @@ export const isExistenceCategory = category =>
 export const EXISTENCE_DEFAULTS = {
   birth: '2001-10-19',
   years: 80,
+  firstWritten: '2025-03-24',
   awakening: '2025-03-28',
   newEnd: '2081-03-27',
   motto:
     '我的思想也许不在于我想了什么，而在于我做了什么。人有很多面，而我才见了几面？',
   stamp: '2026年9月28日22时更新'
 }
+
+export const EXISTENCE_MERGED_SPANS = [
+  {
+    start: '2025-04-24',
+    end: '2025-04-27',
+    note: '这几天实际是多天融于的一篇'
+  }
+]
 
 export const LIFE_MARKERS = [
   { iso: '2001-10-19', label: '生命的起点' },
@@ -70,6 +79,48 @@ export const shiftIso = (iso, days) => {
   return new Date(t).toISOString().slice(0, 10)
 }
 
+export const eachIsoInclusive = (fromIso, toIso) => {
+  const out = []
+  if (!fromIso) return out
+  const stop = toIso && toIso > fromIso ? toIso : fromIso
+  let cur = fromIso
+  while (cur <= stop) {
+    out.push(cur)
+    cur = shiftIso(cur, 1)
+    if (out.length > 400) break
+  }
+  return out
+}
+
+export const parseDateSpan = value => {
+  if (!value) return { start: '', end: '' }
+  if (typeof value === 'object') {
+    const start = isoDay(
+      value.start_date || value.startDate || value.start || value
+    )
+    const end = isoDay(value.end_date || value.endDate || value.end)
+    return { start, end: end && end > start ? end : start }
+  }
+  const text = String(value)
+  const start = isoDay(text)
+  const range = text.match(
+    /(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})\s*[–—~至到\-]+\s*(?:(\d{4})[-/.])?(\d{1,2})(?:[-/.](\d{1,2}))?/
+  )
+  if (!range || !start) return { start, end: start }
+  const m1 = Number(range[2])
+  const y2 = range[4] ? Number(range[4]) : Number(range[1])
+  let m2 = Number(range[5])
+  let d2 = range[6] ? Number(range[6]) : NaN
+  if (!range[6] && !range[4]) {
+    d2 = m2
+    m2 = m1
+  }
+  if (!Number.isFinite(m2) || !Number.isFinite(d2)) return { start, end: start }
+  const end = `${y2}-${String(m2).padStart(2, '0')}-${String(d2).padStart(2, '0')}`
+  if (end < start) return { start, end: start }
+  return { start, end }
+}
+
 export const hoursUntil = endIso => {
   const t = Date.parse(`${endIso}T00:00:00+08:00`)
   if (Number.isNaN(t)) return 0
@@ -93,20 +144,59 @@ export const formatZhDate = iso => {
   return `${y}年${m}月${d}日`
 }
 
+const spanNoteOf = (start, end) => {
+  if (!start || !end || end <= start) return ''
+  const known = EXISTENCE_MERGED_SPANS.find(
+    span => start <= span.end && end >= span.start
+  )
+  return known?.note || '这几天实际是多天融于的一篇'
+}
+
 export const slimExistencePosts = posts =>
   (posts || [])
-    .map(post => ({
-      id: post.id,
-      title: post.title,
-      href: post.href,
-      date: isoDay(post.date) || isoDay(post.publishDay)
-    }))
+    .map(post => {
+      const fromDate = parseDateSpan(post.date || post.publishDay)
+      const fromTitle = parseDateSpan(post.title)
+      const start = fromDate.start || fromTitle.start || isoDay(post.date)
+      const known = EXISTENCE_MERGED_SPANS.find(
+        span => start && start >= span.start && start <= span.end
+      )
+      const end =
+        known?.end ||
+        (fromDate.end && fromDate.end > start ? fromDate.end : '') ||
+        (fromTitle.end && fromTitle.end > start ? fromTitle.end : '') ||
+        start
+      return {
+        id: post.id,
+        title: post.title,
+        href: post.href,
+        date: start,
+        spanStart: known?.start || start,
+        spanEnd: end && end > start ? end : '',
+        note: spanNoteOf(start, end)
+      }
+    })
     .filter(post => post.href && post.date)
 
 export const postMapFrom = posts => {
   const map = Object.create(null)
+  const put = (post, iso, extra = {}) => {
+    map[iso] = { ...post, date: iso, ...extra }
+  }
   slimExistencePosts(posts).forEach(post => {
-    if (!map[post.date]) map[post.date] = post
+    const last = post.spanEnd || post.date
+    eachIsoInclusive(post.date, last).forEach(iso => put(post, iso))
+  })
+  EXISTENCE_MERGED_SPANS.forEach(span => {
+    const source = map[span.start]
+    if (!source) return
+    eachIsoInclusive(span.start, span.end).forEach(iso =>
+      put(source, iso, {
+        spanStart: span.start,
+        spanEnd: span.end,
+        note: span.note
+      })
+    )
   })
   return map
 }

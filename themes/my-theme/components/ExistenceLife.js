@@ -69,11 +69,12 @@ const isDarkNow = () =>
   typeof document !== 'undefined' &&
   document.documentElement.classList.contains('dark')
 
-const dayState = (iso, { birth, today, end, postMap }) => {
+const dayState = (iso, { birth, awakening, today, end, postMap }) => {
   if (iso < birth || iso >= end) return null
   if (postMap[iso]) return STATE.WRITTEN
   if (iso > today) return STATE.FUTURE
-  return STATE.MENGMEI
+  if (awakening && iso < awakening) return STATE.MENGMEI
+  return STATE.AWAKE
 }
 
 const buildCells = meta => {
@@ -198,7 +199,9 @@ const YearSheet = ({
                     }${day.post ? ' is-link' : ''}`}
                     title={
                       day.post
-                        ? day.post.title
+                        ? `${day.post.title}${
+                            day.post.note ? ` · ${day.post.note}` : ''
+                          }`
                         : day.state
                           ? `${formatDotDate(day.iso)} ${phaseLabel(day.state)}`
                           : ''
@@ -226,6 +229,14 @@ const ExistenceLife = props => {
   const years = Number(
     siteConfig('EXISTENCE_YEARS', EXISTENCE_DEFAULTS.years, CONFIG)
   ) || EXISTENCE_DEFAULTS.years
+  const firstWritten =
+    isoDay(
+      siteConfig(
+        'EXISTENCE_FIRST_WRITTEN',
+        EXISTENCE_DEFAULTS.firstWritten,
+        CONFIG
+      )
+    ) || EXISTENCE_DEFAULTS.firstWritten
   const awakening =
     isoDay(
       siteConfig('EXISTENCE_AWAKENING', EXISTENCE_DEFAULTS.awakening, CONFIG)
@@ -269,7 +280,7 @@ const ExistenceLife = props => {
   const totalDays = daysBetween(birth, shiftIso(end, -1))
   const livedDays = Math.min(totalDays, daysBetween(birth, lastLived))
   const remainHours = hoursUntil(end)
-  const writtenDays = written.filter(post => post.date >= awakening).length
+  const writtenDays = written.length
   const mottoText = String(motto || '').replace(/\s+/g, ' ').trim()
   const lifeMarks = useMemo(
     () => [
@@ -298,10 +309,16 @@ const ExistenceLife = props => {
     const q = query.trim().toLowerCase()
     if (!q) return []
     const byText = written.filter(post => {
-      const hay = `${post.title} ${post.date} ${formatDotDate(post.date)}`.toLowerCase()
+      const hay = `${post.title} ${post.date} ${formatDotDate(post.date)} ${
+        post.spanEnd || ''
+      }`.toLowerCase()
       return hay.includes(q) || (parsedQuery.date && post.date === parsedQuery.date)
     })
-    if (parsedQuery.date && !byText.some(post => post.date === parsedQuery.date)) {
+    const mapped = parsedQuery.date ? postMap[parsedQuery.date] : null
+    if (mapped && !byText.some(post => post.href === mapped.href)) {
+      byText.unshift(mapped)
+    }
+    if (parsedQuery.date && !byText.some(post => post.date === parsedQuery.date || post.href === mapped?.href)) {
       const state = dayState(parsedQuery.date, meta)
       if (state) {
         return [
@@ -317,7 +334,7 @@ const ExistenceLife = props => {
       }
     }
     return byText.slice(0, 8)
-  }, [query, parsedQuery, written, meta])
+  }, [query, parsedQuery, written, meta, postMap])
 
   useEffect(() => {
     setDark(isDarkNow())
@@ -379,6 +396,7 @@ const ExistenceLife = props => {
           ctx.fill()
           return
         }
+        if (cell.state === STATE.AWAKE) return
         ctx.fillStyle =
           cell.state === STATE.FUTURE ? pal.future : pal.mengmei
         const r = cell.state === STATE.FUTURE ? dot / 2 : dot * 0.82
@@ -438,13 +456,15 @@ const ExistenceLife = props => {
       }).filter(Boolean)
       setMarks(nextMarks)
 
-      const nextLinks = written.map(post => {
-        const { y, m, d } = parseIso(post.date)
+      const nextLinks = Object.keys(postMap).map(iso => {
+        const post = postMap[iso]
+        const { y, m, d } = parseIso(iso)
         const x = labelW + (ordinalInYear(y, m, d) - 1) * colW + colW / 2
         const cy = topH + (y - YEAR_START) * rowH + rowH / 2
         const hit = Math.max(width < 640 ? 18 : 12, writtenR * 3)
         return {
           ...post,
+          date: iso,
           left: x - hit / 2,
           top: cy - hit / 2,
           size: hit
@@ -457,7 +477,7 @@ const ExistenceLife = props => {
     const ro = new ResizeObserver(paint)
     ro.observe(wrap)
     return () => ro.disconnect()
-  }, [cells, dark, yearCount, written, focusIso, birth, end, lifeMarks])
+  }, [cells, dark, yearCount, postMap, focusIso, birth, end, lifeMarks])
 
   const onMove = event => {
     const layout = layoutRef.current
@@ -487,10 +507,11 @@ const ExistenceLife = props => {
           : cell.state === STATE.WRITTEN
             ? post?.title || '已留下'
             : '尚未到来'
+    const extra = post?.note ? ` · ${post.note}` : ''
     setTip({
       x: event.clientX - rect.left,
       y: event.clientY - rect.top,
-      text: `${formatDotDate(cell.iso)}  ${phase}`
+      text: `${formatDotDate(cell.iso)}  ${phase}${extra}`
     })
   }
 
@@ -717,6 +738,13 @@ const ExistenceLife = props => {
           font-size: 12px;
           letter-spacing: 0.04em;
           font-variant-numeric: tabular-nums;
+        }
+        .ob-ex-phase-note {
+          margin-top: 4px;
+          font-size: 12px;
+          line-height: 1.55;
+          color: var(--ob-muted);
+          letter-spacing: 0.02em;
         }
         .ob-ex-phase.is-awake .ob-ex-phase-name { color: var(--ob-gold-deep); }
         .ob-ex-bar {
@@ -1001,7 +1029,7 @@ const ExistenceLife = props => {
           opacity: 0.25;
         }
         .ob-ex-day.is-mengmei { background: color-mix(in srgb, var(--ob-ink) 10%, transparent); }
-        .ob-ex-day.is-awake { background: color-mix(in srgb, var(--ob-gold) 28%, transparent); }
+        .ob-ex-day.is-awake { background: transparent; }
         .ob-ex-day.is-written,
         .ob-ex-day.is-link {
           background: var(--ob-gold);
@@ -1102,9 +1130,14 @@ const ExistenceLife = props => {
             </div>
             <div className='ob-ex-phase is-awake'>
               <div className='ob-ex-phase-name'>不断摆脱蒙昧</div>
-              <div className='ob-ex-phase-range'>{formatDotDate(awakening)} —</div>
+              <div className='ob-ex-phase-range'>
+                {formatDotDate(firstWritten)}-{formatDotDate(awakening)}—今
+              </div>
               <div className='ob-ex-phase-count'>
                 已过 {nf(awakeDays)} 日 · 已发布 {nf(writtenDays)} 篇
+              </div>
+              <div className='ob-ex-phase-note'>
+                2025.4.24–27 周四至周日，实际是多天融于的一篇
               </div>
             </div>
           </div>
@@ -1184,6 +1217,7 @@ const ExistenceLife = props => {
             {' · '}
             {phaseLabel(dayState(focusIso, meta) || STATE.FUTURE)}
             {postMap[focusIso] ? ` · ${postMap[focusIso].title}` : ''}
+            {postMap[focusIso]?.note ? ` · ${postMap[focusIso].note}` : ''}
           </p>
         ) : null}
       </div>
@@ -1212,7 +1246,7 @@ const ExistenceLife = props => {
         />
         {links.map(link => (
           <SmartLink
-            key={link.id || link.date}
+            key={`${link.href}-${link.date}`}
             className='ob-ex-hit'
             href={link.href}
             title={link.title}
