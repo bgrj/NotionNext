@@ -1,25 +1,94 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import {
   FRIEND_LINK_SECTIONS,
   FRIEND_LINKS_MOTTO,
   getFriendLinkToc
 } from '../friendLinks'
 
-const TOC = getFriendLinkToc()
+const AXIS_LABEL = {
+  time: '时间',
+  space: '空间',
+  info: '信息',
+  language: '语言',
+  tech: '技术'
+}
 
 const letterOf = name => {
   const ch = Array.from(name || '')[0] || '#'
   return ch.toUpperCase ? ch : ch
 }
 
-const titleOf = id => {
-  for (const section of TOC) {
+const titleOf = (id, toc) => {
+  for (const section of toc) {
     if (section.id === id) return section.title
     for (const group of section.groups || []) {
       if (group.id === id) return group.title
     }
   }
   return ''
+}
+
+const haystackOf = (item, group, section) =>
+  [
+    item.name,
+    item.desc,
+    item.domain,
+    item.url,
+    group.title,
+    section.title,
+    ...(item.axes || []).flatMap(axis => [axis, AXIS_LABEL[axis] || ''])
+  ]
+    .join(' ')
+    .toLowerCase()
+
+const filterSections = (sections, q) => {
+  const tokens = String(q || '')
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+  if (!tokens.length) return sections
+  return sections
+    .map(section => ({
+      ...section,
+      groups: (section.groups || [])
+        .map(group => ({
+          ...group,
+          items: (group.items || []).filter(item => {
+            const hay = haystackOf(item, group, section)
+            return tokens.every(token => hay.includes(token))
+          })
+        }))
+        .filter(group => (group.items || []).length)
+    }))
+    .filter(section => (section.groups || []).length)
+}
+
+const countItems = sections =>
+  sections.reduce(
+    (n, section) =>
+      n +
+      (section.groups || []).reduce(
+        (m, group) => m + (group.items || []).length,
+        0
+      ),
+    0
+  )
+
+const replaceLoc = ({ query, hash } = {}) => {
+  if (typeof window === 'undefined' || !window.history?.replaceState) return
+  const url = new URL(window.location.href)
+  const nextQuery = query === undefined ? url.searchParams.get('q') : query
+  const trimmed = String(nextQuery || '').trim()
+  if (trimmed) url.searchParams.set('q', trimmed)
+  else url.searchParams.delete('q')
+  const nextHash =
+    hash === undefined ? url.hash.replace(/^#/, '') : String(hash || '')
+  const next =
+    url.pathname + url.search + (nextHash ? `#${nextHash}` : '')
+  const cur =
+    window.location.pathname + window.location.search + window.location.hash
+  if (next !== cur) window.history.replaceState(null, '', next)
 }
 
 const CardIcon = ({ item }) => {
@@ -94,7 +163,45 @@ const GroupBlock = ({ group }) => (
 
 const FriendLinks = () => {
   const [open, setOpen] = useState(false)
-  const [active, setActive] = useState(TOC[0]?.id || '')
+  const [draft, setDraft] = useState('')
+  const [query, setQuery] = useState('')
+  const [ready, setReady] = useState(false)
+  const [stuck, setStuck] = useState(false)
+  const composingRef = useRef(false)
+  const slotRef = useRef(null)
+  const inputRef = useRef(null)
+
+  const visible = useMemo(
+    () => filterSections(FRIEND_LINK_SECTIONS, query),
+    [query]
+  )
+  const toc = useMemo(() => getFriendLinkToc(visible), [visible])
+  const [active, setActive] = useState(toc[0]?.id || '')
+  const hitCount = countItems(visible)
+  const searching = Boolean(query.trim())
+  const activeTitle = titleOf(active, toc)
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get('q') || ''
+    setDraft(q)
+    setQuery(q)
+    setReady(true)
+  }, [])
+
+  useEffect(() => {
+    if (!ready) return
+    replaceLoc({ query })
+  }, [query, ready])
+
+  useEffect(() => {
+    const ids = []
+    toc.forEach(section => {
+      ids.push(section.id)
+      ;(section.groups || []).forEach(group => ids.push(group.id))
+    })
+    if (active && ids.includes(active)) return
+    setActive(ids[0] || '')
+  }, [toc, active])
 
   useEffect(() => {
     const hash = decodeURIComponent((window.location.hash || '').replace(/^#/, ''))
@@ -103,7 +210,7 @@ const FriendLinks = () => {
     }
 
     const ids = []
-    TOC.forEach(section => {
+    toc.forEach(section => {
       ids.push(section.id)
       ;(section.groups || []).forEach(group => ids.push(group.id))
     })
@@ -112,18 +219,52 @@ const FriendLinks = () => {
 
     const io = new IntersectionObserver(
       entries => {
-        const visible = entries
+        const visibleEntries = entries
           .filter(entry => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)
-        if (visible[0]?.target?.id) {
-          setActive(visible[0].target.id)
+        if (visibleEntries[0]?.target?.id) {
+          setActive(visibleEntries[0].target.id)
         }
       },
       { rootMargin: '-16% 0px -68% 0px', threshold: [0, 0.2, 0.55] }
     )
     els.forEach(el => io.observe(el))
     return () => io.disconnect()
+  }, [toc])
+
+  useEffect(() => {
+    const slot = slotRef.current
+    if (!slot) return undefined
+
+    const update = () => {
+      const mobile = window.matchMedia('(max-width: 1023px)').matches
+      if (!mobile) {
+        setStuck(false)
+        return
+      }
+      const headerOffset = 68
+      setStuck(slot.getBoundingClientRect().top <= headerOffset)
+    }
+
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    window.addEventListener('resize', update)
+    return () => {
+      window.removeEventListener('scroll', update)
+      window.removeEventListener('resize', update)
+    }
   }, [])
+
+  const commitQuery = value => {
+    setQuery(value)
+  }
+
+  const clearQuery = () => {
+    composingRef.current = false
+    setDraft('')
+    setQuery('')
+    inputRef.current?.focus()
+  }
 
   const onTocClick = (event, id) => {
     event.preventDefault()
@@ -132,15 +273,11 @@ const FriendLinks = () => {
     el.scrollIntoView({ behavior: 'smooth', block: 'start' })
     setActive(id)
     setOpen(false)
-    if (window.history?.replaceState) {
-      window.history.replaceState(null, '', `#${id}`)
-    }
+    replaceLoc({ query, hash: id })
   }
 
-  const activeTitle = titleOf(active)
-
   return (
-    <div id='notion-article' className='ob-fl'>
+    <div id='notion-article' className={`ob-fl${stuck ? ' is-search-stuck' : ''}`}>
       <style>{`
         .ob-fl {
           --ob-gold: #C9A66B;
@@ -173,6 +310,10 @@ const FriendLinks = () => {
         .ob-fl-hero { grid-area: hero; min-width: 0; }
         .ob-fl-toc { grid-area: toc; min-width: 0; }
         .ob-fl-main { grid-area: main; min-width: 0; }
+        .ob-fl-hero {
+          display: grid;
+          gap: 0.85rem;
+        }
         .ob-fl-title {
           margin: 4px 0 8px;
           font-size: 1.7rem;
@@ -190,6 +331,92 @@ const FriendLinks = () => {
           letter-spacing: 0.03em;
           max-width: 28em;
           color: var(--ob-ink);
+        }
+        .ob-fl-search-slot {
+          min-width: 0;
+        }
+        .ob-fl-search {
+          display: flex;
+          flex-direction: column;
+          gap: 6px;
+        }
+        .ob-fl-search-box {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 44px;
+          padding: 0 12px;
+          border: 1px solid var(--ob-line);
+          border-radius: 12px;
+          background: color-mix(in srgb, var(--ob-card) 88%, transparent);
+          backdrop-filter: blur(8px);
+        }
+        .ob-fl-search-box:focus-within {
+          border-color: color-mix(in srgb, var(--ob-gold-deep) 70%, var(--ob-line));
+        }
+        .ob-fl-search-box .ob-fl-search-icon {
+          color: var(--ob-muted);
+          flex-shrink: 0;
+          width: 1.1em;
+          text-align: center;
+        }
+        .ob-fl-search-box input {
+          flex: 1;
+          min-width: 0;
+          border: 0;
+          background: transparent;
+          color: var(--ob-ink);
+          font: inherit;
+          font-size: 14px;
+          letter-spacing: 0.04em;
+          outline: none;
+          min-height: 44px;
+        }
+        .ob-fl-search-box input::placeholder {
+          color: var(--ob-muted);
+          opacity: 0.86;
+        }
+        .ob-fl-search-clear {
+          flex-shrink: 0;
+          width: 32px;
+          height: 32px;
+          border: 0;
+          border-radius: 999px;
+          background: none;
+          color: var(--ob-muted);
+          cursor: pointer;
+          display: grid;
+          place-items: center;
+        }
+        .ob-fl-search-clear:hover,
+        .ob-fl-search-clear:focus-visible {
+          color: var(--ob-ink);
+          background: color-mix(in srgb, var(--ob-card) 70%, transparent);
+        }
+        .ob-fl-search-meta {
+          font-size: 12px;
+          color: var(--ob-muted);
+          letter-spacing: 0.04em;
+          line-height: 1.4;
+          min-height: 1.2em;
+        }
+        .ob-fl .sr-only {
+          position: absolute;
+          width: 1px;
+          height: 1px;
+          padding: 0;
+          margin: -1px;
+          overflow: hidden;
+          clip: rect(0, 0, 0, 0);
+          white-space: nowrap;
+          border: 0;
+        }
+        .ob-fl-empty {
+          margin: 1.2rem 0 0;
+          padding: 0.2rem 0 0.4rem;
+          color: var(--ob-muted);
+          font-size: 0.95rem;
+          letter-spacing: 0.04em;
         }
         .ob-fl-axes {
           display: flex;
@@ -428,6 +655,26 @@ const FriendLinks = () => {
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
+        @media (max-width: 1023px) {
+          .ob-fl-search.is-stuck {
+            position: fixed;
+            top: 4.25rem;
+            left: 0;
+            right: 0;
+            z-index: 19;
+            padding: 8px 16px 10px;
+            background: color-mix(in srgb, var(--ob-card) 92%, transparent);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--ob-line);
+          }
+          .ob-fl.is-search-stuck .ob-fl-toc {
+            top: calc(4.25rem + 3.7rem);
+          }
+          .ob-fl.is-search-stuck .ob-fl-section,
+          .ob-fl.is-search-stuck .ob-fl-group {
+            scroll-margin-top: 11.6rem;
+          }
+        }
         @media (min-width: 640px) {
           .ob-fl-grid {
             grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -445,7 +692,15 @@ const FriendLinks = () => {
             column-gap: 2.35rem;
             align-items: start;
           }
-          .ob-fl-hero { padding-top: 0.1rem; }
+          .ob-fl-hero {
+            padding-top: 0.1rem;
+            grid-template-columns: minmax(0, 1fr) minmax(16.5rem, 22.5rem);
+            align-items: start;
+            column-gap: 1.4rem;
+          }
+          .ob-fl-search-slot {
+            padding-top: 0.45rem;
+          }
           .ob-fl-toc {
             top: 5.25rem;
             margin: 0;
@@ -515,9 +770,70 @@ const FriendLinks = () => {
 
       <div className='ob-fl-shell'>
         <header className='ob-fl-hero'>
-          <h1 className='ob-fl-title'>友情链接</h1>
-          <blockquote className='ob-fl-motto'>{FRIEND_LINKS_MOTTO}</blockquote>
-  
+          <div className='ob-fl-hero-copy'>
+            <h1 className='ob-fl-title'>友情链接</h1>
+            <blockquote className='ob-fl-motto'>{FRIEND_LINKS_MOTTO}</blockquote>
+          </div>
+          <div className='ob-fl-search-slot' ref={slotRef}>
+            <form
+              className={`ob-fl-search${stuck ? ' is-stuck' : ''}`}
+              role='search'
+              onSubmit={event => event.preventDefault()}>
+              <label className='sr-only' htmlFor='ob-fl-search-input'>
+                搜索友链
+              </label>
+              <div className='ob-fl-search-box'>
+                <i className='fa-solid fa-magnifying-glass ob-fl-search-icon' aria-hidden='true' />
+                <input
+                  id='ob-fl-search-input'
+                  ref={inputRef}
+                  type='text'
+                  name='q'
+                  value={draft}
+                  autoComplete='off'
+                  spellCheck='false'
+                  enterKeyHint='search'
+                  placeholder='在友链里找站点'
+                  onChange={event => {
+                    const value = event.target.value
+                    setDraft(value)
+                    if (!composingRef.current) commitQuery(value)
+                  }}
+                  onCompositionStart={() => {
+                    composingRef.current = true
+                  }}
+                  onCompositionEnd={event => {
+                    composingRef.current = false
+                    const value = event.target.value
+                    setDraft(value)
+                    commitQuery(value)
+                  }}
+                  onKeyDown={event => {
+                    if (event.key === 'Escape') {
+                      event.preventDefault()
+                      clearQuery()
+                    }
+                  }}
+                />
+                {draft ? (
+                  <button
+                    type='button'
+                    className='ob-fl-search-clear'
+                    aria-label='清除'
+                    onClick={clearQuery}>
+                    <i className='fa-solid fa-xmark' aria-hidden='true' />
+                  </button>
+                ) : null}
+              </div>
+              <div className='ob-fl-search-meta' aria-live='polite'>
+                {searching
+                  ? hitCount
+                    ? `找到 ${hitCount} 个`
+                    : `没有叫「${query.trim()}」的站点`
+                  : ''}
+              </div>
+            </form>
+          </div>
         </header>
 
         <aside className='ob-fl-toc' aria-label='目录'>
@@ -534,7 +850,7 @@ const FriendLinks = () => {
             <i className={`fa fa-angle-down duration-200 ${open ? 'rotate-180' : ''}`} />
           </button>
           <nav className={`ob-fl-toc-nav${open ? ' is-open' : ''}`}>
-            {TOC.map(section => (
+            {toc.map(section => (
               <div className='ob-fl-toc-block' key={section.id}>
                 <a
                   href={`#${section.id}`}
@@ -559,20 +875,24 @@ const FriendLinks = () => {
         </aside>
 
         <div className='ob-fl-main'>
-          {FRIEND_LINK_SECTIONS.map(section => (
-            <section
-              className='ob-fl-section'
-              key={section.id}
-              id={section.id}
-              aria-labelledby={`fl-${section.id}`}>
-              <h2 className='ob-fl-section-title' id={`fl-${section.id}`}>
-                {section.title}
-              </h2>
-              {(section.groups || []).map(group => (
-                <GroupBlock key={group.id} group={group} />
-              ))}
-            </section>
-          ))}
+          {visible.length === 0 ? (
+            <p className='ob-fl-empty'>没有叫「{query.trim()}」的站点</p>
+          ) : (
+            visible.map(section => (
+              <section
+                className='ob-fl-section'
+                key={section.id}
+                id={section.id}
+                aria-labelledby={`fl-${section.id}`}>
+                <h2 className='ob-fl-section-title' id={`fl-${section.id}`}>
+                  {section.title}
+                </h2>
+                {(section.groups || []).map(group => (
+                  <GroupBlock key={group.id} group={group} />
+                ))}
+              </section>
+            ))
+          )}
         </div>
       </div>
     </div>
