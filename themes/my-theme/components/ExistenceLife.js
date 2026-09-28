@@ -321,9 +321,9 @@ const ExistenceLife = props => {
 
     const paint = () => {
       const width = Math.max(wrap.clientWidth, 280)
-      const labelW = width < 640 ? 34 : 44
-      const topH = 18
-      const rowH = width < 640 ? 6.2 : 8.2
+      const labelW = width < 640 ? 42 : 48
+      const topH = width < 640 ? 16 : 18
+      const rowH = width < 640 ? 7.1 : 8.2
       const bottomH = 8
       const height = topH + yearCount * rowH + bottomH
       const pal = colorsOf(dark)
@@ -592,6 +592,7 @@ const ExistenceLife = props => {
           flex-direction: column;
           justify-content: flex-end;
         }
+        .ob-ex-hg-fill span { width: 100%; min-height: 0; }
         .ob-ex-hg-fill .is-mengmei {
           background: color-mix(in srgb, var(--ob-ink) 42%, transparent);
         }
@@ -685,6 +686,77 @@ const ExistenceLife = props => {
           color: var(--ob-muted);
           letter-spacing: 0.04em;
           max-width: 46em;
+        }
+        .ob-ex-search {
+          position: relative;
+          margin-top: 0.75rem;
+          width: 100%;
+        }
+        .ob-ex-search-box {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          min-height: 44px;
+          padding: 0 12px;
+          border: 1px solid var(--ob-line);
+          border-radius: 10px;
+          background: color-mix(in srgb, var(--ob-card) 88%, transparent);
+        }
+        .ob-ex-search-box:focus-within {
+          border-color: color-mix(in srgb, var(--ob-gold-deep) 70%, var(--ob-line));
+        }
+        .ob-ex-search-box input {
+          flex: 1;
+          min-width: 0;
+          border: 0;
+          background: transparent;
+          color: var(--ob-ink);
+          font: inherit;
+          font-size: 14px;
+          outline: none;
+          min-height: 44px;
+        }
+        .ob-ex-search-box input::placeholder {
+          color: var(--ob-muted);
+        }
+        .ob-ex-search-hits {
+          position: absolute;
+          z-index: 8;
+          left: 0;
+          right: 0;
+          top: calc(100% + 4px);
+          margin: 0;
+          padding: 6px 0;
+          list-style: none;
+          border: 1px solid var(--ob-line);
+          border-radius: 10px;
+          background: var(--ob-card);
+          backdrop-filter: blur(10px);
+          box-shadow: 0 12px 32px rgba(28, 22, 16, 0.12);
+          max-height: 16rem;
+          overflow: auto;
+        }
+        .ob-ex-search-hits button {
+          display: block;
+          width: 100%;
+          text-align: left;
+          border: 0;
+          background: none;
+          color: var(--ob-ink);
+          font: inherit;
+          font-size: 13px;
+          padding: 10px 12px;
+          cursor: pointer;
+        }
+        .ob-ex-search-hits button:hover,
+        .ob-ex-search-hits button:focus-visible {
+          background: color-mix(in srgb, var(--ob-gold) 16%, transparent);
+        }
+        .ob-ex-focusline {
+          margin: 0.35rem 0 0;
+          font-size: 12px;
+          color: var(--ob-gold-deep);
+          letter-spacing: 0.04em;
         }
         .ob-ex-legend {
           display: flex;
@@ -851,9 +923,27 @@ const ExistenceLife = props => {
           outline: 2px solid var(--ob-gold-deep);
           outline-offset: 1px;
         }
+        @media (max-width: 639px) {
+          .ob-ex { padding: 0 0 2rem; }
+          .ob-ex-title {
+            font-size: 1.45rem;
+            letter-spacing: 0.1em;
+          }
+          .ob-ex-motto {
+            font-size: 0.95rem;
+            padding: 0.65rem 0 0.65rem 0.8rem;
+          }
+          .ob-ex-hero { padding: 0.85rem 0.8rem 1rem; }
+          .ob-ex-urgent { font-size: 0.92rem; }
+          .ob-ex-chart { padding: 0.75rem 0.6rem 0.9rem; }
+          .ob-ex-note { font-size: 12px; }
+          .ob-ex-day { min-height: 40px; }
+          .ob-ex-field { min-height: 0; }
+        }
         @media (min-width: 640px) {
           .ob-ex-title { font-size: 2rem; }
           .ob-ex-motto { font-size: 1.12rem; }
+          .ob-ex-search { max-width: 22.5rem; }
           .ob-ex-hero {
             grid-template-columns: 7.2rem minmax(0, 1fr);
             align-items: center;
@@ -864,10 +954,8 @@ const ExistenceLife = props => {
           .ob-ex-months { grid-template-columns: 1fr 1fr; }
         }
         @media (min-width: 1024px) {
-          .ob-ex-months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        }
-        @media (min-width: 1024px) {
           .ob-ex { padding-top: 0.35rem; }
+          .ob-ex-months { grid-template-columns: repeat(3, minmax(0, 1fr)); }
         }
       `}</style>
 
