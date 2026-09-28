@@ -48,7 +48,8 @@ const CONFIG = {
   // 我的存在 · 生命页（可在 Notion 配置中心用同名键覆盖）
   EXISTENCE_BIRTH: '2001-10-19',
   EXISTENCE_YEARS: 80,
-  EXISTENCE_AWAKENING: '2025-03-24',
+  EXISTENCE_AWAKENING: '2025-03-28',
+  EXISTENCE_NEW_END: '2081-03-27',
   EXISTENCE_MOTTO:
     '我的思想也许不在于我想了什么，而在于我做了什么。人有很多面，而我才见了几面？',
   EXISTENCE_STAMP: '2026年9月28日22时更新',

@@ -6,11 +6,18 @@ export const isExistenceCategory = category =>
 export const EXISTENCE_DEFAULTS = {
   birth: '2001-10-19',
   years: 80,
-  awakening: '2025-03-24',
+  awakening: '2025-03-28',
+  newEnd: '2081-03-27',
   motto:
     '我的思想也许不在于我想了什么，而在于我做了什么。人有很多面，而我才见了几面？',
   stamp: '2026年9月28日22时更新'
 }
+
+export const LIFE_MARKERS = [
+  { iso: '2001-10-19', label: '生命的起点' },
+  { iso: '2025-03-28', label: '（新）生命的终（起）点' },
+  { iso: '2081-03-27', label: '（预计）新生命的终点' }
+]
 
 export const isoDay = value => {
   if (!value) return ''
@@ -63,10 +70,10 @@ export const shiftIso = (iso, days) => {
   return new Date(t).toISOString().slice(0, 10)
 }
 
-export const hoursLived = birthIso => {
-  const t = Date.parse(`${birthIso}T00:00:00+08:00`)
+export const hoursUntil = endIso => {
+  const t = Date.parse(`${endIso}T00:00:00+08:00`)
   if (Number.isNaN(t)) return 0
-  return Math.max(0, Math.floor((Date.now() - t) / 3600000))
+  return Math.max(0, Math.ceil((t - Date.now()) / 3600000))
 }
 
 export const daysBetween = (fromIso, toIsoInclusive) => {
@@ -79,6 +86,11 @@ export const daysBetween = (fromIso, toIsoInclusive) => {
 export const formatDotDate = iso => {
   const { y, m, d } = parseIso(iso)
   return `${y}.${m}.${d}`
+}
+
+export const formatZhDate = iso => {
+  const { y, m, d } = parseIso(iso)
+  return `${y}年${m}月${d}日`
 }
 
 export const slimExistencePosts = posts =>
@@ -97,13 +109,6 @@ export const postMapFrom = posts => {
     if (!map[post.date]) map[post.date] = post
   })
   return map
-}
-
-export const mottoLines = motto => {
-  const text = String(motto || '').trim()
-  if (!text) return []
-  const parts = text.split(/(?<=。|？|！)/).map(s => s.trim()).filter(Boolean)
-  return parts.length ? parts : [text]
 }
 
 export const parseSearchQuery = q => {

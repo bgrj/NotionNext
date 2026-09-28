@@ -8,10 +8,10 @@ import {
   addYearsIso,
   daysBetween,
   dimOfMonth,
-  hoursLived,
   formatDotDate,
+  formatZhDate,
+  hoursUntil,
   isoDay,
-  mottoLines,
   ordinalInYear,
   parseIso,
   parseSearchQuery,
@@ -40,9 +40,10 @@ const colorsOf = dark =>
         ink: '#F6F1E8',
         muted: '#D2C4B0',
         line: 'rgba(246, 241, 232, 0.22)',
-        mengmei: 'rgba(210, 196, 176, 0.52)',
-        awake: 'rgba(226, 196, 138, 0.88)',
+        mengmei: 'rgba(210, 196, 176, 0.42)',
+        awake: 'rgba(210, 196, 176, 0.42)',
         written: '#F0D9A0',
+        mark: '#F0D9A0',
         future: 'rgba(246, 241, 232, 0.16)',
         gold: '#E2C48A',
         goldDeep: '#F0D9A0',
@@ -53,9 +54,10 @@ const colorsOf = dark =>
         ink: '#2C241C',
         muted: '#5A4D40',
         line: 'rgba(44, 36, 28, 0.18)',
-        mengmei: 'rgba(56, 48, 42, 0.42)',
-        awake: 'rgba(160, 112, 40, 0.78)',
+        mengmei: 'rgba(56, 48, 42, 0.38)',
+        awake: 'rgba(56, 48, 42, 0.38)',
         written: '#8A5A1F',
+        mark: '#8A5A1F',
         future: 'rgba(44, 36, 28, 0.12)',
         gold: '#C9A66B',
         goldDeep: '#8A5A1F',
@@ -67,12 +69,11 @@ const isDarkNow = () =>
   typeof document !== 'undefined' &&
   document.documentElement.classList.contains('dark')
 
-const dayState = (iso, { birth, awakening, today, end, postMap }) => {
+const dayState = (iso, { birth, today, end, postMap }) => {
   if (iso < birth || iso >= end) return null
   if (postMap[iso]) return STATE.WRITTEN
   if (iso > today) return STATE.FUTURE
-  if (iso < awakening) return STATE.MENGMEI
-  return STATE.AWAKE
+  return STATE.MENGMEI
 }
 
 const buildCells = meta => {
@@ -229,6 +230,9 @@ const ExistenceLife = props => {
     isoDay(
       siteConfig('EXISTENCE_AWAKENING', EXISTENCE_DEFAULTS.awakening, CONFIG)
     ) || EXISTENCE_DEFAULTS.awakening
+  const newEnd =
+    isoDay(siteConfig('EXISTENCE_NEW_END', EXISTENCE_DEFAULTS.newEnd, CONFIG)) ||
+    EXISTENCE_DEFAULTS.newEnd
   const motto = siteConfig(
     'EXISTENCE_MOTTO',
     EXISTENCE_DEFAULTS.motto,
@@ -264,9 +268,17 @@ const ExistenceLife = props => {
   const futureDays = daysBetween(shiftIso(today, 1), shiftIso(end, -1))
   const totalDays = daysBetween(birth, shiftIso(end, -1))
   const livedDays = Math.min(totalDays, daysBetween(birth, lastLived))
-  const livedHours = hoursLived(birth)
-  const writtenDays = written.length
-  const lines = mottoLines(motto)
+  const remainHours = hoursUntil(end)
+  const writtenDays = written.filter(post => post.date >= awakening).length
+  const mottoText = String(motto || '').replace(/\s+/g, ' ').trim()
+  const lifeMarks = useMemo(
+    () => [
+      { iso: birth, label: '生命的起点' },
+      { iso: awakening, label: '（新）生命的终（起）点' },
+      { iso: newEnd, label: '（预计）新生命的终点' }
+    ],
+    [birth, awakening, newEnd]
+  )
   const lastYear = YEAR_START + yearCount - 1
   const wrapRef = useRef(null)
   const canvasRef = useRef(null)
@@ -276,6 +288,7 @@ const ExistenceLife = props => {
   const [dark, setDark] = useState(false)
   const [tip, setTip] = useState(null)
   const [links, setLinks] = useState([])
+  const [marks, setMarks] = useState([])
   const [draft, setDraft] = useState('')
   const [query, setQuery] = useState('')
   const [expandedYear, setExpandedYear] = useState(null)
@@ -324,7 +337,7 @@ const ExistenceLife = props => {
       const labelW = width < 640 ? 42 : 48
       const topH = width < 640 ? 16 : 18
       const rowH = width < 640 ? 7.1 : 8.2
-      const bottomH = 8
+      const bottomH = 36
       const height = topH + yearCount * rowH + bottomH
       const pal = colorsOf(dark)
       const dpr = Math.min(window.devicePixelRatio || 1, 2)
@@ -367,13 +380,8 @@ const ExistenceLife = props => {
           return
         }
         ctx.fillStyle =
-          cell.state === STATE.MENGMEI
-            ? pal.mengmei
-            : cell.state === STATE.AWAKE
-              ? pal.awake
-              : pal.future
-        const r =
-          cell.state === STATE.AWAKE ? Math.max(dot, 1.35) : dot / 2
+          cell.state === STATE.FUTURE ? pal.future : pal.mengmei
+        const r = cell.state === STATE.FUTURE ? dot / 2 : dot * 0.82
         ctx.beginPath()
         ctx.arc(x, y, r, 0, Math.PI * 2)
         ctx.fill()
@@ -407,6 +415,29 @@ const ExistenceLife = props => {
         ctx.stroke()
       }
 
+      const nextMarks = lifeMarks.map(marker => {
+        if (marker.iso < birth || marker.iso >= end) return null
+        const { y, m, d } = parseIso(marker.iso)
+        const x = labelW + (ordinalInYear(y, m, d) - 1) * colW + colW / 2
+        const cy = topH + (y - YEAR_START) * rowH + rowH / 2
+        ctx.strokeStyle = pal.mark
+        ctx.fillStyle = pal.written
+        ctx.lineWidth = 1.8
+        ctx.beginPath()
+        ctx.arc(x, cy, Math.max(writtenR + 3.2, 6), 0, Math.PI * 2)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.arc(x, cy, 1.6, 0, Math.PI * 2)
+        ctx.fill()
+        return {
+          ...marker,
+          left: x,
+          top: cy,
+          flip: x > width * 0.58
+        }
+      }).filter(Boolean)
+      setMarks(nextMarks)
+
       const nextLinks = written.map(post => {
         const { y, m, d } = parseIso(post.date)
         const x = labelW + (ordinalInYear(y, m, d) - 1) * colW + colW / 2
@@ -426,7 +457,7 @@ const ExistenceLife = props => {
     const ro = new ResizeObserver(paint)
     ro.observe(wrap)
     return () => ro.disconnect()
-  }, [cells, dark, yearCount, written, focusIso])
+  }, [cells, dark, yearCount, written, focusIso, birth, end, lifeMarks])
 
   const onMove = event => {
     const layout = layoutRef.current
@@ -552,9 +583,8 @@ const ExistenceLife = props => {
           font-weight: 700;
           line-height: 1.7;
           letter-spacing: 0.03em;
-          max-width: 36em;
+          white-space: nowrap;
         }
-        .ob-ex-motto span { display: block; }
         .ob-ex-stamp {
           margin: 0.55rem 0 1.15rem;
           font-size: 12px;
@@ -574,49 +604,84 @@ const ExistenceLife = props => {
         }
         .ob-ex-hg {
           position: relative;
-          width: 78px;
-          height: 138px;
-          margin: 0.15rem auto 0.2rem;
-          background: color-mix(in srgb, var(--ob-ink) 8%, transparent);
-          clip-path: polygon(
-            8% 0, 92% 0, 57% 46%, 57% 54%, 92% 100%, 8% 100%, 43% 54%, 43% 46%
-          );
+          width: 86px;
+          height: 148px;
+          margin: 0.1rem auto 0.15rem;
+          filter: drop-shadow(0 6px 10px rgba(28, 22, 16, 0.12));
+        }
+        .ob-ex-hg-top,
+        .ob-ex-hg-bot {
+          position: relative;
+          width: 86px;
+          height: 64px;
+          overflow: hidden;
+          background: color-mix(in srgb, var(--ob-ink) 7%, transparent);
+        }
+        .ob-ex-hg-top {
+          clip-path: polygon(4% 0, 96% 0, 56% 100%, 44% 100%);
+        }
+        .ob-ex-hg-bot {
+          clip-path: polygon(44% 0, 56% 0, 96% 100%, 4% 100%);
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
-          overflow: hidden;
         }
-        .ob-ex-hg-fill {
+        .ob-ex-hg-neck {
+          width: 12px;
+          height: 12px;
+          margin: -2px auto;
+          border-radius: 2px;
+          background: linear-gradient(to bottom, var(--ob-gold), var(--ob-gold-deep));
+          box-shadow: 0 0 10px color-mix(in srgb, var(--ob-gold) 70%, transparent);
+          animation: ob-ex-pulse 1.8s ease-in-out infinite;
+          z-index: 2;
+        }
+        .ob-ex-hg-sand-top {
+          position: absolute;
+          left: 0;
+          right: 0;
+          bottom: 0;
+          background: linear-gradient(
+            180deg,
+            color-mix(in srgb, var(--ob-gold) 35%, transparent),
+            color-mix(in srgb, var(--ob-gold) 70%, transparent)
+          );
+        }
+        .ob-ex-hg-sand-bot {
           width: 100%;
           display: flex;
           flex-direction: column;
           justify-content: flex-end;
         }
-        .ob-ex-hg-fill span { width: 100%; min-height: 0; }
-        .ob-ex-hg-fill .is-mengmei {
-          background: color-mix(in srgb, var(--ob-ink) 42%, transparent);
+        .ob-ex-hg-sand-bot .is-mengmei {
+          background: color-mix(in srgb, var(--ob-ink) 38%, transparent);
         }
-        .ob-ex-hg-fill .is-awake {
-          background: var(--ob-gold);
+        .ob-ex-hg-sand-bot .is-awake {
+          background: linear-gradient(180deg, var(--ob-gold), var(--ob-gold-deep));
         }
         .ob-ex-hg-grain {
           position: absolute;
           left: 50%;
-          top: 46%;
-          width: 5px;
-          height: 5px;
-          margin-left: -2.5px;
+          width: 4px;
+          height: 4px;
+          margin-left: -2px;
           border-radius: 50%;
           background: var(--ob-gold);
-          animation: ob-ex-fall 2.4s ease-in infinite;
+          animation: ob-ex-fall 1.7s linear infinite;
         }
+        .ob-ex-hg-grain.g2 { animation-delay: 0.55s; width: 3px; height: 3px; }
+        .ob-ex-hg-grain.g3 { animation-delay: 1.1s; width: 5px; height: 5px; }
         @keyframes ob-ex-fall {
-          0% { top: 44%; opacity: 0; }
-          12% { opacity: 1; }
-          100% { top: 78%; opacity: 0.15; }
+          0% { top: 42%; opacity: 0; }
+          18% { opacity: 1; }
+          100% { top: 78%; opacity: 0.1; }
+        }
+        @keyframes ob-ex-pulse {
+          0%, 100% { transform: scale(1); filter: brightness(1); }
+          50% { transform: scale(1.08); filter: brightness(1.25); }
         }
         @media (prefers-reduced-motion: reduce) {
-          .ob-ex-hg-grain { animation: none; opacity: 0.85; top: 49%; }
+          .ob-ex-hg-grain, .ob-ex-hg-neck { animation: none; }
         }
         .ob-ex-urgent {
           margin: 0;
@@ -685,7 +750,7 @@ const ExistenceLife = props => {
           line-height: 1.75;
           color: var(--ob-muted);
           letter-spacing: 0.04em;
-          max-width: 46em;
+          white-space: nowrap;
         }
         .ob-ex-search {
           position: relative;
@@ -776,8 +841,35 @@ const ExistenceLife = props => {
           vertical-align: 1px;
         }
         .ob-ex-legend .dot-m { background: color-mix(in srgb, var(--ob-ink) 28%, transparent); }
-        .ob-ex-legend .dot-a { background: color-mix(in srgb, var(--ob-gold) 70%, transparent); }
         .ob-ex-legend .dot-w { background: var(--ob-gold); width: 8px; height: 8px; }
+        .ob-ex-mark {
+          position: absolute;
+          z-index: 4;
+          pointer-events: none;
+          transform: translate(-50%, 8px);
+        }
+        .ob-ex-mark.is-flip {
+          transform: translate(calc(-100% + 10px), 8px);
+        }
+        .ob-ex-mark-lab {
+          display: block;
+          padding: 4px 7px;
+          border-radius: 8px;
+          background: var(--ob-card);
+          border: 1px solid var(--ob-gold);
+          color: var(--ob-ink);
+          font-size: 10px;
+          line-height: 1.35;
+          letter-spacing: 0.02em;
+          white-space: nowrap;
+          box-shadow: 0 6px 16px rgba(28, 22, 16, 0.1);
+        }
+        .ob-ex-mark-lab em {
+          display: block;
+          font-style: normal;
+          font-weight: 700;
+          color: var(--ob-gold-deep);
+        }
         .ob-ex-legend .dot-f {
           background: transparent;
           box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ob-ink) 18%, transparent);
@@ -932,7 +1024,10 @@ const ExistenceLife = props => {
           .ob-ex-motto {
             font-size: 0.95rem;
             padding: 0.65rem 0 0.65rem 0.8rem;
+            white-space: normal;
           }
+          .ob-ex-note { white-space: normal; }
+          .ob-ex-mark-lab { white-space: normal; max-width: 9.2rem; }
           .ob-ex-hero { padding: 0.85rem 0.8rem 1rem; }
           .ob-ex-urgent { font-size: 0.92rem; }
           .ob-ex-chart { padding: 0.75rem 0.6rem 0.9rem; }
@@ -961,11 +1056,7 @@ const ExistenceLife = props => {
 
       <header>
         <h1 className='ob-ex-title'>我的存在</h1>
-        <blockquote className='ob-ex-motto'>
-          {lines.map(line => (
-            <span key={line}>{line}</span>
-          ))}
-        </blockquote>
+        <blockquote className='ob-ex-motto'>{mottoText}</blockquote>
         {stamp ? <div className='ob-ex-stamp'>{stamp}</div> : null}
       </header>
 
@@ -973,22 +1064,33 @@ const ExistenceLife = props => {
         <div
           className='ob-ex-hg'
           role='img'
-          aria-label={`已过 ${nf(livedDays)} / ${nf(totalDays)} 日`}>
-          <div
-            className='ob-ex-hg-fill'
-            style={{ height: `${Math.max(2, (livedDays / totalDays) * 100)}%` }}>
-            <span className='is-mengmei' style={{ flexGrow: mengmeiDays, display: 'block' }} />
-            <span className='is-awake' style={{ flexGrow: Math.max(awakeDays, 1), display: 'block' }} />
+          aria-label={`已过 ${nf(livedDays)} / ${nf(totalDays)} 日，剩余 ${nf(remainHours)} 小时`}>
+          <div className='ob-ex-hg-top'>
+            <div
+              className='ob-ex-hg-sand-top'
+              style={{ height: `${Math.max(8, (futureDays / totalDays) * 100)}%` }}
+            />
+          </div>
+          <div className='ob-ex-hg-neck' />
+          <div className='ob-ex-hg-bot'>
+            <div
+              className='ob-ex-hg-sand-bot'
+              style={{ height: `${Math.max(8, (livedDays / totalDays) * 100)}%` }}>
+              <span className='is-mengmei' style={{ flexGrow: mengmeiDays, display: 'block', minHeight: 0 }} />
+              <span className='is-awake' style={{ flexGrow: Math.max(awakeDays, 1), display: 'block', minHeight: 0 }} />
+            </div>
           </div>
           <span className='ob-ex-hg-grain' />
+          <span className='ob-ex-hg-grain g2' />
+          <span className='ob-ex-hg-grain g3' />
         </div>
         <div>
           <p className='ob-ex-urgent'>
-            如果我的存在将终结于 {years} 岁，那么截至 {formatDotDate(today)}，已经过去{' '}
+            如果我的存在将终结于 {years} 岁，那么截至 {formatZhDate(today)}，已经过去{' '}
             <b>
               {nf(livedDays)} / {nf(totalDays)}
             </b>
-            ，仅生于 <b>{nf(livedHours)}</b> 个小时。还剩 {nf(futureDays)} 日。
+            ，仅剩余 <b>{nf(remainHours)}</b> 个小时。还剩余 {nf(futureDays)} 日。
           </p>
           <div className='ob-ex-phases'>
             <div className='ob-ex-phase is-mengmei'>
@@ -1002,7 +1104,7 @@ const ExistenceLife = props => {
               <div className='ob-ex-phase-name'>不断摆脱蒙昧</div>
               <div className='ob-ex-phase-range'>{formatDotDate(awakening)} —</div>
               <div className='ob-ex-phase-count'>
-                {nf(awakeDays)} 日已过 · {nf(writtenDays)} 日留下
+                已过 {nf(awakeDays)} 日 · 已发布 {nf(writtenDays)} 篇
               </div>
             </div>
           </div>
@@ -1027,7 +1129,7 @@ const ExistenceLife = props => {
           role='search'
           onSubmit={event => event.preventDefault()}>
           <label className='sr-only' htmlFor='ob-ex-search-input'>
-            找一天
+            找站主的那一天
           </label>
           <div className='ob-ex-search-box'>
             <i className='fa-solid fa-magnifying-glass' aria-hidden='true' />
@@ -1039,7 +1141,7 @@ const ExistenceLife = props => {
               autoComplete='off'
               spellCheck='false'
               enterKeyHint='search'
-              placeholder='找一天，例如 2025.4.30'
+              placeholder='找站主的那一天，例如 2025.3.28'
               onChange={event => {
                 const value = event.target.value
                 setDraft(value)
@@ -1091,10 +1193,6 @@ const ExistenceLife = props => {
           蒙昧
         </span>
         <span>
-          <b className='dot-a' />
-          不断摆脱蒙昧
-        </span>
-        <span>
           <b className='dot-w' />
           已留下
         </span>
@@ -1125,6 +1223,17 @@ const ExistenceLife = props => {
               height: link.size
             }}
           />
+        ))}
+        {marks.map(mark => (
+          <div
+            key={mark.iso}
+            className={`ob-ex-mark${mark.flip ? ' is-flip' : ''}`}
+            style={{ left: mark.left, top: mark.top }}>
+            <span className='ob-ex-mark-lab'>
+              {formatDotDate(mark.iso)}
+              <em>{mark.label}</em>
+            </span>
+          </div>
         ))}
         {tip ? (
           <div className='ob-ex-tip' style={{ left: tip.x, top: tip.y }}>
