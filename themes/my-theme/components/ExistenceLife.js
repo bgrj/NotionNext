@@ -396,11 +396,27 @@ const ExistenceLife = props => {
         .ob-ex-bar .is-mengmei { background: color-mix(in srgb, var(--ob-ink) 28%, transparent); }
         .ob-ex-bar .is-awake { background: var(--ob-gold); }
         .ob-ex-bar .is-future { background: transparent; }
+        .ob-ex-chart {
+          margin-top: 0.15rem;
+        }
+        .ob-ex-chart-head {
+          margin: 0 0 0.7rem;
+          padding-bottom: 0.7rem;
+          border-bottom: 1px solid var(--ob-line);
+        }
+        .ob-ex-note {
+          margin: 0;
+          font-size: 12px;
+          line-height: 1.75;
+          color: var(--ob-muted);
+          letter-spacing: 0.04em;
+          max-width: 46em;
+        }
         .ob-ex-legend {
           display: flex;
           flex-wrap: wrap;
           gap: 12px 18px;
-          margin: 0 0 0.85rem;
+          margin: 0.7rem 0 0.85rem;
           font-size: 12px;
           color: var(--ob-muted);
           letter-spacing: 0.04em;
@@ -457,14 +473,6 @@ const ExistenceLife = props => {
           overflow: hidden;
           text-overflow: ellipsis;
           box-shadow: 0 8px 24px rgba(28, 22, 16, 0.12);
-        }
-        .ob-ex-note {
-          margin: 1rem 0 0;
-          font-size: 12px;
-          line-height: 1.7;
-          color: var(--ob-muted);
-          letter-spacing: 0.04em;
-          max-width: 42em;
         }
         .ob-ex .sr-only {
           position: absolute;
@@ -523,6 +531,12 @@ const ExistenceLife = props => {
         <span className='is-future' style={{ flexGrow: Math.max(futureDays, 0) }} />
       </div>
 
+      <section className='ob-ex-chart' aria-label='生命点图'>
+      <div className='ob-ex-chart-head'>
+        <p className='ob-ex-note'>
+          按 {years} 岁计，从 {formatDotDate(birth)} 到 {formatDotDate(shiftIso(end, -1))}，共 {nf(totalDays)} 日。每一个点是一天。亮着的日子，可以进去。
+        </p>
+      </div>
       <div className='ob-ex-legend' aria-hidden='true'>
         <span>
           <b className='dot-m' />
@@ -569,10 +583,7 @@ const ExistenceLife = props => {
           </div>
         ) : null}
       </div>
-
-      <p className='ob-ex-note'>
-        按 {years} 岁计，从 {formatDotDate(birth)} 到 {formatDotDate(shiftIso(end, -1))}，共 {nf(totalDays)} 日。每一个点是一天。亮着的日子，可以进去。
-      </p>
+      </section>
 
       <nav className='sr-only' aria-label='已留下的日子'>
         <ul>
