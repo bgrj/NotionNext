@@ -52,7 +52,15 @@ export const FRIEND_LINK_SECTIONS = [
           L('MBA智库', 'https://www.mbalib.com/', '管理与社会的词条', 'mbalib.com', C.clay, 2, ['info']),
           L('PhilPapers', 'https://philpapers.org/', '哲学论文的总目录', 'philpapers.org', C.plum, 5, ['info']),
           L('AskPhilosophers', 'https://www.askphilosophers.org/', '哲学家当场回答', 'askphilosophers.org', C.tea, 4, ['info']),
-          L('哲学中国网', 'http://www.philosophy.org.cn/', '哲学研究的公共入口', 'philosophy.org.cn', C.ink, 4, ['info'])
+          L('哲学中国网', 'http://www.philosophy.org.cn/', '哲学研究的公共入口', 'philosophy.org.cn', C.ink, 4, ['info']),
+          L('五毛研究', 'https://github.com/zmike1993/hello-world/wiki/%E4%BA%94%E6%AF%9B%E7%A0%94%E7%A9%B6', '舆论操控如何分层、伪装与生效', 'github.com', C.ink, 5, ['info']),
+          L('专访五毛党', 'https://github.com/zmike1993/hello-world/wiki/%E4%B8%93%E8%AE%BF%E4%BA%94%E6%AF%9B%E5%85%9A', '当事人自己怎么说这份工作', 'github.com', C.tea, 4, ['info']),
+          L('如何获取信息', 'https://github.com/zmike1993/hello-world/issues/25', '信息爆炸里如何不被投喂', 'github.com', C.plum, 4, ['info']),
+          L('获取信息操作指南', 'https://github.com/zmike1993/hello-world/issues/83', '渠道、媒体参与度与批判阅读', 'github.com', C.olive, 4, ['info']),
+          L('如何提升认知能力', 'https://github.com/zmike1993/hello-world/issues/53', '批判思维、多元渠道与读书', 'github.com', C.clay, 4, ['info']),
+          L('国产教育的内卷', 'https://github.com/zmike1993/hello-world/issues/54', '封闭系统如何卷穿家庭', 'github.com', C.slate, 3, ['info']),
+          L('一封初二女生的遗书', 'https://github.com/zmike1993/hello-world/issues/36', '毁掉一个人，往往从童年开始', 'github.com', C.rust, 4, ['info']),
+          L('一个贪官写给儿子的忠告', 'https://github.com/zmike1993/hello-world/issues/19', '官场生存术如何扭曲人', 'github.com', C.ink, 3, ['info'])
         ]
       },
       {
@@ -341,7 +349,8 @@ export const FRIEND_LINK_SECTIONS = [
           L('法律咨询', 'https://ai.12348.gov.cn/pc/', '中国法律服务网', 'ai.12348.gov.cn', C.plum, 2, []),
           L('清华镜像', 'https://mirrors.tuna.tsinghua.edu.cn/', '开源软件镜像', 'mirrors.tuna.tsinghua.edu.cn', C.ink, 3, ['tech']),
           L('中科大镜像', 'https://mirrors.ustc.edu.cn/', '开源软件镜像', 'mirrors.ustc.edu.cn', C.olive, 3, ['tech']),
-          L('CERNET 镜像', 'https://mirrors.cernet.edu.cn/list', '校园网联合镜像', 'mirrors.cernet.edu.cn', C.slate, 3, ['tech'])
+          L('CERNET 镜像', 'https://mirrors.cernet.edu.cn/list', '校园网联合镜像', 'mirrors.cernet.edu.cn', C.slate, 3, ['tech']),
+          L('高性价比人生指南', 'https://github.com/eternity4719/HowToLiveBetter', '按证据排的活法备选单，不是任务清单', 'github.com', C.moss, 4, ['info'])
         ]
       },
       {
