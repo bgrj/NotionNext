@@ -8,6 +8,7 @@ import {
   addYearsIso,
   daysBetween,
   dimOfMonth,
+  hoursLived,
   formatDotDate,
   isoDay,
   mottoLines,
@@ -262,6 +263,8 @@ const ExistenceLife = props => {
   const awakeDays = today >= awakening ? daysBetween(awakening, lastLived) : 0
   const futureDays = daysBetween(shiftIso(today, 1), shiftIso(end, -1))
   const totalDays = daysBetween(birth, shiftIso(end, -1))
+  const livedDays = Math.min(totalDays, daysBetween(birth, lastLived))
+  const livedHours = hoursLived(birth)
   const writtenDays = written.length
   const lines = mottoLines(motto)
   const lastYear = YEAR_START + yearCount - 1
@@ -553,54 +556,110 @@ const ExistenceLife = props => {
         }
         .ob-ex-motto span { display: block; }
         .ob-ex-stamp {
-          margin: 0.55rem 0 1.4rem;
+          margin: 0.55rem 0 1.15rem;
           font-size: 12px;
           letter-spacing: 0.06em;
           color: var(--ob-muted);
         }
-        .ob-ex-phases {
+        .ob-ex-hero {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 12px;
-          margin: 0 0 1rem;
-        }
-        .ob-ex-phase {
-          padding: 0.85rem 1rem 0.95rem;
+          gap: 1rem;
+          margin: 0 0 1.25rem;
+          padding: 1rem 1rem 1.15rem;
           border: 1px solid var(--ob-line);
-          border-radius: 12px;
+          border-radius: 14px;
           background: var(--ob-card);
           backdrop-filter: blur(10px);
         }
-        .ob-ex-phase.is-awake {
-          border-left: 3px solid var(--ob-gold-deep);
+        .ob-ex-hg {
+          position: relative;
+          width: 78px;
+          height: 138px;
+          margin: 0.15rem auto 0.2rem;
+          background: color-mix(in srgb, var(--ob-ink) 8%, transparent);
+          clip-path: polygon(
+            8% 0, 92% 0, 57% 46%, 57% 54%, 92% 100%, 8% 100%, 43% 54%, 43% 46%
+          );
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+          overflow: hidden;
         }
-        .ob-ex-phase.is-mengmei {
-          border-left: 3px solid color-mix(in srgb, var(--ob-ink) 35%, transparent);
+        .ob-ex-hg-fill {
+          width: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: flex-end;
+        }
+        .ob-ex-hg-fill .is-mengmei {
+          background: color-mix(in srgb, var(--ob-ink) 42%, transparent);
+        }
+        .ob-ex-hg-fill .is-awake {
+          background: var(--ob-gold);
+        }
+        .ob-ex-hg-grain {
+          position: absolute;
+          left: 50%;
+          top: 46%;
+          width: 5px;
+          height: 5px;
+          margin-left: -2.5px;
+          border-radius: 50%;
+          background: var(--ob-gold);
+          animation: ob-ex-fall 2.4s ease-in infinite;
+        }
+        @keyframes ob-ex-fall {
+          0% { top: 44%; opacity: 0; }
+          12% { opacity: 1; }
+          100% { top: 78%; opacity: 0.15; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ob-ex-hg-grain { animation: none; opacity: 0.85; top: 49%; }
+        }
+        .ob-ex-urgent {
+          margin: 0;
+          font-size: 0.98rem;
+          line-height: 1.75;
+          letter-spacing: 0.02em;
+          font-weight: 600;
+        }
+        .ob-ex-urgent b {
+          color: var(--ob-gold-deep);
+          font-weight: 700;
+          font-variant-numeric: tabular-nums;
+        }
+        .ob-ex-phases {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: 10px;
+          margin: 0.85rem 0 0.7rem;
         }
         .ob-ex-phase-name {
-          font-size: 1.05rem;
+          font-size: 0.92rem;
           font-weight: 700;
-          letter-spacing: 0.18em;
+          letter-spacing: 0.16em;
         }
         .ob-ex-phase-range {
-          margin-top: 6px;
-          font-size: 13px;
+          margin-top: 4px;
+          font-size: 12px;
           color: var(--ob-muted);
           letter-spacing: 0.04em;
         }
         .ob-ex-phase-count {
-          margin-top: 4px;
-          font-size: 13px;
+          margin-top: 2px;
+          font-size: 12px;
           letter-spacing: 0.04em;
           font-variant-numeric: tabular-nums;
         }
+        .ob-ex-phase.is-awake .ob-ex-phase-name { color: var(--ob-gold-deep); }
         .ob-ex-bar {
           display: flex;
-          height: 10px;
-          margin: 0 0 1.35rem;
+          height: 8px;
+          margin: 0;
           overflow: hidden;
           border-radius: 999px;
-          background: color-mix(in srgb, var(--ob-ink) 6%, transparent);
+          background: color-mix(in srgb, var(--ob-ink) 8%, transparent);
         }
         .ob-ex-bar span { display: block; height: 100%; }
         .ob-ex-bar .is-mengmei { background: color-mix(in srgb, var(--ob-ink) 28%, transparent); }
@@ -795,6 +854,12 @@ const ExistenceLife = props => {
         @media (min-width: 640px) {
           .ob-ex-title { font-size: 2rem; }
           .ob-ex-motto { font-size: 1.12rem; }
+          .ob-ex-hero {
+            grid-template-columns: 7.2rem minmax(0, 1fr);
+            align-items: center;
+            column-gap: 1.4rem;
+          }
+          .ob-ex-hg { margin: 0; }
           .ob-ex-phases { grid-template-columns: 1fr 1fr; gap: 16px; }
           .ob-ex-months { grid-template-columns: 1fr 1fr; }
         }
@@ -816,30 +881,52 @@ const ExistenceLife = props => {
         {stamp ? <div className='ob-ex-stamp'>{stamp}</div> : null}
       </header>
 
-      <div className='ob-ex-phases'>
-        <div className='ob-ex-phase is-mengmei'>
-          <div className='ob-ex-phase-name'>蒙昧</div>
-          <div className='ob-ex-phase-range'>
-            {formatDotDate(birth)} — {formatDotDate(mengmeiEnd)}
+      <div className='ob-ex-hero'>
+        <div
+          className='ob-ex-hg'
+          role='img'
+          aria-label={`已过 ${nf(livedDays)} / ${nf(totalDays)} 日`}>
+          <div
+            className='ob-ex-hg-fill'
+            style={{ height: `${Math.max(2, (livedDays / totalDays) * 100)}%` }}>
+            <span className='is-mengmei' style={{ flexGrow: mengmeiDays, display: 'block' }} />
+            <span className='is-awake' style={{ flexGrow: Math.max(awakeDays, 1), display: 'block' }} />
           </div>
-          <div className='ob-ex-phase-count'>{nf(mengmeiDays)} 日</div>
+          <span className='ob-ex-hg-grain' />
         </div>
-        <div className='ob-ex-phase is-awake'>
-          <div className='ob-ex-phase-name'>不断摆脱蒙昧</div>
-          <div className='ob-ex-phase-range'>{formatDotDate(awakening)} —</div>
-          <div className='ob-ex-phase-count'>
-            {nf(awakeDays)} 日已过 · {nf(writtenDays)} 日留下
+        <div>
+          <p className='ob-ex-urgent'>
+            如果我的存在将终结于 {years} 岁，那么截至 {formatDotDate(today)}，已经过去{' '}
+            <b>
+              {nf(livedDays)} / {nf(totalDays)}
+            </b>
+            ，仅生于 <b>{nf(livedHours)}</b> 个小时。还剩 {nf(futureDays)} 日。
+          </p>
+          <div className='ob-ex-phases'>
+            <div className='ob-ex-phase is-mengmei'>
+              <div className='ob-ex-phase-name'>蒙昧</div>
+              <div className='ob-ex-phase-range'>
+                {formatDotDate(birth)} — {formatDotDate(mengmeiEnd)}
+              </div>
+              <div className='ob-ex-phase-count'>{nf(mengmeiDays)} 日</div>
+            </div>
+            <div className='ob-ex-phase is-awake'>
+              <div className='ob-ex-phase-name'>不断摆脱蒙昧</div>
+              <div className='ob-ex-phase-range'>{formatDotDate(awakening)} —</div>
+              <div className='ob-ex-phase-count'>
+                {nf(awakeDays)} 日已过 · {nf(writtenDays)} 日留下
+              </div>
+            </div>
+          </div>
+          <div
+            className='ob-ex-bar'
+            role='img'
+            aria-label={`按 ${years} 岁计共 ${nf(totalDays)} 日`}>
+            <span className='is-mengmei' style={{ flexGrow: mengmeiDays }} />
+            <span className='is-awake' style={{ flexGrow: Math.max(awakeDays, 1) }} />
+            <span className='is-future' style={{ flexGrow: Math.max(futureDays, 0) }} />
           </div>
         </div>
-      </div>
-
-      <div
-        className='ob-ex-bar'
-        role='img'
-        aria-label={`按 ${years} 岁计共 ${nf(totalDays)} 日`}>
-        <span className='is-mengmei' style={{ flexGrow: mengmeiDays }} />
-        <span className='is-awake' style={{ flexGrow: Math.max(awakeDays, 1) }} />
-        <span className='is-future' style={{ flexGrow: Math.max(futureDays, 0) }} />
       </div>
 
       <section className='ob-ex-chart' aria-label='生命点图'>

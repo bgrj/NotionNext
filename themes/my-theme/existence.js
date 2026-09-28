@@ -63,6 +63,12 @@ export const shiftIso = (iso, days) => {
   return new Date(t).toISOString().slice(0, 10)
 }
 
+export const hoursLived = birthIso => {
+  const t = Date.parse(`${birthIso}T00:00:00+08:00`)
+  if (Number.isNaN(t)) return 0
+  return Math.max(0, Math.floor((Date.now() - t) / 3600000))
+}
+
 export const daysBetween = (fromIso, toIsoInclusive) => {
   const a = Date.parse(`${fromIso}T12:00:00Z`)
   const b = Date.parse(`${toIsoInclusive}T12:00:00Z`)
