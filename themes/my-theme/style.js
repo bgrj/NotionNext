@@ -352,8 +352,17 @@ const Style = () => {
       }
 
       /* 友情链接页：去掉默认侧栏，主栏铺满剩余宽度 */
-      #theme-my-theme.ob-fl-layout #sideRight {
+      #theme-my-theme.ob-fl-layout #sideRight,
+      #theme-my-theme.ob-ex-layout #sideRight {
         display: none !important;
+      }
+      #theme-my-theme.ob-ex-layout #container-inner {
+        max-width: none;
+        justify-content: stretch;
+      }
+      #theme-my-theme.ob-ex-layout #container-inner > div {
+        max-width: none;
+        overflow: visible;
       }
       #theme-my-theme.ob-fl-layout #container-inner {
         max-width: none;

@@ -23,7 +23,9 @@ import Card from '@/themes/hexo/components/Card'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
+import ExistenceLife from './components/ExistenceLife'
 import NoticeModal from './components/NoticeModal'
+import { EXISTENCE_CATEGORY, isExistenceCategory } from './existence'
 import Hero from '@/themes/hexo/components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
@@ -74,6 +76,23 @@ const slugFromRouter = router => {
 const isFriendLinksView = ({ asPath, slug } = {}) =>
   isFriendLinksPath(asPath) || isFriendLinksSlug(slug)
 
+const decodePath = asPath => {
+  const path = normalizeSitePath(asPath)
+  try {
+    return decodeURIComponent(path)
+  } catch (e) {
+    return path
+  }
+}
+
+const isExistencePath = asPath => {
+  const path = decodePath(asPath)
+  return (
+    path === `/category/${EXISTENCE_CATEGORY}` ||
+    path.startsWith(`/category/${EXISTENCE_CATEGORY}/`)
+  )
+}
+
 /**
  * 基础布局 采用左右两侧布局，移动端使用顶部导航栏
  * @param props
@@ -90,17 +109,19 @@ const LayoutBase = props => {
     asPath: router.asPath,
     slug: post?.slug || slugFromRouter(router)
   })
+  const existence = isExistencePath(router.asPath)
+  const chromeLite = friendLinks || existence
   const hexoArticleRouteLoading = siteConfig(
     'HEXO_ARTICLE_ROUTE_LOADING',
     true,
     CONFIG
   )
   const showArticleSwitchPlaceholder =
-    hexoArticleRouteLoading && isArticleSlugPage && onLoading && !friendLinks
-  const wideMain = fullWidth || friendLinks
+    hexoArticleRouteLoading && isArticleSlugPage && onLoading && !chromeLite
+  const wideMain = fullWidth || chromeLite
   const sidebarReverse =
-    !friendLinks && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
-  const wrapperTop = friendLinks
+    !chromeLite && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
+  const wrapperTop = chromeLite
     ? 'pt-16'
     : post
       ? 'pt-6 md:pt-8'
@@ -108,7 +129,7 @@ const LayoutBase = props => {
         ? 'pt-0'
         : 'pt-16'
 
-  const headerSlot = friendLinks
+  const headerSlot = chromeLite
     ? null
     : post ? (
         <PostHero {...props} />
@@ -123,7 +144,7 @@ const LayoutBase = props => {
   // 悬浮按钮内容
   const floatSlot = (
     <>
-      {post?.toc?.length > 1 && !friendLinks && (
+      {post?.toc?.length > 1 && !chromeLite && (
         <div className='block lg:hidden'>
           <TocDrawerButton
             onClick={() => {
@@ -132,7 +153,7 @@ const LayoutBase = props => {
           />
         </div>
       )}
-      {post && !friendLinks && <ButtonJumpToComment />}
+      {post && !chromeLite && <ButtonJumpToComment />}
       {showRandomButton && <ButtonRandomPostMini {...props} />}
     </>
   )
@@ -144,7 +165,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}`}>
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence ? ' ob-ex-layout' : ''}`}>
         <Style />
 
         {/* 顶部导航 */}
@@ -167,7 +188,7 @@ const LayoutBase = props => {
         {/* 主区块 */}
         <main
           id='wrapper'
-          className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${friendLinks ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
+          className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
           <div
             id='container-inner'
             className={
@@ -175,7 +196,7 @@ const LayoutBase = props => {
               ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
             }>
             <div
-              className={`${className || ''} w-full ${wideMain ? '' : 'max-w-4xl'} h-full ${friendLinks ? '' : 'overflow-x-hidden'}`}>
+              className={`${className || ''} w-full ${wideMain ? '' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}>
               {showArticleSwitchPlaceholder ? (
                 <ArticleSwitchPlaceholder />
               ) : (
@@ -198,11 +219,11 @@ const LayoutBase = props => {
             </div>
 
             {/* 友情链接页不渲染网站信息 / 最近更新 / 正文目录；公告改为全站弹窗 */}
-            {!friendLinks && <SideRight {...props} notice={null} />}
+            {!chromeLite && <SideRight {...props} notice={null} />}
           </div>
         </main>
 
-        {!friendLinks && (
+        {!chromeLite && (
           <div className='block lg:hidden'>
             <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
           </div>
@@ -240,6 +261,13 @@ const LayoutIndex = props => {
  * @returns
  */
 const LayoutPostList = props => {
+  const router = useRouter()
+  if (
+    isExistenceCategory(props.category) ||
+    isExistencePath(router.asPath)
+  ) {
+    return <ExistenceLife {...props} />
+  }
   return (
     <div className='pt-8'>
       <SlotBar {...props} />

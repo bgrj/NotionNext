@@ -2,6 +2,11 @@ import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
 import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
+import {
+  EXISTENCE_CATEGORY,
+  isExistenceCategory,
+  slimExistencePosts
+} from '@/themes/my-theme/existence'
 
 /**
  * 分类页
@@ -24,12 +29,16 @@ export async function getStaticProps({ params: { category, page } }) {
     .filter(post => post && post.category && post.category.includes(category))
   // 处理文章页数
   props.postCount = props.posts.length
-  const POSTS_PER_PAGE = siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
-  // 处理分页
-  props.posts = props.posts.slice(
-    POSTS_PER_PAGE * (page - 1),
-    POSTS_PER_PAGE * page
-  )
+  if (isExistenceCategory(category) || category === EXISTENCE_CATEGORY) {
+    props.existencePosts = slimExistencePosts(props.posts)
+  } else {
+    const POSTS_PER_PAGE = siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
+    // 处理分页
+    props.posts = props.posts.slice(
+      POSTS_PER_PAGE * (page - 1),
+      POSTS_PER_PAGE * page
+    )
+  }
 
   delete props.allPages
   props.page = page
@@ -56,6 +65,7 @@ export async function getStaticPaths() {
   const paths = []
 
   categoryOptions?.forEach(category => {
+    if (isExistenceCategory(category?.name)) return
     // 过滤状态类型
     const categoryPosts = allPages
       ?.filter(page => page.type === 'Post' && page.status === 'Published')

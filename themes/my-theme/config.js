@@ -45,6 +45,14 @@ const CONFIG = {
   HEXO_COLOR_PRIMARY: '#C9A66B',
   HEXO_THEME_COLOR: '#C9A66B', // 主题色配置（默认为 #C9A66B）
 
+  // 我的存在 · 生命页（可在 Notion 配置中心用同名键覆盖）
+  EXISTENCE_BIRTH: '2001-10-19',
+  EXISTENCE_YEARS: 80,
+  EXISTENCE_AWAKENING: '2025-03-24',
+  EXISTENCE_MOTTO:
+    '我的思想也许不在于我想了什么，而在于我做了什么。人有很多面，而我才见了几面？',
+  EXISTENCE_STAMP: '2026年9月28日22时更新',
+
   /** 文章详情页客户端切换时，主栏显示卡片+转圈占位（无全屏遮罩；已有独立 LoadingCover 的主题无需此项） */
   HEXO_ARTICLE_ROUTE_LOADING: true,
 
