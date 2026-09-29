@@ -61,7 +61,7 @@ const ExternalPlugin = props => {
   const RIBBON = siteConfig('RIBBON', null, NOTION_CONFIG)
   const CUSTOM_RIGHT_CLICK_CONTEXT_MENU = siteConfig(
     'CUSTOM_RIGHT_CLICK_CONTEXT_MENU',
-    null,
+    false,
     NOTION_CONFIG
   )
   const CAN_COPY = siteConfig('CAN_COPY', null, NOTION_CONFIG)
@@ -274,7 +274,7 @@ const ExternalPlugin = props => {
       {COMMENT_TWIKOO_COUNT_ENABLE && <TwikooCommentCounter {...props} />}
       {RIBBON && <Ribbon />}
       {DIFY_CHATBOT_ENABLED && <DifyChatbot />}
-      {CUSTOM_RIGHT_CLICK_CONTEXT_MENU && (
+      {CUSTOM_RIGHT_CLICK_CONTEXT_MENU === true && (
         <CustomContextMenu {...props} canCopy={canCopy} />
       )}
       {!canCopy && <DisableCopy />}
