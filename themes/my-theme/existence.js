@@ -140,6 +140,21 @@ export const hoursUntil = endIso => {
   return Math.max(0, Math.ceil((t - Date.now()) / 3600000))
 }
 
+/** Remaining time until the end of endIso in Beijing time. */
+export const remainingHms = endIso => {
+  const t = Date.parse(`${shiftIso(endIso, 1)}T00:00:00+08:00`)
+  if (Number.isNaN(t)) {
+    return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+  }
+  const totalSec = Math.max(0, Math.floor((t - Date.now()) / 1000))
+  return {
+    days: Math.floor(totalSec / 86400),
+    hours: Math.floor((totalSec % 86400) / 3600),
+    minutes: Math.floor((totalSec % 3600) / 60),
+    seconds: totalSec % 60
+  }
+}
+
 export const daysBetween = (fromIso, toIsoInclusive) => {
   const a = Date.parse(`${fromIso}T12:00:00Z`)
   const b = Date.parse(`${toIsoInclusive}T12:00:00Z`)

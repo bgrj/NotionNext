@@ -12,6 +12,7 @@ import {
   formatZhDate,
   hoursUntil,
   isoDay,
+  remainingHms,
   ordinalInYear,
   parseIso,
   parseSearchQuery,
@@ -249,11 +250,6 @@ const ExistenceLife = props => {
     EXISTENCE_DEFAULTS.motto,
     CONFIG
   )
-  const stamp = siteConfig(
-    'EXISTENCE_STAMP',
-    EXISTENCE_DEFAULTS.stamp,
-    CONFIG
-  )
   const end = addYearsIso(birth, years)
   const today = shanghaiToday()
   const written = useMemo(
@@ -280,6 +276,13 @@ const ExistenceLife = props => {
   const totalDays = daysBetween(birth, shiftIso(end, -1))
   const livedDays = Math.min(totalDays, daysBetween(birth, lastLived))
   const remainHours = hoursUntil(end)
+  const [left, setLeft] = useState(() => remainingHms(newEnd))
+  useEffect(() => {
+    const tick = () => setLeft(remainingHms(newEnd))
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [newEnd])
   const writtenDays = written.length
   const mottoText = String(motto || '').replace(/\s+/g, ' ').trim()
   const lifeMarks = useMemo(
@@ -597,7 +600,7 @@ const ExistenceLife = props => {
           line-height: 1.3;
         }
         .ob-ex-motto {
-          margin: 0.65rem 0 0.2rem;
+          margin: 0.65rem 0 1.15rem;
           padding: 0.85rem 0 0.85rem 1rem;
           border-left: 3px solid var(--ob-gold);
           font-size: 1.02rem;
@@ -605,12 +608,6 @@ const ExistenceLife = props => {
           line-height: 1.7;
           letter-spacing: 0.03em;
           white-space: nowrap;
-        }
-        .ob-ex-stamp {
-          margin: 0.55rem 0 1.15rem;
-          font-size: 12px;
-          letter-spacing: 0.06em;
-          color: var(--ob-muted);
         }
         .ob-ex-hero {
           display: grid;
@@ -716,6 +713,10 @@ const ExistenceLife = props => {
           font-weight: 700;
           font-variant-numeric: tabular-nums;
         }
+        .ob-ex-count {
+          font-variant-numeric: tabular-nums;
+          white-space: nowrap;
+        }
         .ob-ex-phases {
           display: grid;
           grid-template-columns: 1fr;
@@ -738,13 +739,6 @@ const ExistenceLife = props => {
           font-size: 12px;
           letter-spacing: 0.04em;
           font-variant-numeric: tabular-nums;
-        }
-        .ob-ex-phase-note {
-          margin-top: 4px;
-          font-size: 12px;
-          line-height: 1.55;
-          color: var(--ob-muted);
-          letter-spacing: 0.02em;
         }
         .ob-ex-phase.is-awake .ob-ex-phase-name { color: var(--ob-gold-deep); }
         .ob-ex-bar {
@@ -1058,6 +1052,7 @@ const ExistenceLife = props => {
           .ob-ex-mark-lab { white-space: normal; max-width: 9.2rem; }
           .ob-ex-hero { padding: 0.85rem 0.8rem 1rem; }
           .ob-ex-urgent { font-size: 0.92rem; }
+          .ob-ex-count { white-space: normal; }
           .ob-ex-chart { padding: 0.75rem 0.6rem 0.9rem; }
           .ob-ex-note { font-size: 12px; }
           .ob-ex-day { min-height: 40px; }
@@ -1085,7 +1080,6 @@ const ExistenceLife = props => {
       <header>
         <h1 className='ob-ex-title'>我的存在</h1>
         <blockquote className='ob-ex-motto'>{mottoText}</blockquote>
-        {stamp ? <div className='ob-ex-stamp'>{stamp}</div> : null}
       </header>
 
       <div className='ob-ex-hero'>
@@ -1118,7 +1112,12 @@ const ExistenceLife = props => {
             <b>
               {nf(livedDays)} / {nf(totalDays)}
             </b>
-            ，仅剩余 <b>{nf(remainHours)}</b> 个小时。还剩余 {nf(futureDays)} 日。
+            ，仅剩余 <b>{nf(remainHours)}</b> 个小时。还剩余{' '}
+            <span className='ob-ex-count' suppressHydrationWarning>
+              {nf(left.days)} 日 {pad2(left.hours)} 时 {pad2(left.minutes)} 分{' '}
+              {pad2(left.seconds)} 秒
+            </span>
+            。
           </p>
           <div className='ob-ex-phases'>
             <div className='ob-ex-phase is-mengmei'>
@@ -1135,9 +1134,6 @@ const ExistenceLife = props => {
               </div>
               <div className='ob-ex-phase-count'>
                 已过 {nf(awakeDays)} 日 · 已发布 {nf(writtenDays)} 篇
-              </div>
-              <div className='ob-ex-phase-note'>
-                2025.4.24–27 周四至周日，实际是多天融于的一篇
               </div>
             </div>
           </div>
