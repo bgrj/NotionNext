@@ -10,9 +10,8 @@ import {
   dimOfMonth,
   formatDotDate,
   formatZhDate,
-  hoursUntil,
   isoDay,
-  remainingHms,
+  newLifeStats,
   ordinalInYear,
   parseIso,
   parseSearchQuery,
@@ -242,6 +241,10 @@ const ExistenceLife = props => {
     isoDay(
       siteConfig('EXISTENCE_AWAKENING', EXISTENCE_DEFAULTS.awakening, CONFIG)
     ) || EXISTENCE_DEFAULTS.awakening
+  const newYears =
+    Number(
+      siteConfig('EXISTENCE_NEW_YEARS', EXISTENCE_DEFAULTS.newYears, CONFIG)
+    ) || EXISTENCE_DEFAULTS.newYears
   const newEnd =
     isoDay(siteConfig('EXISTENCE_NEW_END', EXISTENCE_DEFAULTS.newEnd, CONFIG)) ||
     EXISTENCE_DEFAULTS.newEnd
@@ -275,14 +278,13 @@ const ExistenceLife = props => {
   const futureDays = daysBetween(shiftIso(today, 1), shiftIso(end, -1))
   const totalDays = daysBetween(birth, shiftIso(end, -1))
   const livedDays = Math.min(totalDays, daysBetween(birth, lastLived))
-  const remainHours = hoursUntil(end)
-  const [left, setLeft] = useState(() => remainingHms(newEnd))
+  const [clock, setClock] = useState(() => newLifeStats(awakening, newEnd))
   useEffect(() => {
-    const tick = () => setLeft(remainingHms(newEnd))
+    const tick = () => setClock(newLifeStats(awakening, newEnd))
     tick()
     const id = setInterval(tick, 1000)
     return () => clearInterval(id)
-  }, [newEnd])
+  }, [awakening, newEnd])
   const writtenDays = written.length
   const mottoText = String(motto || '').replace(/\s+/g, ' ').trim()
   const lifeMarks = useMemo(
@@ -717,6 +719,13 @@ const ExistenceLife = props => {
           font-variant-numeric: tabular-nums;
           white-space: nowrap;
         }
+        .ob-ex-why {
+          margin: 0.45rem 0 0;
+          font-size: 12px;
+          line-height: 1.65;
+          color: var(--ob-muted);
+          letter-spacing: 0.02em;
+        }
         .ob-ex-phases {
           display: grid;
           grid-template-columns: 1fr;
@@ -1086,20 +1095,23 @@ const ExistenceLife = props => {
         <div
           className='ob-ex-hg'
           role='img'
-          aria-label={`已过 ${nf(livedDays)} / ${nf(totalDays)} 日，剩余 ${nf(remainHours)} 小时`}>
+          aria-label={`新生命已过 ${nf(clock.elapsedDays)} / ${nf(clock.totalDays)} 日，剩余 ${nf(clock.remainHours)} 小时`}>
           <div className='ob-ex-hg-top'>
             <div
               className='ob-ex-hg-sand-top'
-              style={{ height: `${Math.max(8, (futureDays / totalDays) * 100)}%` }}
+              style={{
+                height: `${Math.max(8, (clock.days / Math.max(clock.totalDays, 1)) * 100)}%`
+              }}
             />
           </div>
           <div className='ob-ex-hg-neck' />
           <div className='ob-ex-hg-bot'>
             <div
               className='ob-ex-hg-sand-bot'
-              style={{ height: `${Math.max(8, (livedDays / totalDays) * 100)}%` }}>
-              <span className='is-mengmei' style={{ flexGrow: mengmeiDays, display: 'block', minHeight: 0 }} />
-              <span className='is-awake' style={{ flexGrow: Math.max(awakeDays, 1), display: 'block', minHeight: 0 }} />
+              style={{
+                height: `${Math.max(8, (clock.elapsedDays / Math.max(clock.totalDays, 1)) * 100)}%`
+              }}>
+              <span className='is-awake' style={{ flexGrow: 1, display: 'block', minHeight: 0 }} />
             </div>
           </div>
           <span className='ob-ex-hg-grain' />
@@ -1107,17 +1119,21 @@ const ExistenceLife = props => {
           <span className='ob-ex-hg-grain g3' />
         </div>
         <div>
-          <p className='ob-ex-urgent'>
-            如果我的存在将终结于 {years} 岁，那么截至 {formatZhDate(today)}，已经过去{' '}
+          <p className='ob-ex-urgent' suppressHydrationWarning>
+            如果我的存在将终结于 {newYears} 岁，那么截至 {clock.todayZh}，已经过去{' '}
             <b>
-              {nf(livedDays)} / {nf(totalDays)}
+              {nf(clock.elapsedDays)} / {nf(clock.totalDays)}
             </b>
-            ，仅剩余 <b>{nf(remainHours)}</b> 个小时。还剩余{' '}
-            <span className='ob-ex-count' suppressHydrationWarning>
-              {nf(left.days)} 日 {pad2(left.hours)} 时 {pad2(left.minutes)} 分{' '}
-              {pad2(left.seconds)} 秒
+            ，仅剩余 <b>{nf(clock.remainHours)}</b> 个小时。还剩余{' '}
+            <span className='ob-ex-count'>
+              {nf(clock.days)} 日 {pad2(clock.hours)} 时 {pad2(clock.minutes)} 分{' '}
+              {pad2(clock.seconds)} 秒
             </span>
             。
+          </p>
+          <p className='ob-ex-why'>
+            图仍按八十岁铺这一生。倒计时只计 2025.3.28
+            零点起的新生命，按五十岁计到 2075.3.27 23:59，不再用八十岁那条尺。
           </p>
           <div className='ob-ex-phases'>
             <div className='ob-ex-phase is-mengmei'>

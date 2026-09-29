@@ -15,7 +15,8 @@ export const EXISTENCE_DEFAULTS = {
   years: 80,
   firstWritten: '2025-03-24',
   awakening: '2025-03-28',
-  newEnd: '2081-03-27',
+  newYears: 50,
+  newEnd: '2075-03-27',
   motto:
     '我的思想也许不在于我想了什么，而在于我做了什么。人有很多面，而我才见了几面？',
   stamp: '2026年9月28日22时更新'
@@ -38,7 +39,7 @@ export const EXISTENCE_MERGED_SPANS = [
 export const LIFE_MARKERS = [
   { iso: '2001-10-19', label: '生命的起点' },
   { iso: '2025-03-28', label: '（新）生命的终（起）点' },
-  { iso: '2081-03-27', label: '（预计）新生命的终点' }
+  { iso: '2075-03-27', label: '（预计）新生命的终点' }
 ]
 
 export const isoDay = value => {
@@ -140,14 +141,41 @@ export const hoursUntil = endIso => {
   return Math.max(0, Math.ceil((t - Date.now()) / 3600000))
 }
 
-/** Remaining time until the end of endIso in Beijing time. */
-export const remainingHms = endIso => {
-  const t = Date.parse(`${shiftIso(endIso, 1)}T00:00:00+08:00`)
-  if (Number.isNaN(t)) {
-    return { days: 0, hours: 0, minutes: 0, seconds: 0 }
+/** New-life clock: startIso 00:00 → endIso 23:59:59, Asia/Shanghai. */
+export const newLifeStats = (startIso, endIso, now = Date.now()) => {
+  const start = Date.parse(`${startIso}T00:00:00+08:00`)
+  const end = Date.parse(`${endIso}T23:59:59+08:00`)
+  const remainMs = Number.isNaN(end) ? 0 : Math.max(0, end - now)
+  const elapsedMs = Number.isNaN(start)
+    ? 0
+    : Math.max(0, Math.min(now, Number.isNaN(end) ? now : end) - start)
+  const totalMs =
+    Number.isNaN(start) || Number.isNaN(end) ? 0 : Math.max(0, end - start)
+  const totalSec = Math.floor(remainMs / 1000)
+  let todayIso = ''
+  try {
+    todayIso = new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Asia/Shanghai',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date(now))
+  } catch (e) {
+    todayIso = new Date(now).toISOString().slice(0, 10)
   }
-  const totalSec = Math.max(0, Math.floor((t - Date.now()) / 1000))
+  const { y, m, d } = parseIso(todayIso)
   return {
+    todayIso,
+    todayZh: `${y}年${m}月${d}日`,
+    elapsedDays:
+      now < start
+        ? 0
+        : Math.min(
+            Math.max(1, Math.round(totalMs / 86400000)),
+            Math.floor(elapsedMs / 86400000) + 1
+          ),
+    totalDays: Math.max(1, Math.round(totalMs / 86400000)),
+    remainHours: Math.floor(remainMs / 3600000),
     days: Math.floor(totalSec / 86400),
     hours: Math.floor((totalSec % 86400) / 3600),
     minutes: Math.floor((totalSec % 3600) / 60),
