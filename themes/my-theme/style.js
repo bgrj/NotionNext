@@ -327,7 +327,7 @@ const Style = () => {
         }
       }
 
-      /* 无头图页：给固定顶栏让出高度，信息卡 / 分类卡 / 标签卡不再被挡住 */
+      /* 无头图页：给固定顶栏让出高度，列表 / 分类标题不再被挡住 */
       #theme-my-theme #wrapper.ob-below-nav {
         padding-top: var(--ob-below-nav);
       }
@@ -384,6 +384,14 @@ const Style = () => {
       #theme-my-theme.ob-fl-layout #container-inner > div {
         max-width: none;
         overflow: visible;
+      }
+
+      /* 首页 / 分类 / 标签 / 归档 / 搜索：无信息卡与最新发布，主栏居中 */
+      #theme-my-theme.ob-list-layout #container-inner {
+        justify-content: center;
+      }
+      #theme-my-theme.ob-list-layout #sideRight {
+        display: none !important;
       }
 
       /* 公告改为弹窗后，侧栏卡片不再出现 */

@@ -30,7 +30,7 @@ import Hero from '@/themes/hexo/components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
 import SearchNav from '@/themes/hexo/components/SearchNav'
-import SideRight from '@/themes/hexo/components/SideRight'
+import Catalog from '@/themes/hexo/components/Catalog'
 import SlotBar from '@/themes/hexo/components/SlotBar'
 import TagItemMini from '@/themes/hexo/components/TagItemMini'
 import TocDrawer from '@/themes/hexo/components/TocDrawer'
@@ -119,8 +119,16 @@ const LayoutBase = props => {
   const showArticleSwitchPlaceholder =
     hexoArticleRouteLoading && isArticleSlugPage && onLoading && !chromeLite
   const wideMain = fullWidth || chromeLite
+  // 列表页去掉信息卡 / 最新发布；文章页只保留目录。
+  const showCatalogSidebar =
+    Boolean(post) &&
+    !chromeLite &&
+    !fullWidth &&
+    Array.isArray(post?.toc) &&
+    post.toc.length > 1
+  const listWithoutSidebar = !post && !chromeLite && !fullWidth
   const sidebarReverse =
-    !chromeLite && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
+    showCatalogSidebar && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
 
   const headerSlot = chromeLite
     ? null
@@ -132,7 +140,7 @@ const LayoutBase = props => {
         ) : null
 
   // 只在「这一页真的渲染了头图」时用 pt-0；分类/标签/搜索等无头图页
-  // 若仍看 HEXO_HOME_BANNER_ENABLE，会被固定顶栏挡住信息卡和分类卡。
+  // 若仍看 HEXO_HOME_BANNER_ENABLE，会被固定顶栏挡住列表和分类标题。
   const hasHero = Boolean(headerSlot)
   const wrapperTop = hasHero
     ? post
@@ -167,7 +175,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence ? ' ob-ex-layout' : ''}`}>
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence ? ' ob-ex-layout' : ''}${listWithoutSidebar ? ' ob-list-layout' : ''}`}>
         <Style />
 
         {/* 顶部导航 */}
@@ -198,7 +206,7 @@ const LayoutBase = props => {
               ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
             }>
             <div
-              className={`${className || ''} w-full ${wideMain ? '' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}>
+              className={`${className || ''} w-full ${wideMain ? '' : listWithoutSidebar ? 'max-w-5xl' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}>
               {showArticleSwitchPlaceholder ? (
                 <ArticleSwitchPlaceholder />
               ) : (
@@ -220,8 +228,16 @@ const LayoutBase = props => {
               )}
             </div>
 
-            {/* 友情链接页不渲染网站信息 / 最近更新 / 正文目录；公告改为全站弹窗 */}
-            {!chromeLite && <SideRight {...props} notice={null} />}
+            {/* 列表页不渲染信息卡 / 最新发布；文章页只保留目录。公告走全站弹窗。 */}
+            {showCatalogSidebar && (
+              <div id='sideRight' className='lg:w-80 lg:pt-0'>
+                <div className='space-y-4'>
+                  <Card>
+                    <Catalog toc={post.toc} />
+                  </Card>
+                </div>
+              </div>
+            )}
           </div>
         </main>
 
