@@ -249,43 +249,12 @@ const Style = () => {
         color: var(--theme-color) !important;
       }
 
-      /* 头图遮罩必须叠在 header 上：img::before 不会渲染 */
-      #theme-my-theme .ob-hero-scrim {
-        position: absolute;
-        inset: 0;
-        z-index: 1;
-        pointer-events: none;
-        background:
-          linear-gradient(
-            to bottom,
-            rgba(20, 16, 12, 0.38) 0%,
-            rgba(20, 16, 12, 0.28) 28%,
-            rgba(20, 16, 12, 0.55) 72%,
-            rgba(20, 16, 12, 0.72) 100%
-          );
-      }
-      #theme-my-theme .ob-hero-copy {
-        z-index: 2;
-        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.45);
-      }
-      #theme-my-theme .ob-hero-title,
-      #theme-my-theme .ob-hero-greet,
-      #theme-my-theme .ob-hero-greet #typed {
-        color: #fff;
-      }
-      #theme-my-theme .ob-hero-greet {
-        min-height: 3.2rem;
-      }
+      /* 首页头图不加遮罩，与 #wrapper 的 uphand 背景同一套原图观感 */
       #theme-my-theme #home-nav-button a {
         color: #fff !important;
-        background: rgba(20, 16, 12, 0.38);
-        border-color: rgba(255, 255, 255, 0.78);
-        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
       }
       #theme-my-theme #home-nav-button a:hover {
-        color: #1c1814 !important;
-        background: rgba(255, 252, 247, 0.92);
-        text-shadow: none;
+        color: #000 !important;
       }
 
       /* 顶栏始终可读，不随头图改成白字 */
@@ -360,7 +329,7 @@ const Style = () => {
 
       ${themeConsoleStyle('hexo', CONFIG)}
 
-      /* 首页分类按钮对比度见上方 .ob-hero 规则 */
+
 
       /* 左右栏拉开，避免 flex-row-reverse + space-x 贴死 */
       #theme-my-theme #container-inner {
