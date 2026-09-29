@@ -121,13 +121,6 @@ const LayoutBase = props => {
   const wideMain = fullWidth || chromeLite
   const sidebarReverse =
     !chromeLite && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
-  const wrapperTop = chromeLite
-    ? 'pt-16'
-    : post
-      ? 'pt-6 md:pt-8'
-      : siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG)
-        ? 'pt-0'
-        : 'pt-16'
 
   const headerSlot = chromeLite
     ? null
@@ -137,6 +130,15 @@ const LayoutBase = props => {
         siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
           <Hero {...props} />
         ) : null
+
+  // 只在「这一页真的渲染了头图」时用 pt-0；分类/标签/搜索等无头图页
+  // 若仍看 HEXO_HOME_BANNER_ENABLE，会被固定顶栏挡住信息卡和分类卡。
+  const hasHero = Boolean(headerSlot)
+  const wrapperTop = hasHero
+    ? post
+      ? 'pt-8 md:pt-10'
+      : 'pt-0'
+    : 'ob-below-nav'
 
   const drawerRight = useRef(null)
   const tocRef = isBrowser ? document.getElementById('article-wrapper') : null
@@ -269,7 +271,7 @@ const LayoutPostList = props => {
     return <ExistenceLife {...props} />
   }
   return (
-    <div className='pt-8'>
+    <div className={props.className || 'pt-2'}>
       <SlotBar {...props} />
       {siteConfig('POST_LIST_STYLE') === 'page' ? (
         <BlogPostListPage {...props} />
@@ -304,7 +306,7 @@ const LayoutSearch = props => {
   })
 
   return (
-    <div className='pt-8'>
+    <div className='pt-2'>
       {!currentSearch ? (
         <SearchNav {...props} />
       ) : (
@@ -329,7 +331,7 @@ const LayoutSearch = props => {
 const LayoutArchive = props => {
   const { archivePosts } = props
   return (
-    <div className='pt-8'>
+    <div className='pt-2'>
       <Card className='w-full'>
         <div className='mb-10 pb-20 bg-white md:p-12 p-3 min-h-full dark:bg-hexo-black-gray'>
           {Object.keys(archivePosts).map(archiveTitle => (
@@ -471,7 +473,7 @@ const LayoutCategoryIndex = props => {
   const { categoryOptions } = props
   const { locale } = useGlobal()
   return (
-    <div className='mt-8'>
+    <div>
       <Card className='w-full min-h-screen'>
         <div className='dark:text-gray-200 mb-5 mx-3'>
           <i className='mr-4 fas fa-th' /> {locale.COMMON.CATEGORY}:
@@ -509,7 +511,7 @@ const LayoutTagIndex = props => {
   const { tagOptions } = props
   const { locale } = useGlobal()
   return (
-    <div className='mt-8'>
+    <div>
       <Card className='w-full'>
         <div className='dark:text-gray-200 mb-5 ml-4'>
           <i className='mr-4 fas fa-tag' /> {locale.COMMON.TAGS}:

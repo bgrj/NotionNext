@@ -50,6 +50,7 @@ const Style = () => {
         --hexo-color-text: var(--hexo-color-text-light);
         --hexo-color-text-secondary: var(--hexo-color-text-secondary-light);
         --hexo-color-border: var(--hexo-color-border-light);
+        --ob-below-nav: 5.25rem; /* 固定顶栏高度 + 与下方板块的行距 */
       }
 
       .dark #theme-my-theme {
@@ -326,6 +327,18 @@ const Style = () => {
         }
       }
 
+      /* 无头图页：给固定顶栏让出高度，信息卡 / 分类卡 / 标签卡不再被挡住 */
+      #theme-my-theme #wrapper.ob-below-nav {
+        padding-top: var(--ob-below-nav);
+      }
+      #theme-my-theme #wrapper.ob-below-nav #sideRight {
+        padding-top: 0 !important;
+      }
+
+      html:has(#theme-my-theme) {
+        scroll-padding-top: 5.25rem;
+      }
+
       /* 桌面：左侧栏随正文滚动时钉在顶栏下方，不跟着文章滑没 */
       @media (min-width: 1024px) {
         #theme-my-theme #sideRight {
@@ -333,7 +346,7 @@ const Style = () => {
         }
         #theme-my-theme #sideRight > div {
           position: sticky;
-          top: 5rem; /* 避开固定页眉，避免板块贴着顶栏 */
+          top: var(--ob-below-nav); /* 与无头图页留白同一套偏移 */
         }
       }
 
