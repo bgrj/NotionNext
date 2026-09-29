@@ -594,22 +594,33 @@ const ExistenceLife = props => {
           --ob-card: rgba(26, 23, 20, 0.82);
           --ob-panel: rgba(22, 19, 16, 0.78);
         }
+        .ob-ex-head {
+          margin: 0 0 1rem;
+          padding: 0.95rem 1rem 1.05rem;
+          border: 1px solid var(--ob-line);
+          border-radius: 14px;
+          background: var(--ob-card);
+          color: var(--ob-ink);
+          backdrop-filter: blur(10px);
+        }
         .ob-ex-title {
           margin: 0 0 8px;
           font-size: 1.7rem;
           letter-spacing: 0.16em;
           font-weight: 700;
           line-height: 1.3;
+          color: var(--ob-ink);
         }
         .ob-ex-motto {
-          margin: 0.65rem 0 1.15rem;
-          padding: 0.85rem 0 0.85rem 1rem;
+          margin: 0.35rem 0 0;
+          padding: 0.55rem 0 0.15rem 1rem;
           border-left: 3px solid var(--ob-gold);
           font-size: 1.02rem;
           font-weight: 700;
           line-height: 1.7;
           letter-spacing: 0.03em;
-          white-space: nowrap;
+          white-space: normal;
+          color: var(--ob-ink);
         }
         .ob-ex-hero {
           display: grid;
@@ -1048,6 +1059,7 @@ const ExistenceLife = props => {
         }
         @media (max-width: 639px) {
           .ob-ex { padding: 0 0 2rem; }
+          .ob-ex-head { padding: 0.8rem 0.85rem 0.9rem; }
           .ob-ex-title {
             font-size: 1.45rem;
             letter-spacing: 0.1em;
@@ -1086,7 +1098,7 @@ const ExistenceLife = props => {
         }
       `}</style>
 
-      <header>
+      <header className='ob-ex-head'>
         <h1 className='ob-ex-title'>我的存在</h1>
         <blockquote className='ob-ex-motto'>{mottoText}</blockquote>
       </header>

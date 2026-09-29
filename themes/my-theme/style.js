@@ -249,22 +249,84 @@ const Style = () => {
         color: var(--theme-color) !important;
       }
 
-      /* 设置了从上到下的渐变黑色 */
-      #theme-my-theme .header-cover::before {
-        content: '';
+      /* 头图遮罩必须叠在 header 上：img::before 不会渲染 */
+      #theme-my-theme .ob-hero-scrim {
         position: absolute;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(
-          to bottom,
-          rgba(0, 0, 0, 0.5) 0%,
-          rgba(0, 0, 0, 0.2) 10%,
-          rgba(0, 0, 0, 0) 25%,
-          rgba(0, 0, 0, 0.2) 75%,
-          rgba(0, 0, 0, 0.5) 100%
-        );
+        inset: 0;
+        z-index: 1;
+        pointer-events: none;
+        background:
+          linear-gradient(
+            to bottom,
+            rgba(20, 16, 12, 0.38) 0%,
+            rgba(20, 16, 12, 0.28) 28%,
+            rgba(20, 16, 12, 0.55) 72%,
+            rgba(20, 16, 12, 0.72) 100%
+          );
+      }
+      #theme-my-theme .ob-hero-copy {
+        z-index: 2;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55), 0 8px 24px rgba(0, 0, 0, 0.45);
+      }
+      #theme-my-theme .ob-hero-title,
+      #theme-my-theme .ob-hero-greet,
+      #theme-my-theme .ob-hero-greet #typed {
+        color: #fff;
+      }
+      #theme-my-theme .ob-hero-greet {
+        min-height: 3.2rem;
+      }
+      #theme-my-theme #home-nav-button a {
+        color: #fff !important;
+        background: rgba(20, 16, 12, 0.38);
+        border-color: rgba(255, 255, 255, 0.78);
+        text-shadow: 0 1px 10px rgba(0, 0, 0, 0.7);
+      }
+      #theme-my-theme #home-nav-button a:hover {
+        color: #1c1814 !important;
+        background: rgba(255, 252, 247, 0.92);
+        text-shadow: none;
+      }
+
+      /* 顶栏始终可读，不随头图改成白字 */
+      #theme-my-theme .ob-sticky-nav {
+        color: #2c241c;
+        background: rgba(255, 252, 247, 0.9);
+        border-bottom: 1px solid rgba(44, 36, 28, 0.08);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+      }
+      .dark #theme-my-theme .ob-sticky-nav {
+        color: #f6f1e8;
+        background: rgba(20, 16, 12, 0.86);
+        border-bottom-color: rgba(246, 241, 232, 0.12);
+      }
+      #theme-my-theme .ob-logo {
+        font-weight: 700;
+        font-size: 1.05rem;
+        letter-spacing: 0.02em;
+        padding: 0.35rem 0.4rem;
+        color: inherit;
+        text-decoration: none;
+        background-image: none !important;
+      }
+      #theme-my-theme .ob-dark-toggle {
+        width: 2rem;
+        height: 2rem;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        background: transparent;
+        color: inherit;
+        cursor: pointer;
+        border-radius: 999px;
+      }
+      #theme-my-theme .ob-dark-toggle:hover {
+        background: rgba(44, 36, 28, 0.08);
+      }
+      .dark #theme-my-theme .ob-dark-toggle:hover {
+        background: rgba(246, 241, 232, 0.1);
       }
 
       /* Custem */
@@ -298,13 +360,7 @@ const Style = () => {
 
       ${themeConsoleStyle('hexo', CONFIG)}
 
-      #theme-my-theme #home-nav-button a {
-        color: #fff !important;
-      }
-
-      #theme-my-theme #home-nav-button a:hover {
-        color: #000 !important;
-      }
+      /* 首页分类按钮对比度见上方 .ob-hero 规则 */
 
       /* 左右栏拉开，避免 flex-row-reverse + space-x 贴死 */
       #theme-my-theme #container-inner {

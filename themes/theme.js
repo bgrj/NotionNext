@@ -273,62 +273,61 @@ const fixThemeDOM = () => {
   }
 }
 
+const USER_DARK_MODE_SET_KEY = 'darkModeUserSet'
+
+export const hasUserDarkModeOverride = () => {
+  if (!isBrowser) return false
+  return localStorage.getItem(USER_DARK_MODE_SET_KEY) === '1'
+}
+
+export const markUserDarkModeOverride = () => {
+  if (!isBrowser) return
+  localStorage.setItem(USER_DARK_MODE_SET_KEY, '1')
+}
+
+const applyHtmlDarkClass = isDark => {
+  const html = document.getElementsByTagName('html')[0]
+  html?.classList?.remove(isDark ? 'light' : 'dark')
+  html?.classList?.add(isDark ? 'dark' : 'light')
+}
+
 /**
- * 初始化主题 , 优先级 query > cookies > systemPrefer
- * @param isDarkMode
- * @param updateDarkMode 更改主题ChangeState函数
- * @description 读取cookie中存的用户主题
+ * 初始化主题 , 优先级 query > 用户手动 > 系统偏好 / 站点 APPEARANCE
  */
 export const initDarkMode = (updateDarkMode, defaultDarkMode) => {
-  // 查看用户设备浏览器是否深色模型
-  let newDarkMode = isPreferDark()
+  const appearance = defaultDarkMode || BLOG.APPEARANCE || 'auto'
+  let newDarkMode = isPreferDark(appearance)
 
-  // 查看localStorage中用户记录的是否深色模式
   const userDarkMode = loadDarkModeFromLocalStorage()
-  if (userDarkMode) {
+  if (hasUserDarkModeOverride() && userDarkMode != null) {
     newDarkMode = userDarkMode === 'dark' || userDarkMode === 'true'
-    saveDarkModeToLocalStorage(newDarkMode) // 用户手动的才保存
   }
 
-  // 如果站点强制设置默认深色，则优先级改过用
-  if (defaultDarkMode === 'true') {
-    newDarkMode = true
+  if (appearance === 'dark' || appearance === true || appearance === 'true') {
+    if (!hasUserDarkModeOverride()) newDarkMode = true
   }
 
-  // url查询条件中是否深色模式
   const queryMode = getQueryVariable('mode')
   if (queryMode) {
     newDarkMode = queryMode === 'dark'
   }
 
   updateDarkMode(newDarkMode)
-  document
-    .getElementsByTagName('html')[0]
-    .setAttribute('class', newDarkMode ? 'dark' : 'light')
+  applyHtmlDarkClass(newDarkMode)
 }
 
 /**
- * 是否优先深色模式， 根据系统深色模式以及当前时间判断
- * @returns {*}
+ * 是否优先深色模式。auto 跟随系统，不再用钟点强切。
  */
-export function isPreferDark() {
-  if (BLOG.APPEARANCE === 'dark') {
+export function isPreferDark(appearance = BLOG.APPEARANCE) {
+  if (appearance === 'dark' || appearance === true || appearance === 'true') {
     return true
   }
-  if (BLOG.APPEARANCE === 'auto') {
-    // 系统深色模式或时间是夜间时，强行置为夜间模式
-    const date = new Date()
-    const prefersDarkMode = window.matchMedia(
-      '(prefers-color-scheme: dark)'
-    ).matches
-    return (
-      prefersDarkMode ||
-      (BLOG.APPEARANCE_DARK_TIME &&
-        (date.getHours() >= BLOG.APPEARANCE_DARK_TIME[0] ||
-          date.getHours() < BLOG.APPEARANCE_DARK_TIME[1]))
-    )
+  if (appearance === 'light' || appearance === false || appearance === 'false') {
+    return false
   }
-  return false
+  if (typeof window === 'undefined') return false
+  return window.matchMedia('(prefers-color-scheme: dark)').matches
 }
 
 /**

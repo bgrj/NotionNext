@@ -7,7 +7,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import CONFIG from '../config'
 import ButtonRandomPost from '@/themes/hexo/components/ButtonRandomPost'
 import CategoryGroup from '@/themes/hexo/components/CategoryGroup'
-import Logo from '@/themes/hexo/components/Logo'
 import { MenuListTop } from './MenuListTop'
 import SearchButton from './SearchButton'
 import SearchDrawer from '@/themes/hexo/components/SearchDrawer'
@@ -18,18 +17,17 @@ import TagGroups from '@/themes/hexo/components/TagGroups'
 let windowTop = 0
 
 /**
- * 顶部导航
- * @param {*} param0
- * @returns
+ * 顶部导航：始终保持可读底与字色，不随头图改成白字。
  */
 const Header = props => {
   const searchDrawer = useRef()
-  const { tags, currentTag, categories, currentCategory } = props
-  const { locale } = useGlobal()
+  const { tags, currentTag, categories, currentCategory, siteInfo } = props
+  const { locale, isDarkMode, toggleDarkMode } = useGlobal()
   const router = useRouter()
   const [isOpen, changeShow] = useState(false)
   const showSearchButton = siteConfig('HEXO_MENU_SEARCH', false, CONFIG)
   const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
+  const showDarkButton = siteConfig('HEXO_WIDGET_DARK_MODE', true, CONFIG)
 
   const toggleMenuOpen = () => {
     changeShow(!isOpen)
@@ -39,7 +37,6 @@ const Header = props => {
     changeShow(false)
   }
 
-  // 监听滚动
   useEffect(() => {
     window.addEventListener('scroll', topNavStyleHandler, { passive: true })
     router.events.on('routeChangeComplete', topNavStyleHandler)
@@ -56,44 +53,18 @@ const Header = props => {
     throttle(() => {
       const scrollS = window.scrollY
       const nav = document.querySelector('#sticky-nav')
-      // 首页和文章页会有头图
+      if (!nav) return
       const header = document.querySelector('#header')
-      // 导航栏和头图是否重叠
-      const scrollInHeader =
-        header && (scrollS < 10 || scrollS < header?.clientHeight - 50) // 透明导航条的条件
-
-      // const textWhite = header && scrollInHeader
-
-      if (scrollInHeader) {
-        nav && nav.classList.replace('bg-white', 'bg-none')
-        nav && nav.classList.replace('border', 'border-transparent')
-        nav && nav.classList.replace('drop-shadow-md', 'shadow-none')
-        nav && nav.classList.replace('dark:bg-hexo-black-gray', 'transparent')
-      } else {
-        nav && nav.classList.replace('bg-none', 'bg-white')
-        nav && nav.classList.replace('border-transparent', 'border')
-        nav && nav.classList.replace('shadow-none', 'drop-shadow-md')
-        nav && nav.classList.replace('transparent', 'dark:bg-hexo-black-gray')
-      }
-
-      if (scrollInHeader) {
-        nav && nav.classList.replace('text-black', 'text-white')
-      } else {
-        nav && nav.classList.replace('text-white', 'text-black')
-      }
-
-      // 导航栏不在头图里，且页面向下滚动一定程度 隐藏导航栏
       const showNav =
         scrollS <= windowTop ||
         scrollS < 5 ||
         (header && scrollS <= header.clientHeight + 100)
       if (!showNav) {
-        nav && nav.classList.replace('top-0', '-top-20')
-        windowTop = scrollS
+        nav.classList.replace('top-0', '-top-20')
       } else {
-        nav && nav.classList.replace('-top-20', 'top-0')
-        windowTop = scrollS
+        nav.classList.replace('-top-20', 'top-0')
       }
+      windowTop = scrollS
     }, throttleMs)
   )
 
@@ -146,20 +117,13 @@ const Header = props => {
     <div id='top-nav' className='z-40'>
       <SearchDrawer cRef={searchDrawer} slot={searchDrawerSlot} />
 
-      {/* 导航栏 */}
-      <div
-        id='sticky-nav'
-        style={{ backdropFilter: 'blur(3px)' }}
-        className={
-          'top-0 duration-300 transition-all  shadow-none fixed bg-none dark:bg-hexo-black-gray dark:text-gray-200 text-black w-full z-20 transform border-transparent dark:border-transparent'
-        }>
+      <div id='sticky-nav' className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'>
         <div className='w-full flex justify-between items-center px-4 py-2'>
-          <div className='flex'>
-            <Logo {...props} />
-          </div>
+          <SmartLink href='/' passHref className='ob-logo'>
+            {siteInfo?.title || siteConfig('TITLE')}
+          </SmartLink>
 
-          {/* 右侧功能 */}
-          <div className='mr-1 flex justify-end items-center '>
+          <div className='mr-1 flex justify-end items-center'>
             <div className='hidden lg:flex ob-top-nav items-center'>
               <MenuListTop {...props} />
             </div>
@@ -172,13 +136,22 @@ const Header = props => {
                 <i className='fas fa-bars' />
               )}
             </div>
+            {showDarkButton && (
+              <button
+                type='button'
+                className='ob-dark-toggle'
+                onClick={toggleDarkMode}
+                title={isDarkMode ? '浅色模式' : '深色模式'}
+                aria-label={isDarkMode ? '切换到浅色模式' : '切换到深色模式'}>
+                <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`} />
+              </button>
+            )}
             {showSearchButton && <SearchButton />}
             {showRandomButton && <ButtonRandomPost {...props} />}
           </div>
         </div>
       </div>
 
-      {/* 折叠侧边栏 */}
       <SideBarDrawer isOpen={isOpen} onClose={toggleSideBarClose}>
         <SideBar {...props} />
       </SideBarDrawer>
