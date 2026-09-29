@@ -1132,8 +1132,7 @@ const ExistenceLife = props => {
             。
           </p>
           <p className='ob-ex-why'>
-            图仍按八十岁铺这一生。倒计时只计 2025.3.28
-            零点起的新生命，按五十岁计到 2075.3.27 23:59，不再用八十岁那条尺。
+            图按八十岁画这一生。倒计时从 2025.3.28 零点起，按五十岁走到 2075.3.27 23:59。
           </p>
           <div className='ob-ex-phases'>
             <div className='ob-ex-phase is-mengmei'>
