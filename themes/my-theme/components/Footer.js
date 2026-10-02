@@ -718,13 +718,15 @@ const Footer = () => {
                 <SectionTitle>站点</SectionTitle>
                 <div className='ob-nav'>
                   <div className='ob-stats'>
-                    <span className='hidden busuanzi_container_site_pv'>
-                      <i className='fas fa-eye' />
-                      <span className='px-1 busuanzi_value_site_pv'> </span>
+                    <span className='busuanzi_container_site_pv'>
+                      <i className='fas fa-eye' aria-hidden='true' />
+                      访问次数
+                      <span className='px-1 busuanzi_value_site_pv'>–</span>
                     </span>
-                    <span className='hidden busuanzi_container_site_uv'>
-                      <i className='fas fa-users' />
-                      <span className='px-1 busuanzi_value_site_uv'> </span>
+                    <span className='busuanzi_container_site_uv'>
+                      <i className='fas fa-users' aria-hidden='true' />
+                      访问人数
+                      <span className='px-1 busuanzi_value_site_uv'>–</span>
                     </span>
                   </div>
                   {icpText && (

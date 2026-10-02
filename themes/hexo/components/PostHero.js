@@ -75,10 +75,16 @@ export default function PostHero({ post, siteInfo }) {
               </div>
             </div>
 
-            {JSON.parse(siteConfig('ANALYTICS_BUSUANZI_ENABLE')) && (
-              <div className='busuanzi_container_page_pv font-light mr-2'>
-                <span className='mr-2 busuanzi_value_page_pv' />
-                {locale.COMMON.VIEWS}
+            {siteConfig('ANALYTICS_BUSUANZI_ENABLE') && (
+              <div className='flex flex-wrap justify-center gap-x-4 font-light mr-2'>
+                <span className='busuanzi_container_page_pv whitespace-nowrap'>
+                  访问次数
+                  <span className='px-1 busuanzi_value_page_pv'>–</span>
+                </span>
+                <span className='busuanzi_container_site_uv whitespace-nowrap'>
+                  访问人数
+                  <span className='px-1 busuanzi_value_site_uv'>–</span>
+                </span>
               </div>
             )}
           </section>
