@@ -84,24 +84,49 @@ function parseArgs() {
 }
 
 function htmlToRoughMarkdown(html) {
-  let t = html
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/<style[\s\S]*?<\/style>/gi, '')
-    .replace(/<h1[^>]*>([\s\S]*?)<\/h1>/gi, '\n# $1\n')
-    .replace(/<h2[^>]*>([\s\S]*?)<\/h2>/gi, '\n## $1\n')
-    .replace(/<h3[^>]*>([\s\S]*?)<\/h3>/gi, '\n### $1\n')
-    .replace(/<h4[^>]*>([\s\S]*?)<\/h4>/gi, '\n#### $1\n')
-    .replace(/<p[^>]*>([\s\S]*?)<\/p>/gi, '\n$1\n')
-    .replace(/<br\s*\/?>/gi, '\n')
-    .replace(/<li[^>]*>([\s\S]*?)<\/li>/gi, '- $1\n')
-    .replace(/<[^>]+>/g, '')
-    .replace(/&nbsp;/g, ' ')
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/\n{3,}/g, '\n\n')
-    .trim()
-  return t
+  if (typeof html !== 'string' || !html) return ''
+  const decoded = html
+    .split('&nbsp;').join(' ')
+    .split('&amp;').join('&')
+    .split('&lt;').join('<')
+    .split('&gt;').join('>')
+    .split('&quot;').join('"')
+  let out = ''
+  let i = 0
+  while (i < decoded.length) {
+    if (decoded[i] !== '<') {
+      out += decoded[i]
+      i += 1
+      continue
+    }
+    const end = decoded.indexOf('>', i + 1)
+    if (end === -1) break
+    const raw = decoded.slice(i + 1, end).trim()
+    const closing = raw.startsWith('/')
+    const name = (closing ? raw.slice(1) : raw).split(/[\s/]/)[0].toLowerCase()
+    i = end + 1
+    if (name === 'script' || name === 'style') {
+      if (!closing) {
+        const closeAt = decoded.toLowerCase().indexOf(`</${name}`, i)
+        if (closeAt === -1) break
+        const after = decoded.indexOf('>', closeAt)
+        i = after === -1 ? decoded.length : after + 1
+      }
+      continue
+    }
+    if (!closing && name === 'br') out += '\n'
+    else if (!closing && name === 'h1') out += '\n# '
+    else if (!closing && name === 'h2') out += '\n## '
+    else if (!closing && name === 'h3') out += '\n### '
+    else if (!closing && name === 'h4') out += '\n#### '
+    else if (!closing && name === 'li') out += '\n- '
+    else if (!closing && name === 'p') out += '\n'
+    else if (closing && (name === 'h1' || name === 'h2' || name === 'h3' || name === 'h4' || name === 'p' || name === 'li')) {
+      out += '\n'
+    }
+  }
+  while (out.includes('\n\n\n')) out = out.split('\n\n\n').join('\n\n')
+  return out.trim()
 }
 
 async function fetchArticle(slug) {
