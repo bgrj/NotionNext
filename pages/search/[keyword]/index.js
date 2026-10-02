@@ -9,6 +9,7 @@ import { DynamicLayout } from '@/themes/theme'
 import { getPageContentText } from '@/lib/db/notion/getPageContentText'
 import { getPageBlockCacheKey } from '@/lib/db/notion/getPostBlocks'
 import { isProtectedPost, toPublicPostSummary } from '@/lib/security/articleAccess'
+import { isExistencePublication } from '@/lib/security/existenceCrawl'
 
 const Index = props => {
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
@@ -77,6 +78,7 @@ async function filterByMemCache(allPosts, keyword) {
     keyword = keyword.trim().toLowerCase()
   }
   for (const post of allPosts) {
+    if (isExistencePublication(post)) continue
     const tagContent =
       post?.tags && Array.isArray(post?.tags) ? post?.tags.join(' ') : ''
     const categoryContent =

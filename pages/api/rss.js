@@ -1,5 +1,6 @@
 import BLOG from '@/blog.config'
 import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import { selectPublicFeedPosts } from '@/lib/security/existenceCrawl'
 import { generateRss, shouldGenerateRssForLocale } from '@/lib/utils/rss'
 import { Feed } from 'feed'
 
@@ -43,14 +44,7 @@ async function generateRssContent() {
   const { siteInfo, allPages, NOTION_CONFIG } = props
 
   // Filter published posts only
-  const latestPosts = allPages
-    .filter(p => p.type === 'Post' && p.status === 'Published')
-    .sort((a, b) => {
-      const dateA = new Date(a.publishDay || a.publishDate || 0)
-      const dateB = new Date(b.publishDay || b.publishDate || 0)
-      return dateB - dateA
-    })
-    .slice(0, 20)
+  const latestPosts = selectPublicFeedPosts(allPages)
 
   if (latestPosts.length === 0) {
     return null

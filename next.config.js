@@ -327,6 +327,26 @@ const nextConfig = {
     : () => {
         return [
           {
+            source: '/diaries',
+            headers: [
+              {
+                key: 'X-Robots-Tag',
+                value:
+                  'noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai'
+              }
+            ]
+          },
+          {
+            source: '/diaries/:path*',
+            headers: [
+              {
+                key: 'X-Robots-Tag',
+                value:
+                  'noindex, nofollow, noarchive, nosnippet, noimageindex, noai, noimageai'
+              }
+            ]
+          },
+          {
             source: '/assets/ourbeing/:path*',
             headers: [
               {

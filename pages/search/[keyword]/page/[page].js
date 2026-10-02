@@ -8,6 +8,7 @@ import {
 import { DynamicLayout } from '@/themes/theme'
 import { getPageBlockCacheKey } from '@/lib/db/notion/getPostBlocks'
 import { isProtectedPost, toPublicPostSummary } from '@/lib/security/articleAccess'
+import { isExistencePublication } from '@/lib/security/existenceCrawl'
 
 const Index = props => {
   const { keyword } = props
@@ -118,6 +119,7 @@ async function filterByMemCache(allPosts, keyword) {
     keyword = keyword.trim()
   }
   for (const post of allPosts) {
+    if (isExistencePublication(post)) continue
     const tagContent =
       post?.tags && Array.isArray(post?.tags) ? post?.tags.join(' ') : ''
     const categoryContent =

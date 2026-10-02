@@ -2,6 +2,11 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { getPwaConfig } from '@/lib/pwa'
 import { createSiteUrl, normalizeSiteUrl } from '@/lib/sitemap-utils'
+import {
+  EXISTENCE_ROBOTS_TAG,
+  isExistenceContentPath,
+  isExistencePublication
+} from '@/lib/security/existenceCrawl'
 import { localizeOurbeingAssetUrl } from '@/lib/utils/ourbeingAssets'
 import { isHttpLink, loadExternalResource } from '@/lib/utils'
 import Head from 'next/head'
@@ -129,6 +134,8 @@ const SEO = props => {
   const TWITTER_CREATOR = siteConfig('TWITTER_CREATOR', '', NOTION_CONFIG)
 
   const AUTHOR = siteConfig('AUTHOR')
+  const hideFromMachines =
+    isExistenceContentPath(router?.asPath || '') || isExistencePublication(post)
   return (
     <Head>
       <link rel='icon' href={favicon} />
@@ -141,7 +148,15 @@ const SEO = props => {
         name='viewport'
         content='width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0'
       />
-      <meta name='robots' content='follow, index, max-snippet:-1, max-image-preview:large, max-video-preview:-1' />
+      <meta
+        name='robots'
+        content={
+          hideFromMachines
+            ? EXISTENCE_ROBOTS_TAG
+            : 'follow, index, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
+        }
+      />
+      {hideFromMachines && <meta name='tdm-reservation' content='1' />}
       <meta charSet='UTF-8' />
       <meta name='format-detection' content='telephone=no' />
       <meta name='mobile-web-app-capable' content='yes' />

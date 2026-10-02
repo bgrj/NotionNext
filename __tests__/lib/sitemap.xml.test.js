@@ -35,6 +35,11 @@ describe('generateSitemapXml', () => {
         {
           slug: 'https://example.com/internal/page',
           publishDay: 'invalid-date'
+        },
+        {
+          slug: 'diaries/2025/06/10/r76',
+          category: '我的存在',
+          publishDay: '2025-06-10'
         }
       ]
     })
@@ -47,6 +52,7 @@ describe('generateSitemapXml', () => {
     expect(xml).not.toContain('<loc>https://external.com/landing</loc>')
     expect(xml).not.toContain('https://example.com/https://external.com/landing')
     expect(xml).not.toContain('Invalid Date')
+    expect(xml).not.toContain('/diaries/2025/06/10/r76')
 
     writeSpy.mockRestore()
   })
