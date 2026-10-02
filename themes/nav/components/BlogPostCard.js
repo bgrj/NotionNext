@@ -4,6 +4,20 @@ import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
 import NotionIcon from './NotionIcon'
 
+function isAmazonImage(value) {
+  if (typeof value !== 'string' || !value) return false
+  try {
+    const url = new URL(value)
+    return (
+      url.protocol === 'https:' &&
+      (url.hostname === 'amazonaws.com' ||
+        url.hostname.endsWith('.amazonaws.com'))
+    )
+  } catch {
+    return false
+  }
+}
+
 /**
  * 博客卡牌
  * @param {*} param0
@@ -16,10 +30,9 @@ const BlogPostCard = ({ post, className }) => {
     post.pageIcon !== ''
       ? post.pageIcon
       : siteConfig('IMG_LAZY_LOAD_PLACEHOLDER')
-  pageIcon =
-    post.pageIcon.indexOf('amazonaws.com') !== -1
-      ? post.pageIcon + '&width=88'
-      : post.pageIcon
+  pageIcon = isAmazonImage(post.pageIcon)
+    ? post.pageIcon + '&width=88'
+    : post.pageIcon
   return (
     <SmartLink
       href={post?.href}

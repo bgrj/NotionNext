@@ -94,7 +94,7 @@ function buildConfigTableBlock(id, keys, notes) {
   block += '| 配置键 | 说明 |\n| --- | --- |\n'
   const showKeys = keys.slice(0, 40)
   for (const k of showKeys) {
-    const note = (notes[k] || '见 config.js').replace(/\|/g, '\\|')
+    const note = (notes[k] || '见 config.js').split('|').join('\\|')
     block += `| \`${k}\` | ${note} |\n`
   }
   if (keys.length > 40) {
@@ -180,7 +180,7 @@ function buildThemeIndexTable(ids) {
   for (const id of ids) {
     const meta = manifest[id] || {}
     const title = meta.name || id.charAt(0).toUpperCase() + id.slice(1)
-    const summary = (meta.summary || scenes[id] || '—').replace(/\|/g, '\\|')
+    const summary = (meta.summary || scenes[id] || '—').split('|').join('\\|')
     const dev = DEV_DEEP_DOCS[id]
       ? ` · [开发文档（GitHub）](${DEV_DEEP_DOCS[id]})`
       : ''
