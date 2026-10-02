@@ -1,10 +1,14 @@
 import BLOG from '@/blog.config'
 import { getDataFromCache } from '@/lib/cache/cache_manager'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps
+} from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import { getPageContentText } from '@/lib/db/notion/getPageContentText'
 import { getPageBlockCacheKey } from '@/lib/db/notion/getPostBlocks'
+import { isProtectedPost, toPublicPostSummary } from '@/lib/security/articleAccess'
 
 const Index = props => {
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
@@ -41,6 +45,7 @@ export async function getStaticProps({ params: { keyword }, locale }) {
     props.posts = props.posts?.slice(0, POSTS_PER_PAGE)
   }
   props.keyword = keyword
+  finalizeListPageProps(props)
   return {
     props,
     revalidate: process.env.EXPORT
@@ -72,8 +77,6 @@ async function filterByMemCache(allPosts, keyword) {
     keyword = keyword.trim().toLowerCase()
   }
   for (const post of allPosts) {
-    const cacheKey = getPageBlockCacheKey(post.id, post.lastEditedDate)
-    const page = await getDataFromCache(cacheKey, true)
     const tagContent =
       post?.tags && Array.isArray(post?.tags) ? post?.tags.join(' ') : ''
     const categoryContent =
@@ -81,6 +84,14 @@ async function filterByMemCache(allPosts, keyword) {
         ? post.category.join(' ')
         : ''
     const articleInfo = post.title + post.summary + tagContent + categoryContent
+    if (isProtectedPost(post)) {
+      if (keyword && articleInfo.toLowerCase().indexOf(keyword) > -1) {
+        filterPosts.push(toPublicPostSummary(post))
+      }
+      continue
+    }
+    const cacheKey = getPageBlockCacheKey(post.id, post.lastEditedDate)
+    const page = await getDataFromCache(cacheKey, true)
     let hit = articleInfo.toLowerCase().indexOf(keyword) > -1
     const contentTextList = getPageContentText(post, page)
     // console.log('全文搜索缓存', cacheKey, page != null)

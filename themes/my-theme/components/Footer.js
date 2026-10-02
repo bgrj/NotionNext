@@ -216,7 +216,7 @@ const Footer = () => {
 
   return (
     <footer className='ob-footer relative z-10 w-full flex-shrink-0 bg-hexo-light-gray text-sm leading-6 dark:bg-black'>
-      <style>{`
+      <style jsx global>{`
         .ob-footer {
           --ob-gold: #D4A35C;
           --ob-ink: #38302A;

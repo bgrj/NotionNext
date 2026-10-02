@@ -1,6 +1,6 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import { fetchGlobalAllData, finalizeListPageProps } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import {
   EXISTENCE_CATEGORY,
@@ -36,6 +36,10 @@ export async function getStaticProps({ params: { category }, locale }) {
   props.postCount = props.posts.length
   if (isExistenceCategory(category) || category === EXISTENCE_CATEGORY) {
     props.existencePosts = slimExistencePosts(props.posts)
+    props.posts = props.existencePosts
+    // SSR and the first client render must share a clock snapshot.
+    props.initialRenderTime = Date.now()
+    finalizeListPageProps(props, { slimPosts: false })
   } else {
     // 处理分页
     const POST_LIST_STYLE = siteConfig(
@@ -51,9 +55,8 @@ export async function getStaticProps({ params: { category }, locale }) {
         siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
       )
     }
+    finalizeListPageProps(props)
   }
-
-  delete props.allPages
 
   props = { ...props, category }
 

@@ -253,7 +253,7 @@ const FriendLinks = () => {
 
   return (
     <div id='notion-article' className='ob-fl'>
-      <style>{`
+      <style jsx global>{`
         .ob-fl {
           --ob-gold: #C9A66B;
           --ob-gold-deep: #8A5A1F;

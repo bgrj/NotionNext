@@ -16,7 +16,6 @@ import {
   parseIso,
   parseSearchQuery,
   postMapFrom,
-  shanghaiToday,
   shiftIso,
   slimExistencePosts,
   weekdaySun0
@@ -254,7 +253,16 @@ const ExistenceLife = props => {
     CONFIG
   )
   const end = addYearsIso(birth, years)
-  const today = shanghaiToday()
+  // Reuse the serialized snapshot through hydration; start the live clock
+  // only after mount. Date.now() during initial render would mismatch SSG.
+  const [clock, setClock] = useState(() =>
+    newLifeStats(
+      awakening,
+      newEnd,
+      Number.isFinite(props.initialRenderTime) ? props.initialRenderTime : 0
+    )
+  )
+  const today = clock.todayIso
   const written = useMemo(
     () => slimExistencePosts(props.existencePosts || props.posts),
     [props.existencePosts, props.posts]
@@ -278,7 +286,6 @@ const ExistenceLife = props => {
   const futureDays = daysBetween(shiftIso(today, 1), shiftIso(end, -1))
   const totalDays = daysBetween(birth, shiftIso(end, -1))
   const livedDays = Math.min(totalDays, daysBetween(birth, lastLived))
-  const [clock, setClock] = useState(() => newLifeStats(awakening, newEnd))
   useEffect(() => {
     const tick = () => setClock(newLifeStats(awakening, newEnd))
     tick()
@@ -571,7 +578,7 @@ const ExistenceLife = props => {
 
   return (
     <div id='notion-article' className='ob-ex'>
-      <style>{`
+      <style jsx global>{`
         .ob-ex {
           --ob-gold: #C9A66B;
           --ob-gold-deep: #8A5A1F;
