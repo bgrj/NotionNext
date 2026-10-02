@@ -3,6 +3,7 @@ import getConfig from 'next/config'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { getQueryParam, getQueryVariable, isBrowser } from '../lib/utils'
+import { ourbeingLayouts } from './ourbeingLayouts'
 
 // 在next.config.js中扫描所有主题
 export const { THEMES = [] } = getConfig()?.publicRuntimeConfig || {}
@@ -32,7 +33,8 @@ const IndexLayoutLoading = () => (
           {[0, 1].map(item => (
             <div
               key={item}
-              className='flex gap-6 border-t border-gray-300 pt-6 dark:border-gray-800'>
+              className='flex gap-6 border-t border-gray-300 pt-6 dark:border-gray-800'
+            >
               <div className='min-w-0 flex-1 space-y-3'>
                 <div className='h-6 w-4/5 animate-pulse bg-gray-200 dark:bg-gray-800' />
                 <div className='h-4 w-2/3 animate-pulse bg-gray-200 dark:bg-gray-800' />
@@ -53,7 +55,8 @@ const IndexLayoutLoading = () => (
           {[0, 1, 2, 3].map(item => (
             <div
               key={item}
-              className='space-y-4 border-t border-gray-300 pt-5 dark:border-gray-800'>
+              className='space-y-4 border-t border-gray-300 pt-5 dark:border-gray-800'
+            >
               <div className='h-5 w-3/4 animate-pulse bg-gray-200 dark:bg-gray-800' />
               <div className='h-4 w-24 animate-pulse bg-gray-200 dark:bg-gray-800' />
             </div>
@@ -144,7 +147,9 @@ async function resolveThemeLayout(themeName, layoutName, emptyLayout) {
     }
   }
 
-  console.warn(`[theme] "${themeName}" missing "${layoutName}", using empty layout.`)
+  console.warn(
+    `[theme] "${themeName}" missing "${layoutName}", using empty layout.`
+  )
   return emptyLayout
 }
 
@@ -169,7 +174,9 @@ export const getThemeConfig = async themeQuery => {
       return cfg
     }
   }
-  console.warn('[theme] No theme configuration could be loaded, using empty config.')
+  console.warn(
+    '[theme] No theme configuration could be loaded, using empty config.'
+  )
   return {}
 }
 
@@ -191,12 +198,12 @@ const getCurrentTheme = (router, fallbackTheme) => {
  */
 export const getBaseLayoutByTheme = theme => {
   const normalizedTheme = normalizeThemeName(theme)
+  if (normalizedTheme === 'my-theme') return ourbeingLayouts.LayoutBase
   if (baseLayoutCache.has(normalizedTheme)) {
     return baseLayoutCache.get(normalizedTheme)
   }
   const DynamicBaseLayout = dynamic(
-    () =>
-      resolveThemeLayout(normalizedTheme, 'LayoutBase', EmptyBaseLayout),
+    () => resolveThemeLayout(normalizedTheme, 'LayoutBase', EmptyBaseLayout),
     { ssr: true }
   )
   baseLayoutCache.set(normalizedTheme, DynamicBaseLayout)
@@ -222,6 +229,10 @@ export const DynamicLayout = props => {
 export const useLayoutByTheme = ({ layoutName, theme }) => {
   const router = useRouter()
   const themeQuery = getCurrentTheme(router, theme)
+  if (themeQuery === 'my-theme' && ourbeingLayouts[layoutName]) {
+    scheduleFixThemeDOM(80)
+    return ourbeingLayouts[layoutName]
+  }
   const cacheKey = `${themeQuery}:${layoutName}`
 
   if (layoutByThemeCache.has(cacheKey)) {
@@ -323,7 +334,11 @@ export function isPreferDark(appearance = BLOG.APPEARANCE) {
   if (appearance === 'dark' || appearance === true || appearance === 'true') {
     return true
   }
-  if (appearance === 'light' || appearance === false || appearance === 'false') {
+  if (
+    appearance === 'light' ||
+    appearance === false ||
+    appearance === 'false'
+  ) {
     return false
   }
   if (typeof window === 'undefined') return false

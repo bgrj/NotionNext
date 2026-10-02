@@ -12,6 +12,7 @@ import { generateSitemapXml } from '@/lib/utils/sitemap.xml'
 import { DynamicLayout } from '@/themes/theme'
 import { generateRedirectJson } from '@/lib/utils/redirect'
 import { checkDataFromAlgolia } from '@/lib/plugins/algolia'
+import { isProtectedPost } from '@/lib/security/articleAccess'
 import pLimit from 'p-limit'
 import { adapterNotionBlockMap } from '@/lib/utils/notion.util'
 
@@ -88,9 +89,9 @@ export async function getStaticProps(req) {
     const previewLimit = pLimit(
       siteConfig('POST_PREVIEW_CONCURRENCY', 5, props?.NOTION_CONFIG)
     )
-    const previewTargets = props.posts.filter(
-      post => !post.password || post.password === ''
-    ).slice(0, POST_PREVIEW_MAX_COUNT)
+    const previewTargets = props.posts
+      .filter(post => !isProtectedPost(post))
+      .slice(0, POST_PREVIEW_MAX_COUNT)
     await Promise.all(
       previewTargets.map(post =>
         previewLimit(async () => {

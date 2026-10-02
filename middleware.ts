@@ -1,7 +1,9 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { checkStrIsNotionId, getLastPartOfUrl } from '@/lib/utils'
-import { idToUuid } from 'notion-utils'
+import {
+  getNotionRedirectId,
+  safeRedirectPath
+} from '@/lib/utils/notionRedirect'
 import BLOG from './blog.config'
 
 /**
@@ -35,23 +37,30 @@ const isTenantAdminRoute = createRouteMatcher([
 // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 const noAuthMiddleware = async (req: NextRequest, ev: any) => {
   // 如果没有配置 Clerk 相关环境变量，返回一个默认响应或者继续处理请求
-  if (BLOG['UUID_REDIRECT']) {
+  const redirectId = getNotionRedirectId(
+    req.nextUrl.pathname,
+    BLOG.UUID_REDIRECT
+  )
+  if (redirectId) {
     let redirectJson: Record<string, string> = {}
     try {
-      const response = await fetch(`${req.nextUrl.origin}/redirect.json`)
+      // The canonical origin is trusted configuration, not an incoming Host
+      // header. Ordinary pages and APIs never make this request.
+      const redirectTableUrl = new URL('/redirect.json', BLOG.LINK)
+      const response = await fetch(redirectTableUrl, {
+        signal: AbortSignal.timeout(1500),
+        redirect: 'error'
+      })
       if (response.ok) {
         redirectJson = (await response.json()) as Record<string, string>
       }
     } catch (err) {
       console.error('Error fetching static file:', err)
     }
-    let lastPart = getLastPartOfUrl(req.nextUrl.pathname) as string
-    if (checkStrIsNotionId(lastPart)) {
-      lastPart = idToUuid(lastPart)
-    }
-    if (lastPart && redirectJson[lastPart]) {
+    const redirectPath = safeRedirectPath(redirectJson[redirectId])
+    if (redirectPath && redirectPath !== req.nextUrl.pathname) {
       const redirectToUrl = req.nextUrl.clone()
-      redirectToUrl.pathname = '/' + redirectJson[lastPart]
+      redirectToUrl.pathname = redirectPath
       console.log(
         `redirect from ${req.nextUrl.pathname} to ${redirectToUrl.pathname}`
       )

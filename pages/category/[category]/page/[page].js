@@ -1,6 +1,9 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps
+} from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import {
   EXISTENCE_CATEGORY,
@@ -32,6 +35,7 @@ export async function getStaticProps({ params: { category, page } }) {
   props.postCount = props.posts.length
   if (isExistenceCategory(category) || category === EXISTENCE_CATEGORY) {
     props.existencePosts = slimExistencePosts(props.posts)
+    props.initialRenderTime = Date.now()
   } else {
     const POSTS_PER_PAGE = siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
     // 处理分页
@@ -41,7 +45,7 @@ export async function getStaticProps({ params: { category, page } }) {
     )
   }
 
-  delete props.allPages
+  finalizeListPageProps(props)
   props.page = page
 
   props = { ...props, category, page }

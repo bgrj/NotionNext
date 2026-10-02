@@ -1,6 +1,11 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData, getPostBlocks } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps,
+  getPostBlocks
+} from '@/lib/db/SiteDataApi'
+import { isProtectedPost } from '@/lib/security/articleAccess'
 import { formatNotionBlock } from '@/lib/db/notion/getPostBlocks'
 import { adapterNotionBlockMap } from '@/lib/utils/notion.util'
 import { DynamicLayout } from '@/themes/theme'
@@ -55,7 +60,7 @@ export async function getStaticProps({ params: { page }, locale }) {
   if (siteConfig('POST_LIST_PREVIEW', false, props?.NOTION_CONFIG)) {
     for (const i in props.posts) {
       const post = props.posts[i]
-      if (post.password && post.password !== '') {
+      if (isProtectedPost(post)) {
         continue
       }
       const rawBlockMap = await getPostBlocks(post.id, 'slug', POST_PREVIEW_LINES)
@@ -66,7 +71,7 @@ export async function getStaticProps({ params: { page }, locale }) {
     }
   }
 
-  delete props.allPages
+  finalizeListPageProps(props)
   return {
     props,
     revalidate: process.env.EXPORT

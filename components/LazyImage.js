@@ -1,6 +1,7 @@
 import { siteConfig } from '@/lib/config'
 import Head from 'next/head'
 import { useCallback, useEffect, useRef, useState } from 'react'
+import { localizeOurbeingAssetUrl } from '@/lib/utils/ourbeingAssets'
 
 const getTargetImageWidth = (width, maxWidth) => {
   const parsedWidth = Number(width)
@@ -161,7 +162,7 @@ export default function LazyImage({
   const imgProps = {
     ref: imageRef,
     src: currentSrc,
-    'data-src': src, // 存储原始图片地址
+    'data-src': adjustImgSize(src, targetImageWidth) || src,
     alt: alt || 'Lazy loaded image',
     onLoad: handleThumbnailLoaded,
     onError: handleImageError,
@@ -219,6 +220,7 @@ const adjustImgSize = (src, maxWidth) => {
   if (!src) {
     return null
   }
+  src = localizeOurbeingAssetUrl(src)
   const screenWidth =
     (typeof window !== 'undefined' && window?.screen?.width) || maxWidth
   const parsedMaxWidth = Number(maxWidth)

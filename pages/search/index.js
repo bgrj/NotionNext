@@ -1,6 +1,9 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps
+} from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import { useRouter } from 'next/router'
 
@@ -52,6 +55,7 @@ export async function getStaticProps({ locale }) {
   props.posts = allPages?.filter(
     page => page.type === 'Post' && page.status === 'Published'
   )
+  finalizeListPageProps(props)
   return {
     props,
     revalidate: process.env.EXPORT

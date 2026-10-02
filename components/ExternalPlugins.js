@@ -260,10 +260,10 @@ const ExternalPlugin = props => {
       {MOUSE_FOLLOW && <MouseFollow />}
       {pluginsIdle && THEME_SWITCH && <ThemeSwitch />}
       {DEBUG && <DebugPanel />}
-      {ANALYTICS_ACKEE_TRACKER && <Ackee />}
-      {ANALYTICS_GOOGLE_ID && <Gtag />}
-      {ANALYTICS_VERCEL && <Analytics />}
-      {ANALYTICS_BUSUANZI_ENABLE && <Busuanzi />}
+      {pluginsIdle && ANALYTICS_ACKEE_TRACKER && <Ackee />}
+      {pluginsIdle && ANALYTICS_GOOGLE_ID && <Gtag />}
+      {pluginsIdle && ANALYTICS_VERCEL && <Analytics />}
+      {pluginsIdle && ANALYTICS_BUSUANZI_ENABLE && <Busuanzi />}
       {FACEBOOK_APP_ID && FACEBOOK_PAGE_ID && <Messenger />}
       {FIREWORKS && <Fireworks />}
       {SAKURA && <Sakura />}
@@ -284,7 +284,7 @@ const ExternalPlugin = props => {
       <VConsole />
       {ENABLE_NPROGRSS && <LoadingProgress />}
       {pluginsIdle && <AosAnimation />}
-      {ANALYTICS_51LA_ID && ANALYTICS_51LA_CK && <LA51 />}
+      {pluginsIdle && ANALYTICS_51LA_ID && ANALYTICS_51LA_CK && <LA51 />}
       {AI_CHAT_API || DOCS_CHAT_API ? <DocsChat /> : COZE_BOT_ID && <Coze />}
 
       {ANALYTICS_51LA_ID && ANALYTICS_51LA_CK && (
@@ -318,7 +318,7 @@ const ExternalPlugin = props => {
         </>
       )}
 
-      {CLARITY_ID && (
+      {pluginsIdle && CLARITY_ID && (
         <>
           <script
             async

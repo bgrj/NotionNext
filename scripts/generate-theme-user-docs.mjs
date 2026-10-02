@@ -59,6 +59,14 @@ const scenes = {
   xuhome: '高辨识度个人博客、新粗野主义卡片布局'
 }
 
+function escapeMdTableCell(value) {
+  return String(value ?? '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\|/g, '\\|')
+    .replace(/`/g, '\\`')
+    .replace(/\n/g, ' ')
+}
+
 function extractKeys(configPath) {
   const src = fs.readFileSync(configPath, 'utf8')
   const keys = []
@@ -94,7 +102,7 @@ function buildConfigTableBlock(id, keys, notes) {
   block += '| 配置键 | 说明 |\n| --- | --- |\n'
   const showKeys = keys.slice(0, 40)
   for (const k of showKeys) {
-    const note = (notes[k] || '见 config.js').replace(/\|/g, '\\|')
+    const note = escapeMdTableCell(notes[k] || '见 config.js')
     block += `| \`${k}\` | ${note} |\n`
   }
   if (keys.length > 40) {
@@ -180,7 +188,7 @@ function buildThemeIndexTable(ids) {
   for (const id of ids) {
     const meta = manifest[id] || {}
     const title = meta.name || id.charAt(0).toUpperCase() + id.slice(1)
-    const summary = (meta.summary || scenes[id] || '—').replace(/\|/g, '\\|')
+    const summary = escapeMdTableCell(meta.summary || scenes[id] || '—')
     const dev = DEV_DEEP_DOCS[id]
       ? ` · [开发文档（GitHub）](${DEV_DEEP_DOCS[id]})`
       : ''
