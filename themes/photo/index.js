@@ -245,7 +245,15 @@ const LayoutSlug = props => {
             if (item.querySelector('figcaption').textContent.trim() === value) {
               item.classList.add('active')
               if (iframe) {
-                iframe.setAttribute('src', iframe.getAttribute('data-src'))
+                const rawSrc = iframe.getAttribute('data-src')
+                try {
+                  const parsed = new URL(rawSrc, window.location.origin)
+                  if (parsed.protocol === 'http:' || parsed.protocol === 'https:') {
+                    iframe.setAttribute('src', parsed.href)
+                  }
+                } catch {
+                  // ignore non-http iframe sources
+                }
               }
             } else {
               item.classList.remove('active')
