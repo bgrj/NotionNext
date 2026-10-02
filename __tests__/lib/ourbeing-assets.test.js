@@ -1,7 +1,8 @@
 /** @jest-environment node */
 import {
   localizeOurbeingAssetUrl,
-  localizeOurbeingAssetReferences
+  localizeOurbeingAssetReferences,
+  localizeOurbeingConfig
 } from '@/lib/utils/ourbeingAssets'
 import assets from '@/lib/ourbeing-assets.json'
 const fs = require('node:fs')
@@ -38,6 +39,17 @@ test.each([
   null
 ])('does not rewrite unrelated source %s', value => {
   expect(localizeOurbeingAssetUrl(value)).toBe(value)
+})
+test('localizes known assets inside the config sent to the browser', () => {
+  const config = localizeOurbeingConfig({
+    GLOBAL_CSS: `#wrapper { background-image: url('${assets[0].source}'); }`,
+    BLOG_FAVICON: assets[2].source,
+    nested: { keep: 'https://cdn.jsdelivr.net/npm/left-pad' }
+  })
+  expect(config.GLOBAL_CSS).toContain(assets[0].path)
+  expect(config.GLOBAL_CSS).not.toContain('jsdelivr')
+  expect(config.BLOG_FAVICON).toBe(assets[2].path)
+  expect(config.nested.keep).toContain('left-pad')
 })
 test('rewrites only URLs in CSS without changing layout declarations', () => {
   const css = `#wrapper { background:url('${assets[0].source}'); color:red; }`
