@@ -20,6 +20,9 @@ test.each(assets)(
   asset => {
     expect(localizeOurbeingAssetUrl(asset.source + '?t=old')).toBe(asset.path)
     expect(
+      localizeOurbeingAssetUrl(asset.source.replace('https://', 'http://'))
+    ).toBe(asset.path)
+    expect(
       localizeOurbeingAssetUrl(
         'https://raw.githubusercontent.com/bgrj/bgrj-images/refs/heads/main/' +
           asset.source.split('/').pop()

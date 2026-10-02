@@ -162,7 +162,7 @@ export default function LazyImage({
   const imgProps = {
     ref: imageRef,
     src: currentSrc,
-    'data-src': src, // 存储原始图片地址
+    'data-src': adjustImgSize(src, targetImageWidth) || src,
     alt: alt || 'Lazy loaded image',
     onLoad: handleThumbnailLoaded,
     onError: handleImageError,

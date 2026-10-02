@@ -132,11 +132,17 @@ function textOf(richText) {
 }
 
 function escapeText(text) {
-  return text.replace(/</g, '&lt;').replace(/>/g, '&gt;')
+  return String(text || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
 }
 
 function escapeLinkLabel(text) {
-  return text.replace(/\[/g, '\\[').replace(/\]/g, '\\]')
+  return String(text || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/\[/g, '\\[')
+    .replace(/\]/g, '\\]')
 }
 
 function escapeImageAlt(text) {

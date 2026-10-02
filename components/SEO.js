@@ -2,6 +2,7 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { getPwaConfig } from '@/lib/pwa'
 import { createSiteUrl, normalizeSiteUrl } from '@/lib/sitemap-utils'
+import { localizeOurbeingAssetUrl } from '@/lib/utils/ourbeingAssets'
 import { isHttpLink, loadExternalResource } from '@/lib/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -378,11 +379,15 @@ const getAbsoluteImageUrl = (image, siteUrl) => {
 
   const rawImage = image.trim()
   if (!rawImage) return ''
-  if (isHttpLink(rawImage) || rawImage.startsWith('data:')) {
-    return rawImage
+  const localized = localizeOurbeingAssetUrl(rawImage)
+  if (localized.startsWith('/')) {
+    return createSiteUrl(siteUrl, localized) || localized
+  }
+  if (isHttpLink(localized) || localized.startsWith('data:')) {
+    return localized
   }
 
-  return createSiteUrl(siteUrl, rawImage) || rawImage
+  return createSiteUrl(siteUrl, localized) || localized
 }
 
 const getIsoTime = value => {

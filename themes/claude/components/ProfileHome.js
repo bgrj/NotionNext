@@ -145,15 +145,6 @@ const isReadmeLikePage = page => {
   return getLastSlugPart(page.slug) === 'readme.md'
 }
 
-const sanitizeReadmeHtml = html => {
-  if (!html || typeof html !== 'string') return ''
-  return html
-    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, '')
-    .replace(/<iframe[\s\S]*?>[\s\S]*?<\/iframe>/gi, '')
-    .replace(/\son[a-z]+\s*=\s*(['"]).*?\1/gi, '')
-    .replace(/\shref\s*=\s*(['"])\s*javascript:[\s\S]*?\1/gi, ' href="#"')
-}
-
 export default function ProfileHome(props) {
   const { posts = [], readmePage, contributionEvents: persistedContributionEvents = [] } = props
   const heatmapGridRef = useRef(null)
@@ -167,10 +158,6 @@ export default function ProfileHome(props) {
     return posts.find(isReadmeLikePage) || null
   }, [readmePage, posts])
 
-  const readmeHtml = useMemo(
-    () => sanitizeReadmeHtml(readmeSource?.readmeHtml || ''),
-    [readmeSource?.readmeHtml]
-  )
   const readmeExcerpt = readmeSource?.excerpt || ''
 
   const timelinePosts = useMemo(() => {
@@ -614,14 +601,7 @@ export default function ProfileHome(props) {
             README
             <span className='claude-readme-card-meta-ext'>.md</span>
           </div>
-          {readmeHtml ? (
-            <div
-              className='markdown-body'
-              dangerouslySetInnerHTML={{ __html: readmeHtml }}
-            />
-          ) : (
-            <p className='claude-readme-card-excerpt'>{readmeExcerpt}</p>
-          )}
+          <p className='claude-readme-card-excerpt'>{readmeExcerpt}</p>
         </div>
 
         <div className='claude-profile-home-timeline'>

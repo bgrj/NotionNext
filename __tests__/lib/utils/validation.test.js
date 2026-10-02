@@ -166,10 +166,11 @@ describe('Sanitizer', () => {
   })
 
   describe('sanitizeXss', () => {
-    it('removes XSS patterns', () => {
-      expect(Sanitizer.sanitizeXss('<script>alert(1)</script>')).toBe('')
+    it('strips tags and escapes leftover text instead of using a filter list', () => {
+      expect(Sanitizer.sanitizeXss('<script>alert(1)</script>')).toBe('alert(1)')
       expect(Sanitizer.sanitizeXss('<iframe src="evil.com"></iframe>')).toBe('')
-      expect(Sanitizer.sanitizeXss('javascript:alert(1)')).toBe('')
+      expect(Sanitizer.sanitizeXss('javascript:alert(1)')).toBe('javascript:alert(1)')
+      expect(Sanitizer.sanitizeXss('<img src=x onerror=alert(1)>')).toBe('')
     })
 
     it('preserves safe content', () => {

@@ -12,6 +12,7 @@ import {
   hashArticlePasswordScrypt,
   verifyArticlePassword
 } from '@/lib/security/articlePassword'
+import { getPasswordQuery } from '@/lib/utils/password'
 import { sha256Digest } from '@/lib/utils/password'
 
 const secret = 'test-article-auth-secret-32chars!'
@@ -86,5 +87,19 @@ describe('article session and password', () => {
       expiresAt: Date.now() + 60_000
     })
     expect(readArticleSession(fresh + 'x')).toBeNull()
+  })
+
+  test('does not persist URL passwords in localStorage', () => {
+    const store = {}
+    global.localStorage = {
+      setItem: (k, v) => {
+        store[k] = v
+      },
+      getItem: k => store[k]
+    }
+    expect(getPasswordQuery('https://ourbeings.com/p?password=secret')).toEqual(
+      ['secret']
+    )
+    expect(store).toEqual({})
   })
 })
