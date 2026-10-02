@@ -37,6 +37,13 @@ describe('article session and password', () => {
     expect(verifyArticlePassword(legacy, password)).toBe(true)
   })
 
+  test('accepts the plaintext password stored in Notion', () => {
+    const post = { slug: 'note', password: 'plain-pass' }
+    expect(verifyArticlePassword(post, 'plain-pass')).toBe(true)
+    expect(verifyArticlePassword(post, 'plain-pass-other')).toBe(false)
+    expect(verifyArticlePassword(post, 'nope')).toBe(false)
+  })
+
   test('verifies scrypt hashes', () => {
     const stored = hashArticlePasswordScrypt('reader-pass', {
       n: 1024,
@@ -71,6 +78,22 @@ describe('article session and password', () => {
     expect(isAllowedRequestOrigin({ headers: { origin } })).toBe(true)
     expect(
       isAllowedRequestOrigin({ headers: { origin: 'https://evil.example' } })
+    ).toBe(false)
+  })
+
+  test('allows the preview host that served the page', () => {
+    const headers = {
+      origin: 'https://preview.example.vercel.app',
+      'x-forwarded-host': 'preview.example.vercel.app'
+    }
+    expect(isAllowedRequestOrigin({ headers })).toBe(true)
+    expect(
+      isAllowedRequestOrigin({
+        headers: {
+          origin: 'https://evil.example',
+          'x-forwarded-host': 'preview.example.vercel.app'
+        }
+      })
     ).toBe(false)
   })
 
