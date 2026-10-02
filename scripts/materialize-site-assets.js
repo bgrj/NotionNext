@@ -27,12 +27,9 @@ function materializeSiteAssets(root = path.resolve(__dirname, '..')) {
       throw new Error(`Site asset integrity check failed: ${asset.file}`)
     }
     const destination = path.join(output, asset.file)
-    if (
-      !fs.existsSync(destination) ||
-      !fs.readFileSync(destination).equals(buffer)
-    ) {
-      fs.writeFileSync(destination, buffer)
-    }
+    const temp = `${destination}.${process.pid}.tmp`
+    fs.writeFileSync(temp, buffer)
+    fs.renameSync(temp, destination)
   }
 }
 
