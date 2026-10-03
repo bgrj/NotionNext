@@ -24,8 +24,10 @@ import Footer from './components/Footer'
 import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
 import ExistenceLife from './components/ExistenceLife'
+import OurBeingsIndex from './components/OurBeingsIndex'
 import NoticeModal from './components/NoticeModal'
 import { EXISTENCE_CATEGORY, isExistenceCategory } from './existence'
+import { isOurBeingsCategory, isOurBeingsPath } from './beings'
 import Hero from '@/themes/hexo/components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
@@ -110,7 +112,8 @@ const LayoutBase = props => {
     slug: post?.slug || slugFromRouter(router)
   })
   const existence = isExistencePath(router.asPath)
-  const chromeLite = friendLinks || existence
+  const ourBeings = isOurBeingsPath(router.asPath)
+  const chromeLite = friendLinks || existence || ourBeings
   const hexoArticleRouteLoading = siteConfig(
     'HEXO_ARTICLE_ROUTE_LOADING',
     true,
@@ -175,7 +178,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence ? ' ob-ex-layout' : ''}${listWithoutSidebar ? ' ob-list-layout' : ''}`}>
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings ? ' ob-ex-layout' : ''}${listWithoutSidebar ? ' ob-list-layout' : ''}`}>
         <Style />
 
         {/* 顶部导航 */}
@@ -285,6 +288,12 @@ const LayoutPostList = props => {
     isExistencePath(router.asPath)
   ) {
     return <ExistenceLife {...props} />
+  }
+  if (
+    isOurBeingsCategory(props.category) ||
+    isOurBeingsPath(router.asPath)
+  ) {
+    return <OurBeingsIndex {...props} />
   }
   return (
     <div className={props.className || 'pt-2'}>

@@ -1,0 +1,85 @@
+import { EXISTENCE_DEFAULTS } from './existence'
+
+export const OUR_BEINGS_CATEGORY = '我们的存在'
+
+export const OUR_BEINGS_SEATS = 100
+
+export const OUR_BEINGS_JOIN_PRICE_YUAN = 5
+
+export const isOurBeingsCategory = category =>
+  String(category || '') === OUR_BEINGS_CATEGORY
+
+export const decodeSitePath = asPath => {
+  const path = String(asPath || '')
+    .split('#')[0]
+    .split('?')[0]
+    .replace(/\/+$/, '')
+  try {
+    return decodeURIComponent(path)
+  } catch (error) {
+    return path
+  }
+}
+
+export const isOurBeingsPath = asPath => {
+  const path = decodeSitePath(asPath)
+  return (
+    path === `/category/${OUR_BEINGS_CATEGORY}` ||
+    path.startsWith(`/category/${OUR_BEINGS_CATEGORY}/`) ||
+    path === '/our-beings' ||
+    path.startsWith('/our-beings/')
+  )
+}
+
+export const AUTHOR_BEING = {
+  id: 'ourbeing',
+  seat: 1,
+  handle: 'ourbeing',
+  name: 'ourbeing',
+  motto: EXISTENCE_DEFAULTS.motto,
+  href: `/category/我的存在`,
+  public: true,
+  isAuthor: true,
+  profile: {
+    birth: EXISTENCE_DEFAULTS.birth,
+    years: EXISTENCE_DEFAULTS.years,
+    newYears: EXISTENCE_DEFAULTS.newYears,
+    firstWritten: EXISTENCE_DEFAULTS.firstWritten,
+    awakening: EXISTENCE_DEFAULTS.awakening,
+    newEnd: EXISTENCE_DEFAULTS.newEnd
+  }
+}
+
+export const createBeingProfile = ({
+  birth,
+  years,
+  newYears,
+  firstWritten,
+  awakening,
+  motto
+} = {}) => {
+  const lifeYears = Number(years) > 0 ? Number(years) : EXISTENCE_DEFAULTS.years
+  const targetYears =
+    Number(newYears) > 0 ? Number(newYears) : EXISTENCE_DEFAULTS.newYears
+  return {
+    birth: birth || EXISTENCE_DEFAULTS.birth,
+    years: lifeYears,
+    newYears: targetYears,
+    firstWritten: firstWritten || EXISTENCE_DEFAULTS.firstWritten,
+    awakening: awakening || EXISTENCE_DEFAULTS.awakening,
+    motto: String(motto || '').trim() || EXISTENCE_DEFAULTS.motto
+  }
+}
+
+export const remainingOurBeingSeats = (taken = 1) =>
+  Math.max(0, OUR_BEINGS_SEATS - taken)
+
+export const joinRequiresInviteOrPayment = taken =>
+  Number(taken) >= OUR_BEINGS_SEATS
+
+export const listPublicBeings = (extra = []) => {
+  const others = (Array.isArray(extra) ? extra : []).filter(
+    being => being?.public && being?.id && being.id !== AUTHOR_BEING.id
+  )
+  return [AUTHOR_BEING, ...others]
+}

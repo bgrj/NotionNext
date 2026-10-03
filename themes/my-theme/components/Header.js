@@ -136,6 +136,11 @@ const Header = props => {
                 <i className='fas fa-bars' />
               )}
             </div>
+            <SmartLink
+              href={'/category/我们的存在#join'}
+              className='menu-link mr-1 whitespace-nowrap text-sm'>
+              注册 / 登录
+            </SmartLink>
             {showDarkButton && (
               <button
                 type='button'
