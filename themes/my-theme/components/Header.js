@@ -6,7 +6,6 @@ import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import CONFIG from '../config'
-import { isClerkEnabled } from '../beings'
 import CategoryGroup from '@/themes/hexo/components/CategoryGroup'
 import { MenuListTop } from './MenuListTop'
 import SearchButton from './SearchButton'
@@ -139,16 +138,8 @@ const Header = props => {
                 <i className='fas fa-bars' />
               )}
             </div>
-            {isClerkEnabled() ? (
-              <OurBeingsHeaderAuth />
-            ) : (
-              <SmartLink
-                href={'/sign-up'}
-                className='menu-link mr-1 whitespace-nowrap text-sm'>
-                注册 / 登录
-              </SmartLink>
-            )}
             {showSearchButton && <SearchButton />}
+            <OurBeingsHeaderAuth />
           </div>
         </div>
       </div>
