@@ -117,6 +117,19 @@ const nf = n => n.toLocaleString('zh-CN')
 
 const WEEKDAYS = ['日', '一', '二', '三', '四', '五', '六']
 const pad2 = n => String(n).padStart(2, '0')
+const SEARCH_PH_PREFIX = '找站主的那一天，例如'
+const SEARCH_PH_EXAMPLE = '2025.3.28'
+
+const shuffleList = list => {
+  const next = list.slice()
+  for (let i = next.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1))
+    const tmp = next[i]
+    next[i] = next[j]
+    next[j] = tmp
+  }
+  return next
+}
 
 const isoOf = (y, m, d) => `${y}-${pad2(m)}-${pad2(d)}`
 
@@ -314,6 +327,26 @@ const ExistenceLife = props => {
   const [marks, setMarks] = useState([])
   const [draft, setDraft] = useState('')
   const [query, setQuery] = useState('')
+  const publishedDotDates = useMemo(() => {
+    const seen = new Set()
+    const dots = []
+    Object.keys(postMap)
+      .sort()
+      .forEach(iso => {
+        const dot = formatDotDate(iso)
+        if (!dot || seen.has(dot)) return
+        seen.add(dot)
+        dots.push(dot)
+      })
+    return dots
+  }, [postMap])
+  const [phDates, setPhDates] = useState([SEARCH_PH_EXAMPLE])
+  useEffect(() => {
+    const pool = publishedDotDates.length
+      ? publishedDotDates
+      : [SEARCH_PH_EXAMPLE]
+    setPhDates(pool.length > 1 ? shuffleList(pool) : pool)
+  }, [publishedDotDates])
   const [expandedYear, setExpandedYear] = useState(null)
   const [focusIso, setFocusIso] = useState(null)
   const parsedQuery = useMemo(() => parseSearchQuery(query), [query])
@@ -819,9 +852,17 @@ const ExistenceLife = props => {
         .ob-ex-search-box:focus-within {
           border-color: color-mix(in srgb, var(--ob-gold-deep) 70%, var(--ob-line));
         }
+        .ob-ex-search-field {
+          position: relative;
+          flex: 1;
+          min-width: 0;
+          align-self: stretch;
+          display: flex;
+        }
         .ob-ex-search-box input {
           flex: 1;
           min-width: 0;
+          width: 100%;
           border: 0;
           background: transparent;
           color: var(--ob-ink);
@@ -831,7 +872,59 @@ const ExistenceLife = props => {
           min-height: 44px;
         }
         .ob-ex-search-box input::placeholder {
+          color: transparent;
+        }
+        .ob-ex-ph {
+          position: absolute;
+          inset: 0;
+          display: flex;
+          align-items: center;
+          gap: 0.35em;
+          min-width: 0;
+          pointer-events: none;
           color: var(--ob-muted);
+          font-size: 14px;
+          line-height: 44px;
+          overflow: hidden;
+        }
+        .ob-ex-ph-fixed {
+          flex: 0 0 auto;
+          white-space: nowrap;
+        }
+        .ob-ex-ph-date {
+          position: relative;
+          flex: 0 1 10.6ch;
+          width: 10.6ch;
+          min-width: 7ch;
+          max-width: 10.6ch;
+          overflow: hidden;
+          white-space: nowrap;
+        }
+        .ob-ex-ph-track {
+          display: flex;
+          width: max-content;
+          will-change: transform;
+        }
+        .ob-ex-ph-date.is-roll .ob-ex-ph-track {
+          animation: ob-ex-ph-roll calc(var(--ob-ph-n, 8) * 2.6s) linear infinite;
+        }
+        .ob-ex-ph-item {
+          flex: 0 0 10.6ch;
+          width: 10.6ch;
+          font-variant-numeric: tabular-nums;
+          letter-spacing: 0.01em;
+        }
+        .ob-ex-search-box:focus-within .ob-ex-ph-track {
+          animation-play-state: paused;
+        }
+        @keyframes ob-ex-ph-roll {
+          from { transform: translate3d(0, 0, 0); }
+          to { transform: translate3d(-50%, 0, 0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ob-ex-ph-date.is-roll .ob-ex-ph-track {
+            animation: none;
+          }
         }
         .ob-ex-search-hits {
           position: absolute;
@@ -1196,30 +1289,52 @@ const ExistenceLife = props => {
           </label>
           <div className='ob-ex-search-box'>
             <i className='fa-solid fa-magnifying-glass' aria-hidden='true' />
-            <input
-              id='ob-ex-search-input'
-              type='text'
-              name='q'
-              value={draft}
-              autoComplete='off'
-              spellCheck='false'
-              enterKeyHint='search'
-              placeholder='找站主的那一天，例如 2025.3.28'
-              onChange={event => {
-                const value = event.target.value
-                setDraft(value)
-                if (!composingRef.current) commitQuery(value)
-              }}
-              onCompositionStart={() => {
-                composingRef.current = true
-              }}
-              onCompositionEnd={event => {
-                composingRef.current = false
-                const value = event.target.value
-                setDraft(value)
-                commitQuery(value)
-              }}
-            />
+            <div className='ob-ex-search-field'>
+              <input
+                id='ob-ex-search-input'
+                type='text'
+                name='q'
+                value={draft}
+                autoComplete='off'
+                spellCheck='false'
+                enterKeyHint='search'
+                placeholder={`${SEARCH_PH_PREFIX} ${SEARCH_PH_EXAMPLE}`}
+                aria-label={`${SEARCH_PH_PREFIX} ${SEARCH_PH_EXAMPLE}`}
+                onChange={event => {
+                  const value = event.target.value
+                  setDraft(value)
+                  if (!composingRef.current) commitQuery(value)
+                }}
+                onCompositionStart={() => {
+                  composingRef.current = true
+                }}
+                onCompositionEnd={event => {
+                  composingRef.current = false
+                  const value = event.target.value
+                  setDraft(value)
+                  commitQuery(value)
+                }}
+              />
+              {!draft ? (
+                <div className='ob-ex-ph' aria-hidden='true'>
+                  <span className='ob-ex-ph-fixed'>{SEARCH_PH_PREFIX}</span>
+                  <span
+                    className={`ob-ex-ph-date${phDates.length > 1 ? ' is-roll' : ''}`}
+                    style={{ '--ob-ph-n': Math.max(phDates.length, 1) }}>
+                    <span className='ob-ex-ph-track'>
+                      {(phDates.length > 1
+                        ? phDates.concat(phDates)
+                        : phDates
+                      ).map((dot, i) => (
+                        <span className='ob-ex-ph-item' key={`${dot}-${i}`}>
+                          {dot}
+                        </span>
+                      ))}
+                    </span>
+                  </span>
+                </div>
+              ) : null}
+            </div>
           </div>
           {query.trim() ? (
             <ul className='ob-ex-search-hits'>
