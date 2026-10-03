@@ -26,6 +26,7 @@ import FriendLinks from './components/FriendLinks'
 import ExistenceLife from './components/ExistenceLife'
 import OurBeingsIndex from './components/OurBeingsIndex'
 import BeingLife from './components/BeingLife'
+import BeingDesk from './components/BeingDesk'
 import { LayoutSignIn, LayoutSignUp } from './components/OurBeingsAuth'
 import NoticeModal from './components/NoticeModal'
 import { EXISTENCE_CATEGORY, isExistenceCategory } from './existence'
@@ -560,12 +561,16 @@ const LayoutTagIndex = props => {
   )
 }
 
-const LayoutBeingProfile = props => <BeingLife being={props.being} />
+const LayoutBeingProfile = props =>
+  props.being ? <BeingLife being={props.being} /> : <BeingDesk />
+
+const LayoutBeingDesk = () => <BeingDesk />
 
 export {
   Layout404,
   LayoutArchive,
   LayoutBase,
+  LayoutBeingDesk,
   LayoutBeingProfile,
   LayoutCategoryIndex,
   LayoutIndex,

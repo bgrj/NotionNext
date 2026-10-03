@@ -2,9 +2,9 @@ import dynamic from 'next/dynamic'
 import SmartLink from '@/components/SmartLink'
 import { useUser } from '@clerk/nextjs'
 import {
+  DESK_HREF,
   OUR_BEINGS_JOIN_PRICE_YUAN,
   OUR_BEINGS_SEATS,
-  beingFromClerkUser,
   isClerkEnabled
 } from '../beings'
 
@@ -19,20 +19,15 @@ const ClerkSignUp = dynamic(
 )
 
 const SignedPanel = ({ signingUp }) => {
-  const { isLoaded, isSignedIn, user } = useUser()
+  const { isLoaded, isSignedIn } = useUser()
   if (!isLoaded) return <p className='ob-join-gate__status'>正在确认登录状态…</p>
   if (isSignedIn) {
-    const being = beingFromClerkUser(user)
     return (
       <p className='ob-join-gate__status'>
         你已经进来。
-        {being?.href ? (
-          <>
-            {' '}
-            <SmartLink href={being.href}>进入我的档案</SmartLink>
-            {' · '}
-          </>
-        ) : null}
+        {' '}
+        <SmartLink href={DESK_HREF}>进入我的档案</SmartLink>
+        {' · '}
         <SmartLink href='/our-beings'>回到我们的存在</SmartLink>
       </p>
     )
@@ -40,9 +35,9 @@ const SignedPanel = ({ signingUp }) => {
   return (
     <div className='ob-join-gate__clerk'>
       {signingUp ? (
-        <ClerkSignUp routing='path' path='/sign-up' signInUrl='/sign-in' />
+        <ClerkSignUp routing='path' path='/sign-up' signInUrl='/sign-in' fallbackRedirectUrl={DESK_HREF} />
       ) : (
-        <ClerkSignIn routing='path' path='/sign-in' signUpUrl='/sign-up' />
+        <ClerkSignIn routing='path' path='/sign-in' signUpUrl='/sign-up' fallbackRedirectUrl={DESK_HREF} />
       )}
     </div>
   )

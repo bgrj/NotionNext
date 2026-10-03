@@ -36,6 +36,9 @@ export const ourbeingLayouts = {
   LayoutSignUp: dynamic(() =>
     import('@/themes/my-theme').then(mod => mod.LayoutSignUp)
   ),
+  LayoutBeingDesk: dynamic(() =>
+    import('@/themes/my-theme').then(mod => mod.LayoutBeingDesk)
+  ),
   LayoutBeingProfile: dynamic(() =>
     import('@/themes/my-theme').then(mod => mod.LayoutBeingProfile)
   )

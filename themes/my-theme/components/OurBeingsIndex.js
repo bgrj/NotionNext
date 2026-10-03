@@ -52,7 +52,7 @@ const OurBeingsIndex = ({ beings } = {}) => {
       <section id='join' className='ob-beings__join'>
         <h2>如何进来</h2>
         <p>
-          前 {OUR_BEINGS_SEATS} 人点右上角「注册 / 登录」，用任何国家的邮箱免费占一个档案位。不需要微信，也不需要中国手机号。席位满了之后，要么用老会员分享的邀请码，要么付{' '}
+          前 {OUR_BEINGS_SEATS} 人点右上角人像，用任何国家的邮箱免费占一个档案位。进来后会得到一张邀请码。不需要微信，也不需要中国手机号。席位满了之后，要么用老会员分享的邀请码，要么付{' '}
           {OUR_BEINGS_JOIN_PRICE_YUAN} 元占一个档案位。这是水电费，不是课程。
         </p>
         <p>

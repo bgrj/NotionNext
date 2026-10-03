@@ -21,6 +21,7 @@ import PWAInstaller from '@/components/PWAInstaller'
 import SEO from '@/components/SEO'
 import { enUS, zhCN } from '@clerk/localizations'
 import dynamic from 'next/dynamic'
+import { DESK_HREF } from '@/themes/my-theme/beings'
 // import { ClerkProvider } from '@clerk/nextjs'
 const ClerkProvider = dynamic(() =>
   import('@clerk/nextjs').then(m => m.ClerkProvider)
@@ -103,7 +104,12 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <>
       {enableClerk ? (
-        <ClerkProvider localization={clerkLocale}>{content}</ClerkProvider>
+        <ClerkProvider
+          localization={clerkLocale}
+          afterSignInUrl={DESK_HREF}
+          afterSignUpUrl={DESK_HREF}>
+          {content}
+        </ClerkProvider>
       ) : (
         content
       )}

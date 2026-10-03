@@ -6,6 +6,14 @@ export const OUR_BEINGS_SEATS = 100
 
 export const OUR_BEINGS_JOIN_PRICE_YUAN = 5
 
+export const DESK_HREF = '/our-beings/me'
+
+export const BEING_ROOMS = [
+  { id: 'existence', name: '存在', authorHref: '/category/我的存在' },
+  { id: 'dao', name: '道', authorHref: '/category/道' },
+  { id: 'shu', name: '术', authorHref: '/category/术' }
+]
+
 export const OUR_BEINGS_LOGIN = {
   primary: 'email',
   optional: ['google', 'github', 'apple'],
@@ -75,6 +83,23 @@ export const clerkPublishableKey = () =>
 
 export const isClerkEnabled = () => Boolean(clerkPublishableKey())
 
+export const inviteCodeFrom = (seat, userId) => {
+  const n = Math.max(1, Math.trunc(Number(seat) || 1))
+  const raw = String(userId || 'being')
+  let h = 2166136261
+  for (let i = 0; i < raw.length; i++) {
+    h ^= raw.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  const tail = (h >>> 0)
+    .toString(36)
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, 'A')
+    .slice(0, 4)
+    .padEnd(4, 'A')
+  return `OB${String(n).padStart(3, '0')}-${tail}`
+}
+
 export const AUTHOR_BEING = {
   id: 'ourbeing',
   seat: 1,
@@ -82,6 +107,7 @@ export const AUTHOR_BEING = {
   name: 'ourbeing',
   motto: EXISTENCE_DEFAULTS.motto,
   href: `/category/我的存在`,
+  deskHref: DESK_HREF,
   public: true,
   isAuthor: true,
   profile: {
@@ -165,8 +191,13 @@ export const beingFromClerkUser = user => {
   if (!user) return null
   const email = clerkEmailOf(user)
   const meta = user.publicMetadata || {}
+  const inviteCode = String(meta.inviteCode || '').trim()
   if (isAuthorLoginEmail(email) || meta.handle === AUTHOR_BEING.handle) {
-    return { ...AUTHOR_BEING, clerkUserId: user.id }
+    return {
+      ...AUTHOR_BEING,
+      clerkUserId: user.id,
+      inviteCode
+    }
   }
   const handle =
     normalizeHandle(meta.handle) || handleFromEmail(email) || 'being'
@@ -178,6 +209,8 @@ export const beingFromClerkUser = user => {
     name,
     motto: String(meta.motto || '').trim(),
     href: beingProfileHref(handle),
+    deskHref: DESK_HREF,
+    inviteCode,
     public: meta.public === true || meta.public === '__YES__',
     isAuthor: false,
     clerkUserId: user.id,
@@ -189,5 +222,21 @@ export const beingFromClerkUser = user => {
       awakening: meta.awakening,
       motto: meta.motto
     })
+  }
+}
+
+export const sanitizeWriting = input => {
+  const room = String(input?.room || '')
+  if (!BEING_ROOMS.some(item => item.id === room)) return null
+  const title = String(input?.title || '').trim().slice(0, 80)
+  const body = String(input?.body || '').trim().slice(0, 2000)
+  if (!title && !body) return null
+  return {
+    id: `w_${Date.now().toString(36)}`,
+    room,
+    title: title || '未题',
+    body,
+    public: input?.public === true,
+    created: new Date().toISOString()
   }
 }
