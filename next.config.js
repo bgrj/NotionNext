@@ -395,7 +395,7 @@ const nextConfig = {
       ...(config.ignoreWarnings || []),
       {
         module:
-          /[\\/]next[\\/]dist[\\/]esm[\\/]client[\\/]components[\\/]navigation\.js$/,
+          /[\\\\/]next[\\\\/]dist[\\\\/]esm[\\\\/]client[\\\\/]components[\\\\/]navigation\\.js$/,
         message: /useContext.*not exported from ['"]react['"]/i
       }
     ]
@@ -425,6 +425,24 @@ const nextConfig = {
         dns: false,
         path: false
       }
+      // Clerk / next/navigation is App Router. Pages Router client builds then
+      // fail with "useContext is not exported from react". Point those imports
+      // at a next/router shim instead of compiling navigation.js.
+      const navigationStub = path.resolve(
+        __dirname,
+        'lib/stubs/next-navigation.js'
+      )
+      ;[
+        'next/navigation',
+        'next/dist/api/navigation',
+        'next/dist/esm/api/navigation',
+        'next/dist/client/components/navigation',
+        'next/dist/esm/client/components/navigation',
+        'next/dist/client/components/navigation.js',
+        'next/dist/esm/client/components/navigation.js'
+      ].forEach(name => {
+        config.resolve.alias[name] = navigationStub
+      })
     }
     return config
   },
