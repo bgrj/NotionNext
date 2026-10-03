@@ -12,6 +12,9 @@ module.exports = {
     '251, 243, 140'
   ],
 
+  // 点击屏幕：随机弹出站内文章里的完整词（最多五字），并轮换升起 / 烟花 / 墨晕等效果
+  CLICK_THOUGHTS: process.env.NEXT_PUBLIC_CLICK_THOUGHTS || true,
+
   // 鼠标跟随特效
   MOUSE_FOLLOW: process.env.NEXT_PUBLIC_MOUSE_FOLLOW || false, // 开关
   // 这两个只有在鼠标跟随特效开启时才生效

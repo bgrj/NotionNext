@@ -117,6 +117,7 @@ const ExternalPlugin = props => {
   const IMG_SHADOW = siteConfig('IMG_SHADOW', null, NOTION_CONFIG)
   const ANIMATE_CSS_URL = siteConfig('ANIMATE_CSS_URL', null, NOTION_CONFIG)
   const MOUSE_FOLLOW = siteConfig('MOUSE_FOLLOW', null, NOTION_CONFIG)
+  const CLICK_THOUGHTS = siteConfig('CLICK_THOUGHTS', true, NOTION_CONFIG)
   const CUSTOM_EXTERNAL_CSS = siteConfig(
     'CUSTOM_EXTERNAL_CSS',
     null,
@@ -258,6 +259,9 @@ const ExternalPlugin = props => {
       <GlobalStyle />
       {ENABLE_ICON_FONT && <IconFont />}
       {MOUSE_FOLLOW && <MouseFollow />}
+      {CLICK_THOUGHTS && (
+        <ClickThoughts pages={innerLinkPages} currentPost={props?.post} />
+      )}
       {pluginsIdle && THEME_SWITCH && <ThemeSwitch />}
       {DEBUG && <DebugPanel />}
       {pluginsIdle && ANALYTICS_ACKEE_TRACKER && <Ackee />}
@@ -527,6 +531,9 @@ const ThemeSwitch = dynamic(() => import('@/components/ThemeSwitch'), {
   ssr: false
 })
 const Fireworks = dynamic(() => import('@/components/Fireworks'), {
+  ssr: false
+})
+const ClickThoughts = dynamic(() => import('@/components/ClickThoughts'), {
   ssr: false
 })
 const MouseFollow = dynamic(() => import('@/components/MouseFollow'), {
