@@ -1,8 +1,9 @@
 const {
   resolvePageUrl,
   fetchRemoteCounts,
-  hasUvCookie,
-  uvCookieHeader
+  inspectVisit,
+  visitCookieHeaders,
+  normalizeCounts
 } = require('@/lib/analytics/pageviews')
 
 function json(res, status, body) {
@@ -32,15 +33,23 @@ export default async function handler(req, res) {
     return
   }
 
-  const isNewUv = !hasUvCookie(req.headers.cookie)
-  if (isNewUv) {
-    res.setHeader('Set-Cookie', uvCookieHeader())
+  const visit = inspectVisit(req.headers.cookie, pageUrl)
+  let counts = null
+  if (visit.samePageSession && visit.lastStat) {
+    counts = normalizeCounts(visit.lastStat)
+  } else {
+    counts = await fetchRemoteCounts({
+      pageUrl,
+      isNewUv: visit.isNewVisitor
+    })
+    counts = normalizeCounts(counts)
   }
 
-  const counts = await fetchRemoteCounts({ pageUrl, isNewUv })
   if (!counts) {
     json(res, 502, { error: 'counter_unavailable' })
     return
   }
+
+  res.setHeader('Set-Cookie', visitCookieHeaders(visit, counts))
   json(res, 200, counts)
 }

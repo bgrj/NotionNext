@@ -81,9 +81,9 @@ export default function PostHero({ post, siteInfo }) {
                   访问次数
                   <span className='px-1 busuanzi_value_page_pv'>–</span>
                 </span>
-                <span className='busuanzi_container_site_uv whitespace-nowrap'>
+                <span className='busuanzi_container_page_uv whitespace-nowrap'>
                   访问人数
-                  <span className='px-1 busuanzi_value_site_uv'>–</span>
+                  <span className='px-1 busuanzi_value_page_uv'>–</span>
                 </span>
               </div>
             )}

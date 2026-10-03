@@ -16,8 +16,13 @@ const response = () => {
   return res
 }
 
-test('POST records same-origin pageviews and sets a first-party UV cookie', async () => {
-  fetchRemoteCounts.mockResolvedValue({ site_pv: 8, site_uv: 3, page_pv: 2 })
+test('POST records same-origin pageviews and sets a first-party visitor cookie', async () => {
+  fetchRemoteCounts.mockResolvedValue({
+    site_pv: 8,
+    site_uv: 3,
+    page_pv: 2,
+    page_uv: 2
+  })
   const res = response()
   await handler(
     {
@@ -33,10 +38,15 @@ test('POST records same-origin pageviews and sets a first-party UV cookie', asyn
   })
   expect(res.setHeader).toHaveBeenCalledWith(
     'Set-Cookie',
-    expect.stringContaining('ob_site_uv=1')
+    expect.arrayContaining([expect.stringContaining('ob_vid=')])
   )
   expect(res.status).toHaveBeenCalledWith(200)
-  expect(res.json).toHaveBeenCalledWith({ site_pv: 8, site_uv: 3, page_pv: 2 })
+  expect(res.json).toHaveBeenCalledWith({
+    site_pv: 8,
+    site_uv: 3,
+    page_pv: 2,
+    page_uv: 2
+  })
 })
 
 test('foreign URLs and GET do not count', async () => {
@@ -58,15 +68,20 @@ test('foreign URLs and GET do not count', async () => {
   expect(fetchRemoteCounts).not.toHaveBeenCalled()
 })
 
-test('existing UV cookie is not treated as a new visitor', async () => {
-  fetchRemoteCounts.mockResolvedValue({ site_pv: 1, site_uv: 1, page_pv: 1 })
+test('existing visitor cookie is not treated as a new visitor', async () => {
+  fetchRemoteCounts.mockResolvedValue({
+    site_pv: 1,
+    site_uv: 1,
+    page_pv: 1,
+    page_uv: 1
+  })
   const res = response()
   await handler(
     {
       method: 'POST',
       headers: {
         host: 'ourbeings.com',
-        cookie: 'ob_site_uv=1'
+        cookie: 'ob_vid=keep-me'
       },
       body: { url: 'https://ourbeings.com/' }
     },
@@ -76,8 +91,32 @@ test('existing UV cookie is not treated as a new visitor', async () => {
     pageUrl: 'https://ourbeings.com/',
     isNewUv: false
   })
-  expect(res.setHeader).not.toHaveBeenCalledWith(
+  expect(res.setHeader).toHaveBeenCalledWith(
     'Set-Cookie',
-    expect.stringContaining('ob_site_uv=1')
+    expect.arrayContaining([expect.stringContaining('ob_vid=keep-me')])
   )
+})
+
+test('same page in the same session does not hit the remote counter', async () => {
+  const res = response()
+  await handler(
+    {
+      method: 'POST',
+      headers: {
+        host: 'ourbeings.com',
+        cookie:
+          'ob_vid=keep-me; ob_sid=sess; ob_hit=sess:/philosophy/a; ob_stat=/philosophy/a|8|3|2|2'
+      },
+      body: { url: 'https://ourbeings.com/philosophy/a' }
+    },
+    res
+  )
+  expect(fetchRemoteCounts).not.toHaveBeenCalled()
+  expect(res.status).toHaveBeenCalledWith(200)
+  expect(res.json).toHaveBeenCalledWith({
+    site_pv: 8,
+    site_uv: 3,
+    page_pv: 2,
+    page_uv: 2
+  })
 })
