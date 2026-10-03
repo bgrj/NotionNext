@@ -20,7 +20,7 @@ const CONFIG = {
   HEXO_MENU_TAG: true, // 显示标签
   HEXO_MENU_ARCHIVE: true, // 显示归档
   HEXO_MENU_SEARCH: true, // 显示搜索
-  HEXO_MENU_RANDOM: true, // 显示随机跳转按钮
+  HEXO_MENU_RANDOM: false, // 顶栏不放随机跳转
 
   HEXO_POST_LIST_COVER: true, // 列表显示文章封面
   HEXO_POST_LIST_COVER_HOVER_ENLARGE: false, // 列表鼠标悬停放大
@@ -39,7 +39,7 @@ const CONFIG = {
   HEXO_WIDGET_ANALYTICS: false, // 显示统计卡
   HEXO_WIDGET_TO_TOP: true,
   HEXO_WIDGET_TO_COMMENT: true, // 跳到评论区
-  HEXO_WIDGET_DARK_MODE: true, // 夜间模式
+  HEXO_WIDGET_DARK_MODE: false, // 顶栏不放夜间模式开关
   HEXO_WIDGET_TOC: true, // 移动端悬浮目录
 
   HEXO_COLOR_PRIMARY: '#C9A66B',

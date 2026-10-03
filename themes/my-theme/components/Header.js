@@ -7,7 +7,6 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import CONFIG from '../config'
 import { isClerkEnabled } from '../beings'
-import ButtonRandomPost from '@/themes/hexo/components/ButtonRandomPost'
 import CategoryGroup from '@/themes/hexo/components/CategoryGroup'
 import { MenuListTop } from './MenuListTop'
 import SearchButton from './SearchButton'
@@ -28,12 +27,10 @@ let windowTop = 0
 const Header = props => {
   const searchDrawer = useRef()
   const { tags, currentTag, categories, currentCategory, siteInfo } = props
-  const { locale, isDarkMode, toggleDarkMode } = useGlobal()
+  const { locale } = useGlobal()
   const router = useRouter()
   const [isOpen, changeShow] = useState(false)
-  const showSearchButton = siteConfig('HEXO_MENU_SEARCH', false, CONFIG)
-  const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
-  const showDarkButton = siteConfig('HEXO_WIDGET_DARK_MODE', true, CONFIG)
+  const showSearchButton = siteConfig('HEXO_MENU_SEARCH', true, CONFIG)
 
   const toggleMenuOpen = () => {
     changeShow(!isOpen)
@@ -151,18 +148,7 @@ const Header = props => {
                 注册 / 登录
               </SmartLink>
             )}
-            {showDarkButton && (
-              <button
-                type='button'
-                className='ob-dark-toggle'
-                onClick={toggleDarkMode}
-                title={isDarkMode ? '浅色模式' : '深色模式'}
-                aria-label={isDarkMode ? '切换到浅色模式' : '切换到深色模式'}>
-                <i className={`fas ${isDarkMode ? 'fa-sun' : 'fa-moon'}`} />
-              </button>
-            )}
             {showSearchButton && <SearchButton />}
-            {showRandomButton && <ButtonRandomPost {...props} />}
           </div>
         </div>
       </div>
