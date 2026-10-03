@@ -17,6 +17,12 @@ import {
   getClerkClient,
   listClerkUsers
 } from '@/lib/beings/clerkClient'
+import {
+  isNotionWriteEnabled,
+  notionWarningOf,
+  publishWritingToSite,
+  upsertBeingArchive
+} from '@/lib/beings/notionStore'
 
 const MAX_WRITINGS = 12
 
@@ -124,6 +130,32 @@ async function ensureBeing(client, userId) {
   }
 }
 
+async function syncNotion({ being, email, writing, res }) {
+  if (!being || being.isAuthor || !isNotionWriteEnabled()) {
+    return { writing, notionWarning: '' }
+  }
+  try {
+    await upsertBeingArchive(being, { email })
+    let nextWriting = writing
+    if (writing?.public) {
+      const published = await publishWritingToSite(being, writing)
+      nextWriting = published.writing || writing
+      if (published.category && res?.revalidate) {
+        try {
+          await res.revalidate(`/category/${published.category}`)
+          await res.revalidate('/our-beings')
+        } catch (error) {
+          console.error('[beings/me] revalidate', error)
+        }
+      }
+    }
+    return { writing: nextWriting, notionWarning: '' }
+  } catch (error) {
+    console.error('[beings/me] notion', error)
+    return { writing, notionWarning: notionWarningOf(error) }
+  }
+}
+
 export default async function handler(req, res) {
   if (!['GET', 'POST', 'PATCH'].includes(req.method)) {
     res.setHeader('Allow', 'GET, POST, PATCH')
@@ -137,7 +169,12 @@ export default async function handler(req, res) {
 
     if (req.method === 'GET' || req.method === 'POST') {
       const data = await ensureBeing(client, userId)
-      return res.status(200).json(data)
+      const notion = await syncNotion({
+        being: data.being,
+        email: clerkEmailOf(await client.users.getUser(userId)),
+        res
+      })
+      return res.status(200).json({ ...data, ...notion })
     }
 
     await ensureBeing(client, userId)
@@ -180,9 +217,28 @@ export default async function handler(req, res) {
     const nextMeta = withInvite(meta, userId, seat)
     const extra = body.writing ? { privateMetadata } : {}
     const saved = await persistMeta(client, userId, nextMeta, extra)
+    let writingsOut = writingsOfUser(saved)
+    const being = beingFromClerkUser(saved)
+    const lastWriting = body.writing
+      ? writingsOut[writingsOut.length - 1]
+      : null
+    const notion = await syncNotion({
+      being,
+      email,
+      writing: lastWriting,
+      res
+    })
+    if (notion.writing?.notionPageId && lastWriting) {
+      writingsOut = writingsOut.map(item =>
+        item.id === lastWriting.id ? notion.writing : item
+      )
+      privateMetadata.writings = writingsOut
+      await persistMeta(client, userId, nextMeta, { privateMetadata })
+    }
     return res.status(200).json({
-      being: beingFromClerkUser(saved),
-      writings: writingsOfUser(saved)
+      being,
+      writings: writingsOut,
+      notionWarning: notion.notionWarning || ''
     })
   } catch (error) {
     if (error.status === 403 || error.code === 'seats_full') {

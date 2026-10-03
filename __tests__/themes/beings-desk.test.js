@@ -3,8 +3,11 @@ import {
   BEING_ROOMS,
   formatSeat,
   inviteCodeFrom,
+  roomCategory,
   sanitizeProfileInput,
-  sanitizeWriting
+  sanitizeWriting,
+  signedPostTitle,
+  writingSlug
 } from '@/themes/my-theme/beings'
 
 describe('being desk', () => {
@@ -62,5 +65,13 @@ describe('being desk', () => {
       body: '人有很多面',
       public: true
     })
+  })
+
+  test('public dao and shu go to site categories with the member name on the title', () => {
+    expect(roomCategory('dao')).toBe('道')
+    expect(roomCategory('shu')).toBe('术')
+    expect(roomCategory('existence')).toBe('我们的存在')
+    expect(signedPostTitle('路', '阿麦')).toBe('路 · 阿麦')
+    expect(writingSlug('Maya', 'w_ab12')).toBe('b-maya-w_ab12')
   })
 })

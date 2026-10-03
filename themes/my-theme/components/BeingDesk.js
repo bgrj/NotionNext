@@ -49,6 +49,7 @@ const BeingDesk = () => {
     setMe(data.being)
     setWritings(Array.isArray(data.writings) ? data.writings : [])
     setProfileDraft(profileFromBeing(data.being))
+    if (data.notionWarning) setError(data.notionWarning)
   }
 
   useEffect(() => {
@@ -381,7 +382,9 @@ const BeingDesk = () => {
       {!being?.isAuthor ? (
         <section className='ob-desk__card'>
           <h2>放下一段</h2>
-          <p>会员的道 / 术以后进同一分区、署你们的名。现在先写在自己的档案里。</p>
+          <p>
+            勾选公开的道 / 术会进全站分区，题目后面署你们的名。私密的只留在自己档案里。存在进「我们的存在」，不进站主的「我的存在」。
+          </p>
           <form
             onSubmit={event => {
               event.preventDefault()

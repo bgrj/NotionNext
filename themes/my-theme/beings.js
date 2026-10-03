@@ -284,6 +284,28 @@ export const writingsOfUser = user => {
   return Array.isArray(list) ? list : []
 }
 
+export const roomCategory = room => {
+  if (room === 'dao') return '道'
+  if (room === 'shu') return '术'
+  return OUR_BEINGS_CATEGORY
+}
+
+export const signedPostTitle = (title, name) => {
+  const t = String(title || '未题').trim() || '未题'
+  const n = String(name || '').trim()
+  if (!n || t.endsWith(` · ${n}`)) return t
+  return `${t} · ${n}`
+}
+
+export const writingSlug = (handle, id) => {
+  const h = normalizeHandle(handle) || 'being'
+  const w = String(id || 'w')
+    .toLowerCase()
+    .replace(/[^a-z0-9_]+/g, '')
+    .slice(0, 24)
+  return `b-${h}-${w}`.slice(0, 80)
+}
+
 export const publicBeingView = being => {
   if (!being) return null
   return {
