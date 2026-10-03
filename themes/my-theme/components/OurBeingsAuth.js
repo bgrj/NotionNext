@@ -1,8 +1,10 @@
 import dynamic from 'next/dynamic'
 import SmartLink from '@/components/SmartLink'
+import { useUser } from '@clerk/nextjs'
 import {
   OUR_BEINGS_JOIN_PRICE_YUAN,
   OUR_BEINGS_SEATS,
+  beingFromClerkUser,
   isClerkEnabled
 } from '../beings'
 
@@ -15,6 +17,36 @@ const ClerkSignUp = dynamic(
   () => import('@clerk/nextjs').then(m => m.SignUp),
   { ssr: false }
 )
+
+const SignedPanel = ({ signingUp }) => {
+  const { isLoaded, isSignedIn, user } = useUser()
+  if (!isLoaded) return <p className='ob-join-gate__status'>正在确认登录状态…</p>
+  if (isSignedIn) {
+    const being = beingFromClerkUser(user)
+    return (
+      <p className='ob-join-gate__status'>
+        你已经进来。
+        {being?.href ? (
+          <>
+            {' '}
+            <SmartLink href={being.href}>进入我的档案</SmartLink>
+            {' · '}
+          </>
+        ) : null}
+        <SmartLink href='/our-beings'>回到我们的存在</SmartLink>
+      </p>
+    )
+  }
+  return (
+    <div className='ob-join-gate__clerk'>
+      {signingUp ? (
+        <ClerkSignUp routing='path' path='/sign-up' signInUrl='/sign-in' />
+      ) : (
+        <ClerkSignIn routing='path' path='/sign-in' signUpUrl='/sign-up' />
+      )}
+    </div>
+  )
+}
 
 const OurBeingsJoinGate = ({ mode = 'up' } = {}) => {
   const enabled = isClerkEnabled()
@@ -40,16 +72,10 @@ const OurBeingsJoinGate = ({ mode = 'up' } = {}) => {
           登录通道还没接上密钥。先把邮箱规则立在这里；密钥配上之后，这个页会直接收任何国家的邮箱。
         </p>
       ) : (
-        <div className='ob-join-gate__clerk'>
-          {signingUp ? (
-            <ClerkSignUp routing='path' path='/sign-up' signInUrl='/sign-in' />
-          ) : (
-            <ClerkSignIn routing='path' path='/sign-in' signUpUrl='/sign-up' />
-          )}
-        </div>
+        <SignedPanel signingUp={signingUp} />
       )}
       <p>
-        <SmartLink href='/category/我们的存在#join'>回到我们的存在</SmartLink>
+        <SmartLink href='/our-beings'>回到我们的存在</SmartLink>
         {' · '}
         <SmartLink href={signingUp ? '/sign-in' : '/sign-up'}>
           {signingUp ? '已有邮箱，去登录' : '还没有档案，去注册'}

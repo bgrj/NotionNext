@@ -2,9 +2,11 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import throttle from 'lodash.throttle'
 import SmartLink from '@/components/SmartLink'
+import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import CONFIG from '../config'
+import { isClerkEnabled } from '../beings'
 import ButtonRandomPost from '@/themes/hexo/components/ButtonRandomPost'
 import CategoryGroup from '@/themes/hexo/components/CategoryGroup'
 import { MenuListTop } from './MenuListTop'
@@ -13,6 +15,10 @@ import SearchDrawer from '@/themes/hexo/components/SearchDrawer'
 import SideBar from '@/themes/hexo/components/SideBar'
 import SideBarDrawer from '@/themes/hexo/components/SideBarDrawer'
 import TagGroups from '@/themes/hexo/components/TagGroups'
+
+const OurBeingsHeaderAuth = dynamic(() => import('./OurBeingsHeaderAuth'), {
+  ssr: false
+})
 
 let windowTop = 0
 
@@ -136,11 +142,15 @@ const Header = props => {
                 <i className='fas fa-bars' />
               )}
             </div>
-            <SmartLink
-              href={'/sign-up'}
-              className='menu-link mr-1 whitespace-nowrap text-sm'>
-              注册 / 登录
-            </SmartLink>
+            {isClerkEnabled() ? (
+              <OurBeingsHeaderAuth />
+            ) : (
+              <SmartLink
+                href={'/sign-up'}
+                className='menu-link mr-1 whitespace-nowrap text-sm'>
+                注册 / 登录
+              </SmartLink>
+            )}
             {showDarkButton && (
               <button
                 type='button'

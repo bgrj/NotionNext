@@ -12,6 +12,8 @@ export const OUR_BEINGS_LOGIN = {
   notRequired: ['wechat', 'phone']
 }
 
+export const AUTHOR_LOGIN_EMAILS = ['hsz@ourbeings.com']
+
 export const isOurBeingsCategory = category =>
   String(category || '') === OUR_BEINGS_CATEGORY
 
@@ -137,4 +139,55 @@ export const findPublicBeing = (handle, extra = []) => {
       being => normalizeHandle(being.handle || being.id) === h
     ) || null
   )
+}
+
+export const clerkEmailOf = user => {
+  if (!user) return ''
+  if (user.primaryEmailAddress?.emailAddress) {
+    return String(user.primaryEmailAddress.emailAddress).trim().toLowerCase()
+  }
+  const list = user.emailAddresses || []
+  const primary = list.find(item => item.id === user.primaryEmailAddressId)
+  return String((primary || list[0])?.emailAddress || '')
+    .trim()
+    .toLowerCase()
+}
+
+export const isAuthorLoginEmail = email =>
+  AUTHOR_LOGIN_EMAILS.includes(String(email || '').trim().toLowerCase())
+
+export const handleFromEmail = email => {
+  const local = String(email || '').split('@')[0]
+  return normalizeHandle(local) || 'being'
+}
+
+export const beingFromClerkUser = user => {
+  if (!user) return null
+  const email = clerkEmailOf(user)
+  const meta = user.publicMetadata || {}
+  if (isAuthorLoginEmail(email) || meta.handle === AUTHOR_BEING.handle) {
+    return { ...AUTHOR_BEING, clerkUserId: user.id }
+  }
+  const handle =
+    normalizeHandle(meta.handle) || handleFromEmail(email) || 'being'
+  const name = String(meta.name || user.firstName || handle).trim() || handle
+  return {
+    id: user.id,
+    seat: Number(meta.seat) > 1 ? Number(meta.seat) : null,
+    handle,
+    name,
+    motto: String(meta.motto || '').trim(),
+    href: beingProfileHref(handle),
+    public: meta.public === true || meta.public === '__YES__',
+    isAuthor: false,
+    clerkUserId: user.id,
+    profile: createBeingProfile({
+      birth: meta.birth,
+      years: meta.years,
+      newYears: meta.newYears,
+      firstWritten: meta.firstWritten,
+      awakening: meta.awakening,
+      motto: meta.motto
+    })
+  }
 }

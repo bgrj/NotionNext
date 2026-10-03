@@ -2,9 +2,12 @@ import {
   AUTHOR_BEING,
   OUR_BEINGS_LOGIN,
   OUR_BEINGS_SEATS,
+  beingFromClerkUser,
   beingProfileHref,
   createBeingProfile,
   findPublicBeing,
+  handleFromEmail,
+  isAuthorLoginEmail,
   isOurBeingsAuthPath,
   isOurBeingsPath,
   isWorldwideEmail,
@@ -71,5 +74,22 @@ describe('our beings archive', () => {
     expect(isWorldwideEmail('名前@example.jp')).toBe(true)
     expect(isWorldwideEmail('not-an-email')).toBe(false)
     expect(normalizeHandle('  東京 太郎 ')).toBe('東京-太郎')
+  })
+
+  test('maps the author login email to archive 001 and keeps other members private by default', () => {
+    expect(isAuthorLoginEmail('hsz@ourbeings.com')).toBe(true)
+    expect(handleFromEmail('maya@gmail.com')).toBe('maya')
+    const author = beingFromClerkUser({
+      id: 'user_1',
+      primaryEmailAddress: { emailAddress: 'hsz@ourbeings.com' }
+    })
+    expect(author).toMatchObject({ handle: 'ourbeing', seat: 1, isAuthor: true })
+    const member = beingFromClerkUser({
+      id: 'user_2',
+      primaryEmailAddress: { emailAddress: 'maya@gmail.com' },
+      publicMetadata: { handle: 'maya', seat: 2 }
+    })
+    expect(member.public).toBe(false)
+    expect(member.href).toBe('/our-beings/maya')
   })
 })

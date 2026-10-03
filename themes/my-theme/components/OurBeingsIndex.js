@@ -1,18 +1,24 @@
+import dynamic from 'next/dynamic'
 import SmartLink from '@/components/SmartLink'
 import {
-  AUTHOR_BEING,
   OUR_BEINGS_JOIN_PRICE_YUAN,
   OUR_BEINGS_SEATS,
+  isClerkEnabled,
   joinRequiresInviteOrPayment,
   listPublicBeings,
   remainingOurBeingSeats
 } from '../beings'
+
+const OurBeingsJoinStatus = dynamic(() => import('./OurBeingsJoinStatus'), {
+  ssr: false
+})
 
 const OurBeingsIndex = ({ beings } = {}) => {
   const archive = listPublicBeings(beings)
   const taken = archive.length
   const remaining = remainingOurBeingSeats(taken)
   const gated = joinRequiresInviteOrPayment(taken)
+  const clerkOn = isClerkEnabled()
 
   return (
     <div className='ob-beings'>
@@ -56,11 +62,15 @@ const OurBeingsIndex = ({ beings } = {}) => {
           Sign in with any email, from anywhere. WeChat and a Chinese phone
           number are not required.
         </p>
-        <p className='ob-beings__status'>
-          {gated
-            ? '前一百席位已满。之后只接受邀请码或付款。'
-            : '前一百席位仍开放。登录密钥尚未接入，现在还不能真正进来。'}
-        </p>
+        {clerkOn ? (
+          <OurBeingsJoinStatus gated={gated} />
+        ) : (
+          <p className='ob-beings__status'>
+            {gated
+              ? '前一百席位已满。之后只接受邀请码或付款。'
+              : '前一百席位仍开放。登录密钥尚未接入，现在还不能真正进来。'}
+          </p>
+        )}
       </section>
 
       <style jsx>{`
