@@ -3,8 +3,9 @@ import { siteConfig } from '@/lib/config'
 import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import {
+  AUTHOR_BEING,
+  DESK_HREF,
   findPublicBeing,
-  listPublicBeings,
   normalizeHandle
 } from '@/themes/my-theme/beings'
 
@@ -17,23 +18,21 @@ export default function BeingProfile(props) {
 
 export async function getStaticProps({ params, locale }) {
   const handle = normalizeHandle(params?.handle)
+  if (handle === 'me') {
+    return {
+      redirect: { destination: DESK_HREF, permanent: false }
+    }
+  }
   const props = await fetchGlobalAllData({ from: 'being-profile', locale })
   delete props.allPages
   const being = findPublicBeing(handle)
-  if (!being) {
-    return {
-      notFound: true,
-      revalidate: process.env.EXPORT
-        ? undefined
-        : siteConfig(
-            'NEXT_REVALIDATE_SECOND',
-            BLOG.NEXT_REVALIDATE_SECOND,
-            props.NOTION_CONFIG
-          )
-    }
-  }
   return {
-    props: { ...props, being },
+    props: {
+      ...props,
+      handle,
+      being: being || null,
+      writings: []
+    },
     revalidate: process.env.EXPORT
       ? undefined
       : siteConfig(
@@ -46,9 +45,7 @@ export async function getStaticProps({ params, locale }) {
 
 export function getStaticPaths() {
   return {
-    paths: listPublicBeings().map(being => ({
-      params: { handle: being.handle }
-    })),
+    paths: [{ params: { handle: AUTHOR_BEING.handle } }],
     fallback: 'blocking'
   }
 }

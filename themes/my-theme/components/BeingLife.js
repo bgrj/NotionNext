@@ -1,15 +1,58 @@
 import SmartLink from '@/components/SmartLink'
 import { useEffect, useState } from 'react'
-import { AUTHOR_BEING, createBeingProfile } from '../beings'
+import { useRouter } from 'next/router'
+import {
+  AUTHOR_BEING,
+  BEING_ROOMS,
+  createBeingProfile,
+  formatSeat,
+  normalizeHandle
+} from '../beings'
 import { daysBetween, formatZhDate, newLifeStats, shiftIso } from '../existence'
 
-const BeingLife = ({ being } = {}) => {
-  const record = being || AUTHOR_BEING
-  const profile = createBeingProfile({
-    ...record.profile,
-    motto: record.motto
-  })
+const BeingLife = ({ being, handle, writings: initialWritings } = {}) => {
+  const router = useRouter()
+  const routeHandle = normalizeHandle(
+    handle || router.query?.handle || being?.handle
+  )
+  const [record, setRecord] = useState(being || null)
+  const [writings, setWritings] = useState(
+    Array.isArray(initialWritings) ? initialWritings : []
+  )
+  const [missing, setMissing] = useState(false)
   const [now, setNow] = useState(null)
+
+  useEffect(() => {
+    if (being) {
+      setRecord(being)
+      setWritings(Array.isArray(initialWritings) ? initialWritings : [])
+      setMissing(false)
+      return undefined
+    }
+    if (!routeHandle) return undefined
+    if (routeHandle === AUTHOR_BEING.handle) {
+      setRecord(AUTHOR_BEING)
+      return undefined
+    }
+    let cancelled = false
+    fetch(`/api/beings/public?handle=${encodeURIComponent(routeHandle)}`)
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (cancelled) return
+        if (!data?.being) {
+          setMissing(true)
+          return
+        }
+        setRecord(data.being)
+        setWritings(Array.isArray(data.writings) ? data.writings : [])
+      })
+      .catch(() => {
+        if (!cancelled) setMissing(true)
+      })
+    return () => {
+      cancelled = true
+    }
+  }, [being, initialWritings, routeHandle])
 
   useEffect(() => {
     const tick = () => setNow(Date.now())
@@ -18,29 +61,59 @@ const BeingLife = ({ being } = {}) => {
     return () => clearInterval(id)
   }, [])
 
-  const clock = now
-    ? newLifeStats(profile.awakening, profile.newEnd, now)
-    : null
+  if (!record && !missing) {
+    return (
+      <div className='ob-being'>
+        <p>正在打开这份存在…</p>
+      </div>
+    )
+  }
 
-  const mengmeiDays = daysBetween(
-    profile.birth,
-    shiftIso(profile.awakening, -1)
+  if (!record) {
+    return (
+      <div className='ob-being'>
+        <h1>这份存在尚未公开</h1>
+        <p>访客只能读已经勾选公开的档案。</p>
+        <p>
+          <SmartLink href='/category/我们的存在'>回到名录</SmartLink>
+        </p>
+      </div>
+    )
+  }
+
+  const profile = createBeingProfile(
+    {
+      ...record.profile,
+      motto: record.motto
+    },
+    { defaults: Boolean(record.isAuthor) }
   )
+  const clock =
+    now && profile.awakening && profile.newEnd
+      ? newLifeStats(profile.awakening, profile.newEnd, now)
+      : null
+  const mengmeiDays =
+    profile.birth && profile.awakening
+      ? daysBetween(profile.birth, shiftIso(profile.awakening, -1))
+      : null
+  const rooms = BEING_ROOMS.map(room => ({
+    ...room,
+    items: writings.filter(item => item.room === room.id)
+  }))
 
   return (
     <div className='ob-being'>
-      <p className='ob-being__seat'>
-        档案 {String(record.seat || 1).padStart(3, '0')}
-      </p>
+      <p className='ob-being__seat'>档案 {formatSeat(record.seat)}</p>
       <h1>{record.name}</h1>
       <p className='ob-being__motto'>{profile.motto}</p>
       <p>
-        出生 {formatZhDate(profile.birth)} · 目标 {profile.newYears} 岁 · 生命钟公式固定，填写的岁数和蒙昧日期可以改。
+        出生 {profile.birth ? formatZhDate(profile.birth) : '未写下'} · 目标{' '}
+        {profile.newYears || '—'} 岁 · 生命钟公式固定，填写的岁数和蒙昧日期由本人改。
       </p>
       <dl>
         <div>
           <dt>蒙昧</dt>
-          <dd>{mengmeiDays} 日</dd>
+          <dd>{mengmeiDays == null ? '未写下' : `${mengmeiDays} 日`}</dd>
         </div>
         <div>
           <dt>挣脱蒙昧后还余</dt>
@@ -57,6 +130,25 @@ const BeingLife = ({ being } = {}) => {
           <SmartLink href={AUTHOR_BEING.href}>我的存在</SmartLink>
           ，不和别人的档案混在一起。
         </p>
+      ) : rooms.some(room => room.items.length) ? (
+        <section>
+          <h2>公开放下的段落</h2>
+          {rooms.map(room =>
+            room.items.length ? (
+              <article key={room.id}>
+                <h3>{room.name}</h3>
+                <ul>
+                  {room.items.map(item => (
+                    <li key={item.id}>
+                      <strong>{item.title}</strong>
+                      {item.body ? ` · ${item.body}` : ''}
+                    </li>
+                  ))}
+                </ul>
+              </article>
+            ) : null
+          )}
+        </section>
       ) : (
         <p>这份存在的日子尚未公开。访客只能读已公开的内容。</p>
       )}
@@ -81,6 +173,14 @@ const BeingLife = ({ being } = {}) => {
           margin: 0 0 0.8rem;
           font-size: 1.85rem;
           font-weight: 650;
+        }
+        .ob-being h2 {
+          margin: 1.4rem 0 0.6rem;
+          font-size: 1.1rem;
+        }
+        .ob-being h3 {
+          margin: 0.8rem 0 0.35rem;
+          font-size: 1rem;
         }
         .ob-being__motto {
           margin: 0 0 1rem;

@@ -1,4 +1,4 @@
-import { clerkClient, getAuth } from '@clerk/nextjs/server'
+import { getAuth } from '@clerk/nextjs/server'
 import {
   AUTHOR_BEING,
   OUR_BEINGS_SEATS,
@@ -8,10 +8,17 @@ import {
   inviteCodeFrom,
   isAuthorLoginEmail,
   normalizeHandle,
-  sanitizeWriting
+  sanitizeProfileInput,
+  sanitizeWriting,
+  writingsOfUser
 } from '@/themes/my-theme/beings'
+import {
+  clerkErrorPayload,
+  getClerkClient,
+  listClerkUsers
+} from '@/lib/beings/clerkClient'
 
-const MAX_WRITINGS = 40
+const MAX_WRITINGS = 12
 
 const takenHandles = users => {
   const used = new Set([AUTHOR_BEING.handle])
@@ -39,25 +46,20 @@ const uniqueHandle = (base, used) => {
   return `${handle}${i}`
 }
 
-const writingsOf = user => {
-  const list = user?.privateMetadata?.writings
-  return Array.isArray(list) ? list : []
-}
-
 const withInvite = (meta, userId, seat) => {
   if (String(meta.inviteCode || '').trim()) return meta
   return { ...meta, inviteCode: inviteCodeFrom(seat, userId) }
 }
 
-async function persistMeta(userId, publicMetadata, extra = {}) {
-  return clerkClient.users.updateUser(userId, {
+async function persistMeta(client, userId, publicMetadata, extra = {}) {
+  return client.users.updateUser(userId, {
     publicMetadata,
     ...extra
   })
 }
 
-async function ensureBeing(userId) {
-  const user = await clerkClient.users.getUser(userId)
+async function ensureBeing(client, userId) {
+  const user = await client.users.getUser(userId)
   const email = clerkEmailOf(user)
   const meta = user.publicMetadata || {}
 
@@ -78,10 +80,12 @@ async function ensureBeing(userId) {
       Number(meta.seat) !== 1 ||
       meta.public !== true ||
       !meta.inviteCode
-    const saved = needsWrite ? await persistMeta(userId, nextMeta) : user
+    const saved = needsWrite
+      ? await persistMeta(client, userId, nextMeta)
+      : user
     return {
       being: beingFromClerkUser(saved),
-      writings: writingsOf(saved)
+      writings: writingsOfUser(saved)
     }
   }
 
@@ -89,33 +93,34 @@ async function ensureBeing(userId) {
     const nextMeta = withInvite(meta, userId, meta.seat)
     const saved = meta.inviteCode
       ? user
-      : await persistMeta(userId, nextMeta)
+      : await persistMeta(client, userId, nextMeta)
     return {
       being: beingFromClerkUser(saved),
-      writings: writingsOf(saved)
+      writings: writingsOfUser(saved)
     }
   }
 
-  const list = await clerkClient.users.getUserList({ limit: 200 })
-  const users = list.data || list || []
+  const users = await listClerkUsers(client, 100)
   const seat = nextSeat(users)
   if (seat > OUR_BEINGS_SEATS) {
     const error = new Error('seats_full')
     error.status = 403
+    error.code = 'seats_full'
     throw error
   }
   const handle = uniqueHandle(handleFromEmail(email), takenHandles(users))
-  const saved = await persistMeta(userId, {
+  const name = String(meta.name || user.firstName || handle).trim() || handle
+  const saved = await persistMeta(client, userId, {
     ...meta,
     handle,
     seat,
     public: false,
-    name: handle,
+    name,
     inviteCode: inviteCodeFrom(seat, userId)
   })
   return {
     being: beingFromClerkUser(saved),
-    writings: writingsOf(saved)
+    writings: writingsOfUser(saved)
   }
 }
 
@@ -128,27 +133,35 @@ export default async function handler(req, res) {
   try {
     const { userId } = getAuth(req)
     if (!userId) return res.status(401).json({ error: 'Unauthorized' })
+    const client = await getClerkClient()
 
     if (req.method === 'GET' || req.method === 'POST') {
-      const data = await ensureBeing(userId)
+      const data = await ensureBeing(client, userId)
       return res.status(200).json(data)
     }
 
-    const current = await clerkClient.users.getUser(userId)
+    await ensureBeing(client, userId)
+    const current = await client.users.getUser(userId)
     const email = clerkEmailOf(current)
     const author = isAuthorLoginEmail(email)
     const meta = { ...(current.publicMetadata || {}) }
     const privateMetadata = { ...(current.privateMetadata || {}) }
     const body = req.body && typeof req.body === 'object' ? req.body : {}
-    let writings = writingsOf(current)
+    let writings = writingsOfUser(current)
 
     if (body.writing) {
       const writing = sanitizeWriting(body.writing)
       if (!writing) {
-        return res.status(400).json({ error: 'invalid_writing' })
+        return res.status(400).json({
+          error: 'invalid_writing',
+          message: '题目或正文至少写一句。'
+        })
       }
       if (writings.length >= MAX_WRITINGS) {
-        return res.status(400).json({ error: 'writings_full' })
+        return res.status(400).json({
+          error: 'writings_full',
+          message: '这间档案先放下十二段。再多的以后进自己的存在页。'
+        })
       }
       writings = [...writings, writing]
       privateMetadata.writings = writings
@@ -157,22 +170,35 @@ export default async function handler(req, res) {
     if (!author && typeof body.public === 'boolean') {
       meta.public = body.public
     }
-    if (typeof body.motto === 'string' && !author) {
-      meta.motto = body.motto.trim().slice(0, 140)
+
+    const profile = sanitizeProfileInput(body.profile || body)
+    if (!author) {
+      Object.assign(meta, profile)
     }
+
     const seat = author ? 1 : Number(meta.seat) || 1
     const nextMeta = withInvite(meta, userId, seat)
-
-    const saved = await persistMeta(userId, nextMeta, { privateMetadata })
+    const extra = body.writing ? { privateMetadata } : {}
+    const saved = await persistMeta(client, userId, nextMeta, extra)
     return res.status(200).json({
       being: beingFromClerkUser(saved),
-      writings
+      writings: writingsOfUser(saved)
     })
   } catch (error) {
-    if (error.status === 403) {
-      return res.status(403).json({ error: 'seats_full' })
+    if (error.status === 403 || error.code === 'seats_full') {
+      return res.status(403).json({
+        error: 'seats_full',
+        message: '前一百席位已满。'
+      })
     }
     console.error('[beings/me]', error)
-    return res.status(500).json({ error: 'Internal Server Error' })
+    const payload = clerkErrorPayload(error)
+    return res.status(error.status || 500).json({
+      ...payload,
+      message:
+        payload.message === 'save_failed' || payload.message === 'clerk_missing'
+          ? '档案位还没坐下。稍后再试。'
+          : payload.message
+    })
   }
 }

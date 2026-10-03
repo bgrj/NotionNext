@@ -120,27 +120,29 @@ export const AUTHOR_BEING = {
   }
 }
 
-export const createBeingProfile = ({
-  birth,
-  years,
-  newYears,
-  firstWritten,
-  awakening,
-  motto
-} = {}) => {
-  const lifeYears = Number(years) > 0 ? Number(years) : EXISTENCE_DEFAULTS.years
+export const createBeingProfile = (
+  { birth, years, newYears, firstWritten, awakening, motto } = {},
+  { defaults = true } = {}
+) => {
+  const fallback = defaults ? EXISTENCE_DEFAULTS : {}
+  const lifeYears = Number(years) > 0 ? Number(years) : fallback.years || ''
   const targetYears =
-    Number(newYears) > 0 ? Number(newYears) : EXISTENCE_DEFAULTS.newYears
-  const born = birth || EXISTENCE_DEFAULTS.birth
-  const woke = awakening || EXISTENCE_DEFAULTS.awakening
+    Number(newYears) > 0 ? Number(newYears) : fallback.newYears || ''
+  const born = birth || fallback.birth || ''
+  const woke = awakening || fallback.awakening || ''
+  const written = firstWritten || fallback.firstWritten || ''
+  const line = String(motto || '').trim() || (defaults ? fallback.motto : '')
   return {
     birth: born,
     years: lifeYears,
     newYears: targetYears,
-    firstWritten: firstWritten || EXISTENCE_DEFAULTS.firstWritten,
+    firstWritten: written,
     awakening: woke,
-    newEnd: shiftIso(addYearsIso(woke, targetYears), -1),
-    motto: String(motto || '').trim() || EXISTENCE_DEFAULTS.motto
+    newEnd:
+      woke && Number(targetYears) > 0
+        ? shiftIso(addYearsIso(woke, Number(targetYears)), -1)
+        : '',
+    motto: line || ''
   }
 }
 
@@ -201,10 +203,11 @@ export const beingFromClerkUser = user => {
   }
   const handle =
     normalizeHandle(meta.handle) || handleFromEmail(email) || 'being'
-  const name = String(meta.name || user.firstName || handle).trim() || handle
+  const name = String(meta.name || handle).trim() || handle
+  const seat = Number(meta.seat)
   return {
     id: user.id,
-    seat: Number(meta.seat) > 1 ? Number(meta.seat) : null,
+    seat: Number.isFinite(seat) && seat > 1 ? Math.trunc(seat) : null,
     handle,
     name,
     motto: String(meta.motto || '').trim(),
@@ -214,14 +217,17 @@ export const beingFromClerkUser = user => {
     public: meta.public === true || meta.public === '__YES__',
     isAuthor: false,
     clerkUserId: user.id,
-    profile: createBeingProfile({
-      birth: meta.birth,
-      years: meta.years,
-      newYears: meta.newYears,
-      firstWritten: meta.firstWritten,
-      awakening: meta.awakening,
-      motto: meta.motto
-    })
+    profile: createBeingProfile(
+      {
+        birth: meta.birth,
+        years: meta.years,
+        newYears: meta.newYears,
+        firstWritten: meta.firstWritten,
+        awakening: meta.awakening,
+        motto: meta.motto
+      },
+      { defaults: false }
+    )
   }
 }
 
@@ -229,7 +235,7 @@ export const sanitizeWriting = input => {
   const room = String(input?.room || '')
   if (!BEING_ROOMS.some(item => item.id === room)) return null
   const title = String(input?.title || '').trim().slice(0, 80)
-  const body = String(input?.body || '').trim().slice(0, 2000)
+  const body = String(input?.body || '').trim().slice(0, 800)
   if (!title && !body) return null
   return {
     id: `w_${Date.now().toString(36)}`,
@@ -238,5 +244,57 @@ export const sanitizeWriting = input => {
     body,
     public: input?.public === true,
     created: new Date().toISOString()
+  }
+}
+
+export const formatSeat = seat => {
+  const n = Number(seat)
+  if (!Number.isFinite(n) || n < 1) return '—'
+  return String(Math.trunc(n)).padStart(3, '0')
+}
+
+export const isIsoDay = value => /^\d{4}-\d{2}-\d{2}$/.test(String(value || ''))
+
+export const sanitizeProfileInput = (input = {}) => {
+  const out = {}
+  if (typeof input.name === 'string') {
+    const name = input.name.trim().slice(0, 40)
+    if (name) out.name = name
+  }
+  if (typeof input.motto === 'string') {
+    out.motto = input.motto.trim().slice(0, 140)
+  }
+  ;['birth', 'awakening', 'firstWritten'].forEach(key => {
+    const day = String(input[key] || '').trim().slice(0, 10)
+    if (isIsoDay(day)) out[key] = day
+  })
+  const years = Number(input.years)
+  if (Number.isFinite(years) && years >= 1 && years <= 120) {
+    out.years = Math.trunc(years)
+  }
+  const newYears = Number(input.newYears)
+  if (Number.isFinite(newYears) && newYears >= 1 && newYears <= 120) {
+    out.newYears = Math.trunc(newYears)
+  }
+  return out
+}
+
+export const writingsOfUser = user => {
+  const list = user?.privateMetadata?.writings
+  return Array.isArray(list) ? list : []
+}
+
+export const publicBeingView = being => {
+  if (!being) return null
+  return {
+    id: being.handle || being.id,
+    seat: being.seat,
+    handle: being.handle,
+    name: being.name,
+    motto: being.motto || '',
+    href: being.href,
+    public: Boolean(being.public),
+    isAuthor: Boolean(being.isAuthor),
+    profile: being.profile
   }
 }

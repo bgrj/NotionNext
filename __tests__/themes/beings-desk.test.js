@@ -1,7 +1,9 @@
 import {
   DESK_HREF,
   BEING_ROOMS,
+  formatSeat,
   inviteCodeFrom,
+  sanitizeProfileInput,
   sanitizeWriting
 } from '@/themes/my-theme/beings'
 
@@ -9,6 +11,30 @@ describe('being desk', () => {
   test('desk lives at /our-beings/me and has three rooms', () => {
     expect(DESK_HREF).toBe('/our-beings/me')
     expect(BEING_ROOMS.map(room => room.name)).toEqual(['存在', '道', '术'])
+  })
+
+  test('seat labels do not pad an em dash into 00—', () => {
+    expect(formatSeat(2)).toBe('002')
+    expect(formatSeat(null)).toBe('—')
+    expect(formatSeat('—')).toBe('—')
+  })
+
+  test('members may edit motto and target age, not the countdown formula', () => {
+    const profile = sanitizeProfileInput({
+      name: '  阿麦  ',
+      motto: '人有很多面',
+      birth: '1990-01-01',
+      newYears: '70',
+      years: 80
+    })
+    expect(profile).toMatchObject({
+      name: '阿麦',
+      motto: '人有很多面',
+      birth: '1990-01-01',
+      newYears: 70,
+      years: 80
+    })
+    expect(profile.newEnd).toBeUndefined()
   })
 
   test('invite codes are stable, seat-prefixed, and not emails', () => {

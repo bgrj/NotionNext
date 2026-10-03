@@ -1,8 +1,10 @@
 import dynamic from 'next/dynamic'
 import SmartLink from '@/components/SmartLink'
+import { useEffect, useState } from 'react'
 import {
   OUR_BEINGS_JOIN_PRICE_YUAN,
   OUR_BEINGS_SEATS,
+  formatSeat,
   isClerkEnabled,
   joinRequiresInviteOrPayment,
   listPublicBeings,
@@ -14,8 +16,26 @@ const OurBeingsJoinStatus = dynamic(() => import('./OurBeingsJoinStatus'), {
 })
 
 const OurBeingsIndex = ({ beings } = {}) => {
-  const archive = listPublicBeings(beings)
-  const taken = archive.length
+  const [extra, setExtra] = useState(Array.isArray(beings) ? beings : [])
+  const [takenSeats, setTakenSeats] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    fetch('/api/beings/public')
+      .then(res => (res.ok ? res.json() : null))
+      .then(data => {
+        if (cancelled || !data) return
+        if (Array.isArray(data.beings)) setExtra(data.beings)
+        if (Number(data.taken) > 0) setTakenSeats(Number(data.taken))
+      })
+      .catch(() => {})
+    return () => {
+      cancelled = true
+    }
+  }, [])
+
+  const archive = listPublicBeings(extra)
+  const taken = takenSeats || archive.length
   const remaining = remainingOurBeingSeats(taken)
   const gated = joinRequiresInviteOrPayment(taken)
   const clerkOn = isClerkEnabled()
@@ -37,7 +57,7 @@ const OurBeingsIndex = ({ beings } = {}) => {
       <section className='ob-beings__list' aria-label='已公开的存在者'>
         {archive.map(being => (
           <article key={being.id} className='ob-beings__card'>
-            <p className='ob-beings__seat'>档案 {String(being.seat).padStart(3, '0')}</p>
+            <p className='ob-beings__seat'>档案 {formatSeat(being.seat)}</p>
             <h2 className='ob-beings__name'>{being.name}</h2>
             {being.motto ? (
               <p className='ob-beings__motto'>{being.motto}</p>

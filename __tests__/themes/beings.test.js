@@ -64,6 +64,14 @@ describe('our beings archive', () => {
     expect(profile.newEnd).toBe('2095-03-27')
   })
 
+  test('empty member profiles do not inherit the author birth date', () => {
+    const profile = createBeingProfile({}, { defaults: false })
+    expect(profile.birth).toBe('')
+    expect(profile.awakening).toBe('')
+    expect(profile.newEnd).toBe('')
+    expect(profile.motto).toBe('')
+  })
+
   test('login accepts any country email and does not require WeChat or phone', () => {
     expect(OUR_BEINGS_LOGIN.primary).toBe('email')
     expect(OUR_BEINGS_LOGIN.notRequired).toEqual(
@@ -86,10 +94,13 @@ describe('our beings archive', () => {
     expect(author).toMatchObject({ handle: 'ourbeing', seat: 1, isAuthor: true })
     const member = beingFromClerkUser({
       id: 'user_2',
+      firstName: 'Anthe',
+      lastName: 'n',
       primaryEmailAddress: { emailAddress: 'maya@gmail.com' },
       publicMetadata: { handle: 'maya', seat: 2 }
     })
     expect(member.public).toBe(false)
     expect(member.href).toBe('/our-beings/maya')
+    expect(member.name).toBe('maya')
   })
 })

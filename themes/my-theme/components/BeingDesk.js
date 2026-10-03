@@ -4,10 +4,32 @@ import { useEffect, useMemo, useState } from 'react'
 import {
   BEING_ROOMS,
   beingFromClerkUser,
+  createBeingProfile,
+  formatSeat,
   isClerkEnabled
 } from '../beings'
+import { daysBetween, formatZhDate, newLifeStats, shiftIso } from '../existence'
 
 const emptyDraft = { room: 'existence', title: '', body: '', public: false }
+
+const profileFromBeing = being => {
+  const profile = createBeingProfile(
+    {
+      ...(being?.profile || {}),
+      motto: being?.motto
+    },
+    { defaults: Boolean(being?.isAuthor) }
+  )
+  return {
+    name: being?.name || '',
+    motto: profile.motto || '',
+    birth: profile.birth,
+    awakening: profile.awakening,
+    firstWritten: profile.firstWritten,
+    years: profile.years,
+    newYears: profile.newYears
+  }
+}
 
 const BeingDesk = () => {
   const enabled = isClerkEnabled()
@@ -16,25 +38,46 @@ const BeingDesk = () => {
   const [me, setMe] = useState(null)
   const [writings, setWritings] = useState([])
   const [draft, setDraft] = useState(emptyDraft)
+  const [profileDraft, setProfileDraft] = useState(null)
   const [copied, setCopied] = useState(false)
   const [saving, setSaving] = useState(false)
   const [error, setError] = useState('')
+  const [now, setNow] = useState(null)
+
+  const applyPayload = data => {
+    if (!data?.being) return
+    setMe(data.being)
+    setWritings(Array.isArray(data.writings) ? data.writings : [])
+    setProfileDraft(profileFromBeing(data.being))
+  }
 
   useEffect(() => {
     if (!isSignedIn) return undefined
     let cancelled = false
     fetch('/api/beings/me', { method: 'POST' })
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => {
-        if (cancelled || !data?.being) return
-        setMe(data.being)
-        setWritings(Array.isArray(data.writings) ? data.writings : [])
+      .then(async res => {
+        const data = await res.json().catch(() => null)
+        if (cancelled) return
+        if (!res.ok) {
+          setError(data?.message || '档案位还没坐下。稍后再试。')
+          return
+        }
+        applyPayload(data)
       })
-      .catch(() => {})
+      .catch(() => {
+        if (!cancelled) setError('档案位还没坐下。稍后再试。')
+      })
     return () => {
       cancelled = true
     }
   }, [isSignedIn])
+
+  useEffect(() => {
+    const tick = () => setNow(Date.now())
+    tick()
+    const id = setInterval(tick, 1000)
+    return () => clearInterval(id)
+  }, [])
 
   const being = me || beingFromClerkUser(user)
   const rooms = useMemo(
@@ -45,6 +88,22 @@ const BeingDesk = () => {
       })),
     [writings]
   )
+
+  const liveProfile = createBeingProfile(
+    {
+      ...(profileDraft || profileFromBeing(being)),
+      motto: (profileDraft || profileFromBeing(being)).motto
+    },
+    { defaults: Boolean(being?.isAuthor) }
+  )
+  const clock =
+    now && liveProfile.awakening && liveProfile.newEnd
+      ? newLifeStats(liveProfile.awakening, liveProfile.newEnd, now)
+      : null
+  const mengmeiDays =
+    liveProfile.birth && liveProfile.awakening
+      ? daysBetween(liveProfile.birth, shiftIso(liveProfile.awakening, -1))
+      : null
 
   const patch = async payload => {
     setSaving(true)
@@ -57,12 +116,12 @@ const BeingDesk = () => {
       })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
-        setError('没有放下。稍后再试。')
-        return
+        setError(data?.message || '没有放下。稍后再试。')
+        return false
       }
-      if (data?.being) setMe(data.being)
-      if (Array.isArray(data?.writings)) setWritings(data.writings)
+      applyPayload(data)
       if (payload.writing) setDraft(emptyDraft)
+      return true
     } finally {
       setSaving(false)
     }
@@ -114,14 +173,31 @@ const BeingDesk = () => {
       <p className='ob-desk__kicker'>我的档案</p>
       <h1>{being?.name || '存在者'}</h1>
       <p className='ob-desk__seat'>
-        档案 {String(being?.seat || '—').toString().padStart(3, '0')}
+        档案 {formatSeat(being?.seat)}
         {being?.handle ? ` · ${being.handle}` : ''}
         {being?.isAuthor ? ' · 站主' : ''}
       </p>
       {being?.motto ? <p className='ob-desk__motto'>{being.motto}</p> : null}
       <p>
-        你已经进来。这里是你的档案位：存在、道、术分三间屋子。默认私密，公开的才进公共池。
+        你已经进来。这里是你的档案位：箴言和生命钟的数据可以改，倒计时公式不能改。存在、道、术分三间屋子。默认私密，公开的才进公共池。
       </p>
+      {error ? <p className='ob-desk__err'>{error}</p> : null}
+
+      <section className='ob-desk__card'>
+        <p className='ob-desk__label'>生命钟</p>
+        <p>
+          出生 {liveProfile.birth ? formatZhDate(liveProfile.birth) : '未写下'} ·
+          目标 {liveProfile.newYears || '—'} 岁
+        </p>
+        <p>蒙昧 {mengmeiDays == null ? '未写下' : `${mengmeiDays} 日`}</p>
+        <p>
+          挣脱蒙昧后还余{' '}
+          {clock
+            ? `${clock.days} 日 ${clock.hours} 时 ${clock.minutes} 分 ${clock.seconds} 秒`
+            : '先写下挣脱蒙昧和目标岁数'}
+        </p>
+        <p className='ob-desk__hint'>倒计时按挣脱蒙昧日 + 目标岁数来算，公式固定。</p>
+      </section>
 
       {being?.inviteCode ? (
         <section className='ob-desk__card'>
@@ -137,18 +213,137 @@ const BeingDesk = () => {
       ) : null}
 
       {!being?.isAuthor ? (
-        <section className='ob-desk__card'>
-          <p className='ob-desk__label'>公开</p>
-          <label className='ob-desk__check'>
-            <input
-              type='checkbox'
-              checked={Boolean(being?.public)}
-              disabled={saving}
-              onChange={event => patch({ public: event.target.checked })}
-            />
-            把档案放进名录。不勾选时，访客看不见你。
-          </label>
-        </section>
+        <>
+          <section className='ob-desk__card'>
+            <p className='ob-desk__label'>公开</p>
+            <label className='ob-desk__check'>
+              <input
+                type='checkbox'
+                checked={Boolean(being?.public)}
+                disabled={saving}
+                onChange={event => patch({ public: event.target.checked })}
+              />
+              把档案放进名录。不勾选时，访客看不见你。
+            </label>
+          </section>
+
+          <section className='ob-desk__card'>
+            <h2>自己的数据</h2>
+            <p>箴言、出生、蒙昧、目标岁数都可以改。不要改倒计时本身。</p>
+            <form
+              onSubmit={event => {
+                event.preventDefault()
+                patch({ profile: profileDraft })
+              }}>
+              <label>
+                显示名
+                <input
+                  value={profileDraft?.name || ''}
+                  maxLength={40}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      name: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                箴言
+                <textarea
+                  rows={3}
+                  maxLength={140}
+                  value={profileDraft?.motto || ''}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      motto: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                出生
+                <input
+                  type='date'
+                  value={profileDraft?.birth || ''}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      birth: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                挣脱蒙昧
+                <input
+                  type='date'
+                  value={profileDraft?.awakening || ''}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      awakening: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                首次写下
+                <input
+                  type='date'
+                  value={profileDraft?.firstWritten || ''}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      firstWritten: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                目标岁数
+                <input
+                  type='number'
+                  min={1}
+                  max={120}
+                  value={profileDraft?.newYears || ''}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      newYears: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <label>
+                生命岁数
+                <input
+                  type='number'
+                  min={1}
+                  max={120}
+                  value={profileDraft?.years || ''}
+                  onChange={event =>
+                    setProfileDraft(prev => ({
+                      ...profileFromBeing(being),
+                      ...(prev || {}),
+                      years: event.target.value
+                    }))
+                  }
+                />
+              </label>
+              <button type='submit' className='ob-desk__btn' disabled={saving}>
+                {saving ? '正在放下…' : '放下这些数据'}
+              </button>
+            </form>
+          </section>
+        </>
       ) : null}
 
       <section>
@@ -221,7 +416,7 @@ const BeingDesk = () => {
               <textarea
                 rows={6}
                 value={draft.body}
-                maxLength={2000}
+                maxLength={800}
                 onChange={event =>
                   setDraft(prev => ({ ...prev, body: event.target.value }))
                 }
@@ -243,11 +438,19 @@ const BeingDesk = () => {
             </button>
           </form>
         </section>
+      ) : error ? (
+        <p className='ob-desk__err'>{error}</p>
       ) : null}
 
       <p>
         <SmartLink href='/category/我们的存在'>回到名录</SmartLink>
         {' · '}
+        {being?.handle && being.public ? (
+          <>
+            <SmartLink href={being.href}>公开的生命钟</SmartLink>
+            {' · '}
+          </>
+        ) : null}
         <button
           type='button'
           className='ob-desk__text'
@@ -292,6 +495,10 @@ const BeingDesk = () => {
         }
         .ob-desk__motto {
           margin: 0 0 1rem;
+        }
+        .ob-desk__hint {
+          color: #6b5344;
+          font-size: 0.92rem;
         }
         .ob-desk__card {
           margin: 0 0 1rem;

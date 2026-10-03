@@ -561,8 +561,13 @@ const LayoutTagIndex = props => {
   )
 }
 
-const LayoutBeingProfile = props =>
-  props.being ? <BeingLife being={props.being} /> : <BeingDesk />
+const LayoutBeingProfile = props => (
+  <BeingLife
+    being={props.being}
+    handle={props.handle}
+    writings={props.writings}
+  />
+)
 
 const LayoutBeingDesk = () => <BeingDesk />
 
