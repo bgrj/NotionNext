@@ -19,7 +19,7 @@ import BLOG from '@/blog.config'
 import ExternalPlugins from '@/components/ExternalPlugins'
 import PWAInstaller from '@/components/PWAInstaller'
 import SEO from '@/components/SEO'
-import { zhCN } from '@clerk/localizations'
+import { enUS, zhCN } from '@clerk/localizations'
 import dynamic from 'next/dynamic'
 // import { ClerkProvider } from '@clerk/nextjs'
 const ClerkProvider = dynamic(() =>
@@ -83,6 +83,11 @@ const MyApp = ({ Component, pageProps }) => {
   )
 
   const enableClerk = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  const clerkLocale = String(route.locale || BLOG.LANG || '')
+    .toLowerCase()
+    .startsWith('zh')
+    ? zhCN
+    : enUS
   const content = (
     <AppErrorBoundary>
       <GlobalContextProvider {...pageProps}>
@@ -98,7 +103,7 @@ const MyApp = ({ Component, pageProps }) => {
   return (
     <>
       {enableClerk ? (
-        <ClerkProvider localization={zhCN}>{content}</ClerkProvider>
+        <ClerkProvider localization={clerkLocale}>{content}</ClerkProvider>
       ) : (
         content
       )}

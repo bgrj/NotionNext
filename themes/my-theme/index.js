@@ -25,9 +25,15 @@ import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
 import ExistenceLife from './components/ExistenceLife'
 import OurBeingsIndex from './components/OurBeingsIndex'
+import BeingLife from './components/BeingLife'
+import { LayoutSignIn, LayoutSignUp } from './components/OurBeingsAuth'
 import NoticeModal from './components/NoticeModal'
 import { EXISTENCE_CATEGORY, isExistenceCategory } from './existence'
-import { isOurBeingsCategory, isOurBeingsPath } from './beings'
+import {
+  isOurBeingsAuthPath,
+  isOurBeingsCategory,
+  isOurBeingsPath
+} from './beings'
 import Hero from '@/themes/hexo/components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
@@ -113,7 +119,8 @@ const LayoutBase = props => {
   })
   const existence = isExistencePath(router.asPath)
   const ourBeings = isOurBeingsPath(router.asPath)
-  const chromeLite = friendLinks || existence || ourBeings
+  const auth = isOurBeingsAuthPath(router.asPath)
+  const chromeLite = friendLinks || existence || ourBeings || auth
   const hexoArticleRouteLoading = siteConfig(
     'HEXO_ARTICLE_ROUTE_LOADING',
     true,
@@ -178,7 +185,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings ? ' ob-ex-layout' : ''}${listWithoutSidebar ? ' ob-list-layout' : ''}`}>
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar ? ' ob-list-layout' : ''}`}>
         <Style />
 
         {/* 顶部导航 */}
@@ -553,14 +560,19 @@ const LayoutTagIndex = props => {
   )
 }
 
+const LayoutBeingProfile = props => <BeingLife being={props.being} />
+
 export {
   Layout404,
   LayoutArchive,
   LayoutBase,
+  LayoutBeingProfile,
   LayoutCategoryIndex,
   LayoutIndex,
   LayoutPostList,
   LayoutSearch,
+  LayoutSignIn,
+  LayoutSignUp,
   LayoutSlug,
   LayoutTagIndex,
   CONFIG as THEME_CONFIG

@@ -20,7 +20,7 @@ const OurBeingsIndex = ({ beings } = {}) => {
         <p className='ob-beings__kicker'>存在者档案</p>
         <h1 className='ob-beings__title'>我们的存在</h1>
         <p className='ob-beings__lead'>
-          「我的存在」只属于站主自己。这里是以后其他人留下自己生命钟、箴言和日子的名录。访客可以读已公开的档案；要写下自己的存在、道、术，需要进入档案位。
+          「我的存在」只属于站主自己。这里是世界各地存在者的名录：以后其他人留下自己的生命钟、箴言和日子。访客可以读已公开的档案；要写下自己的存在、道、术，需要进入档案位。
         </p>
         <p className='ob-beings__count'>
           已留下 {taken} / {OUR_BEINGS_SEATS}
@@ -46,17 +46,20 @@ const OurBeingsIndex = ({ beings } = {}) => {
       <section id='join' className='ob-beings__join'>
         <h2>如何进来</h2>
         <p>
-          前 {OUR_BEINGS_SEATS}{' '}
-          人点击右上角「注册 / 登录」，免费得到邀请码。席位满了之后，要么用老会员分享的邀请码，要么付{' '}
+          前 {OUR_BEINGS_SEATS} 人点右上角「注册 / 登录」，用任何国家的邮箱免费占一个档案位。不需要微信，也不需要中国手机号。席位满了之后，要么用老会员分享的邀请码，要么付{' '}
           {OUR_BEINGS_JOIN_PRICE_YUAN} 元占一个档案位。这是水电费，不是课程。
         </p>
         <p>
-          进来的人可以写自己的存在、道、术，默认私密，公开的才进公共池。访客只读公开内容。登录通道和收款还没接上，先把名录立在这里。
+          进来的人可以写自己的存在、道、术，默认私密，公开的才进公共池。访客只读公开内容。
+        </p>
+        <p className='ob-beings__en'>
+          Sign in with any email, from anywhere. WeChat and a Chinese phone
+          number are not required.
         </p>
         <p className='ob-beings__status'>
           {gated
             ? '前一百席位已满。之后只接受邀请码或付款。'
-            : '前一百席位仍开放。登录密钥尚未接入，现在还不能真正注册。'}
+            : '前一百席位仍开放。登录密钥尚未接入，现在还不能真正进来。'}
         </p>
       </section>
 
@@ -126,6 +129,7 @@ const OurBeingsIndex = ({ beings } = {}) => {
           margin: 0 0 0.7rem;
           font-size: 1.15rem;
         }
+        .ob-beings__en,
         .ob-beings__status {
           color: #6b5344;
         }

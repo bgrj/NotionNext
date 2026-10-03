@@ -137,7 +137,7 @@ const Header = props => {
               )}
             </div>
             <SmartLink
-              href={'/category/我们的存在#join'}
+              href={'/sign-up'}
               className='menu-link mr-1 whitespace-nowrap text-sm'>
               注册 / 登录
             </SmartLink>

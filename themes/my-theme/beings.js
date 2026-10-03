@@ -1,10 +1,16 @@
-import { EXISTENCE_DEFAULTS } from './existence'
+import { EXISTENCE_DEFAULTS, addYearsIso, shiftIso } from './existence'
 
 export const OUR_BEINGS_CATEGORY = '我们的存在'
 
 export const OUR_BEINGS_SEATS = 100
 
 export const OUR_BEINGS_JOIN_PRICE_YUAN = 5
+
+export const OUR_BEINGS_LOGIN = {
+  primary: 'email',
+  optional: ['google', 'github', 'apple'],
+  notRequired: ['wechat', 'phone']
+}
 
 export const isOurBeingsCategory = category =>
   String(category || '') === OUR_BEINGS_CATEGORY
@@ -30,6 +36,42 @@ export const isOurBeingsPath = asPath => {
     path.startsWith('/our-beings/')
   )
 }
+
+export const isOurBeingsAuthPath = asPath => {
+  const path = decodeSitePath(asPath)
+  return (
+    path === '/sign-in' ||
+    path.startsWith('/sign-in/') ||
+    path === '/sign-up' ||
+    path.startsWith('/sign-up/')
+  )
+}
+
+export const beingProfileHref = handle => `/our-beings/${normalizeHandle(handle)}`
+
+export const normalizeHandle = value => {
+  const s = String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+  try {
+    return s.replace(/[^\p{L}\p{N}-]/gu, '').slice(0, 48)
+  } catch (error) {
+    return s.replace(/[^a-z0-9\u00c0-\u024f-]/gi, '').toLowerCase().slice(0, 48)
+  }
+}
+
+export const isWorldwideEmail = value => {
+  const s = String(value || '').trim()
+  if (!s || s.length > 254) return false
+  if (/\s/.test(s)) return false
+  return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(s)
+}
+
+export const clerkPublishableKey = () =>
+  String(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '').trim()
+
+export const isClerkEnabled = () => Boolean(clerkPublishableKey())
 
 export const AUTHOR_BEING = {
   id: 'ourbeing',
@@ -61,12 +103,15 @@ export const createBeingProfile = ({
   const lifeYears = Number(years) > 0 ? Number(years) : EXISTENCE_DEFAULTS.years
   const targetYears =
     Number(newYears) > 0 ? Number(newYears) : EXISTENCE_DEFAULTS.newYears
+  const born = birth || EXISTENCE_DEFAULTS.birth
+  const woke = awakening || EXISTENCE_DEFAULTS.awakening
   return {
-    birth: birth || EXISTENCE_DEFAULTS.birth,
+    birth: born,
     years: lifeYears,
     newYears: targetYears,
     firstWritten: firstWritten || EXISTENCE_DEFAULTS.firstWritten,
-    awakening: awakening || EXISTENCE_DEFAULTS.awakening,
+    awakening: woke,
+    newEnd: shiftIso(addYearsIso(woke, targetYears), -1),
     motto: String(motto || '').trim() || EXISTENCE_DEFAULTS.motto
   }
 }
@@ -82,4 +127,14 @@ export const listPublicBeings = (extra = []) => {
     being => being?.public && being?.id && being.id !== AUTHOR_BEING.id
   )
   return [AUTHOR_BEING, ...others]
+}
+
+export const findPublicBeing = (handle, extra = []) => {
+  const h = normalizeHandle(handle)
+  if (!h) return null
+  return (
+    listPublicBeings(extra).find(
+      being => normalizeHandle(being.handle || being.id) === h
+    ) || null
+  )
 }

@@ -29,5 +29,14 @@ export const ourbeingLayouts = {
   ),
   Layout404: dynamic(() =>
     import('@/themes/my-theme').then(mod => mod.Layout404)
+  ),
+  LayoutSignIn: dynamic(() =>
+    import('@/themes/my-theme').then(mod => mod.LayoutSignIn)
+  ),
+  LayoutSignUp: dynamic(() =>
+    import('@/themes/my-theme').then(mod => mod.LayoutSignUp)
+  ),
+  LayoutBeingProfile: dynamic(() =>
+    import('@/themes/my-theme').then(mod => mod.LayoutBeingProfile)
   )
 }
