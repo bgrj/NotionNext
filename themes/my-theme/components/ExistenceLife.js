@@ -1207,7 +1207,7 @@ const ExistenceLife = props => {
         <div
           className='ob-ex-hg'
           role='img'
-          aria-label={`新生命已过 ${nf(clock.elapsedDays)} / ${nf(clock.totalDays)} 日，剩余 ${nf(clock.remainHours)} 小时`}>
+          aria-label={`新生命已过 ${nf(clock.elapsedDays)} / ${nf(clock.totalDays)} 日，剩余 ${nf(clock.remainHours)} 小时，去掉每天八小时睡眠后剩余 ${nf(clock.awakeRemainHours)} 小时`}>
           <div className='ob-ex-hg-top'>
             <div
               className='ob-ex-hg-sand-top'
@@ -1240,6 +1240,12 @@ const ExistenceLife = props => {
             <span className='ob-ex-count'>
               {nf(clock.days)} 日 {pad2(clock.hours)} 时 {pad2(clock.minutes)} 分{' '}
               {pad2(clock.seconds)} 秒
+            </span>
+            。如果再减去我每天八小时的睡眠，那么实际可供自由存在活动的时间仅剩余{' '}
+            <b>{nf(clock.awakeRemainHours)}</b> 个小时，还剩余{' '}
+            <span className='ob-ex-count'>
+              {nf(clock.awakeDays)} 日 {pad2(clock.awakeHours)} 时{' '}
+              {pad2(clock.awakeMinutes)} 分 {pad2(clock.awakeSeconds)} 秒
             </span>
             。
           </p>

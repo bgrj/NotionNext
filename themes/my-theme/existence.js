@@ -141,6 +141,20 @@ export const hoursUntil = endIso => {
   return Math.max(0, Math.ceil((t - Date.now()) / 3600000))
 }
 
+/** Hours of sleep subtracted from remaining new-life time, every day. */
+export const EXISTENCE_SLEEP_HOURS = 8
+
+const splitDuration = ms => {
+  const totalSec = Math.floor(Math.max(0, ms) / 1000)
+  return {
+    hoursTotal: Math.floor(totalSec / 3600),
+    days: Math.floor(totalSec / 86400),
+    hours: Math.floor((totalSec % 86400) / 3600),
+    minutes: Math.floor((totalSec % 3600) / 60),
+    seconds: totalSec % 60
+  }
+}
+
 /** New-life clock: startIso 00:00 → endIso 23:59:59, Asia/Shanghai. */
 export const newLifeStats = (startIso, endIso, now = Date.now()) => {
   const start = Date.parse(`${startIso}T00:00:00+08:00`)
@@ -151,7 +165,6 @@ export const newLifeStats = (startIso, endIso, now = Date.now()) => {
     : Math.max(0, Math.min(now, Number.isNaN(end) ? now : end) - start)
   const totalMs =
     Number.isNaN(start) || Number.isNaN(end) ? 0 : Math.max(0, end - start)
-  const totalSec = Math.floor(remainMs / 1000)
   let todayIso = ''
   try {
     todayIso = new Intl.DateTimeFormat('en-CA', {
@@ -164,6 +177,12 @@ export const newLifeStats = (startIso, endIso, now = Date.now()) => {
     todayIso = new Date(now).toISOString().slice(0, 10)
   }
   const { y, m, d } = parseIso(todayIso)
+  const remain = splitDuration(remainMs)
+  // Same remaining interval, minus 8h sleep in every 24h (16/24 of remainMs).
+  const awakeMs = Math.floor(
+    (remainMs * (24 - EXISTENCE_SLEEP_HOURS)) / 24
+  )
+  const awake = splitDuration(awakeMs)
   return {
     todayIso,
     todayZh: `${y}年${m}月${d}日`,
@@ -175,11 +194,17 @@ export const newLifeStats = (startIso, endIso, now = Date.now()) => {
             Math.floor(elapsedMs / 86400000) + 1
           ),
     totalDays: Math.max(1, Math.round(totalMs / 86400000)),
-    remainHours: Math.floor(remainMs / 3600000),
-    days: Math.floor(totalSec / 86400),
-    hours: Math.floor((totalSec % 86400) / 3600),
-    minutes: Math.floor((totalSec % 3600) / 60),
-    seconds: totalSec % 60
+    remainHours: remain.hoursTotal,
+    days: remain.days,
+    hours: remain.hours,
+    minutes: remain.minutes,
+    seconds: remain.seconds,
+    sleepHoursPerDay: EXISTENCE_SLEEP_HOURS,
+    awakeRemainHours: awake.hoursTotal,
+    awakeDays: awake.days,
+    awakeHours: awake.hours,
+    awakeMinutes: awake.minutes,
+    awakeSeconds: awake.seconds
   }
 }
 
