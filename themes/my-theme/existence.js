@@ -26,13 +26,7 @@ export const EXISTENCE_MERGED_SPANS = [
   {
     start: '2025-04-24',
     end: '2025-04-27',
-    note: '这几天实际是多天融于的一篇',
-    fallback: {
-      id: 'existence-r32',
-      title: '2025.4.24–27 周四至周日',
-      href: '/diaries/2025/04/24/r32',
-      date: '2025-04-24'
-    }
+    note: '这几天实际是多天融于的一篇'
   }
 ]
 
@@ -259,18 +253,8 @@ export const slimExistencePosts = posts => {
     })
     .filter(post => post.href && post.date)
 
-  EXISTENCE_MERGED_SPANS.forEach(span => {
-    const covered = slim.some(
-      post => post.date >= span.start && post.date <= span.end
-    )
-    if (covered || !span.fallback?.href) return
-    slim.push({
-      ...span.fallback,
-      spanStart: span.start,
-      spanEnd: span.end,
-      note: span.note
-    })
-  })
+  // Span metadata may extend a published post, but must never invent one.
+  // The category routes pass only Published posts; an empty list stays empty.
   return slim
 }
 
