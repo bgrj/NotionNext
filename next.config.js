@@ -301,6 +301,9 @@ const nextConfig = {
         }
 
         return [
+          // 房子模型是独立静态页，不走博客路由，也不把 index.html 剥成页面。
+          { source: '/house', destination: '/house/index.html' },
+          { source: '/house/', destination: '/house/index.html' },
           ...langsRewrites,
           // RSS fallback: when static file doesn't exist, route to API
           {
