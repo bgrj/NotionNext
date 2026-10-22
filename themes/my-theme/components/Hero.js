@@ -4,11 +4,12 @@ import { loadExternalResource } from '@/lib/utils'
 import { useEffect } from 'react'
 import CONFIG from '../config'
 import HandGlow from './HandGlow'
+import SmartLink from '@/components/SmartLink'
 
 /**
  * 顶部全屏大图
- * 欢迎语固定在导航栏区域正中，不再随滚动到底部。
- * 打字效果保留（如果用户配置了 GREETING_WORDS）。
+ * 欢迎语 + 四个核心入口 固定在导航栏区域正中偏下。
+ * 简洁、水平、轻量，不喧宾夺主。
  */
 const Hero = (props) => {
   const { siteInfo } = props
@@ -53,13 +54,34 @@ const Hero = (props) => {
       className='w-full h-screen relative bg-black'
       data-ob-minimal-hero='true'>
 
-      {/* 固定在导航栏区域正中的欢迎语 */}
-      <div className='z-30 absolute left-1/2 top-[72px] -translate-x-1/2 w-full max-w-[1100px] px-6 text-center'>
-        <div className='text-white/95 text-[15px] md:text-[17px] leading-[1.75] tracking-[0.01em] font-light shadow-text'>
+      {/* 固定在导航栏下方的欢迎语 + 四个核心入口 */}
+      <div className='z-30 absolute left-1/2 top-[78px] -translate-x-1/2 w-full max-w-[1120px] px-5 text-center'>
+        {/* 主标题 */}
+        <div className='text-white/95 text-[15.5px] md:text-[17px] leading-[1.7] tracking-[0.015em] font-light shadow-text'>
           我们的存在
-          <span className='block mt-1.5 text-[13px] md:text-[14.5px] text-white/75'>
-            让我们的思想为时代所传唱，让我们的灵魂永世不朽，让我们的存在与世界同在
-          </span>
+        </div>
+        {/* 副标题 */}
+        <div className='mt-1.5 text-[12.8px] md:text-[13.8px] text-white/70 leading-[1.65] tracking-[0.01em] font-light shadow-text'>
+          让我们的思想为时代所传唱，让我们的灵魂永世不朽，让我们的存在与世界同在
+        </div>
+
+        {/* 四个核心部分：简洁水平排列，浅色，hover 提亮 */}
+        <div className='mt-4 flex items-center justify-center gap-x-5 md:gap-x-7 text-[12px] md:text-[12.5px] text-white/50 tracking-[1.5px] font-light'>
+          <SmartLink href='/category/我的存在' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
+            我的存在
+          </SmartLink>
+          <span className='text-white/15 select-none'>·</span>
+          <SmartLink href='/category/我们的存在' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
+            我们的存在
+          </SmartLink>
+          <span className='text-white/15 select-none'>·</span>
+          <SmartLink href='/category/道' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
+            道
+          </SmartLink>
+          <span className='text-white/15 select-none'>·</span>
+          <SmartLink href='/category/术' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
+            术
+          </SmartLink>
         </div>
       </div>
 
