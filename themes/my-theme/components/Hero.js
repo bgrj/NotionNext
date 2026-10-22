@@ -9,7 +9,7 @@ import SmartLink from '@/components/SmartLink'
 /**
  * 顶部全屏大图
  * 欢迎语 + 四个核心入口 固定在导航栏区域正中偏下。
- * 简洁、水平、轻量，不喧宾夺主。字体更优雅，hover 暖金。
+ * 极简优雅，带柔和淡入。
  */
 const Hero = (props) => {
   const { siteInfo } = props
@@ -21,8 +21,8 @@ const Hero = (props) => {
       className='w-full h-screen relative bg-black'
       data-ob-minimal-hero='true'>
 
-      {/* 固定在导航栏下方的欢迎语 + 四个核心入口（极简优雅） */}
-      <div className='z-30 absolute left-1/2 top-[82px] -translate-x-1/2 w-full max-w-[1080px] px-5 text-center'>
+      {/* 固定在导航栏下方的欢迎语 + 四个核心入口（极简优雅 + 淡入） */}
+      <div className='z-30 absolute left-1/2 top-[82px] -translate-x-1/2 w-full max-w-[1080px] px-5 text-center ob-hero-text'>
         {/* 主标题 */}
         <div className='text-white/95 text-[15.5px] md:text-[17px] leading-[1.65] tracking-[0.02em] font-light shadow-text'>
           我们的存在
@@ -63,6 +63,20 @@ const Hero = (props) => {
         height={1080}
         className={`header-cover absolute inset-0 z-0 w-full h-screen object-cover object-center ${siteConfig('HEXO_HOME_NAV_BACKGROUND_IMG_FIXED', null, CONFIG) ? 'fixed' : ''}`}
       />
+
+      <style jsx>{`
+        .ob-hero-text {
+          opacity: 0;
+          animation: ob-hero-fade 680ms cubic-bezier(0.22, 1, 0.36, 1) 120ms forwards;
+        }
+        @keyframes ob-hero-fade {
+          from { opacity: 0; transform: translateY(4px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ob-hero-text { animation: none; opacity: 1; }
+        }
+      `}</style>
     </header>
   )
 }
