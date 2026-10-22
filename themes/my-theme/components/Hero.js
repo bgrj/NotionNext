@@ -9,7 +9,7 @@ import SmartLink from '@/components/SmartLink'
 /**
  * 顶部全屏大图
  * 欢迎语 + 四个核心入口 固定在导航栏区域正中偏下。
- * 极简优雅，带柔和淡入。
+ * 极简优雅，带柔和淡入。四个入口稍稍可读但仍轻。
  */
 const Hero = (props) => {
   const { siteInfo } = props
@@ -32,21 +32,21 @@ const Hero = (props) => {
           让我们的思想为时代所传唱，让我们的灵魂永世不朽，让我们的存在与世界同在
         </div>
 
-        {/* 四个核心部分：极简横排，极细分隔，暖金 hover */}
-        <div className='mt-[13px] flex items-center justify-center gap-x-4 md:gap-x-6 text-[11.5px] md:text-[12px] text-white/42 tracking-[2px] font-light select-none'>
-          <SmartLink href='/category/我的存在' className='hover:text-[#c9a66b] hover:text-white/85 transition-colors duration-200'>
+        {/* 四个核心部分：极简横排，极细分隔，暖金 hover；基础稍可读 */}
+        <div className='mt-[13px] flex items-center justify-center gap-x-4 md:gap-x-6 text-[11.5px] md:text-[12px] text-white/55 tracking-[2px] font-light select-none'>
+          <SmartLink href='/category/我的存在' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
             我的存在
           </SmartLink>
-          <span className='text-white/12'>·</span>
-          <SmartLink href='/category/我们的存在' className='hover:text-[#c9a66b] hover:text-white/85 transition-colors duration-200'>
+          <span className='text-white/15'>·</span>
+          <SmartLink href='/category/我们的存在' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
             我们的存在
           </SmartLink>
-          <span className='text-white/12'>·</span>
-          <SmartLink href='/category/道' className='hover:text-[#c9a66b] hover:text-white/85 transition-colors duration-200'>
+          <span className='text-white/15'>·</span>
+          <SmartLink href='/category/道' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
             道
           </SmartLink>
-          <span className='text-white/12'>·</span>
-          <SmartLink href='/category/术' className='hover:text-[#c9a66b] hover:text-white/85 transition-colors duration-200'>
+          <span className='text-white/15'>·</span>
+          <SmartLink href='/category/术' className='hover:text-[#c9a66b] hover:text-white/90 transition-colors duration-200'>
             术
           </SmartLink>
         </div>
