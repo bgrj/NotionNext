@@ -1,93 +1,86 @@
 /* eslint-disable react/no-unknown-property */
 // Match the bundled down-hand cover's natural 2048 × 989 coordinate system.
-// More motes (42), higher visibility warm gold (#C9A66B and #d4af37), soft dust orbs.
-// Prominent but calm, slow floating dust in light. Higher opacity for normal presence.
+// Particles start at the hand and drift outward like dust in the light.
 
-const MOTES = Array.from({ length: 42 }, (_, i) => {
-  const angle = i * 2.399963 + (i % 5) * 0.35
-  const spread = Math.sqrt((i + 1) / 42) * 1.08
-  return {
-    x: 1020 + Math.cos(angle) * spread * 195,
-    y: 632 + Math.sin(angle) * spread * 165,
-    radius: 0.9 + (i % 5) * 0.35,
-    duration: 8.2 + (i % 6) * 1.05,
-    delay: -i * 1.48
-  }
-})
+const HAND = { x: 1035, y: 620 }
+const GOLDEN = 2.399963229728653
 
-// Larger soft dust orbs — floating in light, low but visible opacity
-const DUST = Array.from({ length: 14 }, (_, i) => {
-  const angle = i * 2.8 + 0.9
-  const spread = 0.58 + (i % 5) * 0.12
-  return {
-    x: 1040 + Math.cos(angle) * spread * 215,
-    y: 618 + Math.sin(angle) * spread * 178,
-    radius: 6.5 + (i % 4) * 2.8,
-    duration: 15 + (i % 4) * 2.1,
-    delay: -i * 2.3
-  }
-})
+const motes = (count, distMin, distMax, seed, radiusBase) =>
+  Array.from({ length: count }, (_, i) => {
+    const angle = (i + seed) * GOLDEN
+    const t = (i + 1) / count
+    const dist = distMin + Math.pow(t, 0.58) * (distMax - distMin)
+    const x = HAND.x + Math.cos(angle) * dist
+    const y = HAND.y + Math.sin(angle) * dist * 0.88
+    return {
+      x,
+      y,
+      radius: radiusBase + (i % 6) * (radiusBase * 0.38),
+      duration: 9.2 + (i % 8) * 1.05,
+      delay: -(i * 0.71 + seed * 2.4),
+      dx: Math.cos(angle) * (16 + t * 52),
+      dy: Math.sin(angle) * (12 + t * 38) + 14,
+      far: dist > 220
+    }
+  })
+
+const CORE = motes(28, 14, 200, 0.2, 0.9)
+const RAYS = motes(46, 130, 720, 1.35, 0.75)
+const DUST = motes(16, 70, 460, 2.7, 6.4)
 
 export default function HandGlow() {
   return (
     <>
       <svg
-        className="ob-hand-glow"
-        viewBox="0 0 2048 989"
-        preserveAspectRatio="xMidYMid slice"
-        aria-hidden="true"
-        focusable="false">
-        {/* soft dust orbs (behind) */}
+        className='ob-hand-glow'
+        viewBox='0 0 2048 989'
+        preserveAspectRatio='xMidYMid slice'
+        aria-hidden='true'
+        focusable='false'>
         {DUST.map((d, index) => (
           <g
             key={`dust-${index}`}
-            className="ob-hand-dust"
+            className={`ob-hand-dust${d.far ? ' ob-hand-far' : ''}`}
             style={{
-              animationDuration: `${d.duration}s`,
-              animationDelay: `${d.delay}s`
+              animationDuration: `${d.duration + 4}s`,
+              animationDelay: `${d.delay}s`,
+              '--dx': `${d.dx}px`,
+              '--dy': `${d.dy}px`
             }}>
-            <circle
-              cx={d.x}
-              cy={d.y}
-              r={d.radius}
-              fill="#c9a66b"
-              opacity="0.065"
-            />
+            <circle cx={d.x} cy={d.y} r={d.radius} fill='#c9a66b' opacity='0.07' />
           </g>
         ))}
-
-        {MOTES.map((mote, index) => (
+        {[...CORE, ...RAYS].map((mote, index) => (
           <g
-            key={index}
-            className="ob-hand-mote"
+            key={`mote-${index}`}
+            className={`ob-hand-mote${mote.far ? ' ob-hand-far' : ''}`}
             style={{
               animationDuration: `${mote.duration}s`,
-              animationDelay: `${mote.delay}s`
+              animationDelay: `${mote.delay}s`,
+              '--dx': `${mote.dx}px`,
+              '--dy': `${mote.dy}px`
             }}>
-            {/* soft halo for presence */}
             <circle
               cx={mote.x}
               cy={mote.y}
-              r={mote.radius * 5.8}
-              fill="#c9a66b"
-              opacity="0.12"
+              r={mote.radius * 5.2}
+              fill='#c9a66b'
+              opacity='0.11'
             />
-            {/* main warm particle */}
             <circle
               cx={mote.x}
               cy={mote.y}
-              r={mote.radius * 1.9}
-              fill={index % 4 === 0 ? "#d4af37" : "#c9a66b"}
-              opacity="0.88"
+              r={mote.radius * 1.85}
+              fill={index % 4 === 0 ? '#d4af37' : '#c9a66b'}
+              opacity='0.86'
             />
-            {/* subtle bright core */}
             {index % 5 === 0 && (
               <circle
                 cx={mote.x}
                 cy={mote.y}
-                r={mote.radius * 0.6}
-                fill="#f5e8c7"
-                opacity="0.6"
+                r={mote.radius * 0.55}
+                fill='#f5e8c7'
+                opacity='0.62'
               />
             )}
           </g>
@@ -103,44 +96,37 @@ export default function HandGlow() {
           pointer-events: none;
           overflow: hidden;
         }
-        .ob-hand-mote {
-          opacity: 0;
-          animation: ob-hand-drift 10.5s ease-in-out infinite;
-        }
+        .ob-hand-mote,
         .ob-hand-dust {
           opacity: 0;
-          animation: ob-hand-drift 15.5s ease-in-out infinite;
+          animation-name: ob-hand-radiate;
+          animation-timing-function: ease-out;
+          animation-iteration-count: infinite;
         }
-        @keyframes ob-hand-drift {
-          0%, 100% {
+        @keyframes ob-hand-radiate {
+          0% {
             opacity: 0;
-            transform: translate(0, 8px);
+            transform: translate(0, 0) scale(0.65);
           }
-          18% {
-            opacity: 0.78;
+          14% {
+            opacity: 0.95;
           }
-          52% {
+          58% {
             opacity: 0.42;
           }
-          78% {
+          100% {
             opacity: 0;
-            transform: translate(7px, -16px);
+            transform: translate(var(--dx), var(--dy)) scale(1.12);
           }
         }
         @media (max-width: 640px) {
-          .ob-hand-mote:nth-child(n + 28) {
-            display: none;
-          }
-          .ob-hand-dust:nth-child(n + 8) {
+          .ob-hand-far:nth-child(2n) {
             display: none;
           }
         }
         @media (prefers-reduced-motion: reduce) {
           .ob-hand-glow {
             display: none;
-          }
-          .ob-hand-mote, .ob-hand-dust {
-            animation: none;
           }
         }
       `}</style>

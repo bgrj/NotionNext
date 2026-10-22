@@ -9,7 +9,11 @@ const OurBeingsHeaderAuth = dynamic(() => import('./OurBeingsHeaderAuth'), {
   ssr: false
 })
 
-/** Minimal theme chrome: brand and the existing account entry only.
+const MOTTO_TITLE = '我们的存在'
+const MOTTO_LINE =
+  '让我们的思想为时代所传唱，让我们的灵魂永世不朽，让我们的存在与世界同在'
+
+/** Minimal theme chrome: brand, centered motto, existing account entry.
  * Navigation routes remain available; no authentication behavior is changed.
  */
 const Header = ({ siteInfo }) => {
@@ -26,7 +30,7 @@ const Header = ({ siteInfo }) => {
         scrollTop < 5 ||
         (hero && scrollTop <= hero.clientHeight + 100)
       nav.classList.toggle('top-0', Boolean(showNav))
-      nav.classList.toggle('-top-20', !showNav)
+      nav.classList.toggle('ob-nav-hidden', !showNav)
       previousTop = scrollTop
     }, 200)
 
@@ -45,15 +49,103 @@ const Header = ({ siteInfo }) => {
       <div
         id='sticky-nav'
         className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'>
-        <div className='w-full flex justify-between items-center px-4 py-2'>
-          <SmartLink href='/' passHref className='ob-logo'>
-            {siteInfo?.title || siteConfig('TITLE')}
-          </SmartLink>
-          <div className='mr-1 flex justify-end items-center'>
-            <OurBeingsHeaderAuth />
+        <div className='ob-nav-inner'>
+          <div className='ob-nav-row'>
+            <SmartLink href='/' passHref className='ob-logo'>
+              {siteInfo?.title || siteConfig('TITLE')}
+            </SmartLink>
+            <div className='ob-nav-right'>
+              <OurBeingsHeaderAuth />
+            </div>
+          </div>
+          <div className='ob-nav-motto'>
+            <div className='ob-nav-motto-title'>{MOTTO_TITLE}</div>
+            <div className='ob-nav-motto-line'>{MOTTO_LINE}</div>
           </div>
         </div>
       </div>
+      <style jsx global>{`
+        #theme-my-theme .ob-nav-inner {
+          position: relative;
+        }
+        #theme-my-theme .ob-nav-row {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          min-height: 3.25rem;
+          padding: 0.42rem 1.05rem;
+        }
+        #theme-my-theme .ob-nav-right {
+          position: relative;
+          z-index: 2;
+          display: flex;
+          align-items: center;
+        }
+        #theme-my-theme .ob-logo {
+          position: relative;
+          z-index: 2;
+        }
+        #theme-my-theme .ob-nav-motto {
+          position: absolute;
+          left: 50%;
+          top: 50%;
+          transform: translate(-50%, -50%);
+          text-align: center;
+          pointer-events: none;
+          max-width: min(58vw, 44rem);
+          padding: 0 0.5rem;
+        }
+        #theme-my-theme .ob-nav-motto-title {
+          font-size: 15px;
+          letter-spacing: 0.22em;
+          font-weight: 400;
+          line-height: 1.2;
+        }
+        #theme-my-theme .ob-nav-motto-line {
+          margin-top: 3px;
+          font-size: 11px;
+          letter-spacing: 0.045em;
+          font-weight: 300;
+          opacity: 0.72;
+          line-height: 1.35;
+          white-space: nowrap;
+        }
+        #theme-my-theme .ob-sticky-nav.ob-nav-hidden {
+          transform: translateY(-110%);
+        }
+        @media (max-width: 1100px) {
+          #theme-my-theme .ob-nav-motto-line {
+            white-space: normal;
+          }
+        }
+        @media (max-width: 767px) {
+          #theme-my-theme {
+            --ob-below-nav: 6.5rem;
+          }
+          html:has(#theme-my-theme) {
+            scroll-padding-top: 6.5rem;
+          }
+          #theme-my-theme .ob-nav-row {
+            min-height: 2.55rem;
+            padding: 0.3rem 0.7rem 0;
+          }
+          #theme-my-theme .ob-nav-motto {
+            position: static;
+            transform: none;
+            max-width: none;
+            padding: 0 0.75rem 0.5rem;
+          }
+          #theme-my-theme .ob-nav-motto-title {
+            font-size: 13px;
+            letter-spacing: 0.16em;
+          }
+          #theme-my-theme .ob-nav-motto-line {
+            font-size: 9.5px;
+            letter-spacing: 0.02em;
+            white-space: normal;
+          }
+        }
+      `}</style>
     </div>
   )
 }
