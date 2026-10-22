@@ -1,152 +1,59 @@
 import { siteConfig } from '@/lib/config'
-import { useGlobal } from '@/lib/global'
 import throttle from 'lodash.throttle'
 import SmartLink from '@/components/SmartLink'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import CONFIG from '../config'
-import CategoryGroup from '@/themes/hexo/components/CategoryGroup'
-import { MenuListTop } from './MenuListTop'
-import SearchButton from './SearchButton'
-import SearchDrawer from '@/themes/hexo/components/SearchDrawer'
-import SideBar from '@/themes/hexo/components/SideBar'
-import SideBarDrawer from '@/themes/hexo/components/SideBarDrawer'
-import TagGroups from '@/themes/hexo/components/TagGroups'
+import { useEffect } from 'react'
 
 const OurBeingsHeaderAuth = dynamic(() => import('./OurBeingsHeaderAuth'), {
   ssr: false
 })
 
-let windowTop = 0
-
-/**
- * 顶部导航：始终保持可读底与字色，不随头图改成白字。
+/** Minimal theme chrome: brand and the existing account entry only.
+ * Navigation routes remain available; no authentication behavior is changed.
  */
-const Header = props => {
-  const searchDrawer = useRef()
-  const { tags, currentTag, categories, currentCategory, siteInfo } = props
-  const { locale } = useGlobal()
+const Header = ({ siteInfo }) => {
   const router = useRouter()
-  const [isOpen, changeShow] = useState(false)
-  const showSearchButton = siteConfig('HEXO_MENU_SEARCH', true, CONFIG)
-
-  const toggleMenuOpen = () => {
-    changeShow(!isOpen)
-  }
-
-  const toggleSideBarClose = () => {
-    changeShow(false)
-  }
-
   useEffect(() => {
+    let previousTop = window.scrollY
+    const topNavStyleHandler = throttle(() => {
+      const scrollTop = window.scrollY
+      const nav = document.getElementById('sticky-nav')
+      if (!nav) return
+      const hero = document.getElementById('header')
+      const showNav =
+        scrollTop <= previousTop ||
+        scrollTop < 5 ||
+        (hero && scrollTop <= hero.clientHeight + 100)
+      nav.classList.toggle('top-0', Boolean(showNav))
+      nav.classList.toggle('-top-20', !showNav)
+      previousTop = scrollTop
+    }, 200)
+
     window.addEventListener('scroll', topNavStyleHandler, { passive: true })
     router.events.on('routeChangeComplete', topNavStyleHandler)
     topNavStyleHandler()
     return () => {
       router.events.off('routeChangeComplete', topNavStyleHandler)
       window.removeEventListener('scroll', topNavStyleHandler)
+      topNavStyleHandler.cancel()
     }
-  }, [])
-
-  const throttleMs = 200
-
-  const topNavStyleHandler = useCallback(
-    throttle(() => {
-      const scrollS = window.scrollY
-      const nav = document.querySelector('#sticky-nav')
-      if (!nav) return
-      const header = document.querySelector('#header')
-      const showNav =
-        scrollS <= windowTop ||
-        scrollS < 5 ||
-        (header && scrollS <= header.clientHeight + 100)
-      if (!showNav) {
-        nav.classList.replace('top-0', '-top-20')
-      } else {
-        nav.classList.replace('-top-20', 'top-0')
-      }
-      windowTop = scrollS
-    }, throttleMs)
-  )
-
-  const searchDrawerSlot = (
-    <>
-      {categories && (
-        <section className='mt-8'>
-          <div className='text-sm flex flex-nowrap justify-between font-light px-2'>
-            <div className='text-gray-600 dark:text-gray-200'>
-              <i className='mr-2 fas fa-th-list' />
-              {locale.COMMON.CATEGORY}
-            </div>
-            <SmartLink
-              href={'/category'}
-              passHref
-              className='mb-3 text-gray-400 hover:text-black dark:text-gray-400 dark:hover:text-white hover:underline cursor-pointer'>
-              {locale.COMMON.MORE} <i className='fas fa-angle-double-right' />
-            </SmartLink>
-          </div>
-          <CategoryGroup
-            currentCategory={currentCategory}
-            categories={categories}
-          />
-        </section>
-      )}
-
-      {tags && (
-        <section className='mt-4'>
-          <div className='text-sm py-2 px-2 flex flex-nowrap justify-between font-light dark:text-gray-200'>
-            <div className='text-gray-600 dark:text-gray-200'>
-              <i className='mr-2 fas fa-tag' />
-              {locale.COMMON.TAGS}
-            </div>
-            <SmartLink
-              href={'/tag'}
-              passHref
-              className='text-gray-400 hover:text-black  dark:hover:text-white hover:underline cursor-pointer'>
-              {locale.COMMON.MORE} <i className='fas fa-angle-double-right' />
-            </SmartLink>
-          </div>
-          <div className='p-2'>
-            <TagGroups tags={tags} currentTag={currentTag} />
-          </div>
-        </section>
-      )}
-    </>
-  )
+  }, [router.events])
 
   return (
     <div id='top-nav' className='z-40'>
-      <SearchDrawer cRef={searchDrawer} slot={searchDrawerSlot} />
-
-      <div id='sticky-nav' className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'>
+      <div
+        id='sticky-nav'
+        className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'>
         <div className='w-full flex justify-between items-center px-4 py-2'>
           <SmartLink href='/' passHref className='ob-logo'>
             {siteInfo?.title || siteConfig('TITLE')}
           </SmartLink>
-
           <div className='mr-1 flex justify-end items-center'>
-            <div className='hidden lg:flex ob-top-nav items-center'>
-              <MenuListTop {...props} />
-            </div>
-            <div
-              onClick={toggleMenuOpen}
-              className='w-8 justify-center items-center h-8 cursor-pointer flex lg:hidden'>
-              {isOpen ? (
-                <i className='fas fa-times' />
-              ) : (
-                <i className='fas fa-bars' />
-              )}
-            </div>
-            {showSearchButton && <SearchButton />}
             <OurBeingsHeaderAuth />
           </div>
         </div>
       </div>
-
-      <SideBarDrawer isOpen={isOpen} onClose={toggleSideBarClose}>
-        <SideBar {...props} />
-      </SideBarDrawer>
     </div>
   )
 }

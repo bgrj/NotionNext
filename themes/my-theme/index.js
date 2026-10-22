@@ -35,7 +35,7 @@ import {
   isOurBeingsCategory,
   isOurBeingsPath
 } from './beings'
-import Hero from '@/themes/hexo/components/Hero'
+import Hero from './components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
 import SearchNav from '@/themes/hexo/components/SearchNav'
