@@ -2,67 +2,66 @@
 import { useRouter } from 'next/router'
 
 const PIECES = [
-
   {
     key: 'our',
     name: '我们的存在',
     href: '/category/我们的存在',
-    d: 'M8.00 8.00L929.55 8.00L933.10 21.23L933.65 25.73L938.09 39.23L942.64 61.74L949.42 82.73L950.99 90.52L959.02 108.57L968.98 126.57L970.11 127.56L971.03 126.95L970.40 127.18L969.30 136.72L969.14 153.30L964.36 164.36L961.24 177.31L960.37 184.77L958.09 194.96L958.38 205.29L960.92 216.55L969.59 233.17L977.84 242.29L1000.74 262.33L1010.48 269.17L1023.86 280.66L1022.65 288.65L1022.51 299.16L1017.84 318.14L1014.88 325.08L1010.52 331.15L1007.99 339.30L1003.57 349.66L993.77 369.54L990.21 381.13L988.37 394.10L989.40 407.61L995.69 446.00L8.00 446.00Z',
+    d: 'M8.00 8.00L929.55 8.00L933.10 21.23L933.65 25.73L938.09 39.23L942.64 61.74L949.42 82.73L950.99 90.52L959.02 108.57L968.98 126.57L970.11 127.56L971.03 126.95L970.40 127.18L969.30 136.72L969.14 153.30L964.36 164.36L961.24 177.31L960.37 184.77L958.09 194.96L958.38 205.29L960.92 216.55L969.59 233.17L977.84 242.29L1000.74 262.33L1010.48 269.17L1023.86 280.66L1022.65 288.65L1022.51 299.16L1017.84 318.14L1014.88 325.08L1010.52 331.15L1007.99 339.30L1003.57 349.66L993.77 369.54L990.21 381.13L988.37 394.10L989.40 407.61L989.40 407.61L989.40 407.61L966.02 407.83L942.62 408.66L919.21 409.92L895.80 411.34L872.40 412.64L849.00 413.53L825.61 413.77L802.25 413.12L778.91 411.44L755.59 408.66L732.30 404.81L709.03 399.99L685.78 394.41L662.53 388.34L639.30 382.10L616.05 376.08L592.80 370.66L569.51 366.30L546.20 363.57L522.83 363.25L499.38 366.37L475.83 374.04L452.16 386.84L428.40 403.94L404.60 422.57L380.87 438.58L357.27 448.12L333.86 449.66L310.60 444.62L287.40 436.36L264.21 428.22L240.97 422.02L217.68 417.91L194.37 415.03L171.05 412.39L147.74 409.35L124.44 405.68L101.16 401.48L77.88 397.04L54.60 392.69L31.31 388.78L8.00 385.61Z',
     desk: [
-      { ch: '我', x: 322.7, y: 165.1, size: 164 },
-      { ch: '们', x: 508.0, y: 165.1, size: 164 },
-      { ch: '的', x: 693.3, y: 165.1, size: 164 },
-      { ch: '存', x: 415.3, y: 338.9, size: 164 },
-      { ch: '在', x: 600.7, y: 338.9, size: 164 }
+      { ch: '我', x: 318, y: 168, size: 176, rot: -6.5 },
+      { ch: '们', x: 512, y: 152, size: 168, rot: 4.8 },
+      { ch: '的', x: 708, y: 174, size: 172, rot: -3.2 },
+      { ch: '存', x: 400, y: 318, size: 168, rot: 5.5 },
+      { ch: '在', x: 620, y: 332, size: 174, rot: -4.6 }
     ],
     mobi: [
-      { ch: '我', x: 872, y: 174.4, size: 58 },
-      { ch: '们', x: 872, y: 238.2, size: 58 },
-      { ch: '的', x: 872, y: 302.0, size: 58 },
-      { ch: '存', x: 872, y: 365.8, size: 58 },
-      { ch: '在', x: 872, y: 429.6, size: 58 }
+      { ch: '我', x: 868, y: 176, size: 62, rot: -5.0 },
+      { ch: '们', x: 876, y: 238, size: 58, rot: 4.0 },
+      { ch: '的', x: 864, y: 298, size: 60, rot: -3.0 },
+      { ch: '存', x: 878, y: 360, size: 58, rot: 5.0 },
+      { ch: '在', x: 870, y: 408, size: 62, rot: -4.0 }
     ]
   },
   {
     key: 'self',
     name: '我的存在',
     href: '/category/我的存在',
-    d: 'M2040.00 8.00L2040.00 446.00L1088.11 446.00L1085.08 443.81L1079.60 441.26L1078.29 439.79L1073.44 427.28L1074.28 422.40L1074.04 418.86L1077.26 405.70L1080.98 399.43L1082.84 393.34L1084.19 392.41L1089.34 391.82L1090.47 390.76L1088.20 382.53L1089.65 381.53L1094.36 381.10L1095.12 380.49L1095.50 376.39L1098.57 374.66L1095.41 370.45L1097.92 369.46L1103.19 369.21L1105.46 368.17L1104.96 366.44L1098.77 362.20L1097.50 360.50L1100.83 353.99L1101.75 348.42L1101.26 345.01L1103.08 338.12L1108.44 332.50L1110.58 322.46L1115.93 317.25L1116.23 314.20L1121.01 299.20L1121.21 290.60L1119.31 276.12L1118.32 273.22L1118.22 266.46L1121.93 259.08L1129.43 247.58L1132.12 241.85L1134.22 232.17L1128.03 212.10L1126.01 200.55L1126.97 193.35L1130.09 183.70L1130.03 171.02L1127.25 155.12L1127.31 143.72L1126.44 141.85L1126.88 137.71L1131.18 122.83L1131.36 123.45L1139.90 108.52L1147.85 90.15L1146.77 81.10L1144.76 75.20L1142.67 72.61L1142.19 70.72L1143.32 67.62L1154.04 49.64L1154.34 50.89L1154.53 48.10L1158.22 35.07L1158.74 28.23L1161.81 18.77L1162.77 8.89L1162.65 2.06L1161.52 0.94L1161.52 8.00Z',
+    d: 'M2040.00 8.00L2040.00 543.99L2040.00 543.99L2016.31 544.30L1992.63 544.02L1969.00 542.80L1945.40 540.49L1921.85 537.11L1898.33 532.89L1874.83 528.16L1851.33 523.27L1827.83 518.50L1804.32 513.92L1780.81 509.45L1757.30 504.98L1733.78 500.71L1710.22 497.29L1686.59 495.87L1662.84 497.66L1638.95 503.31L1614.92 512.38L1590.82 523.27L1566.74 533.68L1542.77 541.40L1518.95 544.99L1495.30 544.10L1471.80 539.31L1448.40 531.78L1425.06 522.88L1401.72 513.90L1378.34 505.89L1354.90 499.60L1331.37 495.46L1307.76 493.58L1284.07 493.80L1260.32 495.71L1236.52 498.72L1212.71 502.17L1188.90 505.41L1165.12 507.89L1141.39 509.22L1117.71 509.24L1094.07 507.99L1095.26 506.55L1095.43 504.74L1093.13 492.72L1092.85 474.23L1093.47 468.99L1092.87 451.27L1093.36 448.31L1093.07 449.59L1085.08 443.81L1079.60 441.26L1078.29 439.79L1073.44 427.28L1074.28 422.40L1074.04 418.86L1077.26 405.70L1080.98 399.43L1082.84 393.34L1084.19 392.41L1089.34 391.82L1090.47 390.76L1088.20 382.53L1089.65 381.53L1094.36 381.10L1095.12 380.49L1095.50 376.39L1098.57 374.66L1095.41 370.45L1097.92 369.46L1103.19 369.21L1105.46 368.17L1104.96 366.44L1098.77 362.20L1097.50 360.50L1100.83 353.99L1101.75 348.42L1101.26 345.01L1103.08 338.12L1108.44 332.50L1110.58 322.46L1115.93 317.25L1116.23 314.20L1121.01 299.20L1121.21 290.60L1119.31 276.12L1118.32 273.22L1118.22 266.46L1121.93 259.08L1129.43 247.58L1132.12 241.85L1134.22 232.17L1128.03 212.10L1126.01 200.55L1126.97 193.35L1130.09 183.70L1130.03 171.02L1127.25 155.12L1127.31 143.72L1126.44 141.85L1126.88 137.71L1131.18 122.83L1131.36 123.45L1139.90 108.52L1147.85 90.15L1146.77 81.10L1144.76 75.20L1142.67 72.61L1142.19 70.72L1143.32 67.62L1154.04 49.64L1154.34 50.89L1154.53 48.10L1158.22 35.07L1158.74 28.23L1161.81 18.77L1162.77 8.89L1162.65 2.06L1161.52 0.94L1161.52 8.00Z',
     desk: [
-      { ch: '我', x: 1442.9, y: 165.1, size: 164 },
-      { ch: '的', x: 1633.1, y: 165.1, size: 164 },
-      { ch: '存', x: 1442.9, y: 338.9, size: 164 },
-      { ch: '在', x: 1633.1, y: 338.9, size: 164 }
+      { ch: '我', x: 1438, y: 160, size: 176, rot: 5.8 },
+      { ch: '的', x: 1648, y: 176, size: 168, rot: -6.2 },
+      { ch: '存', x: 1448, y: 328, size: 170, rot: 3.4 },
+      { ch: '在', x: 1656, y: 318, size: 176, rot: -5.0 }
     ],
     mobi: [
-      { ch: '我', x: 1186, y: 187.4, size: 64 },
-      { ch: '的', x: 1186, y: 258.5, size: 64 },
-      { ch: '存', x: 1186, y: 329.5, size: 64 },
-      { ch: '在', x: 1186, y: 400.6, size: 64 }
+      { ch: '我', x: 1188, y: 188, size: 66, rot: 4.5 },
+      { ch: '的', x: 1180, y: 258, size: 62, rot: -5.5 },
+      { ch: '存', x: 1192, y: 328, size: 64, rot: 3.0 },
+      { ch: '在', x: 1182, y: 400, size: 66, rot: -4.2 }
     ]
   },
   {
     key: 'dao',
     name: '道',
     href: '/category/道',
-    d: 'M8.00 458.00L995.40 458.00L994.48 460.33L994.79 461.25L995.86 461.19L993.25 464.27L989.24 472.00L969.68 497.66L966.22 500.74L954.71 516.39L947.71 524.67L929.65 552.91L922.33 568.47L923.24 574.20L925.20 577.32L927.64 579.46L931.03 580.33L937.79 577.24L941.26 573.95L946.76 565.81L960.80 552.28L1004.73 515.24L1006.24 515.18L1008.22 517.11L1009.71 520.20L1010.37 520.03L1006.52 529.14L996.20 542.70L987.07 561.85L976.06 572.85L971.25 579.68L962.53 587.94L954.88 598.07L951.23 604.13L939.60 618.33L937.08 623.67L934.20 635.49L934.58 638.50L937.10 644.15L944.25 649.04L948.98 649.18L942.64 660.18L939.32 674.53L939.70 677.53L941.60 681.29L944.39 684.13L947.28 685.27L956.29 685.40L962.91 683.14L977.50 674.80L984.02 672.16L991.57 667.23L1010.85 648.31L1012.39 647.88L1014.91 650.19L1015.77 650.16L1011.34 656.75L1001.56 666.57L990.93 675.32L987.42 678.85L984.95 683.11L983.67 701.60L984.05 704.60L985.15 706.86L988.47 709.99L993.66 712.11L988.66 712.11L988.66 981.00L8.00 981.00Z',
+    d: 'M8.00 385.61L31.31 388.78L54.60 392.69L77.88 397.04L101.16 401.48L124.44 405.68L147.74 409.35L171.05 412.39L194.37 415.03L217.68 417.91L240.97 422.02L264.21 428.22L287.40 436.36L310.60 444.62L333.86 449.66L357.27 448.12L380.87 438.58L404.60 422.57L428.40 403.94L452.16 386.84L475.83 374.04L499.38 366.37L522.83 363.25L546.20 363.57L569.51 366.30L592.80 370.66L616.05 376.08L639.30 382.10L662.53 388.34L685.78 394.41L709.03 399.99L732.30 404.81L755.59 408.66L778.91 411.44L802.25 413.12L825.61 413.77L849.00 413.53L872.40 412.64L895.80 411.34L919.21 409.92L942.62 408.66L966.02 407.83L989.40 407.61L997.00 453.94L994.48 460.33L994.79 461.25L995.86 461.19L993.25 464.27L989.24 472.00L969.68 497.66L966.22 500.74L954.71 516.39L947.71 524.67L929.65 552.91L922.33 568.47L923.24 574.20L925.20 577.32L927.64 579.46L931.03 580.33L937.79 577.24L941.26 573.95L946.76 565.81L960.80 552.28L1004.73 515.24L1006.24 515.18L1008.22 517.11L1009.71 520.20L1010.37 520.03L1006.52 529.14L996.20 542.70L987.07 561.85L976.06 572.85L971.25 579.68L962.53 587.94L954.88 598.07L951.23 604.13L939.60 618.33L937.08 623.67L934.20 635.49L934.58 638.50L937.10 644.15L944.25 649.04L948.98 649.18L942.64 660.18L939.32 674.53L939.70 677.53L941.60 681.29L944.39 684.13L947.28 685.27L956.29 685.40L962.91 683.14L977.50 674.80L984.02 672.16L991.57 667.23L1010.85 648.31L1012.39 647.88L1014.91 650.19L1015.77 650.16L1011.34 656.75L1001.56 666.57L990.93 675.32L987.42 678.85L984.95 683.11L983.67 701.60L984.05 704.60L985.15 706.86L988.47 709.99L993.66 712.11L993.66 712.11L989.92 720.05L986.99 727.91L986.35 735.53L989.03 742.80L995.35 749.69L1004.76 756.26L1015.97 762.64L1027.14 769.03L1036.24 775.63L1041.43 782.64L1041.37 790.20L1035.30 798.38L1023.04 807.21L1004.92 816.64L982.14 826.56L957.41 836.69L935.46 846.52L922.06 855.47L921.55 863.07L934.32 869.29L956.37 874.55L981.36 879.50L1003.61 884.73L1019.83 890.59L1029.17 897.17L1032.24 904.40L1030.39 912.14L1025.33 920.22L1018.88 928.44L1012.83 936.62L1008.66 944.60L1007.25 952.30L1008.72 959.70L1012.46 966.86L1017.27 973.91L1021.66 981.00L8.00 981.00Z',
     desk: [
-      { ch: '道', x: 500, y: 728, size: 488 }
+      { ch: '道', x: 492, y: 730, size: 470, rot: -7.5 }
     ],
     mobi: [
-      { ch: '道', x: 874, y: 722, size: 128 }
+      { ch: '道', x: 872, y: 724, size: 132, rot: -6.0 }
     ]
   },
   {
     key: 'shu',
     name: '术',
     href: '/category/术',
-    d: 'M2040.00 981.00L998.66 981.00L998.66 712.11L993.66 712.11L995.88 712.11L1001.95 709.74L1026.84 693.25L1035.15 686.37L1048.72 672.87L1063.01 656.36L1072.03 642.85L1075.70 631.97L1077.70 617.27L1080.27 605.34L1081.52 593.25L1086.35 572.29L1086.81 567.05L1090.55 555.72L1093.10 543.78L1093.72 529.25L1095.47 517.47L1094.07 507.99L1095.26 506.55L1095.43 504.74L1093.13 492.72L1092.85 474.23L1093.47 468.99L1093.10 458.00L2040.00 458.00Z',
+    d: 'M2040.00 981.00L1021.66 981.00L1021.66 981.00L1017.27 973.91L1012.46 966.86L1008.72 959.70L1007.25 952.30L1008.66 944.60L1012.83 936.62L1018.88 928.44L1025.33 920.22L1030.39 912.14L1032.24 904.40L1029.17 897.17L1019.83 890.59L1003.61 884.73L981.36 879.50L956.37 874.55L934.32 869.29L921.55 863.07L922.06 855.47L935.46 846.52L957.41 836.69L982.14 826.56L1004.92 816.64L1023.04 807.21L1035.30 798.38L1041.37 790.20L1041.43 782.64L1036.24 775.63L1027.14 769.03L1015.97 762.64L1004.76 756.26L995.35 749.69L989.03 742.80L986.35 735.53L986.99 727.91L989.92 720.05L993.66 712.11L993.66 712.11L995.88 712.11L1001.95 709.74L1026.84 693.25L1035.15 686.37L1048.72 672.87L1063.01 656.36L1072.03 642.85L1075.70 631.97L1077.70 617.27L1080.27 605.34L1081.52 593.25L1086.35 572.29L1086.81 567.05L1090.55 555.72L1093.10 543.78L1093.72 529.25L1095.47 517.47L1094.07 507.99L1094.07 507.99L1117.71 509.24L1141.39 509.22L1165.12 507.89L1188.90 505.41L1212.71 502.17L1236.52 498.72L1260.32 495.71L1284.07 493.80L1307.76 493.58L1331.37 495.46L1354.90 499.60L1378.34 505.89L1401.72 513.90L1425.06 522.88L1448.40 531.78L1471.80 539.31L1495.30 544.10L1518.95 544.99L1542.77 541.40L1566.74 533.68L1590.82 523.27L1614.92 512.38L1638.95 503.31L1662.84 497.66L1686.59 495.87L1710.22 497.29L1733.78 500.71L1757.30 504.98L1780.81 509.45L1804.32 513.92L1827.83 518.50L1851.33 523.27L1874.83 528.16L1898.33 532.89L1921.85 537.11L1945.40 540.49L1969.00 542.80L1992.63 544.02L2016.31 544.30L2040.00 543.99Z',
     desk: [
-      { ch: '术', x: 1536, y: 728, size: 488 }
+      { ch: '术', x: 1548, y: 724, size: 470, rot: 6.8 }
     ],
     mobi: [
-      { ch: '术', x: 1186, y: 722, size: 118 }
+      { ch: '术', x: 1188, y: 724, size: 124, rot: 5.5 }
     ]
   }
 ]
@@ -77,7 +76,8 @@ const Glyphs = ({ glyphs, mode }) =>
       y={g.y}
       fontSize={g.size}
       textAnchor='middle'
-      dominantBaseline='central'>
+      dominantBaseline='central'
+      transform={`rotate(${g.rot} ${g.x} ${g.y})`}>
       {g.ch}
     </text>
   ))
@@ -111,47 +111,52 @@ export default function HeroPuzzle() {
             onClick={event => go(event, piece.href)}>
             <path className='ob-plate-fill' d={piece.d} />
             <path className='ob-plate-seam' d={piece.d} vectorEffect='nonScalingStroke' />
-            <g className='ob-type-desk ob-letter-halo' clipPath={`url(#ob-clip-${piece.key})`}>
-              <Glyphs glyphs={piece.desk} mode='halo-desk' />
-            </g>
-            <g className='ob-type-desk ob-letter' clipPath={`url(#ob-clip-${piece.key})`}>
+            <g
+              className='ob-type-desk ob-letter'
+              clipPath={`url(#ob-clip-${piece.key})`}>
               <Glyphs glyphs={piece.desk} mode='desk' />
             </g>
-            <g className='ob-type-mobi ob-letter-halo' clipPath={`url(#ob-clip-${piece.key})`}>
-              <Glyphs glyphs={piece.mobi} mode='halo-mobi' />
-            </g>
-            <g className='ob-type-mobi ob-letter' clipPath={`url(#ob-clip-${piece.key})`}>
+            <g
+              className='ob-type-mobi ob-letter'
+              clipPath={`url(#ob-clip-${piece.key})`}>
               <Glyphs glyphs={piece.mobi} mode='mobi' />
             </g>
           </a>
         ))}
         <path className='ob-hand-outline' d={HAND_OUTLINE} vectorEffect='nonScalingStroke' />
       </svg>
+      <style jsx global>{`
+        @font-face {
+          font-family: 'ObXing';
+          src: url('data:font/woff;base64,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') format('woff');
+          font-weight: 400;
+          font-style: normal;
+          font-display: swap;
+        }
+      `}</style>
       <style jsx>{`
         .ob-puzzle {
           position: absolute;
           inset: 0;
           z-index: 20;
           pointer-events: none;
-          --ob-fill: rgba(46, 34, 20, 0.09);
-          --ob-fill-hover: rgba(46, 34, 20, 0.16);
-          --ob-seam: rgba(168, 122, 54, 0.9);
-          --ob-seam-hover: rgba(210, 160, 70, 1);
-          --ob-letter: rgba(74, 54, 32, 0.78);
-          --ob-letter-hover: rgba(168, 118, 46, 0.95);
-          --ob-halo: rgba(255, 248, 232, 0.28);
-          --ob-hand: rgba(196, 150, 74, 0.72);
+          --ob-fill: rgba(46, 34, 20, 0.035);
+          --ob-fill-hover: rgba(46, 34, 20, 0.08);
+          --ob-seam: rgba(196, 154, 86, 0.55);
+          --ob-seam-hover: rgba(210, 168, 96, 0.7);
+          --ob-letter: rgba(96, 68, 38, 0.42);
+          --ob-letter-hover: rgba(120, 82, 40, 0.58);
+          --ob-hand: rgba(196, 150, 74, 0.55);
         }
         :global(html.dark) .ob-puzzle,
         :global(.dark) .ob-puzzle {
-          --ob-fill: rgba(12, 10, 8, 0.16);
-          --ob-fill-hover: rgba(12, 10, 8, 0.24);
-          --ob-seam: rgba(212, 175, 55, 0.92);
-          --ob-seam-hover: rgba(236, 200, 96, 1);
-          --ob-letter: rgba(58, 42, 22, 0.84);
-          --ob-letter-hover: rgba(212, 170, 80, 0.96);
-          --ob-halo: rgba(255, 236, 200, 0.26);
-          --ob-hand: rgba(212, 175, 55, 0.8);
+          --ob-fill: rgba(12, 10, 8, 0.06);
+          --ob-fill-hover: rgba(12, 10, 8, 0.12);
+          --ob-seam: rgba(212, 175, 55, 0.4);
+          --ob-seam-hover: rgba(232, 196, 90, 0.68);
+          --ob-letter: rgba(72, 52, 28, 0.38);
+          --ob-letter-hover: rgba(168, 130, 70, 0.55);
+          --ob-hand: rgba(212, 175, 55, 0.5);
         }
         .ob-puzzle :global(svg) {
           position: absolute;
@@ -172,7 +177,7 @@ export default function HeroPuzzle() {
         .ob-puzzle :global(.ob-plate-seam) {
           fill: none;
           stroke: var(--ob-seam);
-          stroke-width: 2.1;
+          stroke-width: 1.35;
           stroke-linejoin: round;
           stroke-linecap: round;
           vector-effect: non-scaling-stroke;
@@ -182,7 +187,7 @@ export default function HeroPuzzle() {
         .ob-puzzle :global(.ob-hand-outline) {
           fill: none;
           stroke: var(--ob-hand);
-          stroke-width: 1.55;
+          stroke-width: 1.45;
           stroke-linejoin: round;
           vector-effect: non-scaling-stroke;
           pointer-events: none;
@@ -195,26 +200,22 @@ export default function HeroPuzzle() {
         .ob-puzzle :global(a:focus-visible .ob-plate-seam) {
           stroke: var(--ob-seam-hover);
         }
-        .ob-puzzle :global(.ob-letter text),
-        .ob-puzzle :global(.ob-letter-halo text) {
-          fill: none;
-          font-family: 'Noto Serif SC', 'Noto Serif CJK SC', 'Source Han Serif SC', 'Songti SC', 'STSong', serif;
-          font-weight: 300;
-          pointer-events: none;
-          stroke-linejoin: round;
-          stroke-linecap: round;
-        }
-        .ob-puzzle :global(.ob-letter-halo text) {
-          stroke: var(--ob-halo);
-          stroke-width: 0.036em;
+        .ob-puzzle :global(.ob-letter) {
+          mix-blend-mode: multiply;
+          filter: blur(0.45px);
         }
         .ob-puzzle :global(.ob-letter text) {
-          stroke: var(--ob-letter);
-          stroke-width: 0.015em;
+          fill: var(--ob-letter);
+          stroke: rgba(232, 208, 160, 0.16);
+          stroke-width: 0.012em;
+          stroke-linejoin: round;
+          font-family: 'ObXing', 'Zhi Mang Xing', 'STXingkai', '华文行楷', serif;
+          font-weight: 400;
+          pointer-events: none;
         }
         .ob-puzzle :global(a:hover .ob-letter text),
         .ob-puzzle :global(a:focus-visible .ob-letter text) {
-          stroke: var(--ob-letter-hover);
+          fill: var(--ob-letter-hover);
         }
         .ob-puzzle :global(.ob-type-mobi) {
           display: none;
@@ -227,13 +228,10 @@ export default function HeroPuzzle() {
             display: inline;
           }
           .ob-puzzle :global(.ob-plate-seam) {
-            stroke-width: 1.5;
+            stroke-width: 1.15;
           }
           .ob-puzzle :global(.ob-letter text) {
-            stroke-width: 0.034em;
-          }
-          .ob-puzzle :global(.ob-letter-halo text) {
-            stroke-width: 0.05em;
+            stroke-width: 0.02em;
           }
         }
         @media (hover: none) {
@@ -244,7 +242,7 @@ export default function HeroPuzzle() {
             stroke: var(--ob-seam);
           }
           .ob-puzzle :global(a:hover .ob-letter text) {
-            stroke: var(--ob-letter);
+            fill: var(--ob-letter);
           }
         }
       `}</style>
