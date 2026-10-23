@@ -31,7 +31,9 @@ jest.mock('styled-jsx/style', () => ({
 }))
 jest.mock('next/dynamic', () => () => () => null)
 jest.mock('@headlessui/react', () => ({
-  Transition: ({ children }) => <>{children}</>
+  Transition: ({ children, appear }) => (
+    <div data-transition-appear={String(appear)}>{children}</div>
+  )
 }))
 jest.mock('@/components/NotionPage', () => ({
   __esModule: true,
@@ -222,6 +224,13 @@ test.each(['/links', '/our-beings', '/sign-in'])(
     )
   }
 )
+
+test('article content is visible on first render without waiting for entry animation', () => {
+  const { container } = render(article(postFor('术')))
+  expect(
+    container.querySelector('.ob-article-card').closest('[data-transition-appear]')
+  ).toHaveAttribute('data-transition-appear', 'false')
+})
 
 // Optional local-only HTML fixture for viewport checks using the actual rendered shell/CSS.
 if (process.env.ARTICLE_WIDTH_FIXTURE) {

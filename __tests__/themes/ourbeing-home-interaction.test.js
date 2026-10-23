@@ -4,6 +4,8 @@ import { createStyleRegistry, StyleRegistry } from 'styled-jsx'
 import HeroPuzzle from '@/themes/my-theme/components/HeroPuzzle'
 import Header from '@/themes/my-theme/components/Header'
 
+jest.mock('@/lib/global', () => ({ useGlobal: () => ({}) }))
+
 jest.mock('@/lib/config', () => ({
   siteConfig: (_key, fallback) => fallback
 }))

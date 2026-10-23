@@ -1,13 +1,9 @@
 import { siteConfig } from '@/lib/config'
 import throttle from 'lodash.throttle'
 import SmartLink from '@/components/SmartLink'
-import dynamic from 'next/dynamic'
+import SiteSettings from './SiteSettings'
 import { useRouter } from 'next/router'
-import { useEffect, useRef } from 'react'
-
-const OurBeingsHeaderAuth = dynamic(() => import('./OurBeingsHeaderAuth'), {
-  ssr: false
-})
+import { useCallback, useEffect, useRef, useState } from 'react'
 
 const MOTTO_TITLE = '我们的存在'
 const MOTTO_LINES = [
@@ -34,12 +30,18 @@ const MottoWave = ({ text, offset = 0, duration = 2.5, step = 0.1 }) => (
   </span>
 )
 
-/** Minimal theme chrome: brand, centered motto, existing account entry.
+/** Minimal theme chrome: brand, centered motto, unified site settings.
  * Navigation routes remain available; no authentication behavior is changed.
  */
 const Header = ({ siteInfo }) => {
   const router = useRouter()
   const navRef = useRef(null)
+  const [settingsOpen, setSettingsOpen] = useState(false)
+  const settingsOpenRef = useRef(false)
+  const handleSettingsOpen = useCallback(value => {
+    settingsOpenRef.current = value
+    setSettingsOpen(value)
+  }, [])
   useEffect(() => {
     const nav = navRef.current
     const theme = nav?.closest('#theme-my-theme')
@@ -59,6 +61,7 @@ const Header = ({ siteInfo }) => {
       if (!nav) return
       const hero = document.getElementById('header')
       const showNav =
+        settingsOpenRef.current ||
         scrollTop <= previousTop ||
         scrollTop < 5 ||
         (hero && scrollTop <= hero.clientHeight + 100)
@@ -73,7 +76,7 @@ const Header = ({ siteInfo }) => {
     return () => {
       router.events.off('routeChangeComplete', topNavStyleHandler)
       window.removeEventListener('scroll', topNavStyleHandler)
-      topNavStyleHandler.cancel()
+      topNavStyleHandler.cancel?.()
     }
   }, [router.events])
 
@@ -82,7 +85,7 @@ const Header = ({ siteInfo }) => {
       <div
         id='sticky-nav'
         ref={navRef}
-        className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'
+        className={`ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all${settingsOpen ? ' ob-nav-settings-open' : ''}`}
       >
         <div className='ob-nav-inner'>
           <div className='ob-nav-row'>
@@ -90,7 +93,7 @@ const Header = ({ siteInfo }) => {
               {siteInfo?.title || siteConfig('TITLE')}
             </SmartLink>
             <div className='ob-nav-right'>
-              <OurBeingsHeaderAuth />
+              <SiteSettings onOpenChange={handleSettingsOpen} />
             </div>
           </div>
           <div className='ob-nav-motto'>

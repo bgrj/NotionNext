@@ -1,4 +1,10 @@
 const CONFIG = {
+  // 文章阅读与顶栏设置（可由 Notion 配置中心同名键覆盖）
+  OURBEINGS_ARTICLE_BACKGROUND:
+    '/assets/ourbeing/web-mainpage-uphand.dc81786dbc79.webp',
+  OURBEINGS_ARTICLE_OPACITY_LIGHT: 0.82,
+  OURBEINGS_ARTICLE_OPACITY_DARK: 0.8,
+  OURBEINGS_UI_LANGUAGES: ['zh-CN', 'en-US'],
   HEXO_HOME_BANNER_ENABLE: true,
   // 3.14.1以后的版本中，欢迎语在blog.config.js中配置，用英文逗号','隔开多个。
   HEXO_HOME_BANNER_GREETINGS: [

@@ -220,8 +220,10 @@ const LayoutBase = props => {
                   <ArticleSwitchPlaceholder />
                 ) : (
                   <Transition
-                    show={isArticleSlugPage ? true : !onLoading}
-                    appear={true}
+                    show={
+                      articleLayout || isArticleSlugPage ? true : !onLoading
+                    }
+                    appear={!articleLayout}
                     enter='transition ease-in-out duration-700 transform order-first'
                     enterFrom='opacity-0 translate-y-16'
                     enterTo='opacity-100'
@@ -434,7 +436,7 @@ const LayoutSlug = props => {
             <div className='pt-4 border-dashed'></div>
 
             {/* 评论互动 */}
-            <div className='duration-200 overflow-x-auto bg-white dark:bg-hexo-black-gray px-3'>
+            <div className='ob-article-comments duration-200 overflow-x-auto px-3'>
               <Comment frontMatter={post} />
             </div>
           </div>

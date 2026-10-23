@@ -2,6 +2,7 @@
 import { themeConsoleStyle } from '@/lib/themeConsoleStyle'
 import { siteConfig } from '@/lib/config'
 import CONFIG from './config'
+import { articleBackground, articleOpacity } from './readingSettings'
 
 /**
  * 这里的css样式只对当前主题生效
@@ -33,6 +34,29 @@ const Style = () => {
   )
   const border = siteConfig('HEXO_COLOR_BORDER', '#e5e7eb', CONFIG)
   const borderDark = siteConfig('HEXO_COLOR_BORDER_DARK', '#000000', CONFIG)
+  const readingBackground = articleBackground(
+    siteConfig(
+      'OURBEINGS_ARTICLE_BACKGROUND',
+      CONFIG.OURBEINGS_ARTICLE_BACKGROUND,
+      CONFIG
+    )
+  )
+  const readingOpacityLight = articleOpacity(
+    siteConfig(
+      'OURBEINGS_ARTICLE_OPACITY_LIGHT',
+      CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT,
+      CONFIG
+    ),
+    CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT
+  )
+  const readingOpacityDark = articleOpacity(
+    siteConfig(
+      'OURBEINGS_ARTICLE_OPACITY_DARK',
+      CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK,
+      CONFIG
+    ),
+    CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK
+  )
 
   return (
     <style jsx global>{`
@@ -402,6 +426,53 @@ const Style = () => {
           position: static;
           top: auto;
         }
+      }
+
+      /* 仅底板半透明：文字、图片和视频不使用整体 opacity。 */
+      #theme-my-theme.ob-article-layout {
+        isolation: isolate;
+        position: relative;
+        --ob-reading-opacity: ${readingOpacityLight};
+      }
+      .dark #theme-my-theme.ob-article-layout {
+        --ob-reading-opacity: ${readingOpacityDark};
+      }
+      #theme-my-theme.ob-article-layout::before {
+        content: '';
+        position: fixed;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        background-image: url(${JSON.stringify(readingBackground)});
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+      }
+      #theme-my-theme.ob-article-layout #wrapper {
+        background: transparent !important;
+        padding-bottom: 0;
+        min-height: 0;
+      }
+      #theme-my-theme.ob-article-layout .ob-article-card {
+        background-color: rgba(255, 255, 255, ${readingOpacityLight});
+        background-color: color-mix(
+          in srgb,
+          var(--hexo-color-card) calc(var(--ob-reading-opacity) * 100%),
+          transparent
+        );
+      }
+      .dark #theme-my-theme.ob-article-layout .ob-article-card {
+        background-color: rgba(16, 20, 20, ${readingOpacityDark});
+        background-color: color-mix(
+          in srgb,
+          var(--hexo-color-card) calc(var(--ob-reading-opacity) * 100%),
+          transparent
+        );
+      }
+      #theme-my-theme.ob-article-layout .ob-article-comments,
+      #theme-my-theme.ob-article-layout .ob-article-body .notion,
+      #theme-my-theme.ob-article-layout .ob-article-body .notion-page {
+        background: transparent !important;
       }
 
       /* 文章详情（含「术」）：卡片全屏铺展，目录走抽屉，不挤占正文。 */
