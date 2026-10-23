@@ -122,6 +122,8 @@ const Ink = ({ set, className }) => (
 export default function HeroPuzzle() {
   const router = useRouter()
   const [hover, setHover] = useState('')
+  const [focused, setFocused] = useState('')
+  const active = focused || hover
   const go = (event, href) => {
     event.preventDefault()
     router.push(href)
@@ -135,10 +137,15 @@ export default function HeroPuzzle() {
         preserveAspectRatio='xMidYMid slice'
         aria-hidden='true'
         focusable='false'
-        data-hover={hover}>
+        data-hover={active}>
         <defs>
           {Object.entries(GLYPHS).map(([glyph, d]) => (
-            <path key={glyph} id={`ob-g-${glyph}`} d={d} vectorEffect='non-scaling-stroke' />
+            <path
+              key={glyph}
+              id={`ob-g-${glyph}`}
+              d={d}
+              vectorEffect='non-scaling-stroke'
+            />
           ))}
           {PIECES.map(piece => (
             <clipPath key={piece.key} id={`ob-clip-${piece.key}`}>
@@ -169,7 +176,7 @@ export default function HeroPuzzle() {
           </g>
         ))}
       </svg>
-      <div className='ob-puzzle'>
+      <div className='ob-puzzle' data-hover={active}>
         <svg
           viewBox='0 0 2048 989'
           preserveAspectRatio='xMidYMid slice'
@@ -182,10 +189,24 @@ export default function HeroPuzzle() {
               aria-label={piece.name}
               className='ob-plate-link'
               onClick={event => go(event, piece.href)}
-              onMouseEnter={() => setHover(piece.key)}
-              onMouseLeave={() => setHover('')}
-              onFocus={() => setHover(piece.key)}
-              onBlur={() => setHover('')}>
+              onPointerEnter={event => {
+                if (event.pointerType !== 'touch') setHover(piece.key)
+              }}
+              onPointerLeave={() => setHover('')}
+              onPointerDown={() => {
+                setFocused('')
+                setHover(piece.key)
+              }}
+              onPointerUp={event => {
+                if (event.pointerType === 'touch') setHover('')
+              }}
+              onPointerCancel={() => setHover('')}
+              onFocus={event => {
+                if (event.currentTarget.matches(':focus-visible')) {
+                  setFocused(piece.key)
+                }
+              }}
+              onBlur={() => setFocused('')}>
               <path className='ob-plate' d={piece.plate} />
             </a>
           ))}
@@ -201,6 +222,16 @@ export default function HeroPuzzle() {
           </g>
           <path className='ob-hand-outline' d={HAND_OUTLINE} />
         </svg>
+        <div className='ob-entry-hints' aria-hidden='true'>
+          {PIECES.map(piece => (
+            <span
+              key={piece.key}
+              className={`ob-entry-hint ob-entry-hint-${piece.key}`}>
+              {piece.name}
+              <span className='ob-entry-action'>进入 →</span>
+            </span>
+          ))}
+        </div>
       </div>
       <style jsx global>{`
         .ob-ink-layer,
@@ -225,13 +256,18 @@ export default function HeroPuzzle() {
           stroke-linecap: round;
           stroke-linejoin: round;
           opacity: 0.48;
-          transition: opacity 240ms ease;
+          transition:
+            opacity 240ms ease,
+            fill 240ms ease,
+            stroke-width 240ms ease;
         }
         .ob-ink-layer[data-hover='our'] .ob-ink-our,
         .ob-ink-layer[data-hover='self'] .ob-ink-self,
         .ob-ink-layer[data-hover='dao'] .ob-ink-dao,
         .ob-ink-layer[data-hover='shu'] .ob-ink-shu {
-          opacity: 0.61;
+          opacity: 0.94;
+          fill: rgba(94, 65, 32, 0.2);
+          stroke-width: 1.3;
         }
         .ob-puzzle {
           z-index: 20;
@@ -255,7 +291,71 @@ export default function HeroPuzzle() {
         }
         .ob-plate-link:hover .ob-plate,
         .ob-plate-link:focus-visible .ob-plate {
-          fill: rgba(255, 244, 222, 0.07);
+          fill: rgba(239, 194, 115, 0.21);
+        }
+        .ob-plate-link:active .ob-plate {
+          fill: rgba(218, 168, 79, 0.28);
+        }
+        .ob-plate-link:focus-visible .ob-plate {
+          stroke: #765020;
+          stroke-width: 3;
+          vector-effect: non-scaling-stroke;
+        }
+        .ob-entry-hints {
+          position: absolute;
+          inset: 0;
+          pointer-events: none;
+        }
+        .ob-entry-hint {
+          position: absolute;
+          left: 25%;
+          top: 36%;
+          transform: translate(-50%, -50%) translateY(4px);
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          padding: 8px 13px;
+          border: 1px solid rgba(109, 78, 36, 0.4);
+          border-radius: 4px;
+          background: rgba(255, 246, 227, 0.94);
+          color: #49351d;
+          font-size: 14px;
+          line-height: 1.5;
+          white-space: nowrap;
+          opacity: 0;
+          transition:
+            opacity 240ms ease,
+            transform 240ms ease;
+        }
+        .ob-entry-hint-self,
+        .ob-entry-hint-shu {
+          left: 75%;
+        }
+        .ob-entry-hint-dao,
+        .ob-entry-hint-shu {
+          top: 82%;
+        }
+        .ob-entry-action {
+          font-size: 12px;
+        }
+        .ob-puzzle[data-hover='our'] .ob-entry-hint-our,
+        .ob-puzzle[data-hover='self'] .ob-entry-hint-self,
+        .ob-puzzle[data-hover='dao'] .ob-entry-hint-dao,
+        .ob-puzzle[data-hover='shu'] .ob-entry-hint-shu {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+        html.dark .ob-entry-hint {
+          background: rgba(31, 25, 18, 0.94);
+          color: #f6e5c5;
+          border-color: rgba(223, 180, 108, 0.65);
+        }
+        @media (prefers-reduced-motion: reduce) {
+          .ob-ink,
+          .ob-plate,
+          .ob-entry-hint {
+            transition: none;
+          }
         }
         .ob-seam-glow path {
           fill: rgba(255, 232, 186, 0.22);
@@ -276,9 +376,6 @@ export default function HeroPuzzle() {
         html.dark .ob-ink-layer {
           --ob-ink: #766957;
         }
-        html.dark .ob-ink {
-          opacity: 0.48;
-        }
         @media (max-width: 1023px) {
           .ob-type-desk {
             display: none;
@@ -295,43 +392,62 @@ export default function HeroPuzzle() {
           .ob-ink-dao .ob-type-desk,
           .ob-ink-shu .ob-type-desk {
             transform-origin: 0 0;
-            transform: translate(1024px, 730px) scale(0.85) translate(-1024px, -730px);
+            transform: translate(1024px, 730px) scale(0.85)
+              translate(-1024px, -730px);
           }
           .ob-ink-our .ob-type-desk {
-            transform: translate(960px, 300px) scale(0.72) translate(-960px, -300px);
+            transform: translate(960px, 300px) scale(0.72)
+              translate(-960px, -300px);
           }
           .ob-ink-self .ob-type-desk {
-            transform: translate(1150px, 300px) scale(0.72) translate(-1150px, -300px);
+            transform: translate(1150px, 300px) scale(0.72)
+              translate(-1150px, -300px);
           }
         }
         @media (min-width: 1024px) and (max-aspect-ratio: 7/5) {
           .ob-ink-dao .ob-type-desk,
           .ob-ink-shu .ob-type-desk {
             transform-origin: 0 0;
-            transform: translate(1024px, 730px) scale(0.72) translate(-1024px, -730px);
+            transform: translate(1024px, 730px) scale(0.72)
+              translate(-1024px, -730px);
           }
           .ob-ink-our .ob-type-desk {
-            transform: translate(960px, 300px) scale(0.62) translate(-960px, -300px);
+            transform: translate(960px, 300px) scale(0.62)
+              translate(-960px, -300px);
           }
           .ob-ink-self .ob-type-desk {
-            transform: translate(1150px, 300px) scale(0.62) translate(-1150px, -300px);
+            transform: translate(1150px, 300px) scale(0.62)
+              translate(-1150px, -300px);
           }
         }
         @media (min-width: 1024px) and (max-aspect-ratio: 13/10) {
           .ob-ink-dao .ob-type-desk,
           .ob-ink-shu .ob-type-desk {
             transform-origin: 0 0;
-            transform: translate(1024px, 730px) scale(0.60) translate(-1024px, -730px);
+            transform: translate(1024px, 730px) scale(0.6)
+              translate(-1024px, -730px);
           }
           .ob-ink-our .ob-type-desk {
-            transform: translate(960px, 300px) scale(0.54) translate(-960px, -300px);
+            transform: translate(960px, 300px) scale(0.54)
+              translate(-960px, -300px);
           }
           .ob-ink-self .ob-type-desk {
-            transform: translate(1150px, 300px) scale(0.54) translate(-1150px, -300px);
+            transform: translate(1150px, 300px) scale(0.54)
+              translate(-1150px, -300px);
           }
         }
         @media (hover: none) {
-          .ob-plate-link:hover .ob-plate {
+          .ob-entry-hint {
+            opacity: 1;
+            transform: translate(-50%, -50%);
+            gap: 6px;
+            padding: 6px 8px;
+            font-size: 12px;
+          }
+          .ob-entry-action {
+            font-size: 11px;
+          }
+          .ob-plate-link:hover:not(:active):not(:focus-visible) .ob-plate {
             fill: rgba(255, 244, 222, 0);
           }
         }

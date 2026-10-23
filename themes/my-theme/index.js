@@ -153,6 +153,8 @@ const LayoutBase = props => {
   // 只在「这一页真的渲染了头图」时用 pt-0；分类/标签/搜索等无头图页
   // 若仍看 HEXO_HOME_BANNER_ENABLE，会被固定顶栏挡住列表和分类标题。
   const hasHero = Boolean(headerSlot)
+  // The landing page ends at the hero; category/search/article layouts stay intact.
+  const heroOnlyHome = !post && router.route === '/' && hasHero
   const wrapperTop = hasHero
     ? post
       ? 'pt-8 md:pt-10'
@@ -207,50 +209,55 @@ const LayoutBase = props => {
         </Transition>
 
         {/* 主区块 */}
-        <main
-          id='wrapper'
-          className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
-          <div
-            id='container-inner'
-            className={
-              (sidebarReverse ? 'flex-row-reverse' : '') +
-              ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
-            }>
+        {!heroOnlyHome && (
+          <main
+            id='wrapper'
+            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
             <div
-              className={`${className || ''} w-full ${wideMain ? '' : listWithoutSidebar ? 'max-w-5xl' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}>
-              {showArticleSwitchPlaceholder ? (
-                <ArticleSwitchPlaceholder />
-              ) : (
-                <Transition
-                  show={isArticleSlugPage ? true : !onLoading}
-                  appear={true}
-                  enter='transition ease-in-out duration-700 transform order-first'
-                  enterFrom='opacity-0 translate-y-16'
-                  enterTo='opacity-100'
-                  leave='transition ease-in-out duration-300 transform'
-                  leaveFrom='opacity-100 translate-y-0'
-                  leaveTo='opacity-0 -translate-y-16'
-                  unmount={false}>
-                  {/* 主区上部嵌入 */}
-                  {slotTop}
+              id='container-inner'
+              className={
+                (sidebarReverse ? 'flex-row-reverse' : '') +
+                ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
+              }
+            >
+              <div
+                className={`${className || ''} w-full ${wideMain ? '' : listWithoutSidebar ? 'max-w-5xl' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}
+              >
+                {showArticleSwitchPlaceholder ? (
+                  <ArticleSwitchPlaceholder />
+                ) : (
+                  <Transition
+                    show={isArticleSlugPage ? true : !onLoading}
+                    appear={true}
+                    enter='transition ease-in-out duration-700 transform order-first'
+                    enterFrom='opacity-0 translate-y-16'
+                    enterTo='opacity-100'
+                    leave='transition ease-in-out duration-300 transform'
+                    leaveFrom='opacity-100 translate-y-0'
+                    leaveTo='opacity-0 -translate-y-16'
+                    unmount={false}
+                  >
+                    {/* 主区上部嵌入 */}
+                    {slotTop}
 
-                  {children}
-                </Transition>
+                    {children}
+                  </Transition>
+                )}
+              </div>
+
+              {/* 列表页不渲染信息卡 / 最新发布；文章页只保留目录。公告走全站弹窗。 */}
+              {showCatalogSidebar && (
+                <div id='sideRight' className='lg:w-80 lg:pt-0'>
+                  <div className='space-y-4'>
+                    <Card>
+                      <Catalog toc={post.toc} />
+                    </Card>
+                  </div>
+                </div>
               )}
             </div>
-
-            {/* 列表页不渲染信息卡 / 最新发布；文章页只保留目录。公告走全站弹窗。 */}
-            {showCatalogSidebar && (
-              <div id='sideRight' className='lg:w-80 lg:pt-0'>
-                <div className='space-y-4'>
-                  <Card>
-                    <Catalog toc={post.toc} />
-                  </Card>
-                </div>
-              </div>
-            )}
-          </div>
-        </main>
+          </main>
+        )}
 
         {!chromeLite && (
           <div className='block lg:hidden'>
@@ -276,11 +283,12 @@ const LayoutBase = props => {
 
 /**
  * 首页
- * 是一个博客列表，嵌入一个Hero大图
+ * 启用头图时只保留主视觉和页脚；未启用时保留文章列表。
  * @param {*} props
  * @returns
  */
 const LayoutIndex = props => {
+  if (siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG)) return null
   return <LayoutPostList {...props} className='pt-8' />
 }
 

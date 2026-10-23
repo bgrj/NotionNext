@@ -10,8 +10,25 @@ const OurBeingsHeaderAuth = dynamic(() => import('./OurBeingsHeaderAuth'), {
 })
 
 const MOTTO_TITLE = '我们的存在'
-const MOTTO_LINE =
-  '让我们的思想为时代所传唱，让我们的灵魂永世不朽，让我们的存在与世界同在'
+const MOTTO_LINES = [
+  '让我们的思想为时代所传唱，',
+  '让我们的灵魂永世不朽，',
+  '让我们的存在与世界同在'
+]
+
+const MottoWave = ({ text, offset = 0 }) => (
+  <span className='ob-nav-wave' aria-label={text}>
+    {Array.from(text).map((char, index) => (
+      <span
+        key={index}
+        aria-hidden='true'
+        className='ob-nav-wave-char'
+        style={{ animationDelay: `${-6 + offset + index * 0.12}s` }}>
+        {char}
+      </span>
+    ))}
+  </span>
+)
 
 /** Minimal theme chrome: brand, centered motto, existing account entry.
  * Navigation routes remain available; no authentication behavior is changed.
@@ -59,8 +76,14 @@ const Header = ({ siteInfo }) => {
             </div>
           </div>
           <div className='ob-nav-motto'>
-            <div className='ob-nav-motto-title'>{MOTTO_TITLE}</div>
-            <div className='ob-nav-motto-line'>{MOTTO_LINE}</div>
+            <div className='ob-nav-motto-title'>
+              <MottoWave text={MOTTO_TITLE} />
+            </div>
+            <div className='ob-nav-motto-line'>
+              {MOTTO_LINES.map((line, index) => (
+                <MottoWave key={line} text={line} offset={index * 0.65} />
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -106,9 +129,31 @@ const Header = ({ siteInfo }) => {
           font-size: 11px;
           letter-spacing: 0.045em;
           font-weight: 300;
-          opacity: 0.72;
+          opacity: 0.88;
           line-height: 1.35;
           white-space: nowrap;
+        }
+        #theme-my-theme .ob-nav-wave {
+          display: inline-block;
+          white-space: nowrap;
+        }
+        #theme-my-theme .ob-nav-wave-char {
+          display: inline-block;
+          animation: ob-nav-breathe 6s ease-in-out infinite;
+        }
+        @keyframes ob-nav-breathe {
+          0%,
+          100% {
+            opacity: 0.78;
+          }
+          50% {
+            opacity: 1;
+          }
+        }
+        @media (prefers-reduced-motion: reduce) {
+          #theme-my-theme .ob-nav-wave-char {
+            animation: none;
+          }
         }
         #theme-my-theme .ob-sticky-nav.ob-nav-hidden {
           transform: translateY(-110%);
