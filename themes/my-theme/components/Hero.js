@@ -13,7 +13,7 @@ const Hero = props => {
     <header
       id='header'
       style={{ zIndex: 1 }}
-      className='w-full h-screen relative bg-black'
+      className='ob-home-hero w-full relative bg-black'
       data-ob-minimal-hero='true'
     >
       <HandGlow />
@@ -23,11 +23,24 @@ const Hero = props => {
         priority
         id='header-cover'
         alt={siteInfo?.title}
-        src={siteInfo?.pageCover}
+        src='/assets/ourbeing/web-mainpage-downhand.90bc60e9a6ab.webp'
         width={1920}
         height={1080}
         className='header-cover absolute inset-0 z-0 h-full w-full object-cover object-center'
       />
+      <style jsx global>{`
+        #theme-my-theme.ob-home-only #ob-home-main {
+          padding-top: var(--ob-home-nav-height, 64px);
+        }
+        #theme-my-theme .ob-home-hero {
+          position: relative;
+          isolation: isolate;
+          overflow: hidden;
+          height: calc(100vh - var(--ob-home-nav-height, 64px));
+          height: calc(100svh - var(--ob-home-nav-height, 64px));
+          min-height: 360px;
+        }
+      `}</style>
     </header>
   )
 }

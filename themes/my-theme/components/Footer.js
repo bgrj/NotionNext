@@ -238,11 +238,17 @@ const Footer = ({ homeCanvas = false }) => {
           --ob-line: rgba(232, 224, 212, 0.12);
         }
         .ob-footer.ob-footer-home {
+          --ob-ink: #33271c;
+          --ob-muted: #554431;
+          --ob-gold: #765018;
           isolation: isolate;
           overflow: hidden;
           background-color: #f4ead8;
         }
         .dark .ob-footer.ob-footer-home {
+          --ob-ink: #fff7e9;
+          --ob-muted: #f2e5d1;
+          --ob-gold: #f2c984;
           background-color: #120e0a;
         }
         .ob-footer.ob-footer-home::before,
@@ -262,22 +268,45 @@ const Footer = ({ homeCanvas = false }) => {
         .ob-footer.ob-footer-home::after {
           background: linear-gradient(
             180deg,
-            rgba(255, 248, 236, 0.42) 0%,
-            rgba(250, 240, 222, 0.66) 55%,
-            rgba(244, 234, 216, 0.82) 100%
+            rgba(255, 248, 236, 0.76) 0%,
+            rgba(250, 240, 222, 0.8) 55%,
+            rgba(244, 234, 216, 0.9) 100%
           );
         }
         .dark .ob-footer.ob-footer-home::after {
           background: linear-gradient(
             180deg,
-            rgba(12, 9, 6, 0.38) 0%,
-            rgba(12, 9, 6, 0.58) 52%,
-            rgba(8, 6, 4, 0.78) 100%
+            rgba(12, 9, 6, 0.72) 0%,
+            rgba(12, 9, 6, 0.75) 52%,
+            rgba(8, 6, 4, 0.85) 100%
           );
         }
         .ob-footer.ob-footer-home > * {
           position: relative;
           z-index: 1;
+        }
+        @media (max-width: 767px) {
+          .ob-footer.ob-footer-home::before {
+            /* A tall stacked footer must not enlarge the hand to several
+               screens or crop it down to a few fingers. */
+            top: calc(58% - 380px);
+            bottom: auto;
+            height: 760px;
+            background-size: cover;
+            background-position: center;
+            mask-image: linear-gradient(
+              transparent,
+              #000 18%,
+              #000 82%,
+              transparent
+            );
+            -webkit-mask-image: linear-gradient(
+              transparent,
+              #000 18%,
+              #000 82%,
+              transparent
+            );
+          }
         }
         .ob-wave-char {
           display: inline-block;
@@ -285,6 +314,19 @@ const Footer = ({ homeCanvas = false }) => {
           animation-name: ob-wave;
           animation-timing-function: ease-in-out;
           animation-iteration-count: infinite;
+        }
+        .ob-footer-home .ob-wave-char {
+          animation-name: ob-home-footer-wave;
+          opacity: 0.8;
+        }
+        @keyframes ob-home-footer-wave {
+          0%,
+          100% {
+            opacity: 0.8;
+          }
+          50% {
+            opacity: 1;
+          }
         }
         @keyframes ob-wave {
           0%,
@@ -628,10 +670,9 @@ const Footer = ({ homeCanvas = false }) => {
           }
           .ob-grid {
             display: grid;
-            grid-template-columns: minmax(13.5rem, 1.05fr) minmax(
-                10rem,
-                0.62fr
-              ) minmax(0, 2.55fr);
+            grid-template-columns:
+              minmax(13.5rem, 1.05fr) minmax(10rem, 0.62fr)
+              minmax(0, 2.55fr);
             column-gap: 3rem;
             row-gap: 2.5rem;
             align-items: start;
@@ -718,10 +759,9 @@ const Footer = ({ homeCanvas = false }) => {
             padding: 3.75rem 3.25rem 0;
           }
           .ob-grid {
-            grid-template-columns: minmax(14rem, 1fr) minmax(
-                10rem,
-                0.55fr
-              ) minmax(0, 2.9fr);
+            grid-template-columns:
+              minmax(14rem, 1fr) minmax(10rem, 0.55fr)
+              minmax(0, 2.9fr);
             column-gap: 3.5rem;
           }
           .ob-east-cols {

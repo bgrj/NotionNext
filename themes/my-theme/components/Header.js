@@ -3,7 +3,7 @@ import throttle from 'lodash.throttle'
 import SmartLink from '@/components/SmartLink'
 import dynamic from 'next/dynamic'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 const OurBeingsHeaderAuth = dynamic(() => import('./OurBeingsHeaderAuth'), {
   ssr: false
@@ -39,6 +39,18 @@ const MottoWave = ({ text, offset = 0, duration = 2.5, step = 0.1 }) => (
  */
 const Header = ({ siteInfo }) => {
   const router = useRouter()
+  const navRef = useRef(null)
+  useEffect(() => {
+    const nav = navRef.current
+    const theme = nav?.closest('#theme-my-theme')
+    if (!nav || !theme) return
+    const measure = () =>
+      theme.style.setProperty('--ob-home-nav-height', `${nav.offsetHeight}px`)
+    measure()
+    const observer = new ResizeObserver(measure)
+    observer.observe(nav)
+    return () => observer.disconnect()
+  }, [])
   useEffect(() => {
     let previousTop = window.scrollY
     const topNavStyleHandler = throttle(() => {
@@ -69,6 +81,7 @@ const Header = ({ siteInfo }) => {
     <div id='top-nav' className='z-40'>
       <div
         id='sticky-nav'
+        ref={navRef}
         className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'
       >
         <div className='ob-nav-inner'>
@@ -100,7 +113,7 @@ const Header = ({ siteInfo }) => {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          min-height: 3.25rem;
+          min-height: 4rem;
           padding: 0.42rem 1.05rem;
         }
         #theme-my-theme .ob-nav-right {
@@ -128,22 +141,22 @@ const Header = ({ siteInfo }) => {
           letter-spacing: 0.22em;
           font-weight: 400;
           line-height: 1.2;
-          color: #8d6230;
+          color: #65451f;
         }
         .dark #theme-my-theme .ob-nav-motto-title {
           color: #e2c48a;
         }
         #theme-my-theme .ob-nav-motto-line {
           margin-top: 3px;
-          font-size: 11px;
+          font-size: 13px;
           letter-spacing: 0.045em;
           font-weight: 300;
           line-height: 1.35;
           white-space: nowrap;
-          color: #8f7e6a;
+          color: #594c3b;
         }
         .dark #theme-my-theme .ob-nav-motto-line {
-          color: #cbb79a;
+          color: #f0dfc4;
         }
         #theme-my-theme .ob-nav-wave {
           display: inline-block;
@@ -154,7 +167,7 @@ const Header = ({ siteInfo }) => {
         }
         #theme-my-theme .ob-nav-wave-char {
           display: inline-block;
-          opacity: 0.32;
+          opacity: 0.78;
           animation-name: ob-nav-breathe;
           animation-timing-function: ease-in-out;
           animation-iteration-count: infinite;
@@ -162,10 +175,12 @@ const Header = ({ siteInfo }) => {
         @keyframes ob-nav-breathe {
           0%,
           100% {
-            opacity: 0.32;
+            opacity: 0.78;
+            filter: brightness(1);
           }
           50% {
             opacity: 1;
+            filter: brightness(1.18);
           }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -200,13 +215,18 @@ const Header = ({ siteInfo }) => {
             padding: 0 0.75rem 0.5rem;
           }
           #theme-my-theme .ob-nav-motto-title {
-            font-size: 13px;
+            font-size: 15px;
             letter-spacing: 0.16em;
           }
           #theme-my-theme .ob-nav-motto-line {
-            font-size: 9.5px;
+            font-size: 12px;
             letter-spacing: 0.02em;
             white-space: normal;
+          }
+          #theme-my-theme .ob-nav-motto-line .ob-nav-wave {
+            display: block;
+            margin-left: 0;
+            line-height: 1.5;
           }
         }
       `}</style>

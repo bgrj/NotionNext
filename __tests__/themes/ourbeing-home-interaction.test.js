@@ -61,7 +61,7 @@ test('navigation keeps the complete motto and provides a reduced-motion alternat
     expect(markup).toContain(`aria-label="${text}"`)
   }
   expect(styles).toContain('ob-nav-breathe')
-  expect(styles).toMatch(/opacity:\s*\.?32/)
+  expect(styles).toMatch(/opacity:\s*0?\.78/)
   expect(styles).toContain('prefers-reduced-motion')
   expect(styles).not.toMatch(/&#(?:x27|39);|&quot;/)
 })

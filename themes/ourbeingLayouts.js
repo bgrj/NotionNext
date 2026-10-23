@@ -1,11 +1,12 @@
 import dynamic from 'next/dynamic'
+import { LayoutBase } from '@/themes/my-theme'
 
 // Top-level literal imports let Next register/preload before SSR. Creating a
 // loadable during render can leave initial HTML as a skeleton despite ssr:true.
 export const ourbeingLayouts = {
-  LayoutBase: dynamic(() =>
-    import('@/themes/my-theme').then(mod => mod.LayoutBase)
-  ),
+  // Keep the application shell synchronous. A suspended root layout can leave
+  // the server-rendered shell behind while the client mounts another copy.
+  LayoutBase,
   LayoutIndex: dynamic(() =>
     import('@/themes/my-theme').then(mod => mod.LayoutIndex)
   ),

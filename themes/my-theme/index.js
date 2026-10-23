@@ -194,19 +194,26 @@ const LayoutBase = props => {
         <Header {...props} />
 
         {/* 顶部嵌入 */}
-        <Transition
-          show={!onLoading}
-          appear={true}
-          enter='transition ease-in-out duration-700 transform order-first'
-          enterFrom='opacity-0 -translate-y-16'
-          enterTo='opacity-100'
-          leave='transition ease-in-out duration-300 transform'
-          leaveFrom='opacity-100'
-          leaveTo='opacity-0 translate-y-16'
-          unmount={false}
-        >
-          {headerSlot}
-        </Transition>
+        {heroOnlyHome ? (
+          <main id='ob-home-main'>{headerSlot}</main>
+        ) : (
+          <Transition
+            show={!onLoading}
+            appear={true}
+            enter='transition ease-in-out duration-700 transform order-first'
+            enterFrom='opacity-0 -translate-y-16'
+            enterTo='opacity-100'
+            leave='transition ease-in-out duration-300 transform'
+            leaveFrom='opacity-100'
+            leaveTo='opacity-0 translate-y-16'
+            unmount={false}
+          >
+            {headerSlot}
+          </Transition>
+        )}
+
+        {/* Keep Next's page/SEO lifecycle mounted, without a list container. */}
+        {heroOnlyHome && children}
 
         {/* 主区块 */}
         {!heroOnlyHome && (
