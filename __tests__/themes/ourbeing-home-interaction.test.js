@@ -65,3 +65,21 @@ test('navigation keeps the complete motto and provides a reduced-motion alternat
   expect(styles).toContain('prefers-reduced-motion')
   expect(styles).not.toMatch(/&#(?:x27|39);|&quot;/)
 })
+
+test('touch hints use unboxed arrows above and below the calligraphy', () => {
+  const { markup, styles } = render(<HeroPuzzle />)
+  expect(markup).toContain('ob-entry-name')
+  expect(markup).toContain('ob-entry-arrow-mobile')
+  expect(markup).toContain('↗')
+  expect(styles).toMatch(/top:\s*8%/)
+  expect(styles).toMatch(/top:\s*94%/)
+  expect(styles).toMatch(/background:\s*transparent/)
+})
+
+test('mobile navigation uses a compact title row and a visible reduced-motion-safe wave', () => {
+  const { styles } = render(<Header siteInfo={{ title: 'Our beings' }} />)
+  expect(styles).toContain('ob-nav-mobile-wave')
+  expect(styles).toMatch(/translateY\(-1\.5px\)/i)
+  expect(styles).toMatch(/min-height:\s*44px/)
+  expect(styles).toMatch(/animation:\s*none\s*!important/)
+})

@@ -183,6 +183,21 @@ const Header = ({ siteInfo }) => {
             filter: brightness(1.18);
           }
         }
+        @keyframes ob-nav-mobile-wave {
+          0%,
+          100% {
+            opacity: 0.86;
+            transform: translateY(0);
+          }
+          45% {
+            opacity: 1;
+            transform: translateY(-1.5px);
+          }
+          70% {
+            opacity: 0.94;
+            transform: translateY(0.5px);
+          }
+        }
         @media (prefers-reduced-motion: reduce) {
           #theme-my-theme .ob-nav-wave-char {
             animation: none;
@@ -205,28 +220,54 @@ const Header = ({ siteInfo }) => {
             scroll-padding-top: 6.5rem;
           }
           #theme-my-theme .ob-nav-row {
-            min-height: 2.55rem;
-            padding: 0.3rem 0.7rem 0;
+            min-height: 44px;
+            padding: 0 12px;
+          }
+          #theme-my-theme .ob-logo {
+            font-size: 14px;
+          }
+          #theme-my-theme .ob-nav-right {
+            min-width: 44px;
+            min-height: 44px;
+            justify-content: flex-end;
           }
           #theme-my-theme .ob-nav-motto {
             position: static;
             transform: none;
             max-width: none;
-            padding: 0 0.75rem 0.5rem;
+            padding: 0 12px 6px;
           }
           #theme-my-theme .ob-nav-motto-title {
-            font-size: 15px;
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            font-size: 14px;
             letter-spacing: 0.16em;
           }
           #theme-my-theme .ob-nav-motto-line {
-            font-size: 12px;
+            margin-top: 0;
+            font-size: 14px;
+            line-height: 1.4;
             letter-spacing: 0.02em;
             white-space: normal;
           }
           #theme-my-theme .ob-nav-motto-line .ob-nav-wave {
-            display: block;
+            display: inline;
+            white-space: normal;
             margin-left: 0;
-            line-height: 1.5;
+          }
+          #theme-my-theme .ob-nav-wave-char {
+            animation-name: ob-nav-mobile-wave;
+            animation-duration: 3s !important;
+          }
+        }
+        @media (max-width: 767px) and (prefers-reduced-motion: reduce) {
+          #theme-my-theme .ob-nav-wave-char {
+            animation: none !important;
+            opacity: 1;
+            transform: none;
           }
         }
       `}</style>

@@ -239,8 +239,11 @@ export default function HeroPuzzle() {
               key={piece.key}
               className={`ob-entry-hint ob-entry-hint-${piece.key}`}
             >
-              {piece.name}
-              <span className='ob-entry-action'>进入 →</span>
+              <span className='ob-entry-name'>{piece.name}</span>
+              <span className='ob-entry-action'>
+                进入 <span className='ob-entry-arrow-desktop'>→</span>
+                <span className='ob-entry-arrow-mobile'>↗</span>
+              </span>
             </span>
           ))}
         </div>
@@ -349,6 +352,9 @@ export default function HeroPuzzle() {
         }
         .ob-entry-action {
           font-size: 12px;
+        }
+        .ob-entry-arrow-mobile {
+          display: none;
         }
         .ob-puzzle[data-hover='our'] .ob-entry-hint-our,
         .ob-puzzle[data-hover='self'] .ob-entry-hint-self,
@@ -461,6 +467,48 @@ export default function HeroPuzzle() {
           }
           .ob-plate-link:hover:not(:active):not(:focus-visible) .ob-plate {
             fill: rgba(255, 244, 222, 0);
+          }
+        }
+        @media (max-width: 767px), (hover: none) {
+          .ob-entry-hint,
+          html.dark .ob-entry-hint {
+            left: 12%;
+            top: 8%;
+            padding: 0;
+            border: 0;
+            border-radius: 0;
+            background: transparent;
+            color: #49351d;
+            opacity: 1;
+            transform: translate(-50%, -50%);
+          }
+          .ob-entry-hint-self,
+          html.dark .ob-entry-hint-self {
+            left: 88%;
+          }
+          .ob-entry-hint-dao,
+          .ob-entry-hint-shu,
+          html.dark .ob-entry-hint-dao,
+          html.dark .ob-entry-hint-shu {
+            left: 25%;
+            top: 94%;
+          }
+          .ob-entry-hint-shu,
+          html.dark .ob-entry-hint-shu {
+            left: 75%;
+          }
+          .ob-entry-name,
+          .ob-entry-arrow-desktop {
+            display: none;
+          }
+          .ob-entry-arrow-mobile {
+            display: inline;
+          }
+          .ob-entry-action {
+            font-size: 14px;
+            line-height: 20px;
+            padding-bottom: 2px;
+            border-bottom: 1px solid rgba(73, 53, 29, 0.45);
           }
         }
       `}</style>
