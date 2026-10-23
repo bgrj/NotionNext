@@ -33,8 +33,14 @@ const profileFromBeing = being => {
 
 const BeingDesk = () => {
   const enabled = isClerkEnabled()
-  const { isLoaded, isSignedIn, user } = useUser()
-  const { signOut } = useClerk()
+  const { isLoaded, isSignedIn, user } = enabled
+    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
+      useUser()
+    : { isLoaded: true, isSignedIn: false, user: null }
+  const { signOut } = enabled
+    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
+      useClerk()
+    : { signOut: async () => {} }
   const [me, setMe] = useState(null)
   const [writings, setWritings] = useState([])
   const [draft, setDraft] = useState(emptyDraft)
@@ -161,8 +167,7 @@ const BeingDesk = () => {
         <p className='ob-desk__kicker'>我的档案</p>
         <h1>先登录</h1>
         <p>
-          用任何国家的邮箱进来，再坐下这个档案位。
-          {' '}
+          用任何国家的邮箱进来，再坐下这个档案位。{' '}
           <SmartLink href='/sign-up'>注册 / 登录</SmartLink>
         </p>
       </div>
@@ -187,8 +192,8 @@ const BeingDesk = () => {
       <section className='ob-desk__card'>
         <p className='ob-desk__label'>生命钟</p>
         <p>
-          出生 {liveProfile.birth ? formatZhDate(liveProfile.birth) : '未写下'} ·
-          目标 {liveProfile.newYears || '—'} 岁
+          出生 {liveProfile.birth ? formatZhDate(liveProfile.birth) : '未写下'}{' '}
+          · 目标 {liveProfile.newYears || '—'} 岁
         </p>
         <p>蒙昧 {mengmeiDays == null ? '未写下' : `${mengmeiDays} 日`}</p>
         <p>
@@ -197,7 +202,9 @@ const BeingDesk = () => {
             ? `${clock.days} 日 ${clock.hours} 时 ${clock.minutes} 分 ${clock.seconds} 秒`
             : '先写下挣脱蒙昧和目标岁数'}
         </p>
-        <p className='ob-desk__hint'>倒计时按挣脱蒙昧日 + 目标岁数来算，公式固定。</p>
+        <p className='ob-desk__hint'>
+          倒计时按挣脱蒙昧日 + 目标岁数来算，公式固定。
+        </p>
       </section>
 
       {being?.inviteCode ? (
@@ -205,7 +212,8 @@ const BeingDesk = () => {
           <p className='ob-desk__label'>邀请码</p>
           <p className='ob-desk__code'>{being.inviteCode}</p>
           <p>
-            前一百人可以把这张码分给后来的人。席位满了之后，没有码就付 5 元水电费。不是课程。
+            前一百人可以把这张码分给后来的人。席位满了之后，没有码就付 5
+            元水电费。不是课程。
           </p>
           <button type='button' className='ob-desk__btn' onClick={copyCode}>
             {copied ? '已复制' : '复制邀请码'}
@@ -235,7 +243,8 @@ const BeingDesk = () => {
               onSubmit={event => {
                 event.preventDefault()
                 patch({ profile: profileDraft })
-              }}>
+              }}
+            >
               <label>
                 显示名
                 <input
@@ -383,20 +392,23 @@ const BeingDesk = () => {
         <section className='ob-desk__card'>
           <h2>放下一段</h2>
           <p>
-            勾选公开的道 / 术会进全站分区，题目后面署你们的名。私密的只留在自己档案里。存在进「我们的存在」，不进站主的「我的存在」。
+            勾选公开的道 /
+            术会进全站分区，题目后面署你们的名。私密的只留在自己档案里。存在进「我们的存在」，不进站主的「我的存在」。
           </p>
           <form
             onSubmit={event => {
               event.preventDefault()
               patch({ writing: draft })
-            }}>
+            }}
+          >
             <label>
               屋子
               <select
                 value={draft.room}
                 onChange={event =>
                   setDraft(prev => ({ ...prev, room: event.target.value }))
-                }>
+                }
+              >
                 {BEING_ROOMS.map(room => (
                   <option key={room.id} value={room.id}>
                     {room.name}
@@ -457,7 +469,8 @@ const BeingDesk = () => {
         <button
           type='button'
           className='ob-desk__text'
-          onClick={() => signOut({ redirectUrl: '/our-beings' })}>
+          onClick={() => signOut({ redirectUrl: '/our-beings' })}
+        >
           退出
         </button>
       </p>

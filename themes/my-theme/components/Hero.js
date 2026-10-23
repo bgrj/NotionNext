@@ -1,6 +1,4 @@
 import LazyImage from '@/components/LazyImage'
-import { siteConfig } from '@/lib/config'
-import CONFIG from '../config'
 import HandGlow from './HandGlow'
 import HeroPuzzle from './HeroPuzzle'
 
@@ -16,7 +14,8 @@ const Hero = props => {
       id='header'
       style={{ zIndex: 1 }}
       className='w-full h-screen relative bg-black'
-      data-ob-minimal-hero='true'>
+      data-ob-minimal-hero='true'
+    >
       <HandGlow />
       <HeroPuzzle />
 
@@ -27,7 +26,7 @@ const Hero = props => {
         src={siteInfo?.pageCover}
         width={1920}
         height={1080}
-        className={`header-cover absolute inset-0 z-0 w-full h-screen object-cover object-center ${siteConfig('HEXO_HOME_NAV_BACKGROUND_IMG_FIXED', null, CONFIG) ? 'fixed' : ''}`}
+        className='header-cover absolute inset-0 z-0 h-full w-full object-cover object-center'
       />
     </header>
   )

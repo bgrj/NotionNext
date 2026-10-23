@@ -21,8 +21,16 @@ const Style = () => {
   const titleDark = siteConfig('HEXO_COLOR_TITLE_DARK', '#f3f4f6', CONFIG)
   const text = siteConfig('HEXO_COLOR_TEXT', '#374151', CONFIG)
   const textDark = siteConfig('HEXO_COLOR_TEXT_DARK', '#d1d5db', CONFIG)
-  const textSecondary = siteConfig('HEXO_COLOR_TEXT_SECONDARY', '#9ca3af', CONFIG)
-  const textSecondaryDark = siteConfig('HEXO_COLOR_TEXT_SECONDARY_DARK', '#6b7280', CONFIG)
+  const textSecondary = siteConfig(
+    'HEXO_COLOR_TEXT_SECONDARY',
+    '#9ca3af',
+    CONFIG
+  )
+  const textSecondaryDark = siteConfig(
+    'HEXO_COLOR_TEXT_SECONDARY_DARK',
+    '#6b7280',
+    CONFIG
+  )
   const border = siteConfig('HEXO_COLOR_BORDER', '#e5e7eb', CONFIG)
   const borderDark = siteConfig('HEXO_COLOR_BORDER_DARK', '#000000', CONFIG)
 
@@ -137,7 +145,10 @@ const Style = () => {
       #theme-my-theme #nav div[class*='hover:text-indigo-600']:hover {
         color: var(--theme-color) !important;
       }
-      .dark #theme-my-theme #nav div[class*='dark:hover:text-indigo-400']:hover {
+      .dark
+        #theme-my-theme
+        #nav
+        div[class*='dark:hover:text-indigo-400']:hover {
         color: var(--theme-color) !important;
       }
 
@@ -249,7 +260,13 @@ const Style = () => {
         color: var(--theme-color) !important;
       }
 
-      /* 首页头图不加遮罩，与 #wrapper 的 uphand 背景同一套原图观感 */
+      /* 首页只保留头图与页脚；上手图改到页脚背景，头图本身不加遮罩 */
+      #theme-my-theme.ob-home-only {
+        background: #f7f0e4;
+      }
+      .dark #theme-my-theme.ob-home-only {
+        background: #0b0907;
+      }
       #theme-my-theme #home-nav-button a {
         color: #fff !important;
       }
@@ -328,8 +345,6 @@ const Style = () => {
       }
 
       ${themeConsoleStyle('hexo', CONFIG)}
-
-
 
       /* 左右栏拉开，避免 flex-row-reverse + space-x 贴死 */
       #theme-my-theme #container-inner {
@@ -508,7 +523,7 @@ const Style = () => {
       }
 
       .ob-notice-kicker i {
-        color: var(--ob-notice-accent, var(--theme-color, #C9A66B));
+        color: var(--ob-notice-accent, var(--theme-color, #c9a66b));
       }
 
       .ob-notice-x {
@@ -524,7 +539,7 @@ const Style = () => {
 
       .ob-notice-x:focus-visible,
       .ob-notice-enter:focus-visible {
-        outline: 2px solid var(--ob-notice-accent, #C9A66B);
+        outline: 2px solid var(--ob-notice-accent, #c9a66b);
         outline-offset: 2px;
       }
 
@@ -577,7 +592,7 @@ const Style = () => {
       }
 
       .ob-notice-body a {
-        color: var(--ob-notice-accent, var(--theme-color, #C9A66B));
+        color: var(--ob-notice-accent, var(--theme-color, #c9a66b));
         text-decoration: underline;
         text-underline-offset: 0.18em;
         word-break: break-word;
@@ -625,7 +640,7 @@ const Style = () => {
         font-size: 15px;
         letter-spacing: 0.08em;
         color: #fff;
-        background: var(--ob-notice-accent, var(--theme-color, #C9A66B));
+        background: var(--ob-notice-accent, var(--theme-color, #c9a66b));
       }
 
       @media (max-width: 640px) {
@@ -656,7 +671,7 @@ const Style = () => {
           transition: none !important;
         }
       }
-  `}</style>
+    `}</style>
   )
 }
 

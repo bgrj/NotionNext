@@ -141,14 +141,12 @@ const LayoutBase = props => {
   const sidebarReverse =
     showCatalogSidebar && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
 
-  const headerSlot = chromeLite
-    ? null
-    : post ? (
-        <PostHero {...props} />
-      ) : router.route === '/' &&
-        siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
-          <Hero {...props} />
-        ) : null
+  const headerSlot = chromeLite ? null : post ? (
+    <PostHero {...props} />
+  ) : router.route === '/' &&
+    siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
+    <Hero {...props} />
+  ) : null
 
   // 只在「这一页真的渲染了头图」时用 pt-0；分类/标签/搜索等无头图页
   // 若仍看 HEXO_HOME_BANNER_ENABLE，会被固定顶栏挡住列表和分类标题。
@@ -188,7 +186,8 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar ? ' ob-list-layout' : ''}`}>
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}`}
+      >
         <Style />
 
         {/* 顶部导航 */}
@@ -204,7 +203,8 @@ const LayoutBase = props => {
           leave='transition ease-in-out duration-300 transform'
           leaveFrom='opacity-100'
           leaveTo='opacity-0 translate-y-16'
-          unmount={false}>
+          unmount={false}
+        >
           {headerSlot}
         </Transition>
 
@@ -212,7 +212,8 @@ const LayoutBase = props => {
         {!heroOnlyHome && (
           <main
             id='wrapper'
-            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}>
+            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}
+          >
             <div
               id='container-inner'
               className={
@@ -272,7 +273,7 @@ const LayoutBase = props => {
         <AlgoliaSearchModal cRef={searchModal} {...props} />
 
         {/* 页脚 */}
-        <Footer title={siteConfig('TITLE')} />
+        <Footer title={siteConfig('TITLE')} homeCanvas={heroOnlyHome} />
 
         {/* 首次访问公告弹窗：定位文案在 noticeContent.js；最近一篇跟站点 latestPosts 走 */}
         <NoticeModal latestPosts={props.latestPosts} />
@@ -299,16 +300,10 @@ const LayoutIndex = props => {
  */
 const LayoutPostList = props => {
   const router = useRouter()
-  if (
-    isExistenceCategory(props.category) ||
-    isExistencePath(router.asPath)
-  ) {
+  if (isExistenceCategory(props.category) || isExistencePath(router.asPath)) {
     return <ExistenceLife {...props} />
   }
-  if (
-    isOurBeingsCategory(props.category) ||
-    isOurBeingsPath(router.asPath)
-  ) {
+  if (isOurBeingsCategory(props.category) || isOurBeingsPath(router.asPath)) {
     return <OurBeingsIndex {...props} />
   }
   return (
@@ -404,19 +399,18 @@ const LayoutSlug = props => {
   useEffect(() => {
     // 404
     if (!post && !friendLinks) {
-      setTimeout(
-        () => {
-          if (isBrowser) {
-            const article = document.querySelector('#article-wrapper #notion-article')
-            if (!article) {
-              router.push('/404').then(() => {
-                console.warn('找不到页面', router.asPath)
-              })
-            }
+      setTimeout(() => {
+        if (isBrowser) {
+          const article = document.querySelector(
+            '#article-wrapper #notion-article'
+          )
+          if (!article) {
+            router.push('/404').then(() => {
+              console.warn('找不到页面', router.asPath)
+            })
           }
-        },
-        waiting404
-      )
+        }
+      }, waiting404)
     }
   }, [post, friendLinks])
 
@@ -438,7 +432,8 @@ const LayoutSlug = props => {
           <div className='overflow-x-auto flex-grow mx-auto md:w-full md:px-5'>
             <article
               id='article-wrapper'
-              className='subpixel-antialiased overflow-y-hidden'>
+              className='subpixel-antialiased overflow-y-hidden'
+            >
               {/* Notion文章主体 */}
               <section className='px-5 justify-center mx-auto max-w-2xl lg:max-w-full'>
                 {post && <NotionPage post={post} />}
@@ -480,7 +475,9 @@ const Layout404 = props => {
     // 延时3秒如果加载失败就返回首页
     setTimeout(() => {
       if (isBrowser) {
-        const article = document.querySelector('#article-wrapper #notion-article')
+        const article = document.querySelector(
+          '#article-wrapper #notion-article'
+        )
         if (!article) {
           router.push('/').then(() => {
             // console.log('找不到页面', router.asPath)
@@ -526,11 +523,13 @@ const LayoutCategoryIndex = props => {
                 key={category.name}
                 href={`/category/${category.name}`}
                 passHref
-                legacyBehavior>
+                legacyBehavior
+              >
                 <div
                   className={
                     ' duration-300 dark:hover:text-white px-5 cursor-pointer py-2 hover:text-indigo-400'
-                  }>
+                  }
+                >
                   <i className='mr-4 fas fa-folder' /> {category.name}(
                   {category.count})
                 </div>

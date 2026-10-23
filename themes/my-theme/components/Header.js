@@ -16,15 +16,19 @@ const MOTTO_LINES = [
   '让我们的存在与世界同在'
 ]
 
-const MottoWave = ({ text, offset = 0 }) => (
+const MottoWave = ({ text, offset = 0, duration = 2.5, step = 0.1 }) => (
   <span className='ob-nav-wave' aria-label={text}>
     {Array.from(text).map((char, index) => (
       <span
         key={index}
         aria-hidden='true'
         className='ob-nav-wave-char'
-        style={{ animationDelay: `${-6 + offset + index * 0.12}s` }}>
-        {char}
+        style={{
+          animationDuration: `${duration}s`,
+          animationDelay: `${-duration + offset + index * step}s`
+        }}
+      >
+        {char === ' ' ? '\u00A0' : char}
       </span>
     ))}
   </span>
@@ -65,7 +69,8 @@ const Header = ({ siteInfo }) => {
     <div id='top-nav' className='z-40'>
       <div
         id='sticky-nav'
-        className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'>
+        className='ob-sticky-nav top-0 fixed z-20 w-full duration-300 transition-all'
+      >
         <div className='ob-nav-inner'>
           <div className='ob-nav-row'>
             <SmartLink href='/' passHref className='ob-logo'>
@@ -123,28 +128,41 @@ const Header = ({ siteInfo }) => {
           letter-spacing: 0.22em;
           font-weight: 400;
           line-height: 1.2;
+          color: #8d6230;
+        }
+        .dark #theme-my-theme .ob-nav-motto-title {
+          color: #e2c48a;
         }
         #theme-my-theme .ob-nav-motto-line {
           margin-top: 3px;
           font-size: 11px;
           letter-spacing: 0.045em;
           font-weight: 300;
-          opacity: 0.88;
           line-height: 1.35;
           white-space: nowrap;
+          color: #8f7e6a;
+        }
+        .dark #theme-my-theme .ob-nav-motto-line {
+          color: #cbb79a;
         }
         #theme-my-theme .ob-nav-wave {
           display: inline-block;
           white-space: nowrap;
         }
+        #theme-my-theme .ob-nav-motto-line .ob-nav-wave + .ob-nav-wave {
+          margin-left: 0.35em;
+        }
         #theme-my-theme .ob-nav-wave-char {
           display: inline-block;
-          animation: ob-nav-breathe 6s ease-in-out infinite;
+          opacity: 0.32;
+          animation-name: ob-nav-breathe;
+          animation-timing-function: ease-in-out;
+          animation-iteration-count: infinite;
         }
         @keyframes ob-nav-breathe {
           0%,
           100% {
-            opacity: 0.78;
+            opacity: 0.32;
           }
           50% {
             opacity: 1;
@@ -153,6 +171,7 @@ const Header = ({ siteInfo }) => {
         @media (prefers-reduced-motion: reduce) {
           #theme-my-theme .ob-nav-wave-char {
             animation: none;
+            opacity: 1;
           }
         }
         #theme-my-theme .ob-sticky-nav.ob-nav-hidden {
