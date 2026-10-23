@@ -159,7 +159,7 @@ const Motto = ({ text }) => {
   )
 }
 
-const Footer = ({ homeCanvas = false }) => {
+const Footer = () => {
   const brandName = siteConfig(
     'FOOTER_BRAND_NAME',
     'Our Beings（吾在）',
@@ -220,11 +220,7 @@ const Footer = ({ homeCanvas = false }) => {
   const slogans = [slogan, slogan2, slogan3].filter(Boolean)
 
   return (
-    <footer
-      className={`ob-footer relative z-10 w-full flex-shrink-0 text-sm leading-6${
-        homeCanvas ? ' ob-footer-home' : ' bg-hexo-light-gray dark:bg-black'
-      }`}
-    >
+    <footer className='ob-footer ob-footer-home relative z-10 w-full flex-shrink-0 text-sm leading-6'>
       <style jsx global>{`
         .ob-footer {
           --ob-gold: #d4a35c;

@@ -27,15 +27,17 @@ test('SSR footer CSS preserves quotes without raw-text hydration mismatches', ()
   registry.flush()
 })
 
-test('homepage footer uses the uphand canvas instead of a flat black slab', () => {
+test('shared footer always uses the uphand canvas without a homepage flag', () => {
   const registry = createStyleRegistry()
   const markup = renderToStaticMarkup(
     <StyleRegistry registry={registry}>
-      <Footer homeCanvas />
+      <Footer />
     </StyleRegistry>
   )
   const styles = renderToStaticMarkup(<>{registry.styles()}</>)
   expect(markup).toContain('ob-footer-home')
+  expect(markup).not.toContain('bg-hexo-light-gray')
+  expect(markup).not.toContain('dark:bg-black')
   expect(styles).toContain('web-mainpage-uphand')
   expect(styles).toContain('.ob-footer.ob-footer-home::before')
   expect(styles).toMatch(/height:\s*760px/)

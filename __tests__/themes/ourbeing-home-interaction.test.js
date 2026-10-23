@@ -66,14 +66,23 @@ test('navigation keeps the complete motto and provides a reduced-motion alternat
   expect(styles).not.toMatch(/&#(?:x27|39);|&quot;/)
 })
 
-test('touch hints use unboxed arrows above and below the calligraphy', () => {
+test('touch layouts hide previews and desktop previews contain names only', () => {
   const { markup, styles } = render(<HeroPuzzle />)
   expect(markup).toContain('ob-entry-name')
-  expect(markup).toContain('ob-entry-arrow-mobile')
-  expect(markup).toContain('↗')
-  expect(styles).toMatch(/top:\s*8%/)
-  expect(styles).toMatch(/top:\s*94%/)
-  expect(styles).toMatch(/background:\s*transparent/)
+  expect(markup).not.toContain('进入')
+  expect(markup).not.toContain('ob-entry-action')
+  expect(markup).not.toContain('ob-entry-arrow')
+  expect(styles).toMatch(/@media\s*\(max-width:\s*767px\),\s*\(hover:\s*none\)/)
+  expect(styles).toMatch(/\.ob-entry-hints[^{}]*\{[^{}]*display:\s*none/)
+})
+
+test('self calligraphy uses separate vertical alignment for desktop and mobile', () => {
+  const { markup } = render(<HeroPuzzle />)
+  expect(markup).toContain('matrix(1 0 0 0.879267 0 -7.499528)')
+  expect(markup).toContain(
+    'matrix(1.066467 0 0 1.244622 -78.429887 -142.324481)'
+  )
+  expect(markup).not.toContain('translate(4 -4)')
 })
 
 test('mobile navigation uses a compact title row and a visible reduced-motion-safe wave', () => {
