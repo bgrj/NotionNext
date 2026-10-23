@@ -404,6 +404,39 @@ const Style = () => {
         }
       }
 
+      /* 文章详情（含「术」）：卡片全屏铺展，目录走抽屉，不挤占正文。 */
+      #theme-my-theme.ob-article-layout #container-inner {
+        display: block;
+        max-width: none;
+      }
+      #theme-my-theme.ob-article-layout #container-inner > div {
+        max-width: none;
+        min-width: 0;
+      }
+      #theme-my-theme .ob-article-card {
+        padding: clamp(1rem, 2vw, 2.5rem);
+      }
+      #theme-my-theme .ob-article-body #notion-article,
+      #theme-my-theme .ob-article-body .notion,
+      #theme-my-theme .ob-article-body .notion-page {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        --notion-max-width: 100%;
+      }
+      /* 保留代码、表格等块自身的横向滚动，不让长内容撑开页面。 */
+      #theme-my-theme .ob-article-content {
+        overflow-x: auto;
+      }
+
+      #theme-my-theme .ob-article-toc .animate__slideOutRight {
+        display: none;
+      }
+      #theme-my-theme .ob-article-toc .animate__slideInRight {
+        max-height: calc(100dvh - 8rem);
+        overflow-y: auto;
+      }
+
       /* 友情链接页：去掉默认侧栏，主栏铺满剩余宽度 */
       #theme-my-theme.ob-fl-layout #sideRight,
       #theme-my-theme.ob-ex-layout #sideRight {

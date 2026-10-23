@@ -39,7 +39,6 @@ import Hero from './components/Hero'
 import PostHero from '@/themes/hexo/components/PostHero'
 import RightFloatArea from '@/themes/hexo/components/RightFloatArea'
 import SearchNav from '@/themes/hexo/components/SearchNav'
-import Catalog from '@/themes/hexo/components/Catalog'
 import SlotBar from '@/themes/hexo/components/SlotBar'
 import TagItemMini from '@/themes/hexo/components/TagItemMini'
 import TocDrawer from '@/themes/hexo/components/TocDrawer'
@@ -129,17 +128,10 @@ const LayoutBase = props => {
   )
   const showArticleSwitchPlaceholder =
     hexoArticleRouteLoading && isArticleSlugPage && onLoading && !chromeLite
-  const wideMain = fullWidth || chromeLite
-  // 列表页去掉信息卡 / 最新发布；文章页只保留目录。
-  const showCatalogSidebar =
-    Boolean(post) &&
-    !chromeLite &&
-    !fullWidth &&
-    Array.isArray(post?.toc) &&
-    post.toc.length > 1
+  // 所有文章共用全宽布局，不依赖分类、slug 或 Notion 的 fullWidth 开关。
+  const articleLayout = Boolean(post) && !chromeLite
+  const wideMain = fullWidth || chromeLite || articleLayout
   const listWithoutSidebar = !post && !chromeLite && !fullWidth
-  const sidebarReverse =
-    showCatalogSidebar && JSON.parse(siteConfig('LAYOUT_SIDEBAR_REVERSE'))
 
   const headerSlot = chromeLite ? null : post ? (
     <PostHero {...props} />
@@ -153,11 +145,7 @@ const LayoutBase = props => {
   const hasHero = Boolean(headerSlot)
   // The landing page ends at the hero; category/search/article layouts stay intact.
   const heroOnlyHome = !post && router.route === '/' && hasHero
-  const wrapperTop = hasHero
-    ? post
-      ? 'pt-8 md:pt-10'
-      : 'pt-0'
-    : 'ob-below-nav'
+  const wrapperTop = hasHero ? 'pt-0' : 'ob-below-nav'
 
   const drawerRight = useRef(null)
   const tocRef = isBrowser ? document.getElementById('article-wrapper') : null
@@ -166,7 +154,7 @@ const LayoutBase = props => {
   const floatSlot = (
     <>
       {post?.toc?.length > 1 && !chromeLite && (
-        <div className='block lg:hidden'>
+        <div className='block'>
           <TocDrawerButton
             onClick={() => {
               drawerRight?.current?.handleSwitchVisible()
@@ -186,7 +174,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}`}
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}`}
       >
         <Style />
 
@@ -219,17 +207,14 @@ const LayoutBase = props => {
         {!heroOnlyHome && (
           <main
             id='wrapper'
-            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'} pb-14 md:pb-16 min-h-screen relative`}
+            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full ${articleLayout ? 'px-0' : `px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'}`} pb-14 md:pb-16 min-h-screen relative`}
           >
             <div
               id='container-inner'
-              className={
-                (sidebarReverse ? 'flex-row-reverse' : '') +
-                ' w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
-              }
+              className='w-full mx-auto lg:flex lg:gap-10 justify-center relative z-10'
             >
               <div
-                className={`${className || ''} w-full ${wideMain ? '' : listWithoutSidebar ? 'max-w-5xl' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}
+                className={`${className || ''} w-full min-w-0 ${wideMain ? '' : listWithoutSidebar ? 'max-w-5xl' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}
               >
                 {showArticleSwitchPlaceholder ? (
                   <ArticleSwitchPlaceholder />
@@ -252,23 +237,12 @@ const LayoutBase = props => {
                   </Transition>
                 )}
               </div>
-
-              {/* 列表页不渲染信息卡 / 最新发布；文章页只保留目录。公告走全站弹窗。 */}
-              {showCatalogSidebar && (
-                <div id='sideRight' className='lg:w-80 lg:pt-0'>
-                  <div className='space-y-4'>
-                    <Card>
-                      <Catalog toc={post.toc} />
-                    </Card>
-                  </div>
-                </div>
-              )}
             </div>
           </main>
         )}
 
         {!chromeLite && (
-          <div className='block lg:hidden'>
+          <div className='ob-article-toc block'>
             <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
           </div>
         )}
@@ -432,17 +406,17 @@ const LayoutSlug = props => {
 
   return (
     <>
-      <div className='w-full lg:hover:shadow lg:border rounded-t-xl lg:rounded-xl lg:px-2 lg:py-4 bg-white dark:bg-hexo-black-gray dark:border-black article'>
+      <div className='ob-article-card w-full min-w-0 bg-white dark:bg-hexo-black-gray article'>
         {lock && <ArticleLock validPassword={validPassword} />}
 
         {!lock && post && (
-          <div className='overflow-x-auto flex-grow mx-auto md:w-full md:px-5'>
+          <div className='ob-article-content w-full min-w-0 flex-grow mx-auto'>
             <article
               id='article-wrapper'
               className='subpixel-antialiased overflow-y-hidden'
             >
               {/* Notion文章主体 */}
-              <section className='px-5 justify-center mx-auto max-w-2xl lg:max-w-full'>
+              <section className='ob-article-body w-full min-w-0 mx-auto'>
                 {post && <NotionPage post={post} />}
               </section>
 
