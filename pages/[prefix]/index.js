@@ -3,6 +3,7 @@ import useNotification from '@/components/Notification'
 import TechGrow from '@/components/TechGrow'
 import { siteConfig } from '@/lib/config'
 import { resolvePostProps } from '@/lib/db/SiteDataApi'
+import { redirectIfCanonical } from '@/lib/utils/postTitleUrl'
 import { useGlobal } from '@/lib/global'
 import { getPageTableOfContents } from '@/lib/db/notion/getPageTableOfContents'
 import { isProtectedPost } from '@/lib/security/articleAccess'
@@ -125,6 +126,9 @@ export async function getStaticProps({ params: { prefix }, locale }) {
     prefix,
     locale
   })
+
+  const redirected = redirectIfCanonical(props)
+  if (redirected) return redirected
 
   return {
     props,

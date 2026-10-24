@@ -12,8 +12,12 @@ const AccountLinks = dynamic(() => import('./OurBeingsHeaderAuth'), {
 
 /** A non-modal, keyboard-accessible popover; it never changes article content. */
 export default function SiteSettings({ onOpenChange } = {}) {
-  const { lang = 'zh-CN', changeLang, isDarkMode, toggleDarkMode } =
-    useGlobal() || {}
+  const {
+    lang = 'zh-CN',
+    changeLang,
+    isDarkMode,
+    toggleDarkMode
+  } = useGlobal() || {}
   const router = useRouter()
   const [open, setOpen] = useState(false)
   const containerRef = useRef(null)
@@ -67,8 +71,15 @@ export default function SiteSettings({ onOpenChange } = {}) {
         aria-haspopup='dialog'
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
-        onClick={() => setOpen(value => !value)}>
-        <svg width='22' height='22' viewBox='0 0 24 24' fill='none' aria-hidden='true'>
+        onClick={() => setOpen(value => !value)}
+      >
+        <svg
+          width='22'
+          height='22'
+          viewBox='0 0 24 24'
+          fill='none'
+          aria-hidden='true'
+        >
           <path
             d='M4 6h16M4 12h16M4 18h16'
             stroke='currentColor'
@@ -82,7 +93,8 @@ export default function SiteSettings({ onOpenChange } = {}) {
           id={panelId}
           className='ob-settings-panel'
           role='dialog'
-          aria-label={title}>
+          aria-label={title}
+        >
           <div className='ob-settings-heading'>
             <strong>{title}</strong>
             <button
@@ -92,7 +104,8 @@ export default function SiteSettings({ onOpenChange } = {}) {
               onClick={() => {
                 setOpen(false)
                 triggerRef.current?.focus()
-              }}>
+              }}
+            >
               ×
             </button>
           </div>
@@ -105,7 +118,8 @@ export default function SiteSettings({ onOpenChange } = {}) {
                 aria-pressed={!isDarkMode}
                 onClick={() => {
                   if (isDarkMode) toggleDarkMode?.()
-                }}>
+                }}
+              >
                 {english ? 'Light' : '浅色'}
               </button>
               <button
@@ -113,7 +127,8 @@ export default function SiteSettings({ onOpenChange } = {}) {
                 aria-pressed={Boolean(isDarkMode)}
                 onClick={() => {
                   if (!isDarkMode) toggleDarkMode?.()
-                }}>
+                }}
+              >
                 {english ? 'Dark' : '深色'}
               </button>
             </div>
@@ -125,7 +140,8 @@ export default function SiteSettings({ onOpenChange } = {}) {
             <select
               id={`${panelId}-language`}
               value={lang}
-              onChange={event => changeLang?.(event.target.value, true)}>
+              onChange={event => changeLang?.(event.target.value, true)}
+            >
               {languages.map(code => (
                 <option key={code} value={code}>
                   {UI_LANGUAGE_LABELS[code]}
@@ -167,7 +183,8 @@ export default function SiteSettings({ onOpenChange } = {}) {
         #theme-my-theme .ob-settings-close:hover {
           background: rgba(120, 104, 80, 0.12);
         }
-        #theme-my-theme .ob-sticky-nav.ob-nav-settings-open {
+        #theme-my-theme
+          .ob-sticky-nav.ob-nav-settings-open {
           transform: none;
         }
         #theme-my-theme .ob-settings-panel {

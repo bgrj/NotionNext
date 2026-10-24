@@ -220,9 +220,7 @@ const LayoutBase = props => {
                   <ArticleSwitchPlaceholder />
                 ) : (
                   <Transition
-                    show={
-                      articleLayout || isArticleSlugPage ? true : !onLoading
-                    }
+                    show={articleLayout || isArticleSlugPage ? true : !onLoading}
                     appear={!articleLayout}
                     enter='transition ease-in-out duration-700 transform order-first'
                     enterFrom='opacity-0 translate-y-16'

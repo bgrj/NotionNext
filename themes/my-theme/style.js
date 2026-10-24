@@ -34,27 +34,16 @@ const Style = () => {
   )
   const border = siteConfig('HEXO_COLOR_BORDER', '#e5e7eb', CONFIG)
   const borderDark = siteConfig('HEXO_COLOR_BORDER_DARK', '#000000', CONFIG)
+
   const readingBackground = articleBackground(
-    siteConfig(
-      'OURBEINGS_ARTICLE_BACKGROUND',
-      CONFIG.OURBEINGS_ARTICLE_BACKGROUND,
-      CONFIG
-    )
+    siteConfig('OURBEINGS_ARTICLE_BACKGROUND', CONFIG.OURBEINGS_ARTICLE_BACKGROUND, CONFIG)
   )
   const readingOpacityLight = articleOpacity(
-    siteConfig(
-      'OURBEINGS_ARTICLE_OPACITY_LIGHT',
-      CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT,
-      CONFIG
-    ),
+    siteConfig('OURBEINGS_ARTICLE_OPACITY_LIGHT', CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT, CONFIG),
     CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT
   )
   const readingOpacityDark = articleOpacity(
-    siteConfig(
-      'OURBEINGS_ARTICLE_OPACITY_DARK',
-      CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK,
-      CONFIG
-    ),
+    siteConfig('OURBEINGS_ARTICLE_OPACITY_DARK', CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK, CONFIG),
     CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK
   )
 
@@ -498,6 +487,10 @@ const Style = () => {
       /* 保留代码、表格等块自身的横向滚动，不让长内容撑开页面。 */
       #theme-my-theme .ob-article-content {
         overflow-x: auto;
+      }
+      #theme-my-theme .ob-article-body video::-internal-media-controls-download-button,
+      #theme-my-theme .ob-article-body video::-webkit-media-controls-download-button {
+        display: none !important;
       }
 
       #theme-my-theme .ob-article-toc .animate__slideOutRight {

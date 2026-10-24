@@ -27,11 +27,9 @@ const mockRouter = {
   }
 }
 // The production throttle alias does not expose Lodash's cancel method.
-jest.mock(
-  'lodash.throttle',
-  () => ({ __esModule: true, default: fn => fn }),
-  { virtual: true }
-)
+jest.mock('lodash.throttle', () => ({ __esModule: true, default: fn => fn }), {
+  virtual: true
+})
 jest.mock('@/lib/global', () => ({ useGlobal: () => mockGlobal }))
 jest.mock('next/router', () => ({ useRouter: () => mockRouter }))
 jest.mock('@/lib/config', () => ({ siteConfig: (_key, fallback) => fallback }))
@@ -39,11 +37,15 @@ jest.mock('styled-jsx/style', () => ({
   __esModule: true,
   default: ({ children }) => <style>{children}</style>
 }))
-jest.mock('next/dynamic', () => () => function AccountFixture(props) {
-  const Account = require('@/themes/my-theme/components/OurBeingsHeaderAuth')
-    .default
-  return <Account {...props} />
-})
+jest.mock(
+  'next/dynamic',
+  () => () =>
+    function AccountFixture(props) {
+      const Account =
+        require('@/themes/my-theme/components/OurBeingsHeaderAuth').default
+      return <Account {...props} />
+    }
+)
 jest.mock('@/components/SmartLink', () => ({
   __esModule: true,
   default: ({ children, ...props }) => <a {...props}>{children}</a>
@@ -63,7 +65,8 @@ beforeEach(() => {
   mockSignedIn = false
   mockClerkEnabled = false
 })
-const open = () => fireEvent.click(screen.getByRole('button', { name: '网站设置' }))
+const open = () =>
+  fireEvent.click(screen.getByRole('button', { name: '网站设置' }))
 
 test('hamburger opens an accessible dialog; Escape closes and restores focus', () => {
   render(<SiteSettings />)
@@ -105,7 +108,9 @@ test('language selection requests persistence and localizes the settings UI', ()
   mockGlobal.lang = 'en-US'
   rerender(<SiteSettings />)
   expect(screen.getByRole('dialog', { name: 'Site settings' })).toBeTruthy()
-  expect(screen.getByText(/articles stay in their original language/)).toBeTruthy()
+  expect(
+    screen.getByText(/articles stay in their original language/)
+  ).toBeTruthy()
 })
 
 test('outside pointer and focus close the panel', () => {
@@ -173,7 +178,9 @@ test.each([
 
 test('background paths cannot break CSS and invalid UI languages fall back safely', () => {
   expect(articleBackground('/assets/hand.webp')).toBe('/assets/hand.webp')
-  expect(articleBackground('https://example.com/hand.webp')).toContain('https://')
+  expect(articleBackground('https://example.com/hand.webp')).toContain(
+    'https://'
+  )
   for (const input of [
     'javascript:alert(1)',
     '//evil.example/image',
@@ -197,7 +204,9 @@ test('the real header keeps settings mounted and supports throttle implementatio
   )
   fireEvent.click(container.querySelector('.ob-settings-trigger'))
   expect(container.querySelector('[role="dialog"]')).not.toBeNull()
-  expect(container.querySelector('#sticky-nav')).toHaveClass('ob-nav-settings-open')
+  expect(container.querySelector('#sticky-nav')).toHaveClass(
+    'ob-nav-settings-open'
+  )
   fireEvent.keyDown(document, { key: 'Escape' })
   expect(container.querySelector('#sticky-nav')).not.toHaveClass(
     'ob-nav-settings-open'

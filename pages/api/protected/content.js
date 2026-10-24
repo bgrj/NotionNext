@@ -25,7 +25,7 @@ export default async function handler(req, res) {
   if (!getArticleAuthSecret()) return fail(res, 503)
 
   const slug = typeof req.query?.slug === 'string' ? req.query.slug.trim() : ''
-  if (!slug || slug.length > 200) return fail(res, 401)
+  if (!slug || slug.length > 400) return fail(res, 401)
 
   try {
     const record = await loadArticleAccessRecord(slug)

@@ -4,7 +4,6 @@ import {
   saveUiLanguagePreference,
   initLocale
 } from '@/lib/utils/lang'
-
 const mockQuery = {}
 jest.mock('@/lib/utils', () => ({
   isBrowser: true,
@@ -12,7 +11,6 @@ jest.mock('@/lib/utils', () => ({
   mergeDeep: (...objects) => Object.assign({}, ...objects)
 }))
 jest.mock('next/router', () => ({ useRouter: jest.fn() }))
-
 let store
 beforeEach(() => {
   store = {}

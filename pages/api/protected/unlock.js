@@ -11,7 +11,7 @@ import {
 } from '@/lib/security/articleSession'
 
 const MAX_BODY_BYTES = 2048
-const MAX_SLUG = 200
+const MAX_SLUG = 400
 const MAX_PASSWORD = 256
 
 function fail(res, status) {

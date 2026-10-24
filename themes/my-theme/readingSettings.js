@@ -2,7 +2,8 @@ export const ARTICLE_BACKGROUND =
   '/assets/ourbeing/web-mainpage-uphand.dc81786dbc79.webp'
 
 export const articleOpacity = (value, fallback) => {
-  if (value === '' || value == null || typeof value === 'boolean') return fallback
+  if (value === '' || value == null || typeof value === 'boolean')
+    return fallback
   const number = Number(value)
   return Number.isFinite(number) ? Math.min(1, Math.max(0, number)) : fallback
 }
@@ -28,7 +29,9 @@ export const UI_LANGUAGE_LABELS = {
 
 export const uiLanguageOptions = (configured, current) => {
   const candidates = Array.isArray(configured) ? configured : ['zh-CN', 'en-US']
-  const valid = candidates.filter(code => Object.hasOwn(UI_LANGUAGE_LABELS, code))
+  const valid = candidates.filter(code =>
+    Object.hasOwn(UI_LANGUAGE_LABELS, code)
+  )
   if (!valid.length) valid.push('zh-CN', 'en-US')
   if (Object.hasOwn(UI_LANGUAGE_LABELS, current)) valid.push(current)
   return [...new Set(valid)]
