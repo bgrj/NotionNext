@@ -8,6 +8,7 @@ import {
   prettyPostPath,
   publicPostUrl,
   redirectIfCanonical,
+  resolvePostSlugBase,
   sanitizePostTitleSegment
 } from '@/lib/utils/postTitleUrl'
 
@@ -33,41 +34,56 @@ describe('postTitleUrl', () => {
     )
   })
 
-  it('matches exact, legacy, and title aliases', () => {
+  it('treats the short path as canonical and title leftovers as aliases', () => {
     const post = {
       type: 'Post',
       slug: `philosophy/2026/10/23/18/${safeTitle}`,
       slugBase: 'philosophy/2026/10/23/18',
       id: 'post-id'
     }
-    expect(matchRequestedPostSlug(post, post.slug)).toBe('exact')
     expect(matchRequestedPostSlug(post, 'philosophy/2026/10/23/18')).toBe(
-      'legacy'
+      'exact'
     )
+    expect(matchRequestedPostSlug(post, post.slug)).toBe('alias')
     expect(
       matchRequestedPostSlug(post, 'philosophy/2026/10/23/18/影片启蒙')
     ).toBe('alias')
+    expect(
+      matchRequestedPostSlug(
+        post,
+        'philosophy/2026/10/23/18/影片启蒙/不得人爱'
+      )
+    ).toBe('alias')
   })
 
-  it('prefers exact slug matches over legacy aliases', () => {
+  it('still matches truncated titles when slugBase was stripped from summaries', () => {
+    const post = {
+      type: 'Post',
+      slug: `philosophy/2026/10/23/18/${safeTitle}`
+    }
+    expect(resolvePostSlugBase(post)).toBe('philosophy/2026/10/23/18')
+    expect(
+      matchRequestedPostSlug(post, 'philosophy/2026/10/23/18/影片启蒙')
+    ).toBe('alias')
+    const found = findPostByRequestedSlug(
+      [post],
+      'philosophy/2026/10/23/18/%E5%BD%B1%E7%89%87%E5%90%AF%E8%92%99'
+    )
+    expect(found.match).toBe('alias')
+    expect(found.post).toBe(post)
+  })
+
+  it('prefers the short canonical path over a title alias', () => {
     const pages = [
       {
         type: 'Post',
         slug: `philosophy/2026/10/23/18/${safeTitle}`,
         slugBase: 'philosophy/2026/10/23/18'
-      },
-      {
-        type: 'Post',
-        slug: 'philosophy/2026/10/23/18',
-        slugBase: 'philosophy/2026/10/23/18'
       }
     ]
-    const found = findPostByRequestedSlug(
-      pages,
-      `philosophy/2026/10/23/18/${safeTitle}`
-    )
+    const found = findPostByRequestedSlug(pages, 'philosophy/2026/10/23/18')
     expect(found.match).toBe('exact')
-    expect(found.post.slug).toContain(safeTitle)
+    expect(found.post.slugBase).toBe('philosophy/2026/10/23/18')
   })
 
   it('returns a permanent redirect payload', () => {

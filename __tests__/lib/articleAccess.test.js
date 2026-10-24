@@ -55,4 +55,17 @@ describe('public article DTO', () => {
     expect(dto.protected).toBe(false)
     expect(isProtectedPost(dto)).toBe(false)
   })
+
+  test('keeps slugBase so short and truncated article URLs can be resolved', () => {
+    const dto = toPublicPostSummary({
+      id: 'page-c',
+      slug: 'philosophy/2026/10/23/18',
+      slugBase: 'philosophy/2026/10/23/18',
+      href: '/philosophy/2026/10/23/18',
+      title: '影片启蒙',
+      type: 'Post'
+    })
+    expect(dto.slugBase).toBe('philosophy/2026/10/23/18')
+    expect(dto.slug).toBe('philosophy/2026/10/23/18')
+  })
 })

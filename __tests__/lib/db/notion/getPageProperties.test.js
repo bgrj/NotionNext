@@ -57,7 +57,7 @@ describe('adjustPageProperties', () => {
     expect(plainPage.href).toBe('/a-book')
   })
 
-  it('appends the post title after the existing date slug', () => {
+  it('keeps the routed post slug short and stores the title separately', () => {
     const NOTION_CONFIG = {
       POST_URL_PREFIX: '%category%/%year%/%month%/%day%',
       POST_URL_PREFIX_MAPPING_CATEGORY: {
@@ -79,8 +79,11 @@ describe('adjustPageProperties', () => {
     adjustPageProperties(post, NOTION_CONFIG)
 
     expect(post.slugBase).toBe('philosophy/2026/10/23/18')
-    expect(post.slug).toBe(`philosophy/2026/10/23/18/影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）`)
-    expect(post.href).toBe(`/philosophy/2026/10/23/18/影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）`)
+    expect(post.slug).toBe('philosophy/2026/10/23/18')
+    expect(post.slugTitle).toBe(
+      '影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）'
+    )
+    expect(post.href).toBe('/philosophy/2026/10/23/18')
   })
 
   it('can keep the original post slug when title appending is disabled', () => {
