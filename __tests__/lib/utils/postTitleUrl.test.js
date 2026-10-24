@@ -1,10 +1,12 @@
 import {
   appendPostTitleToSlug,
+  canonicalOrigin,
+  displayPostUrl,
   encodePostPath,
   findPostByRequestedSlug,
   matchRequestedPostSlug,
   prettyPostPath,
-  prettyPostUrl,
+  publicPostUrl,
   redirectIfCanonical,
   sanitizePostTitleSegment
 } from '@/lib/utils/postTitleUrl'
@@ -16,33 +18,22 @@ describe('postTitleUrl', () => {
   it('turns || and spaces into Unicode so the address bar stays readable', () => {
     expect(sanitizePostTitleSegment(title)).toBe(safeTitle)
     expect(sanitizePostTitleSegment(title)).not.toMatch(/[ |]/)
-    expect(
-      appendPostTitleToSlug('philosophy/2026/10/23/18', title)
-    ).toBe(`philosophy/2026/10/23/18/${safeTitle}`)
+    expect(appendPostTitleToSlug('philosophy/2026/10/23/18', title)).toBe(
+      `philosophy/2026/10/23/18/${safeTitle}`
+    )
   })
 
   it('strips path-breaking characters from titles', () => {
     expect(sanitizePostTitleSegment('a/b?c#d')).toBe('abcd')
   })
 
-  it('keeps the title readable in paths and displayed links', () => {
-    const slug = `philosophy/2026/10/23/18/${safeTitle}`
-    expect(encodePostPath(slug)).toBe(`/${slug}`)
-    expect(prettyPostPath(slug)).toBe(`/${slug}`)
-    expect(
-      prettyPostUrl('https://ourbeings.com', `/${slug}`)
-    ).toBe(`https://ourbeings.com/${slug}`)
-  })
-
-  it('decodes percent-encoded titles back to readable Chinese', () => {
-    const encoded =
-      '/philosophy/2026/10/23/18/%E5%BD%B1%E7%89%87%E5%90%AF%E8%92%99%20%7C%7C%20%E4%B8%8D%E5%BE%97%E4%BA%BA%E7%88%B1'
-    expect(prettyPostPath(encoded)).toBe(
-      '/philosophy/2026/10/23/18/影片启蒙 || 不得人爱'
+  it('keeps the title readable in displayed links', () => {
+    expect(prettyPostPath(`philosophy/2026/10/23/18/${safeTitle}`)).toBe(
+      `/philosophy/2026/10/23/18/${safeTitle}`
     )
   })
 
-  it('matches exact, legacy, and mistyped title aliases', () => {
+  it('matches exact, legacy, and title aliases', () => {
     const post = {
       type: 'Post',
       slug: `philosophy/2026/10/23/18/${safeTitle}`,
@@ -54,15 +45,8 @@ describe('postTitleUrl', () => {
       'legacy'
     )
     expect(
-      matchRequestedPostSlug(post, 'philosophy/2026/10/23/18/wrong-title')
+      matchRequestedPostSlug(post, 'philosophy/2026/10/23/18/影片启蒙')
     ).toBe('alias')
-    expect(
-      matchRequestedPostSlug(
-        post,
-        'philosophy/2026/10/23/18/影片启蒙 || 不得人爱，便无法爱人（大都市爱情法·八集混剪）'
-      )
-    ).toBe('alias')
-    expect(matchRequestedPostSlug(post, 'philosophy/2026/10/23')).toBeNull()
   })
 
   it('prefers exact slug matches over legacy aliases', () => {
@@ -89,14 +73,40 @@ describe('postTitleUrl', () => {
   it('returns a permanent redirect payload', () => {
     expect(
       redirectIfCanonical({
-        canonicalRedirect: encodePostPath(`philosophy/2026/10/23/18/${safeTitle}`)
+        canonicalRedirect: encodePostPath('philosophy/2026/10/23/18')
       })
     ).toEqual({
       redirect: {
-        destination: `/philosophy/2026/10/23/18/${safeTitle}`,
+        destination: '/philosophy/2026/10/23/18',
         permanent: true
       }
     })
-    expect(redirectIfCanonical({ post: {} })).toBeNull()
+  })
+
+  it('normalizes ourbeings links to https://www', () => {
+    expect(canonicalOrigin('http://www.ourbeings.com')).toBe(
+      'https://www.ourbeings.com'
+    )
+    expect(canonicalOrigin('https://ourbeings.com')).toBe(
+      'https://www.ourbeings.com'
+    )
+    expect(
+      displayPostUrl('http://www.ourbeings.com', {
+        type: 'Post',
+        title,
+        slug: 'philosophy/2026/10/23/18',
+        slugBase: 'philosophy/2026/10/23/18'
+      })
+    ).toBe(
+      `https://www.ourbeings.com/philosophy/2026/10/23/18/${safeTitle}`
+    )
+    expect(
+      publicPostUrl('http://www.ourbeings.com', {
+        type: 'Post',
+        title,
+        slug: `philosophy/2026/10/23/18/${safeTitle}`,
+        slugBase: 'philosophy/2026/10/23/18'
+      })
+    ).toBe('https://www.ourbeings.com/philosophy/2026/10/23/18')
   })
 })

@@ -2,9 +2,8 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import dynamic from 'next/dynamic'
 import Image from 'next/image'
-import { useRouter } from 'next/router'
 import { useState } from 'react'
-import { prettyPostUrl } from '@/lib/utils/postTitleUrl'
+import { publicPostUrl } from '@/lib/utils/postTitleUrl'
 
 const QrCode = dynamic(() => import('@/components/QrCode'), { ssr: false })
 const BASE_BUTTON_CLASS =
@@ -68,11 +67,7 @@ const SHARE_BG_CLASS = {
  * @returns
  */
 const ShareButtons = ({ post }) => {
-  const router = useRouter()
-  const shareUrl = prettyPostUrl(
-    siteConfig('LINK'),
-    post?.href || post?.slug || router.asPath
-  )
+  const shareUrl = publicPostUrl(siteConfig('LINK'), post)
   const title = post?.title || siteConfig('TITLE')
   const image = post?.pageCover
   const tags = post.tags || []
