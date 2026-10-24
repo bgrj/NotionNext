@@ -79,8 +79,8 @@ describe('adjustPageProperties', () => {
     adjustPageProperties(post, NOTION_CONFIG)
 
     expect(post.slugBase).toBe('philosophy/2026/10/23/18')
-    expect(post.slug).toBe(`philosophy/2026/10/23/18/${title}`)
-    expect(post.href).toBe(`/philosophy/2026/10/23/18/${title}`)
+    expect(post.slug).toBe(`philosophy/2026/10/23/18/影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）`)
+    expect(post.href).toBe(`/philosophy/2026/10/23/18/影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）`)
   })
 
   it('can keep the original post slug when title appending is disabled', () => {

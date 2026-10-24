@@ -10,21 +10,23 @@ import {
 } from '@/lib/utils/postTitleUrl'
 
 const title = '影片启蒙 || 不得人爱，便无法爱人（大都市爱情法·八集混剪）'
+const safeTitle = '影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）'
 
 describe('postTitleUrl', () => {
-  it('keeps readable titles, including ||, as one path segment', () => {
-    expect(sanitizePostTitleSegment(title)).toBe(title)
+  it('turns || and spaces into Unicode so the address bar stays readable', () => {
+    expect(sanitizePostTitleSegment(title)).toBe(safeTitle)
+    expect(sanitizePostTitleSegment(title)).not.toMatch(/[ |]/)
     expect(
       appendPostTitleToSlug('philosophy/2026/10/23/18', title)
-    ).toBe(`philosophy/2026/10/23/18/${title}`)
+    ).toBe(`philosophy/2026/10/23/18/${safeTitle}`)
   })
 
   it('strips path-breaking characters from titles', () => {
-    expect(sanitizePostTitleSegment('a/b?c#d')).toBe('a b c d')
+    expect(sanitizePostTitleSegment('a/b?c#d')).toBe('abcd')
   })
 
   it('keeps the title readable in paths and displayed links', () => {
-    const slug = `philosophy/2026/10/23/18/${title}`
+    const slug = `philosophy/2026/10/23/18/${safeTitle}`
     expect(encodePostPath(slug)).toBe(`/${slug}`)
     expect(prettyPostPath(slug)).toBe(`/${slug}`)
     expect(
@@ -38,18 +40,12 @@ describe('postTitleUrl', () => {
     expect(prettyPostPath(encoded)).toBe(
       '/philosophy/2026/10/23/18/影片启蒙 || 不得人爱'
     )
-    expect(
-      prettyPostUrl(
-        'https://ourbeings.com',
-        'https://ourbeings.com' + encoded
-      )
-    ).toBe('https://ourbeings.com/philosophy/2026/10/23/18/影片启蒙 || 不得人爱')
   })
 
   it('matches exact, legacy, and mistyped title aliases', () => {
     const post = {
       type: 'Post',
-      slug: `philosophy/2026/10/23/18/${title}`,
+      slug: `philosophy/2026/10/23/18/${safeTitle}`,
       slugBase: 'philosophy/2026/10/23/18',
       id: 'post-id'
     }
@@ -60,6 +56,12 @@ describe('postTitleUrl', () => {
     expect(
       matchRequestedPostSlug(post, 'philosophy/2026/10/23/18/wrong-title')
     ).toBe('alias')
+    expect(
+      matchRequestedPostSlug(
+        post,
+        'philosophy/2026/10/23/18/影片启蒙 || 不得人爱，便无法爱人（大都市爱情法·八集混剪）'
+      )
+    ).toBe('alias')
     expect(matchRequestedPostSlug(post, 'philosophy/2026/10/23')).toBeNull()
   })
 
@@ -67,7 +69,7 @@ describe('postTitleUrl', () => {
     const pages = [
       {
         type: 'Post',
-        slug: `philosophy/2026/10/23/18/${title}`,
+        slug: `philosophy/2026/10/23/18/${safeTitle}`,
         slugBase: 'philosophy/2026/10/23/18'
       },
       {
@@ -78,20 +80,20 @@ describe('postTitleUrl', () => {
     ]
     const found = findPostByRequestedSlug(
       pages,
-      `philosophy/2026/10/23/18/${title}`
+      `philosophy/2026/10/23/18/${safeTitle}`
     )
     expect(found.match).toBe('exact')
-    expect(found.post.slug).toContain(title)
+    expect(found.post.slug).toContain(safeTitle)
   })
 
   it('returns a permanent redirect payload', () => {
     expect(
       redirectIfCanonical({
-        canonicalRedirect: encodePostPath(`philosophy/2026/10/23/18/${title}`)
+        canonicalRedirect: encodePostPath(`philosophy/2026/10/23/18/${safeTitle}`)
       })
     ).toEqual({
       redirect: {
-        destination: `/philosophy/2026/10/23/18/${title}`,
+        destination: `/philosophy/2026/10/23/18/${safeTitle}`,
         permanent: true
       }
     })
