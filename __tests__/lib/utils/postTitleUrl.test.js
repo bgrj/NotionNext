@@ -3,6 +3,8 @@ import {
   encodePostPath,
   findPostByRequestedSlug,
   matchRequestedPostSlug,
+  prettyPostPath,
+  prettyPostUrl,
   redirectIfCanonical,
   sanitizePostTitleSegment
 } from '@/lib/utils/postTitleUrl'
@@ -21,10 +23,27 @@ describe('postTitleUrl', () => {
     expect(sanitizePostTitleSegment('a/b?c#d')).toBe('a b c d')
   })
 
-  it('encodes the title segment for redirects', () => {
-    expect(encodePostPath(`philosophy/2026/10/23/18/${title}`)).toBe(
-      `/philosophy/2026/10/23/18/${encodeURIComponent(title)}`
+  it('keeps the title readable in paths and displayed links', () => {
+    const slug = `philosophy/2026/10/23/18/${title}`
+    expect(encodePostPath(slug)).toBe(`/${slug}`)
+    expect(prettyPostPath(slug)).toBe(`/${slug}`)
+    expect(
+      prettyPostUrl('https://ourbeings.com', `/${slug}`)
+    ).toBe(`https://ourbeings.com/${slug}`)
+  })
+
+  it('decodes percent-encoded titles back to readable Chinese', () => {
+    const encoded =
+      '/philosophy/2026/10/23/18/%E5%BD%B1%E7%89%87%E5%90%AF%E8%92%99%20%7C%7C%20%E4%B8%8D%E5%BE%97%E4%BA%BA%E7%88%B1'
+    expect(prettyPostPath(encoded)).toBe(
+      '/philosophy/2026/10/23/18/影片启蒙 || 不得人爱'
     )
+    expect(
+      prettyPostUrl(
+        'https://ourbeings.com',
+        'https://ourbeings.com' + encoded
+      )
+    ).toBe('https://ourbeings.com/philosophy/2026/10/23/18/影片启蒙 || 不得人爱')
   })
 
   it('matches exact, legacy, and mistyped title aliases', () => {
@@ -72,7 +91,7 @@ describe('postTitleUrl', () => {
       })
     ).toEqual({
       redirect: {
-        destination: `/philosophy/2026/10/23/18/${encodeURIComponent(title)}`,
+        destination: `/philosophy/2026/10/23/18/${title}`,
         permanent: true
       }
     })

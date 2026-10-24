@@ -3,6 +3,7 @@ import replaceSearchResult from '@/components/Mark'
 import NotionPage from '@/components/NotionPage'
 import ShareBar from '@/components/ShareBar'
 import { siteConfig } from '@/lib/config'
+import { syncPrettyPostUrl } from '@/lib/utils/postTitleUrl'
 import { useGlobal } from '@/lib/global'
 import { isBrowser } from '@/lib/utils'
 import { Transition } from '@headlessui/react'
@@ -377,6 +378,9 @@ const LayoutSlug = props => {
     slug: post?.slug || slugFromRouter(router)
   })
   const waiting404 = siteConfig('POST_WAITING_TIME_FOR_404') * 1000
+  useEffect(() => {
+    syncPrettyPostUrl(post)
+  }, [post?.slug])
   useEffect(() => {
     // 404
     if (!post && !friendLinks) {

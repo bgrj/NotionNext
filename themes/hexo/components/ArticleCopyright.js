@@ -1,18 +1,18 @@
 import { useGlobal } from '@/lib/global'
 import SmartLink from '@/components/SmartLink'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
 import CONFIG from '../config'
 import { siteConfig } from '@/lib/config'
 import NotByAI from '@/components/NotByAI'
 import { resolveArticleCopyrightText } from '@/lib/utils/articleCopyright'
+import { prettyPostUrl } from '@/lib/utils/postTitleUrl'
 
 export default function ArticleCopyright({ post }) {
   const router = useRouter()
-  const [path, setPath] = useState(siteConfig('LINK') + router.asPath)
-  useEffect(() => {
-    setPath(window.location.href)
-  })
+  const path = prettyPostUrl(
+    siteConfig('LINK'),
+    post?.href || post?.slug || router.asPath
+  )
 
   const { locale } = useGlobal()
   const copyrightText = resolveArticleCopyrightText({
