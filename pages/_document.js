@@ -85,6 +85,9 @@ class MyDocument extends Document {
 
           {/* 预先设置深色模式，避免闪烁 */}
           <script dangerouslySetInnerHTML={{ __html: darkModeScript }} />
+
+          {/* Mastodon 验证链接：ourbeings.com 验证 Mastodon @ourbeings（按官方步骤添加到 header） */}
+          <a rel="me" href="https://mastodon.social/@ourbeings" style={{ display: 'none' }}>Mastodon</a>
         </Head>
 
         <body>
