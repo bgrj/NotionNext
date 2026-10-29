@@ -110,7 +110,7 @@ function createMouseCanvas() {
           canvas.style.position = 'fixed'
           canvas.style.left = '0px'
           canvas.style.top = '0px'
-          canvas.style.zIndex = '2147483647'
+          canvas.style.zIndex = '12'
           canvas.style.pointerEvents = 'none'
 
           // 将 canvas 添加到 body 元素中
@@ -555,9 +555,7 @@ function createMouseCanvas() {
                   shift: { x: d, y: f },
                   speed: 0.01 + 0.04 * Math.random(),
                   targetSize: 1,
-                  fillColor:
-                    '#' +
-                    ((9453632 * Math.random() + 11184810) | 0).toString(16),
+                  fillColor: ['#C9A66B', '#d4af37', '#e8c98a', '#f5e8c7'][t % 4],
                   orbit: 0.5 * i + 0.5 * i * Math.random()
                 }
                 a.push(e)
