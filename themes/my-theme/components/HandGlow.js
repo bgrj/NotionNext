@@ -24,8 +24,8 @@ const motes = (count, distMin, distMax, seed, radiusBase) =>
     }
   })
 
-const CORE = motes(28, 14, 200, 0.2, 0.9)
-const RAYS = motes(46, 130, 720, 1.35, 0.75)
+const CORE = motes(28, 14, 200, 0.2, 2.2)
+const RAYS = motes(36, 90, 420, 1.35, 1.6)
 const DUST = motes(16, 70, 460, 2.7, 6.4)
 
 export default function HandGlow() {
@@ -47,7 +47,7 @@ export default function HandGlow() {
               '--dx': `${d.dx}px`,
               '--dy': `${d.dy}px`
             }}>
-            <circle cx={d.x} cy={d.y} r={d.radius} fill='#c9a66b' opacity='0.07' />
+            <circle cx={d.x} cy={d.y} r={d.radius} fill='#c9a66b' opacity='0.16' />
           </g>
         ))}
         {[...CORE, ...RAYS].map((mote, index) => (
@@ -92,7 +92,7 @@ export default function HandGlow() {
           inset: 0;
           width: 100%;
           height: 100%;
-          z-index: 1;
+          z-index: 18;
           pointer-events: none;
           overflow: hidden;
         }
