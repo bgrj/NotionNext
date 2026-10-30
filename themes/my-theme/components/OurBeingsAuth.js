@@ -1,6 +1,7 @@
 import { Component, useEffect, useMemo, useState } from 'react'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useClerk, useUser } from '@clerk/nextjs'
 import {
@@ -156,6 +157,7 @@ function useAuthAppearance() {
 }
 
 function SignedPanel({ signingUp, returnTo }) {
+  const router = useRouter()
   const { isLoaded, isSignedIn } = useUser()
   const { signOut } = useClerk()
   const authAppearance = useAuthAppearance()
@@ -193,6 +195,7 @@ function SignedPanel({ signingUp, returnTo }) {
                 })
               } catch {
                 setError('未能退出，请稍后再试。')
+              } finally {
                 setLeaving(false)
               }
             }}
@@ -210,22 +213,29 @@ function SignedPanel({ signingUp, returnTo }) {
     forceRedirectUrl: returnTo,
     fallbackRedirectUrl: returnTo
   }
-  return signingUp ? (
-    <ClerkSignUp
-      {...shared}
-      path='/sign-up'
-      signInUrl={authHref('in', returnTo)}
-      signInForceRedirectUrl={returnTo}
-      signInFallbackRedirectUrl={returnTo}
-    />
-  ) : (
-    <ClerkSignIn
-      {...shared}
-      path='/sign-in'
-      signUpUrl={authHref('up', returnTo)}
-      signUpForceRedirectUrl={returnTo}
-      signUpFallbackRedirectUrl={returnTo}
-    />
+  return (
+    <>
+      {router.query?.signed_out === '1' && (
+        <p role='status'>已退出登录。你可以继续阅读公开内容，或重新登录。</p>
+      )}
+      {signingUp ? (
+        <ClerkSignUp
+          {...shared}
+          path='/sign-up'
+          signInUrl={authHref('in', returnTo)}
+          signInForceRedirectUrl={returnTo}
+          signInFallbackRedirectUrl={returnTo}
+        />
+      ) : (
+        <ClerkSignIn
+          {...shared}
+          path='/sign-in'
+          signUpUrl={authHref('up', returnTo)}
+          signUpForceRedirectUrl={returnTo}
+          signUpFallbackRedirectUrl={returnTo}
+        />
+      )}
+    </>
   )
 }
 
@@ -252,6 +262,12 @@ function AuthShell({
 }) {
   return (
     <section className='ob-auth' aria-labelledby='ob-auth-title'>
+      <Head>
+        <title>
+          {prompt ? '我的空间' : signingUp ? '创建账户' : '登录'} · Our beings
+        </title>
+        <meta name='robots' content='noindex,nofollow' />
+      </Head>
       <div className='ob-auth__intro'>
         <p className='ob-auth__eyebrow'>
           OUR BEINGS <span aria-hidden='true'>／</span> 吾在
@@ -329,6 +345,7 @@ function AuthShell({
           --ob-auth-control: #9b8a70;
           --ob-auth-gold: #785620;
           --ob-auth-soft: #f3eee4;
+          --ob-auth-forest: #314b3e;
           display: grid;
           grid-template-columns: minmax(0, 1fr) minmax(0, 28rem);
           gap: clamp(2rem, 6vw, 5rem);
@@ -356,9 +373,10 @@ function AuthShell({
           margin: 0 0 1.5rem;
           font-size: 0.875rem;
           letter-spacing: 0.12em;
-          color: var(--ob-auth-muted);
+          color: var(--ob-auth-forest);
         }
         .ob-auth h1 {
+          font-family: 'Noto Serif SC', 'Songti SC', SimSun, serif;
           margin: 0 0 1.25rem;
           font-size: clamp(1.75rem, 3vw, 2.5rem);
           line-height: 1.3;
@@ -587,6 +605,7 @@ function AuthShell({
           max-width: 2.75rem;
         }
         :global(.dark) .ob-auth {
+          --ob-auth-forest: #b8cfba;
           --ob-auth-ink: #f3eee5;
           --ob-auth-muted: #c6bbaa;
           --ob-auth-paper: #25221e;
@@ -654,6 +673,14 @@ export function OurBeingsAccountPrompt({ available = true }) {
       ) : (
         <UnavailablePanel />
       )}
+    </AuthShell>
+  )
+}
+
+export function OurBeingsAccountPending() {
+  return (
+    <AuthShell prompt>
+      <LoadingPanel />
     </AuthShell>
   )
 }

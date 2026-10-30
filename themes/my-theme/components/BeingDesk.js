@@ -1,6 +1,10 @@
-import { useClerk, useUser } from '@clerk/nextjs'
+import { useUser } from '@clerk/nextjs'
 import SmartLink from '@/components/SmartLink'
-import { OurBeingsAccountPrompt } from './OurBeingsAuth'
+import {
+  OurBeingsAccountPending,
+  OurBeingsAccountPrompt
+} from './OurBeingsAuth'
+import OurBeingsSignOut from './OurBeingsSignOut'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BEING_ROOMS,
@@ -33,15 +37,22 @@ const profileFromBeing = being => {
 }
 
 const BeingDesk = () => {
-  const enabled = isClerkEnabled()
-  const { isLoaded, isSignedIn, user } = enabled
-    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
-      useUser()
-    : { isLoaded: true, isSignedIn: false, user: null }
-  const { signOut } = enabled
-    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
-      useClerk()
-    : { signOut: async () => {} }
+  if (!isClerkEnabled()) return <OurBeingsAccountPrompt available={false} />
+  return <ConnectedDesk />
+}
+
+const ConnectedDesk = () => {
+  const { isLoaded, isSignedIn, user } = useUser()
+  if (!isLoaded || (isSignedIn && !user?.id)) {
+    return <OurBeingsAccountPending />
+  }
+  if (!isSignedIn) return <OurBeingsAccountPrompt />
+  // A different account gets entirely new state, including unsaved drafts.
+  // Responses belonging to the unmounted account are ignored by its effects.
+  return <BeingDeskSession key={user.id} user={user} />
+}
+
+const BeingDeskSession = ({ user }) => {
   const [me, setMe] = useState(null)
   const [writings, setWritings] = useState([])
   const [draft, setDraft] = useState(emptyDraft)
@@ -60,7 +71,6 @@ const BeingDesk = () => {
   }
 
   useEffect(() => {
-    if (!isSignedIn) return undefined
     let cancelled = false
     fetch('/api/beings/me', { method: 'POST' })
       .then(async res => {
@@ -78,7 +88,7 @@ const BeingDesk = () => {
     return () => {
       cancelled = true
     }
-  }, [isSignedIn])
+  }, [user.id])
 
   useEffect(() => {
     const tick = () => setNow(Date.now())
@@ -130,6 +140,9 @@ const BeingDesk = () => {
       applyPayload(data)
       if (payload.writing) setDraft(emptyDraft)
       return true
+    } catch {
+      setError('连接暂时中断。输入仍保留在这里，请稍后再试。')
+      return false
     } finally {
       setSaving(false)
     }
@@ -145,18 +158,6 @@ const BeingDesk = () => {
       setCopied(false)
     }
   }
-
-  if (!enabled) return <OurBeingsAccountPrompt available={false} />
-
-  if (!isLoaded) {
-    return (
-      <div className='ob-desk'>
-        <p>正在确认登录状态…</p>
-      </div>
-    )
-  }
-
-  if (!isSignedIn) return <OurBeingsAccountPrompt />
 
   return (
     <div className='ob-desk'>
@@ -450,13 +451,7 @@ const BeingDesk = () => {
             {' · '}
           </>
         ) : null}
-        <button
-          type='button'
-          className='ob-desk__text'
-          onClick={() => signOut({ redirectUrl: '/our-beings' })}
-        >
-          退出
-        </button>
+        <OurBeingsSignOut />
       </p>
 
       <style jsx>{`

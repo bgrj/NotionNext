@@ -40,6 +40,9 @@ export const ourbeingLayouts = {
   LayoutBeingDesk: dynamic(() =>
     import('@/themes/my-theme').then(mod => mod.LayoutBeingDesk)
   ),
+  LayoutOurBeingsApp: dynamic(() =>
+    import('@/themes/my-theme').then(mod => mod.LayoutOurBeingsApp)
+  ),
   LayoutBeingProfile: dynamic(() =>
     import('@/themes/my-theme').then(mod => mod.LayoutBeingProfile)
   )

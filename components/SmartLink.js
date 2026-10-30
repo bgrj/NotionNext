@@ -1,15 +1,11 @@
 import Link from 'next/link'
 import { siteConfig } from '@/lib/config'
+import { isAuthFlowPath } from '@/lib/beings/authNavigation'
 
 // 过滤 <a> 标签不能识别的 props
 const filterDOMProps = props => {
-  const {
-    passHref,
-    legacyBehavior,
-    placeholderSrc,
-    fallbackSrc,
-    ...rest
-  } = props
+  const { passHref, legacyBehavior, placeholderSrc, fallbackSrc, ...rest } =
+    props
   return rest
 }
 
@@ -34,6 +30,10 @@ const filterLinkProps = props => {
 const SmartLink = ({ href, children, ...rest }) => {
   const LINK = siteConfig('LINK')
 
+  if (href === undefined || href === null) {
+    return <span {...filterDOMProps(rest)}>{children}</span>
+  }
+
   // 获取 URL 字符串用于判断是否是外链
   let urlString = ''
 
@@ -51,6 +51,7 @@ const SmartLink = ({ href, children, ...rest }) => {
 
   const getPersistedQuery = () => {
     if (typeof window === 'undefined') return {}
+    if (isAuthFlowPath(window.location.pathname)) return {}
     const queryString = window.location.search?.slice(1) || ''
     const params = new URLSearchParams(queryString)
     const preserved = {}
@@ -61,11 +62,13 @@ const SmartLink = ({ href, children, ...rest }) => {
   }
 
   const mergePreservedQueryForStringHref = value => {
-    if (typeof value !== 'string' || !value || value.startsWith('#')) return value
+    if (typeof value !== 'string' || !value || value.startsWith('#'))
+      return value
     const preservedQuery = getPersistedQuery()
     if (Object.keys(preservedQuery).length === 0) return value
 
-    const isAbsolute = value.startsWith('http://') || value.startsWith('https://')
+    const isAbsolute =
+      value.startsWith('http://') || value.startsWith('https://')
     const url = new URL(value, LINK)
     Object.entries(preservedQuery).forEach(([key, paramValue]) => {
       if (!url.searchParams.has(key)) {
@@ -100,7 +103,8 @@ const SmartLink = ({ href, children, ...rest }) => {
         href={externalUrl}
         target='_blank'
         rel='noopener noreferrer'
-        {...filterDOMProps(rest)}>
+        {...filterDOMProps(rest)}
+      >
         {children}
       </a>
     )

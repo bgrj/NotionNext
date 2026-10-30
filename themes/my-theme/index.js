@@ -24,10 +24,9 @@ import Card from '@/themes/hexo/components/Card'
 import Footer from './components/Footer'
 import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
-import ExistenceLife from './components/ExistenceLife'
 import OurBeingsIndex from './components/OurBeingsIndex'
 import BeingLife from './components/BeingLife'
-import BeingDesk from './components/BeingDesk'
+const CommunityApp = dynamic(() => import('./components/community/CommunityApp'))
 import { LayoutSignIn, LayoutSignUp } from './components/OurBeingsAuth'
 import NoticeModal from './components/NoticeModal'
 import { EXISTENCE_CATEGORY, isExistenceCategory } from './existence'
@@ -121,7 +120,8 @@ const LayoutBase = props => {
   const existence = isExistencePath(router.asPath)
   const ourBeings = isOurBeingsPath(router.asPath)
   const auth = isOurBeingsAuthPath(router.asPath)
-  const chromeLite = friendLinks || existence || ourBeings || auth
+  const editorial = /^\/category\/(?:道|术)(?:\/|$)/.test(decodePath(router.asPath))
+  const chromeLite = friendLinks || existence || ourBeings || auth || editorial
   const hexoArticleRouteLoading = siteConfig(
     'HEXO_ARTICLE_ROUTE_LOADING',
     true,
@@ -175,7 +175,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}`}
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth || editorial ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}`}
       >
         <Style />
 
@@ -258,7 +258,7 @@ const LayoutBase = props => {
         <Footer title={siteConfig('TITLE')} />
 
         {/* 首次访问公告弹窗：定位文案在 noticeContent.js；最近一篇跟站点 latestPosts 走 */}
-        <NoticeModal latestPosts={props.latestPosts} />
+        {router.route === '/' && <NoticeModal latestPosts={props.latestPosts} />}
       </div>
     </ThemeGlobalHexo.Provider>
   )
@@ -283,10 +283,13 @@ const LayoutIndex = props => {
 const LayoutPostList = props => {
   const router = useRouter()
   if (isExistenceCategory(props.category) || isExistencePath(router.asPath)) {
-    return <ExistenceLife {...props} />
+    return <CommunityApp defaultView='workspace' {...props} />
   }
   if (isOurBeingsCategory(props.category) || isOurBeingsPath(router.asPath)) {
     return <OurBeingsIndex {...props} />
+  }
+  if (['道', '术'].includes(props.category)) {
+    return <CommunityApp defaultView={props.category === '道' ? 'dao' : 'shu'} {...props} />
   }
   return (
     <div className={props.className || 'pt-2'}>
@@ -561,13 +564,15 @@ const LayoutBeingProfile = props => (
   />
 )
 
-const LayoutBeingDesk = () => <BeingDesk />
+const LayoutBeingDesk = () => <CommunityApp defaultView='workspace' />
+const LayoutOurBeingsApp = props => <CommunityApp {...props} />
 
 export {
   Layout404,
   LayoutArchive,
   LayoutBase,
   LayoutBeingDesk,
+  LayoutOurBeingsApp,
   LayoutBeingProfile,
   LayoutCategoryIndex,
   LayoutIndex,

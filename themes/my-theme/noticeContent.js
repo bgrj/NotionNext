@@ -8,18 +8,18 @@ export const NOTICE_VERSION = '2026-09-27-18'
 export const NOTICE = {
   title: '公告',
   mottoLines: ['我们的所选、所信、所践，', '塑造了我们之所是'],
-  updatedAt: '思想定位更新｜2026年9月26日20时',
+  updatedAt: '实验站说明｜2026年10月31日',
   lead:
-    'Our Being 不是个人博客，也不是知识付费铺子。它是一处长期公共思想实践。',
+    '与自己周旋，与他人相处，在世界里慢慢安放自己。',
   body: [
-    '这个站有四类：道、术、我的存在、我们的存在。',
-    '道是已经写出的思想。术服从道，是各种工具的分享。我的存在只是作者自己的日子。我们的存在以后或许会开放给其他人留下自己的存在，现在还没有。'
+    '我们的存在，让阅读活动与公开分享相遇。我的存在，是每个人自己的生命日志、图书馆、影像馆与音频馆。道，留下长期的追问；术，整理当下有用的方法。',
+    '新记录默认私密，主动提交并通过审核后才进入公开阅读。实验版的云端保存状态会在页面提示；功能导览使用虚构账号与示例，只保存在当前浏览器。'
   ],
   recentLabel: '最近',
   recent: {
-    date: '2026年9月27日',
-    title: '把一本英文小说拆成学习资料以后：怎样读，什么才能卖',
-    href: 'https://ourbeings.com/tools/2026/09/27/diy2'
+    date: '2026年10月31日',
+    title: '从这里开始：自己的空间，与我们的相遇',
+    href: '/our-beings/app/about'
   },
   album: {
     title: '微信公众号合集',
@@ -28,7 +28,7 @@ export const NOTICE = {
   aboutLabel: '把这个站的中心看清楚',
   about: {
     title: '关于 Our Being',
-    href: 'https://ourbeings.com/philosophy/2026/04/01/about'
+    href: '/our-beings/app/about'
   }
 }
 

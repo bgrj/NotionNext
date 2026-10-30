@@ -25,7 +25,7 @@ export default function Category(props) {
 export async function getStaticProps({ params: { category, page } }) {
   const from = 'category-page-props'
   let props = await fetchGlobalAllData({ from })
-  if (isOurBeingsCategory(category)) {
+  if (isOurBeingsCategory(category) || ['道', '术'].includes(category)) {
     props.publicHub = buildPublicHub(props.allPages)
   }
 

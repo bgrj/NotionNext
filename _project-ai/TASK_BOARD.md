@@ -1,6 +1,6 @@
 # Task Board
 
-Current rule: one smallest verifiable task per round.
+Current scope: continuously implement and publish ourbeings.com-1 under the latest user authorization; no per-item conversational pauses.
 
 ## Our beings（1）实施分支
 
@@ -28,3 +28,7 @@ Current rule: one smallest verifiable task per round.
 - real business outcome
 
 Do not track message count, role count, or meeting summaries.
+
+## 当前连续发布
+
+`ob1-release-site` 覆盖本轮实现、验证与发布。189 项针对性测试及完整 Next 构建通过。新私有 Blob 绑定生产的创建请求被自动审批拒绝，操作未执行；真实存储关闭，导览与实时 API 隔离。详细状态见 RELEASE-01.md。
