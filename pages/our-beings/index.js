@@ -3,6 +3,7 @@ import { siteConfig } from '@/lib/config'
 import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import { OUR_BEINGS_CATEGORY } from '@/themes/my-theme/beings'
+import { buildPublicHub } from '@/lib/site/publicHub'
 
 export default function OurBeingsHome(props) {
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
@@ -12,6 +13,7 @@ export default function OurBeingsHome(props) {
 export async function getStaticProps({ locale }) {
   const from = 'our-beings-index'
   const props = await fetchGlobalAllData({ from, locale })
+  props.publicHub = buildPublicHub(props.allPages)
   delete props.allPages
   return {
     props: { ...props, category: OUR_BEINGS_CATEGORY },

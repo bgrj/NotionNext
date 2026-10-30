@@ -2,6 +2,8 @@ import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
 import { fetchGlobalAllData, finalizeListPageProps } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
+import { buildPublicHub } from '@/lib/site/publicHub'
+import { isOurBeingsCategory } from '@/themes/my-theme/beings'
 import {
   EXISTENCE_CATEGORY,
   existenceRevalidateSeconds,
@@ -22,6 +24,9 @@ export default function Category(props) {
 export async function getStaticProps({ params: { category }, locale }) {
   const from = 'category-props'
   let props = await fetchGlobalAllData({ from, locale })
+  if (isOurBeingsCategory(category)) {
+    props.publicHub = buildPublicHub(props.allPages)
+  }
 
   // 过滤状态
   props.posts = props.allPages?.filter(

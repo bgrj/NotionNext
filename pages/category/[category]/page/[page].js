@@ -1,10 +1,9 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import {
-  fetchGlobalAllData,
-  finalizeListPageProps
-} from '@/lib/db/SiteDataApi'
+import { fetchGlobalAllData, finalizeListPageProps } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
+import { buildPublicHub } from '@/lib/site/publicHub'
+import { isOurBeingsCategory } from '@/themes/my-theme/beings'
 import {
   EXISTENCE_CATEGORY,
   existenceRevalidateSeconds,
@@ -26,6 +25,9 @@ export default function Category(props) {
 export async function getStaticProps({ params: { category, page } }) {
   const from = 'category-page-props'
   let props = await fetchGlobalAllData({ from })
+  if (isOurBeingsCategory(category)) {
+    props.publicHub = buildPublicHub(props.allPages)
+  }
 
   // 过滤状态类型
   props.posts = props.allPages
@@ -37,7 +39,11 @@ export async function getStaticProps({ params: { category, page } }) {
     props.existencePosts = slimExistencePosts(props.posts)
     props.initialRenderTime = Date.now()
   } else {
-    const POSTS_PER_PAGE = siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
+    const POSTS_PER_PAGE = siteConfig(
+      'POSTS_PER_PAGE',
+      12,
+      props?.NOTION_CONFIG
+    )
     // 处理分页
     props.posts = props.posts.slice(
       POSTS_PER_PAGE * (page - 1),
@@ -74,9 +80,11 @@ export async function getStaticProps({ params: { category, page } }) {
 
 export async function getStaticPaths() {
   const from = 'category-paths'
-  const { categoryOptions, allPages, NOTION_CONFIG } = await fetchGlobalAllData({
-    from
-  })
+  const { categoryOptions, allPages, NOTION_CONFIG } = await fetchGlobalAllData(
+    {
+      from
+    }
+  )
   const paths = []
 
   categoryOptions?.forEach(category => {
