@@ -1,21 +1,24 @@
-import { completeNotionOAuth } from '@/lib/server/notionOAuth'
+import { completeNotionOAuth } from '@/lib/security/notionOAuth'
 
-// Retain the legacy callback URL while sharing the state-checked server flow.
-export async function getServerSideProps({ req, res, query }) {
-  res.setHeader('Cache-Control', 'private, no-store')
-  res.setHeader('Referrer-Policy', 'no-referrer')
-  if (!query.code && !query.error) {
-    return { redirect: { destination: '/api/auth/notion', permanent: false } }
-  }
-  const result = await completeNotionOAuth({ query, cookies: req.cookies }, res)
+// Support the legacy callback without putting credentials in page props.
+export async function getServerSideProps(ctx) {
+  const result = await completeNotionOAuth(
+    {
+      method: ctx.req.method,
+      headers: ctx.req.headers,
+      cookies: ctx.req.cookies,
+      query: ctx.query
+    },
+    ctx.res
+  )
   return {
     redirect: {
-      destination: result.redirect || '/auth/result?status=error',
+      destination: `/auth/result?${new URLSearchParams({ msg: result.message }).toString()}`,
       permanent: false
     }
   }
 }
 
-export default function NotionOAuthRedirect() {
+export default function AuthCallback() {
   return null
 }

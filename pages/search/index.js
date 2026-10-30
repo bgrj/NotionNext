@@ -1,6 +1,10 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps
+} from '@/lib/db/SiteDataApi'
+import { isExistencePublication } from '@/lib/security/existenceCrawl'
 import { DynamicLayout } from '@/themes/theme'
 import { useRouter } from 'next/router'
 
@@ -50,9 +54,12 @@ export async function getStaticProps({ locale }) {
   })
   const { allPages } = props
   props.posts = allPages?.filter(
-    page => page.type === 'Post' && page.status === 'Published'
+    page =>
+      page.type === 'Post' &&
+      page.status === 'Published' &&
+      !isExistencePublication(page)
   )
-  delete props.allPages
+  finalizeListPageProps(props)
   return {
     props,
     revalidate: process.env.EXPORT
