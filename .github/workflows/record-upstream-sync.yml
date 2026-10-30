@@ -1,4 +1,5 @@
 name: Record upstream sync
+# trigger-revision: 2
 
 # One-shot: the push that adds this file records upstream as an ancestor of
 # main and ourbeings.com. It does not rewrite site design files.
