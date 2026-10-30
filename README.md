@@ -1,198 +1,146 @@
-<div align="center">
+# Our beings · 我们的存在
 
-<img src="https://github.com/user-attachments/assets/c111204d-2016-4343-92e4-83357cac4b19" width="96" height="96" alt="NotionNext Logo" />
+**与自己周旋，与他人相处，在世界里慢慢安放自己。**
 
-# NotionNext
+[访问网站](https://ourbeings.com) · [本站源码](https://github.com/bgrj/NotionNext/tree/ourbeings.com) · [NotionNext 上游](https://github.com/notionnext-org/NotionNext)
 
-用 Notion 搭建自己的独立站
+一个人活着，先要与自己周旋，随后与他人相处，再慢慢学会如何安放自己在世界中的位置。Our beings 想写的，正是这件事。
 
-继续在Notion 写作，一键发布为博客、作品集、知识库、导航站或产品官网。
+这是一个缓慢生长的内容站：保留自己的写作、思考与创作，也收集值得反复阅读、反复进入、反复使用的外部资源。文字留下问题，工具让想法落地。
 
-<p>
-  <a href="https://preview.tangly1024.com/">在线预览</a>
-  ·
-  <a href="https://notionnext.tangly1024.com/user-guide/start-here">开始搭建</a>
-  ·
-  <a href="https://notionnext.tangly1024.com/user-guide/themes/THEMES_CATALOG">主题全览</a>
-  ·
-  <a href="https://notionnext.tangly1024.com/user-guide/showcase">用户作品</a>
-  ·
-  <a href="https://notionnext.tangly1024.com/">文档站</a>
-  ·
-  <a href="https://github.com/notionnext-org/NotionNext/discussions">讨论区</a>
-</p>
+## 四个入口，一条内容脉络
 
-<p>
-  <a aria-label="GitHub commit activity" href="https://github.com/notionnext-org/NotionNext/commits/main" title="GitHub commit activity">
-    <img src="https://img.shields.io/github/commit-activity/m/notionnext-org/NotionNext?style=for-the-badge"/>
-  </a>
-  <a aria-label="GitHub contributors" href="https://github.com/notionnext-org/NotionNext/graphs/contributors" title="GitHub contributors">
-    <img src="https://img.shields.io/github/contributors/notionnext-org/NotionNext?color=orange&style=for-the-badge"/>
-  </a>
-  <a aria-label="Build status" href="#" title="Build status">
-    <img src="https://img.shields.io/github/deployments/notionnext-org/NotionNext/Production?logo=Vercel&style=for-the-badge"/>
-  </a>
-  <a aria-label="Powered by Vercel" href="https://vercel.com?utm_source=Craigary&utm_campaign=oss" title="Powered by Vercel">
-    <img src="https://www.datocms-assets.com/31049/1618983297-powered-by-vercel.svg" height="28"/>
-  </a>
-</p>
+首页继续使用现有四区设计。下表说明本轮优化的**目标结构**，不表示所有功能已经上线。
 
-中文 | [English](./README_EN.md)
+| 入口 | 用途 | 内容与可见性 | 保留的路径 |
+| --- | --- | --- | --- |
+| 我们的存在 | 思考、阅读与分享的公共入口 | 汇集「我的存在」「道」「术」中主动公开的内容，以及经整理的外部资源 | `/category/我们的存在` |
+| 我的存在 | 个人存在日志 | 日常记录、生命感受与创作片段；逐篇决定公开或私密 | `/category/我的存在` |
+| 道 | 深度长文、思考与分享 | 哲学、人文、阅读与观察；逐篇决定公开或私密 | `/category/道` |
+| 术 | 工具、资料与 know-how | 方法、教程、可重复使用的资源与工具；逐项决定公开或私密 | `/category/术` |
 
-</div>
+「我们的存在」将作为公开内容的汇流视图。同一篇内容保留一个稳定 ID、一份正文和一个主链接，避免为四个入口重复维护文章。
 
----
+现有实现中，「我们的存在」仍主要是存在者名录，相关代码位于 `themes/my-theme/components/OurBeingsIndex.js`。后续会逐步接入公开内容；已有名录、账户与相关数据的去向需单独确认，不在本轮文档调整中移除。
 
-## NotionNext 是什么呢？
+## 视觉与交互基线
 
-NotionNext 是一个基于 **Next.js + Notion API** 的开源站点系统。你继续用 Notion 管理文章、分类、标签、菜单和页面，NotionNext 负责把这些内容发布成可访问、可搜索、可运营的独立网站。
+保留首页截图所体现的作品：上下手背景、四个入口的字形与分区、位置比例，以及金色连线。后续调整围绕内容页展开，首页基线在每次涉及界面的提交后单独复核。
 
-它适合想长期沉淀内容的人：内容创作者、独立开发者、设计师、摄影师、课程作者、开源项目维护者，以及需要快速搭建产品官网或知识库的小团队。
-
-## 你可以用它做什么？
-
-| 目标 | 推荐入口 | 适合人群 |
+| 基线 | 当前实现位置 | 维护约束 |
 | --- | --- | --- |
-| 搭个人博客 | [从这里开始](https://notionnext.tangly1024.com/user-guide/start-here) | 内容创作者、独立开发者、学生 |
-| 做作品集或个人品牌站 | [按场景选主题](https://notionnext.tangly1024.com/user-guide/themes/THEMES_CATALOG#按场景选主题) | 设计师、摄影师、自由职业者 |
-| 做产品官网或 SaaS 落地页 | [Starter / Landing / Proxio](https://notionnext.tangly1024.com/user-guide/themes/THEMES_CATALOG#按场景选主题) | 创业者、独立产品、小团队 |
-| 做知识库或文档站 | [GitBook / Claude](https://notionnext.tangly1024.com/user-guide/themes/THEMES_CATALOG#按场景选主题) | 开源项目、课程作者、团队文档 |
-| 做导航站或资源聚合 | [Nav 主题](https://notionnext.tangly1024.com/user-guide/themes/nav) | 资源整理者、社群运营者 |
+| 首页「下手」背景 | `themes/my-theme/components/Hero.js` | 保留原图、构图与现有适配方式 |
+| 「上手」背景 | `themes/my-theme/config.js`、Notion 配置中心的 `OURBEINGS_ARTICLE_BACKGROUND` | 保留图片来源，不用新插画或纯色替换 |
+| 四个入口 | `themes/my-theme/components/HeroPuzzle.js` | 保留名称、字形、区域路径、空间关系与点击入口 |
+| 主视觉资源 | `assets/ourbeing/manifest.json`、`lib/ourbeing-assets.json` | 保留当前资源与校验信息 |
 
-## 为什么选择 NotionNext？
+内页延续米白、暖灰与现有金色线索，借鉴纸张般的留白和清晰的文字层级。正文、目录、必要操作优先；减少重复推荐、无关挂件和争夺注意力的动效。具体样式逐项预览后确认。
 
-- **不换写作工具**：文章、分类、标签、封面、菜单仍在 Notion 中维护。
-- **上线路径短**：复制 Notion 模板、Fork 仓库、连接 Vercel，即可部署。
-- **主题选择多**：内置 26 个主题，覆盖博客、文档、作品集、官网、相册、导航站等场景。
-- **适合长期运营**：支持独立域名、SEO、Sitemap、RSS、评论、统计、搜索、广告和邮件订阅。
-- **开源可控**：源码、配置和主题都在自己的仓库里，后续可以继续二次开发。
-- **数据链路清晰**：Notion 负责内容沉淀，站点负责展示和分发，后续可迁移到 Markdown 或其他系统。
+## 内容后台与维护边界
 
-## 20 分钟部署路线
+本站继续使用 **Notion 管内容、GitHub 管代码、现有托管平台构建发布** 的方式。
 
-1. 打开 [主题预览站](https://preview.tangly1024.com/) 看最终效果。
-2. 复制 NotionNext 官方 Notion 模板。
-3. Fork 本仓库到自己的 GitHub 账号。
-4. 使用 [Vercel 部署 NotionNext](https://notionnext.tangly1024.com/user-guide/deploy-vercel)。
-5. 在环境变量中填写 Notion 页面 ID 等配置。
-6. 部署成功后，按场景选择主题并补齐域名、评论、统计、搜索等功能。
-
-新手建议直接从文档站的 [从这里开始](https://notionnext.tangly1024.com/user-guide/start-here) 阅读。
-
-## 主题与预览
-
-- 在线切换主题：[preview.tangly1024.com](https://preview.tangly1024.com/)
-- 26 个内置主题：[主题全览](https://notionnext.tangly1024.com/user-guide/themes/THEMES_CATALOG)
-- 仓库内主题文档：[docs/user-guide/themes/](./docs/user-guide/themes/)
-
-| 场景 | 优先看 |
+| 要调整的内容 | 维护位置 |
 | --- | --- |
-| 个人博客 | `simple`、`hexo`、`nobelium`、`typography` |
-| 文档 / 知识库 | `gitbook`、`claude`、`thoughtlite` |
-| 作品集 / 个人品牌 | `opc`、`proxio`、`starter`、`landing` |
-| 产品官网 | `starter`、`landing`、`commerce` |
-| 图片 / 摄影 | `photo`、`plog`、`magzine` |
-| 导航站 | `nav` |
+| 文章正文、标题、摘要、分类、标签、日期 | 原有 Notion 内容库 |
+| 站点介绍、主题支持的显示选项 | Notion 配置中心及对应配置文件 |
+| 主题布局、阅读交互、接口与授权逻辑 | 本仓库的 `ourbeings.com` 分支 |
+| 构建环境、服务端凭据、部署与回滚 | 现有托管平台；凭据不写入仓库或公开文档 |
 
-## 本地开发
+内容库已有 `title`、`type`、`status`、`category`、`summary`、`tags`、`slug`、`date`、`password`、`comment` 等字段。保留现有字段与内容；如需新增来源、内容形态或可见性字段，先核对读取代码与默认值，再单独迁移。
 
-推荐使用 Node 22 和 Yarn 1。Node 20 已无法安装当前依赖（`@ai-sdk/google` 要求 Node >=22），部署平台也需要同步设置为 Node 22。
+配置中心可覆盖许多站点选项，但并非每项都能从 Notion 修改。`NOTION_PAGE_ID` 等启动配置应在部署环境中设置。维护配置前先确认实际生效位置，避免同时修改多个来源。
+
+### 公开与私密分开处理
+
+当前库使用 `Published`、`Invisible`、`Draft`。这些是发布状态，不能直接当作完整的隐私权限模型。
+
+- `Published`：进入公开内容候选范围；还需经过内容类型、访问权限等检查。
+- `Invisible`：现有代码允许部分内容通过链接访问；**不等于仅自己可见**。
+- `Draft`：草稿状态；仍需验证正文、子页面和附属接口都遵守相同规则。
+- `password`：已有文章保护机制；不能把前端隐藏或输入框本身当作服务端授权。
+
+下一阶段先验证匿名 HTML、Next 页面数据、搜索、RSS、Sitemap、摘要、子页面与缓存的输出，再确定是否扩展可见性字段。私密正文必须在服务端得到保护，也不能通过公开的 Notion 源页面绕过授权。
+
+本次只调整说明文档，不改变任何内容的发布状态，不批量公开历史记录。
+
+## 逐项优化计划
+
+执行方式：**一个明确交付 → 一次独立提交 → 提供差异与验证 → 站主确认 → 下一项。**
+
+涉及多处代码的阶段继续拆成可单独验证的小项。每次记录提交 SHA；应用发布保留可回滚版本。未确认的阶段仅作为计划。
+
+| 顺序 | 调整项 | 交付与涉及范围 | 验收标准 |
+| --- | --- | --- | --- |
+| 01 | 本站 README 与定位 | 本文件；整理四个入口、维护方式、视觉基线和后续路线 | 提交只包含 `README.md`；网站代码、图片、Notion 配置保持原状 |
+| 02 | 发布与访问边界核对 | 核对 `lib/security/`、`lib/server/postAccess.js`、页面及公开输出；用虚构记录验证公开、未列出、草稿、加密、私密的区别 | 给出实际行为与需要修复的路径；测试记录不包含真实私密内容；具体修复单独提交 |
+| 03 | 统一内容规则 | 在确认字段与默认策略后，逐个接入正文、列表、搜索、RSS 等输出；必要时再调整 Notion 字段 | 同一记录在各出口得到一致判定；旧链接保留；历史记录不会因缺省值意外公开 |
+| 04 | 「我们的存在」公开汇流 | 保留四区入口，调整其目标页的内容组织；从日志、道、术中选择公开内容，保留分类回溯 | 同一内容不重复建档；可筛选、分页、返回原文；现有名录的安排经单独确认 |
+| 05 | Notion 发布工作流 | 基于已有字段整理写作、预览、公开、撤回的操作说明；仅按实际需要增加内容形态、来源等字段 | 原有内容可继续维护；新增项有默认值与迁移说明；更改权限前可预览范围 |
+| 06 | 内页阅读与简约性 | 在原有主题内逐项调整列表密度、正文排版、目录和辅助操作，保留上下手图片 | 桌面与手机可读；原有阅读设置可用；四区、背景和原文路径对照基线一致 |
+| 07 | 「术」与外部资源 | 统一资源条目的用途、来源、适用条件、入口和可用状态；先整理条目，再决定工具实现 | 来源可追溯；规划中的工具清楚标注；外链、站内教程与可运行服务可辨认 |
+| 08 | 移动端与性能复核 | 对相关页面逐项检查窄屏、键盘操作、减弱动效、图片加载和必要请求 | 无横向溢出、可操作、无相关运行错误；对比优化前后；首页基线保持一致 |
+| 09 | App、小程序与 PWA 衔接 | 整理可复用的内容数据结构、稳定 ID、分页、筛选与授权接口；评估现有 PWA 配置 | 网页展示逻辑与内容规则分开；私密内容不进入共享或离线缓存；新增客户端可复用同一数据规则 |
+
+02 是公开汇流、搜索扩展和客户端复用的前置检查。涉及代码的调整按影响范围运行针对性测试，再做必要的构建与预览；文档调整采用对应的链接、内容与差异检查。
+
+### 「术」的首批候选
+
+以下是需求方向，尚不表示已有可用服务：
+
+| 候选 | 第一版先解决的问题 | 交付前要验证 |
+| --- | --- | --- |
+| 微信聊天记录全文提取 | 从用户持有的导出文件整理可检索文本与附件索引 | 支持的文件格式、完整性、导出结果；原始内容优先本地处理 |
+| 本地影视高质量自动截图 | 从本地视频按时间点或规则提取截图 | 分辨率、时间戳、重复帧处理、文件命名与批量导出 |
+
+工具的处理逻辑与网页界面分开。耗时的视频任务、文件格式兼容和运行环境需要单独评估，避免把未来桌面端、App 或小程序绑定在某一张页面里。
+
+## 给后续客户端留出余地
+
+现有项目已经包含 PWA 配置、安装组件和服务端 API；是否在生产启用，应以实际配置与验收为准。
+
+后续复用围绕以下边界推进：
+
+1. **内容数据**：保留 Notion 记录 ID，统一标题、摘要、分类、内容形态、来源与时间等字段的对外结构。
+2. **访问规则**：服务端统一判断公开与私密；网页、App、小程序使用相同规则，凭据保留在服务端。
+3. **接口**：按实际需求补齐版本化、分页、筛选、错误响应与缓存规则；保留现有链接兼容。
+4. **呈现**：Web 主题专注页面展示，业务规则不写死在 React 组件或 DOM 选择器中。
+5. **工具任务**：文件处理、进度与结果导出独立封装，供不同界面调用。
+
+PWA 可以作为较轻的安装体验，但不等同于原生 App 或小程序。先把内容与服务边界理顺，再选择客户端技术。
+
+## 本地开发与相关文件
+
+当前仓库为 NotionNext 的定制分支，默认主题为 `my-theme`。现有运行配置要求 Node.js 22–24，包管理器为 Yarn 1.22.22；开发与托管端保持一致。
 
 ```bash
-# 1. 使用 Node 22
-nvm use || nvm install
-
-# 2. 安装 Yarn
-npm i -g yarn
-
-# 3. 安装依赖
-yarn
-
-# 4. 启动开发
+git clone --branch ourbeings.com --single-branch https://github.com/bgrj/NotionNext.git
+cd NotionNext
+nvm use
+npm install --global yarn@1.22.22
+yarn install --frozen-lockfile
+cp .env.example .env.local
+# 在 .env.local 中填写自己的 NOTION_PAGE_ID 等必需配置
 yarn dev
 ```
 
-常用命令：
-
-| 命令 | 用途 |
+| 路径或命令 | 用途 |
 | --- | --- |
-| `yarn dev` | 启动本地开发 |
-| `yarn build` | 构建生产版本 |
-| `yarn export` | 静态导出 |
-| `yarn docs:site:dev` | 本地预览文档站 |
-| `yarn docs:site:build` | 构建文档站 |
+| [themes/my-theme/](./themes/my-theme/) | 本站主题与阅读界面 |
+| [blog.config.js](./blog.config.js)、[conf/](./conf/) | 站点配置与分项配置 |
+| [pages/api/](./pages/api/)、[lib/](./lib/) | 接口、内容读取与共享逻辑 |
+| [assets/ourbeing/](./assets/ourbeing/) | 已有主视觉资源的构建来源 |
+| `yarn test` | 现有测试集 |
+| `yarn type-check` | 类型检查 |
+| `yarn build` | 生产构建 |
+| [docs/](./docs/) | 保留的 NotionNext 使用与开发文档 |
 
-## 文档入口
+站点定制只在明确选定的分支和范围内进行。同步上游时复核首页、主题、资源与锁文件差异，保留本站的设计和数据；不要把本站远程仓库改成上游地址。
 
-自 2026 年起，NotionNext 使用仓库内 Markdown 文档作为主要教程来源，并发布为独立文档站。
+本轮 01 仅更新根目录 README。根 README 不属于当前 VitePress 文档站的构建内容，也不代表页面功能已经更改或网站已经重新部署。
 
-| 内容 | 链接 |
-| --- | --- |
-| 在线文档站 | [notionnext.tangly1024.com](https://notionnext.tangly1024.com) |
-| 新手入口 | [从这里开始](https://notionnext.tangly1024.com/user-guide/start-here) |
-| 场景模板 | [按目标选择模板](https://notionnext.tangly1024.com/user-guide/templates) |
-| 配置索引 | [全站功能与配置索引](https://notionnext.tangly1024.com/user-guide/reference/features) |
-| 主题说明 | [26 个主题说明](https://notionnext.tangly1024.com/user-guide/themes/THEMES_CATALOG) |
-| 用户作品 | [Showcase](https://notionnext.tangly1024.com/user-guide/showcase)：已上线站点欢迎提交作品 |
-| 文档源码 | [docs/](./docs/) |
-| 旧版手册 | [docs.tangly1024.com](https://docs.tangly1024.com/) |
+## 上游与许可
 
-## 参与社区
+本站基于 [NotionNext](https://github.com/notionnext-org/NotionNext) 定制，感谢原作者与社区贡献者。保留现有 [MIT License](./LICENSE)、上游归属、通用文档和贡献记录。
 
-NotionNext 主仓库由 GitHub 组织 [notionnext-org](https://github.com/notionnext-org) 维护。欢迎提交问题、补充文档、贡献主题、修复代码或参与讨论。
-
-| 内容 | 链接 |
-| --- | --- |
-| 参与社区 | [community-participate.md](./docs/user-guide/community-participate.md) |
-| 5.0 愿景与路线图 | [VISION_ROADMAP.md](./docs/developer/VISION_ROADMAP.md) |
-| 贡献指南 | [CONTRIBUTING.zh-CN.md](./CONTRIBUTING.zh-CN.md) |
-| 项目治理 | [GOVERNANCE.zh-CN.md](./GOVERNANCE.zh-CN.md) |
-| 维护者 | [MAINTAINERS.md](./MAINTAINERS.md) |
-| 行为准则 | [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md) |
-| 讨论区 | [GitHub Discussions](https://github.com/notionnext-org/NotionNext/discussions) |
-
-如果你在仓库转让前已克隆旧地址，建议更新远程仓库：
-
-```bash
-git remote set-url origin https://github.com/notionnext-org/NotionNext.git
-git remote -v
-```
-
-## 技术栈
-
-- **框架**：[Next.js](https://nextjs.org)
-- **样式**：[Tailwind CSS](https://www.tailwindcss.cn/)
-- **渲染**：[react-notion-x](https://github.com/NotionX/react-notion-x)
-- **评论**：Twikoo、Giscus、Gitalk、Cusdis、Utterances
-- **部署**：[Vercel](https://vercel.com)
-
-## 相关项目
-
-- [Elog](https://github.com/LetTTGACO/elog)：Markdown 批量导出工具，支持组合 Notion、语雀、FlowUs、飞书等写作平台与 Hexo、VitePress、Halo、WordPress 等博客平台。
-
-## 致谢
-
-感谢 Craig Hart 发起的 Nobelium 项目。
-
-<table><tr align="left">
-  <td align="center"><a href="https://github.com/craigary" title="Craig Hart"><img src="https://avatars.githubusercontent.com/u/10571717" width="64px;" alt="Craig Hart"/></a><br/><a href="https://github.com/craigary" title="Craig Hart">Craig Hart</a></td>
-</tr></table>
-
-感谢每一位参与代码、主题、文档、Issue、Review 与发布维护的贡献者。
-
-[![Contributors](https://contrib.rocks/image?repo=notionnext-org/NotionNext)](https://github.com/notionnext-org/NotionNext/graphs/contributors)
-
-## 使用声明
-
-本项目为免费、公开资源，仅限个人学习和合法站点建设使用。禁止利用本项目发布非法内容或进行违法活动。
-
-## License
-
-The MIT License.
-
-## Project Stars
-
-[![GitHub stars](https://img.shields.io/github/stars/notionnext-org/NotionNext?style=social)](https://github.com/notionnext-org/NotionNext/stargazers)
-[![GitHub forks](https://img.shields.io/github/forks/notionnext-org/NotionNext?style=social)](https://github.com/notionnext-org/NotionNext/forks)
-
-Live star-history charts are temporarily unavailable because GitHub now restricts historical stargazer data to repository owners and collaborators.
+本站定位、内容结构与定制计划以本 README 为准；通用安装与框架资料可参考 [docs/](./docs/) 和 [英文上游说明](./README_EN.md)。
