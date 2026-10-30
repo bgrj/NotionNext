@@ -137,7 +137,7 @@ async function syncNotion({ being, email, writing, res }) {
   try {
     await upsertBeingArchive(being, { email })
     let nextWriting = writing
-    if (writing?.public) {
+    if (writing?.public === true) {
       const published = await publishWritingToSite(being, writing)
       nextWriting = published.writing || writing
       if (published.category && res?.revalidate) {
