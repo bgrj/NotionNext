@@ -158,7 +158,7 @@ export const onRequestPost = async ({ request, env }: PagesContext) => {
   if (!shouldStream) {
     try {
       const result = await generateText({
-        model: google(env.DOCS_CHAT_MODEL || DEFAULT_MODEL),
+        model: google(env.DOCS_CHAT_MODEL || DEFAULT_MODEL) as never,
         messages: await convertToModelMessages(messages),
         system: SYSTEM_PROMPT,
         temperature: 0,
@@ -173,7 +173,7 @@ export const onRequestPost = async ({ request, env }: PagesContext) => {
   }
 
   const result = streamText({
-    model: google(env.DOCS_CHAT_MODEL || DEFAULT_MODEL),
+    model: google(env.DOCS_CHAT_MODEL || DEFAULT_MODEL) as never,
     messages: await convertToModelMessages(messages),
     system: SYSTEM_PROMPT,
     temperature: 0,
