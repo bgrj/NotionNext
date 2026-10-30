@@ -35,3 +35,14 @@ blocked_format:
 ## Result
 
 最新用户授权优先于旧任务的逐项确认要求。自动审批拒绝了新建私有 Blob 并绑定生产项目，原因是持久资源费用和敏感数据影响未具体授权；操作未执行。继续完成不受影响的实现、隔离测试、工具和预览发布，不绕过拒绝。
+
+
+## Preview delivery result
+
+- Runtime commit: `67d37db736918e2f7338ef156aebdb8bd8193352`.
+- Primary deployment: `dpl_Du2ZCipV5K2rHx1tpeThidMtyVRm`, READY, exact source verified.
+- URL: https://ourbeing-gig6jr5yb-bgrjs-projects.vercel.app . Temporary direct demo share URL delivered in conversation, not committed.
+- Core routes, local-tool page, sign-in shell, CSS and actual share link returned HTTP 200. Status API correctly reports configured auth and disabled new storage/media/payments.
+- Source, explicitly local demo and preview deployment scope accepted with 189 passing tests; full PRD and real multi-user rollout are NOT marked complete.
+- Remaining blocked scope: dedicated cloud persistence and permanent public sharing. Automatic approval rejections recorded in separate blocked task files; no blocked action was executed or bypassed.
+- Real browser/account/video/mobile verification remains unperformed due to the existing usage-limit rejection.

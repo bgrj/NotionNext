@@ -2,11 +2,13 @@
 
 **与自己周旋，与他人相处，在世界里慢慢安放自己。**
 
-[访问网站](https://ourbeings.com) · [本站源码](https://github.com/bgrj/NotionNext/tree/ourbeings.com) · [NotionNext 上游](https://github.com/notionnext-org/NotionNext)
+[访问网站](https://ourbeings.com) · [实验分支源码](https://github.com/bgrj/NotionNext/tree/ourbeings.com-1) · [NotionNext 上游](https://github.com/notionnext-org/NotionNext)
 
 当前为 **（1）实施分支 `ourbeings.com-1`**，从 `ourbeings.com` 最新提交 `b8fe4c4` 复制。完整产品定义见 [PRD](Our-Beings-PRD-v4.0-Draft.md)，逐项状态见[执行清单](_project-ai/DELIVERABLES/ourbeings.com-1/EXECUTION.md)。本分支供独立实现与调整，满意后再确认合并，尚不代表正式网站已更新。
 
-本轮按最新授权连续实施和发布。四馆、阅读室、活动与交换的代码和明确标注的交互导览已经实现；新云端保存因资源创建被自动审批拒绝而暂未开通。实际可用范围、验证与部署地址见[本轮发布记录](_project-ai/DELIVERABLES/ourbeings.com-1/RELEASE-01.md)，不把导览当作真实多用户云服务。
+[预览部署（需 Vercel 访问权限）](https://ourbeing-gig6jr5yb-bgrjs-projects.vercel.app) · [功能导览路径](https://ourbeing-gig6jr5yb-bgrjs-projects.vercel.app/our-beings/app/demo)
+
+本轮按最新授权连续实施，已推送并完成 Vercel preview 发布。四馆、阅读室、活动与交换的代码和明确标注的交互导览已经实现；新云端保存因资源创建被自动审批拒绝而暂未开通。实际可用范围、验证与部署地址见[本轮发布记录](_project-ai/DELIVERABLES/ourbeings.com-1/RELEASE-01.md)，不把导览当作真实多用户云服务。
 
 一个人活着，先要与自己周旋，随后与他人相处，再慢慢学会如何安放自己在世界中的位置。Our beings 想写的，正是这件事。
 
@@ -25,7 +27,7 @@
 
 「我们的存在」将作为公开内容的汇流视图。同一篇内容保留一个稳定 ID、一份正文和一个主链接，避免为四个入口重复维护文章。
 
-现有「我们的存在」已提供活动／公开内容切换，默认活动；原名录与加入说明折叠保留。网站活动发布报名、完整四馆与统一公开撤回尚待分项实现，不能把现有入口当作这些闭环已经完成。相关代码位于 `themes/my-theme/components/OurBeingsIndex.js`。
+本轮已实现四馆、道术、阅读室、活动和交换的共同业务模型与界面。原名录与加入说明折叠保留；历史账号与权益不迁移。新云端写入关闭时，页面明确提示，只有「示例导览」使用当前浏览器保存的虚构资料。真实跨用户保存、完整媒体托管和正式收益能力不在当前已上线范围。
 
 ## 视觉与交互基线
 
@@ -38,7 +40,7 @@
 | 四个入口 | `themes/my-theme/components/HeroPuzzle.js` | 保留名称、字形、区域路径、空间关系与点击入口 |
 | 主视觉资源 | `assets/ourbeing/manifest.json`、`lib/ourbeing-assets.json` | 保留当前资源与校验信息 |
 
-内页延续米白、暖灰与现有金色线索，借鉴纸张般的留白和清晰的文字层级。正文、目录、必要操作优先；减少重复推荐、无关挂件和争夺注意力的动效。具体样式逐项预览后确认。
+内页延续米白、暖灰与现有金色线索，借鉴纸张般的留白和清晰的文字层级。正文、目录、必要操作优先；减少重复推荐、无关挂件和争夺注意力的动效。本分支持续实施并保留差异与验收记录。
 
 子页面结合[不过人间 · 释哲](https://shizhe-buguo-renjian.stonycake21.chatgpt.site/)的衬线标题、墨绿点缀、文字列表、阅读室与精神书架，具体见[设计约定](_project-ai/DELIVERABLES/ourbeings.com-1/DESIGN.md)。这些调整均限定在内页，不替换首页手图或四区设计。
 
@@ -70,13 +72,13 @@
 
 本说明不改变任何内容的发布状态，不批量公开历史记录。分项代码与部署状态以 PRD 和验收记录为准。
 
-## 逐项优化计划
+## 实施与验证
 
 旧表保留为早期路线说明。当前完整实施顺序、需求编号、已有基础和待确认项统一维护在[（1）分支执行清单](_project-ai/DELIVERABLES/ourbeings.com-1/EXECUTION.md)，避免将旧计划误认为本分支进度。第一项登录与账号隔离候选见[评审记录](_project-ai/DELIVERABLES/ourbeings.com-1/AUTH-01-REVIEW.md)。
 
-执行方式：**一个明确交付 → 一次独立提交 → 提供差异与验证 → 站主确认 → 下一项。**
+执行方式以用户最新授权为准：**连续实施、验证并发布实验分支，不再逐项确认；保留可审阅提交与实际边界。**
 
-涉及多处代码的阶段继续拆成可单独验证的小项。每次记录提交 SHA；应用发布保留可回滚版本。未确认的阶段仅作为计划。
+涉及多处代码的阶段继续拆成可单独验证的小项。每次记录提交 SHA；应用发布保留可回滚版本。旧表是原始路线，当前实现和受阻项目以本轮发布记录为准。
 
 | 顺序 | 调整项 | 交付与涉及范围 | 验收标准 |
 | --- | --- | --- | --- |
@@ -94,7 +96,7 @@
 
 ### 「术」的首批候选
 
-以下是需求方向，尚不表示已有可用服务：
+本轮已提供两个浏览器本地工具，文件留在当前设备：
 
 | 候选 | 第一版先解决的问题 | 交付前要验证 |
 | --- | --- | --- |
@@ -122,7 +124,7 @@ PWA 可以作为较轻的安装体验，但不等同于原生 App 或小程序�
 当前仓库为 NotionNext 的定制分支，默认主题为 `my-theme`。现有运行配置要求 Node.js 22–24，包管理器为 Yarn 1.22.22；开发与托管端保持一致。
 
 ```bash
-git clone --branch ourbeings.com --single-branch https://github.com/bgrj/NotionNext.git
+git clone --branch ourbeings.com-1 --single-branch https://github.com/bgrj/NotionNext.git
 cd NotionNext
 nvm use
 npm install --global yarn@1.22.22
@@ -145,7 +147,7 @@ yarn dev
 
 站点定制只在明确选定的分支和范围内进行。同步上游时复核首页、主题、资源与锁文件差异，保留本站的设计和数据；不要把本站远程仓库改成上游地址。
 
-本轮 01 仅更新根目录 README。根 README 不属于当前 VitePress 文档站的构建内容，也不代表页面功能已经更改或网站已经重新部署。
+新业务接口见[API v1 说明](_project-ai/DELIVERABLES/ourbeings.com-1/API-V1.md)。189 项针对性测试及完整 Next 构建通过；真实账号、手机与视频解码的浏览器验收尚未完成。
 
 ## 上游与许可
 

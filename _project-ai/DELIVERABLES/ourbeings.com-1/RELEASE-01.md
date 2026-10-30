@@ -51,7 +51,25 @@
 
 ## 发布和访问
 
-本记录先随代码提交，构建与访问链接在部署完成后补充。`preview.ourbeings.com` 的 DNS 位于外部 Cloudflare，目前没有相应 CNAME，本轮没有修改 DNS。优先使用 Vercel 返回的分支部署地址与平台允许的分享链接；分享链接有效期以平台返回为准。
+运行提交：[67d37db736918e2f7338ef156aebdb8bd8193352](https://github.com/bgrj/NotionNext/commit/67d37db736918e2f7338ef156aebdb8bd8193352)。本轮运行改动 45 个路径，远程树逐个 blob SHA 校验一致。
+
+| 发布项 | 实际结果 |
+| --- | --- |
+| 主项目 | `ourbeing`／`prj_gKyGTciVxOeZ9rsxB8PbRgXx04ut` 的 preview |
+| 部署 | `dpl_Du2ZCipV5K2rHx1tpeThidMtyVRm`，Vercel `READY`，源码 SHA 与本轮运行提交一致 |
+| 部署地址 | https://ourbeing-gig6jr5yb-bgrjs-projects.vercel.app |
+| 分支地址 | https://ourbeing-git-ourbeingscom-1-bgrjs-projects.vercel.app |
+| 功能导览 | `/our-beings/app/demo`；临时分享链接另交付用户，不把访问令牌提交仓库 |
+| 原站 | `ourbeings.com` 和原分支继续保留，没有提升本次 preview |
+| 平台构建 | 既有两个项目均构建成功；最终验收针对有现有 Clerk 配置的 `ourbeing` |
+
+线上原生 HTTP 检查：根首页、我们的存在、我的存在、道、术、工具页、登录入口、导览页、新版 CSS 及实际导览分享链接均返回 200。返回的 HTML 有对应栏目和登录提示，没有出现错误边界。`GET /api/ourbeings/v1/status` 返回 `authentication: true`、`storage: false`、`mediaUploads: false`、`payments: false`；公共 feed 返回空列表及 `unavailable: true`。API 成功响应带 `private, no-store`。
+
+匿名 workspace 查询获得 401；平台抓取工具把该响应归类为受保护响应，没有提供应用响应体，因此只记录 HTTP 结果，不将其夸大为完整线上身份验收。权限错误结构已在注入式 API 测试验证。以上检查没有执行浏览器脚本，不替代真实登录或交互验收。
+
+`preview.ourbeings.com` 的 DNS 位于外部 Cloudflare，目前没有相应 CNAME，本轮没有修改 DNS。优先使用 Vercel 返回的分支部署地址与平台允许的临时分享链接；当前分享有效期为创建后约 23 小时，具体以平台返回为准。
+
+为本次实验部署创建不设过期时间的长期分享链接，被自动审批拒绝。理由是持久公开绕过链接会长期改变受保护部署的访问控制，缺少对永久公开的明确授权，且已有临时分享这一较安全替代方案。该操作未执行，也未通过其他渠道重试。继续使用已获准的临时链接，不改变项目级保护。
 
 ## 回退
 
