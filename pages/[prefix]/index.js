@@ -3,15 +3,16 @@ import useNotification from '@/components/Notification'
 import TechGrow from '@/components/TechGrow'
 import { siteConfig } from '@/lib/config'
 import { resolvePostProps } from '@/lib/db/SiteDataApi'
+import { redirectIfCanonical } from '@/lib/utils/postTitleUrl'
 import { useGlobal } from '@/lib/global'
-import useProtectedPost from '@/hooks/useProtectedPost'
-import ArticleLock from '@/components/ArticleLock'
+import { getPageTableOfContents } from '@/lib/db/notion/getPageTableOfContents'
+import { isProtectedPost } from '@/lib/security/articleAccess'
 import { checkSlugHasNoSlash } from '@/lib/utils/post'
 import { DynamicLayout } from '@/themes/theme'
 import { useRouter } from 'next/router'
 import PropTypes from 'prop-types'
+import { useEffect, useState } from 'react'
 import { getStaticPathsBase } from '@/lib/build/staticPaths'
-import { isExport } from '@/lib/utils/buildMode'
 
 const isStaticExport = process.env.EXPORT === 'true'
 
@@ -22,24 +23,77 @@ const isStaticExport = process.env.EXPORT === 'true'
  * @returns
  */
 const Slug = props => {
+  const { post } = props
   const router = useRouter()
   const { locale } = useGlobal()
-  const access = useProtectedPost(props.post, router, locale, props.postUnlockUnavailable)
+
+  // 文章锁🔐
+  const [lock, setLock] = useState(isProtectedPost(post))
+  const [unlockedPost, setUnlockedPost] = useState(null)
   const { showNotification, Notification } = useNotification()
-  const validPassword = async password => {
-    const valid = await access.validPassword(password)
-    if (valid) showNotification(locale.COMMON.ARTICLE_UNLOCK_TIPS)
-    return valid
+  const viewPost = unlockedPost || post
+
+  /**
+   * 验证文章密码：只向服务器提交，不在浏览器比较摘要、不写入 localStorage。
+   * @param {*} passInput
+   */
+  const validPassword = async passInput => {
+    if (!post?.slug || typeof passInput !== 'string' || !passInput) {
+      return false
+    }
+    try {
+      const unlock = await fetch('/api/protected/unlock', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ slug: post.slug, password: passInput })
+      })
+      if (!unlock.ok) return false
+      const content = await fetch(
+        `/api/protected/content?slug=${encodeURIComponent(post.slug)}`,
+        { credentials: 'same-origin' }
+      )
+      if (!content.ok) return false
+      const data = await content.json()
+      if (!data?.post) return false
+      setUnlockedPost(data.post)
+      setLock(false)
+      showNotification(locale.COMMON.ARTICLE_UNLOCK_TIPS)
+      return true
+    } catch {
+      return false
+    }
   }
+
+  useEffect(() => {
+    setUnlockedPost(null)
+    setLock(isProtectedPost(post))
+  }, [post, router.asPath])
+
+  // 文章加载
+  useEffect(() => {
+    if (lock) {
+      return
+    }
+    // 文章解锁后生成目录与内容
+    if (viewPost?.blockMap?.block) {
+      viewPost.content = Object.keys(viewPost.blockMap.block).filter(
+        key => viewPost.blockMap.block[key]?.value?.parent_id === viewPost.id
+      )
+      viewPost.toc = getPageTableOfContents(viewPost, viewPost.blockMap)
+    }
+  }, [router, lock, viewPost])
+
+  props = { ...props, post: viewPost, lock, validPassword }
   const theme = siteConfig('THEME', BLOG.THEME, props.NOTION_CONFIG)
   return (
     <>
-      {access.unlockError && <p role='alert' className='p-4 text-center text-red-600'>{access.unlockError}</p>}
-      {props.postUnlockUnavailable
-        ? <ArticleLock unavailable post={props.post} />
-        : <DynamicLayout theme={theme} layoutName='LayoutSlug' {...props} {...access} validPassword={validPassword} />}
-      {props.post?.password && !access.lock && <Notification />}
-      <TechGrow lock={access.lock} />
+      {/* 文章布局 */}
+      <DynamicLayout theme={theme} layoutName='LayoutSlug' {...props} />
+      {/* 解锁密码提示框 */}
+      {isProtectedPost(post) && !lock && <Notification />}
+      {/* 导流工具 */}
+      <TechGrow lock={lock} />
     </>
   )
 }
@@ -49,6 +103,7 @@ Slug.propTypes = {
     id: PropTypes.string,
     slug: PropTypes.string,
     password: PropTypes.string,
+    protected: PropTypes.bool,
     content: PropTypes.array,
     toc: PropTypes.array,
     blockMap: PropTypes.shape({
@@ -69,19 +124,21 @@ export async function getStaticPaths() {
 export async function getStaticProps({ params: { prefix }, locale, revalidateReason }) {
   const props = await resolvePostProps({
     prefix,
-    locale,
-    revalidateReason,
+    locale
   })
+
+  const redirected = redirectIfCanonical(props)
+  if (redirected) return redirected
 
   return {
     props,
     revalidate: isStaticExport
       ? undefined
       : siteConfig(
-        'NEXT_REVALIDATE_SECOND',
-        BLOG.NEXT_REVALIDATE_SECOND,
-        props.NOTION_CONFIG
-      ),
+          'NEXT_REVALIDATE_SECOND',
+          BLOG.NEXT_REVALIDATE_SECOND,
+          props.NOTION_CONFIG
+        ),
     notFound: !props.post
   }
 }

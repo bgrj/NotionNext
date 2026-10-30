@@ -49,13 +49,15 @@ async function download(url) {
   })
   if (!res.ok) throw new Error(`HTTP ${res.status}`)
   const contentType = res.headers.get('content-type') || ''
-  let unsplash = false
+  let hostname = ''
   try {
-    unsplash = new URL(url).hostname === 'source.unsplash.com'
+    hostname = new URL(url).hostname
   } catch {
-    unsplash = false
+    hostname = ''
   }
-  if (!contentType.startsWith('image/') && !unsplash) {
+  const unsplashHost =
+    hostname === 'source.unsplash.com' || hostname === 'images.unsplash.com'
+  if (!contentType.startsWith('image/') && !unsplashHost) {
     throw new Error(`not an image: ${contentType || 'unknown content-type'}`)
   }
   const bytes = Buffer.from(await res.arrayBuffer())

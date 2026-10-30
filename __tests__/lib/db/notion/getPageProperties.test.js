@@ -16,6 +16,15 @@ jest.mock('@/lib/db/notion/getNotionAPI', () => ({
   }
 }))
 
+jest.mock('@/lib/config', () => ({
+  siteConfig: (key, fallback, extend = {}) => {
+    if (extend && Object.hasOwn(extend, key) && extend[key] != null) {
+      return extend[key]
+    }
+    return fallback
+  }
+}))
+
 describe('adjustPageProperties', () => {
   it('uses category mapping for pages only when the page category is mapped', () => {
     const NOTION_CONFIG = {
@@ -48,44 +57,51 @@ describe('adjustPageProperties', () => {
     expect(plainPage.href).toBe('/a-book')
   })
 
-  it('keeps date segments for mapped pages that have a Date', () => {
+  it('keeps the routed post slug short and stores the title separately', () => {
     const NOTION_CONFIG = {
       POST_URL_PREFIX: '%category%/%year%/%month%/%day%',
-      POST_URL_PREFIX_MAPPING_CATEGORY: { Guide: 'manual' },
+      POST_URL_PREFIX_MAPPING_CATEGORY: {
+        道: 'philosophy'
+      },
+      POST_URL_APPEND_TITLE: true,
       PSEUDO_STATIC: false
     }
-    const page = {
-      id: 'page-id',
-      type: 'Page',
-      slug: 'a-manual',
-      category: 'Guide',
-      date: { start_date: '2026-08-01' },
-      publishDay: '2026-08-01'
+    const title = '影片启蒙 || 不得人爱，便无法爱人（大都市爱情法·八集混剪）'
+    const post = {
+      id: 'post-id',
+      type: 'Post',
+      slug: '18',
+      title,
+      category: '道',
+      publishDay: '2026-10-23'
     }
 
-    adjustPageProperties(page, NOTION_CONFIG)
+    adjustPageProperties(post, NOTION_CONFIG)
 
-    expect(page.slug).toBe('manual/2026/08/01/a-manual')
-    expect(page.href).toBe('/manual/2026/08/01/a-manual')
+    expect(post.slugBase).toBe('philosophy/2026/10/23/18')
+    expect(post.slug).toBe('philosophy/2026/10/23/18')
+    expect(post.slugTitle).toBe(
+      '影片启蒙｜不得人爱，便无法爱人（大都市爱情法·八集混剪）'
+    )
+    expect(post.href).toBe('/philosophy/2026/10/23/18')
   })
 
-  it('falls back to /category/slug for mapped pages without a Date even when publishDay came from created_time', () => {
-    const NOTION_CONFIG = {
+  it('can keep the original post slug when title appending is disabled', () => {
+    const post = {
+      id: 'post-id',
+      type: 'Post',
+      slug: '18',
+      title: '影片启蒙',
+      category: '道',
+      publishDay: '2026-10-23'
+    }
+    adjustPageProperties(post, {
       POST_URL_PREFIX: '%category%/%year%/%month%/%day%',
-      POST_URL_PREFIX_MAPPING_CATEGORY: { Guide: 'manual' },
+      POST_URL_PREFIX_MAPPING_CATEGORY: { 道: 'philosophy' },
+      POST_URL_APPEND_TITLE: false,
       PSEUDO_STATIC: false
-    }
-    const page = {
-      id: 'page-id',
-      type: 'Page',
-      slug: 'a-manual',
-      category: 'Guide',
-      publishDay: '2026-08-01'
-    }
-
-    adjustPageProperties(page, NOTION_CONFIG)
-
-    expect(page.slug).toBe('manual/a-manual')
-    expect(page.href).toBe('/manual/a-manual')
+    })
+    expect(post.slug).toBe('philosophy/2026/10/23/18')
+    expect(post.href).toBe('/philosophy/2026/10/23/18')
   })
 })
