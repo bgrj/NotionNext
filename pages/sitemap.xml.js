@@ -9,6 +9,7 @@ import {
   toSitemapDateString
 } from '@/lib/sitemap-utils'
 import { extractLangId, extractLangPrefix } from '@/lib/utils/pageId'
+import { isExistencePublication } from '@/lib/security/existenceCrawl'
 import { getServerSideSitemap } from 'next-sitemap'
 
 export const getServerSideProps = async ctx => {
@@ -110,6 +111,7 @@ function generateLocalesSitemap(link, allPages, locale) {
   const postFields =
     allPages
       ?.filter(p => p.status === BLOG.NOTION_PROPERTY_NAME.status_publish)
+      ?.filter(p => !isExistencePublication(p))
       // 过滤掉外部链接(http开头)和锚点链接(#开头)
       ?.filter(p => p.slug && !p.slug.startsWith('http') && !p.slug.startsWith('#'))
       ?.map(post => {

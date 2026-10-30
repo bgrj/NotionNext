@@ -6,7 +6,7 @@
 
 用 Notion 搭建自己的独立站
 
-继续在 Notion 写作，一键发布为博客、作品集、知识库、导航站或产品官网。
+继续在Notion 写作，一键发布为博客、作品集、知识库、导航站或产品官网。
 
 <p>
   <a href="https://preview.tangly1024.com/">在线预览</a>
@@ -43,7 +43,7 @@
 
 ---
 
-## NotionNext 是什么？
+## NotionNext 是什么呢？
 
 NotionNext 是一个基于 **Next.js + Notion API** 的开源站点系统。你继续用 Notion 管理文章、分类、标签、菜单和页面，NotionNext 负责把这些内容发布成可访问、可搜索、可运营的独立网站。
 

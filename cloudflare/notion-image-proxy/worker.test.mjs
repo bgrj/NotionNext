@@ -83,3 +83,116 @@ test('keeps the VitePress copy-paste example in sync with worker.mjs', async () 
 function normalize(value) {
   return value.replace(/\r\n/g, '\n').trim()
 }
+
+for (const [label, upstream, expectedStatus] of [
+  [
+    'non-image HTML',
+    () =>
+      new Response('<script>unsafe</script>', {
+        headers: { 'Content-Type': 'text/html' }
+      }),
+    415
+  ],
+  [
+    'expired image authorization',
+    () =>
+      new Response('expired', {
+        status: 403,
+        headers: { 'Content-Type': 'text/html' }
+      }),
+    403
+  ],
+  [
+    'upstream outage',
+    () => {
+      throw new Error('upstream unavailable')
+    },
+    502
+  ]
+]) {
+  test(`does not cache or expose ${label}`, async () => {
+    const originalFetch = globalThis.fetch
+    const originalCaches = globalThis.caches
+    let puts = 0
+    globalThis.fetch = async () => upstream()
+    globalThis.caches = {
+      default: {
+        match: async () => null,
+        put: async () => {
+          puts++
+        }
+      }
+    }
+    try {
+      const result = await worker.fetch(
+        new Request('https://cdn.example.com/image/example.png')
+      )
+      assert.equal(result.status, expectedStatus)
+      assert.equal(result.headers.get('cache-control'), 'no-store')
+      assert.equal(result.headers.get('x-content-type-options'), 'nosniff')
+      assert.equal(puts, 0)
+      assert.equal(await result.text(), 'Image unavailable')
+    } finally {
+      globalThis.fetch = originalFetch
+      globalThis.caches = originalCaches
+    }
+  })
+}
+
+test('SVG images are sandboxed and cannot execute as a same-origin document', async () => {
+  const originalFetch = globalThis.fetch
+  const originalCaches = globalThis.caches
+  globalThis.fetch = async () =>
+    new Response('<svg xmlns="http://www.w3.org/2000/svg"></svg>', {
+      headers: { 'Content-Type': 'image/svg+xml' }
+    })
+  globalThis.caches = {
+    default: { match: async () => null, put: async () => {} }
+  }
+  try {
+    const result = await worker.fetch(
+      new Request('https://cdn.example.com/image/example.svg')
+    )
+    assert.equal(result.status, 200)
+    assert.equal(result.headers.get('content-disposition'), 'attachment')
+    assert.match(
+      result.headers.get('content-security-policy'),
+      /default-src 'none'/
+    )
+    assert.match(result.headers.get('content-security-policy'), /sandbox/)
+    assert.equal(result.headers.get('x-content-type-options'), 'nosniff')
+  } finally {
+    globalThis.fetch = originalFetch
+    globalThis.caches = originalCaches
+  }
+})
+
+test('ignores unsafe legacy cache entries', async () => {
+  const originalFetch = globalThis.fetch
+  const originalCaches = globalThis.caches
+  let fetched = 0
+  globalThis.fetch = async () => {
+    fetched++
+    return new Response('image', { headers: { 'Content-Type': 'image/webp' } })
+  }
+  globalThis.caches = {
+    default: {
+      match: async () =>
+        new Response('<script>unsafe</script>', {
+          headers: { 'Content-Type': 'text/html' }
+        }),
+      put: async () => {}
+    }
+  }
+  try {
+    const result = await worker.fetch(
+      new Request('https://cdn.example.com/image/example.png')
+    )
+    assert.equal(fetched, 1)
+    assert.equal(result.headers.get('content-type'), 'image/webp')
+    assert.equal(result.headers.get('x-content-type-options'), 'nosniff')
+  } finally {
+    globalThis.fetch = originalFetch
+    globalThis.caches = originalCaches
+  }
+})

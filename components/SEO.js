@@ -2,6 +2,12 @@ import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import { getPwaConfig } from '@/lib/pwa'
 import { createSiteUrl, normalizeSiteUrl } from '@/lib/sitemap-utils'
+import {
+  EXISTENCE_ROBOTS_TAG,
+  isExistenceContentPath,
+  isExistencePublication
+} from '@/lib/security/existenceCrawl'
+import { localizeOurbeingAssetUrl } from '@/lib/utils/ourbeingAssets'
 import { isHttpLink, loadExternalResource } from '@/lib/utils'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
@@ -98,6 +104,12 @@ const SEO = props => {
     NOTION_CONFIG
   )
 
+  const ADSENSE_GOOGLE_ID = siteConfig(
+    'ADSENSE_GOOGLE_ID',
+    null,
+    NOTION_CONFIG
+  )
+
   const BLOG_FAVICON = siteConfig('BLOG_FAVICON', null, NOTION_CONFIG)
   const pwaEnabled = siteConfig('PWA_ENABLE', false, NOTION_CONFIG)
   const pwaConfig = pwaEnabled
@@ -131,6 +143,8 @@ const SEO = props => {
   const TWITTER_CREATOR = siteConfig('TWITTER_CREATOR', '', NOTION_CONFIG)
 
   const AUTHOR = siteConfig('AUTHOR')
+  const hideFromMachines =
+    isExistenceContentPath(router?.asPath || '') || isExistencePublication(post)
   return (
     <Head>
       <link rel='icon' href={favicon} />
@@ -143,7 +157,15 @@ const SEO = props => {
         name='viewport'
         content='width=device-width, initial-scale=1.0, maximum-scale=5.0, minimum-scale=1.0'
       />
-      <meta name='robots' content='follow, index, max-snippet:-1, max-image-preview:large, max-video-preview:-1' />
+      <meta
+        name='robots'
+        content={
+          hideFromMachines
+            ? EXISTENCE_ROBOTS_TAG
+            : 'follow, index, max-snippet:-1, max-image-preview:large, max-video-preview:-1'
+        }
+      />
+      {hideFromMachines && <meta name='tdm-reservation' content='1' />}
       <meta charSet='UTF-8' />
       <meta name='format-detection' content='telephone=no' />
       <meta name='mobile-web-app-capable' content='yes' />
@@ -170,6 +192,21 @@ const SEO = props => {
           name='baidu-site-verification'
           content={SEO_BAIDU_SITE_VERIFICATION}
         />
+      )}
+      {ADSENSE_GOOGLE_ID && (
+        <>
+          <meta name='google-adsense-account' content={ADSENSE_GOOGLE_ID} />
+          <link
+            rel='preconnect'
+            href='https://pagead2.googlesyndication.com'
+            crossOrigin='anonymous'
+          />
+          <script
+            async
+            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_GOOGLE_ID}`}
+            crossOrigin='anonymous'
+          />
+        </>
       )}
 
       {/* 基础SEO元数据 */}
@@ -375,11 +412,15 @@ const getAbsoluteImageUrl = (image, siteUrl) => {
 
   const rawImage = image.trim()
   if (!rawImage) return ''
-  if (isHttpLink(rawImage) || rawImage.startsWith('data:')) {
-    return rawImage
+  const localized = localizeOurbeingAssetUrl(rawImage)
+  if (localized.startsWith('/')) {
+    return createSiteUrl(siteUrl, localized) || localized
+  }
+  if (isHttpLink(localized) || localized.startsWith('data:')) {
+    return localized
   }
 
-  return createSiteUrl(siteUrl, rawImage) || rawImage
+  return createSiteUrl(siteUrl, localized) || localized
 }
 
 const getIsoTime = value => {

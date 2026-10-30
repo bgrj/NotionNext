@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+    <link rel="icon" href="data:," />
+    <title>临街自建房</title>
+    <script type="module" crossorigin src="/house/assets/index-C-QawVXV.js"></script>
+    <link rel="stylesheet" crossorigin href="/house/assets/index-pODuqPLd.css">
+  </head>
+  <body>
+    <div id="view"></div>
+    <div id="bar">
+      <button type="button" data-mode="orbit" class="active">外观</button>
+      <button type="button" data-floor="1">一楼</button>
+      <button type="button" data-floor="2">二楼</button>
+      <button type="button" data-floor="3">三楼</button>
+      <button type="button" id="walk">走进当前层</button>
+      <span id="layers">
+        <button type="button" id="toggleLayers">显示</button>
+        <div id="layerPanel" hidden>
+          <label><input type="checkbox" data-layer="1" checked /> 一楼</label>
+          <label><input type="checkbox" data-layer="2" checked /> 二楼</label>
+          <label><input type="checkbox" data-layer="3" checked /> 三楼</label>
+          <label><input type="checkbox" data-layer="roof" checked /> 屋顶</label>
+          <label><input type="checkbox" data-layer="pvc" /> 吊顶</label>
+          <label><input type="checkbox" data-layer="context" checked /> 周边楼栋</label>
+        </div>
+      </span>
+      <button type="button" id="toggleLabels">名称</button>
+      <button type="button" id="toggleSide">说明</button>
+    </div>
+    <aside id="side"></aside>
+    <div id="card" hidden></div>
+    <div id="compass" aria-hidden="true"><span class="w">西</span><span class="n">北</span><span class="e">东</span><span class="s">南</span></div>
+    <div id="hint">拖拽旋转，滚轮缩放。点上方按钮看各层平面，点地面查看房间。</div>
+    <div id="hud" hidden>
+      <div id="stick" aria-label="移动摇杆"><span id="knob"></span></div>
+      <button type="button" id="useDoor" disabled>开门</button>
+    </div>
+  </body>
+</html>

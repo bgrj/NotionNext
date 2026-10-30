@@ -9,6 +9,7 @@ import dynamic from 'next/dynamic'
 import { useEffect, useId, useRef } from 'react'
 import { NotionRenderer } from 'react-notion-x'
 import OriginalityProof from './OriginalityProof'
+import { watchPostVideoDownloadGuard } from '@/lib/utils/postVideoDownload'
 
 /**
  * 整个站点的核心组件
@@ -21,6 +22,10 @@ const NotionPage = ({ post, className }) => {
   const POST_DISABLE_GALLERY_CLICK = siteConfig('POST_DISABLE_GALLERY_CLICK')
   const POST_DISABLE_DATABASE_CLICK = siteConfig('POST_DISABLE_DATABASE_CLICK')
   const SPOILER_TEXT_TAG = siteConfig('SPOILER_TEXT_TAG')
+  const VIDEO_DISABLE_DOWNLOAD = siteConfig(
+    'OURBEINGS_VIDEO_DISABLE_DOWNLOAD',
+    true
+  )
 
   const zoomRef = useRef(null)
   const articleRef = useRef(null)
@@ -32,6 +37,13 @@ const NotionPage = ({ post, className }) => {
     // 检测当前的url并自动滚动到对应目标
     autoScrollToHash()
   }, [])
+
+  useEffect(() => {
+    if (!VIDEO_DISABLE_DOWNLOAD) return undefined
+    const root = document.getElementById('notion-article')
+    if (!root) return undefined
+    return watchPostVideoDownloadGuard(root)
+  }, [post, VIDEO_DISABLE_DOWNLOAD])
 
   // 页面文章发生变化时会执行的勾子
   useEffect(() => {

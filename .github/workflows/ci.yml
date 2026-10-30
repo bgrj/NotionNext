@@ -3,9 +3,12 @@ name: CI
 
 on:
   pull_request:
-    branches: [main]
+    branches: [main, ourbeings.com]
   push:
-    branches: [main]
+    branches: [main, ourbeings.com]
+
+permissions:
+  contents: read
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -36,6 +39,7 @@ jobs:
           cache: yarn
       - run: yarn install --frozen-lockfile
       - run: yarn test --passWithNoTests
+      - run: node --test cloudflare/notion-image-proxy/worker.test.mjs
 
   lockfile:
     name: Lockfile consistency

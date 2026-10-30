@@ -1,7 +1,15 @@
 import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
-import { checkStrIsNotionId, getLastPartOfUrl } from '@/lib/utils'
-import { idToUuid } from 'notion-utils'
+import {
+  EXISTENCE_ROBOTS_TAG,
+  isExistenceContentPath,
+  readOwnerCredential,
+  shouldRefuseExistenceCrawl
+} from '@/lib/security/existenceCrawl'
+import {
+  getNotionRedirectId,
+  safeRedirectPath
+} from '@/lib/utils/notionRedirect'
 import BLOG from './blog.config'
 
 /**
@@ -33,38 +41,81 @@ const isTenantAdminRoute = createRouteMatcher([
  * @returns
  */
 // eslint-disable-next-line @typescript-eslint/require-await, @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
+const refuseAutomatedExistence = (req: NextRequest) => {
+  const pathname = req.nextUrl?.pathname || ''
+  if (
+    !shouldRefuseExistenceCrawl({
+      pathname,
+      userAgent: req.headers?.get?.('user-agent') || '',
+      ownerCredential: readOwnerCredential(req.headers),
+      expectedToken: process.env.EXISTENCE_OWNER_TOKEN || ''
+    })
+  ) {
+    return null
+  }
+  return new NextResponse('此页面不向自动抓取工具提供。', {
+    status: 403,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'private, no-store',
+      'X-Robots-Tag': EXISTENCE_ROBOTS_TAG
+    }
+  })
+}
+
+const markExistenceRobots = (response: NextResponse, pathname: string) => {
+  if (isExistenceContentPath(pathname)) {
+    response.headers?.set?.('X-Robots-Tag', EXISTENCE_ROBOTS_TAG)
+  }
+  return response
+}
+
 const noAuthMiddleware = async (req: NextRequest, ev: any) => {
+  const refused = refuseAutomatedExistence(req)
+  if (refused) return refused
   // 如果没有配置 Clerk 相关环境变量，返回一个默认响应或者继续处理请求
-  if (BLOG['UUID_REDIRECT']) {
+  const redirectId = getNotionRedirectId(
+    req.nextUrl.pathname,
+    BLOG.UUID_REDIRECT
+  )
+  if (redirectId) {
     let redirectJson: Record<string, string> = {}
     try {
-      const response = await fetch(`${req.nextUrl.origin}/redirect.json`)
+      // The canonical origin is trusted configuration, not an incoming Host
+      // header. Ordinary pages and APIs never make this request.
+      const redirectTableUrl = new URL('/redirect.json', BLOG.LINK)
+      const response = await fetch(redirectTableUrl, {
+        signal: AbortSignal.timeout(1500),
+        redirect: 'error'
+      })
       if (response.ok) {
         redirectJson = (await response.json()) as Record<string, string>
       }
     } catch (err) {
       console.error('Error fetching static file:', err)
     }
-    let lastPart = getLastPartOfUrl(req.nextUrl.pathname) as string
-    if (checkStrIsNotionId(lastPart)) {
-      lastPart = idToUuid(lastPart)
-    }
-    if (lastPart && redirectJson[lastPart]) {
+    const redirectPath = safeRedirectPath(redirectJson[redirectId])
+    if (redirectPath && redirectPath !== req.nextUrl.pathname) {
       const redirectToUrl = req.nextUrl.clone()
-      redirectToUrl.pathname = '/' + redirectJson[lastPart]
+      redirectToUrl.pathname = redirectPath
       console.log(
         `redirect from ${req.nextUrl.pathname} to ${redirectToUrl.pathname}`
       )
-      return NextResponse.redirect(redirectToUrl, 308)
+      return markExistenceRobots(
+        NextResponse.redirect(redirectToUrl, 308),
+        req.nextUrl.pathname
+      )
     }
   }
-  return NextResponse.next()
+  return markExistenceRobots(NextResponse.next(), req.nextUrl.pathname)
 }
 /**
  * 鉴权中间件
  */
 const authMiddleware = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
   ? clerkMiddleware((auth, req) => {
+      const refused = refuseAutomatedExistence(req)
+      if (refused) return refused
       const { userId } = auth()
       // 处理 /dashboard 路由的登录保护
       if (isTenantRoute(req)) {
@@ -87,7 +138,7 @@ const authMiddleware = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
       }
 
       // 默认继续处理请求
-      return NextResponse.next()
+      return markExistenceRobots(NextResponse.next(), req.nextUrl.pathname)
     })
   : noAuthMiddleware
 

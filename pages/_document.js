@@ -2,9 +2,7 @@
 import BLOG from '@/blog.config'
 import Document, { Head, Html, Main, NextScript } from 'next/document'
 
-const isLocalFontAwesome = BLOG.FONT_AWESOME?.startsWith(
-  '/vendor/fontawesome/'
-)
+const isLocalFontAwesome = BLOG.FONT_AWESOME?.startsWith('/vendor/fontawesome/')
 
 // 预先设置深色模式的脚本内容
 const darkModeScript = `
@@ -47,9 +45,6 @@ class MyDocument extends Document {
     return (
       <Html lang={BLOG.LANG}>
         <Head>
-          <link rel='preconnect' href='https://images.unsplash.com' />
-          <link rel='dns-prefetch' href='//images.unsplash.com' />
-
           {/* 预加载字体 */}
           {BLOG.FONT_AWESOME && (
             <>
@@ -58,20 +53,6 @@ class MyDocument extends Document {
                   <link
                     rel='preload'
                     href='/vendor/fontawesome/webfonts/fa-solid-900.woff2'
-                    as='font'
-                    type='font/woff2'
-                    crossOrigin='anonymous'
-                  />
-                  <link
-                    rel='preload'
-                    href='/vendor/fontawesome/webfonts/fa-regular-400.woff2'
-                    as='font'
-                    type='font/woff2'
-                    crossOrigin='anonymous'
-                  />
-                  <link
-                    rel='preload'
-                    href='/vendor/fontawesome/webfonts/fa-brands-400.woff2'
                     as='font'
                     type='font/woff2'
                     crossOrigin='anonymous'
@@ -104,6 +85,9 @@ class MyDocument extends Document {
 
           {/* 预先设置深色模式，避免闪烁 */}
           <script dangerouslySetInnerHTML={{ __html: darkModeScript }} />
+
+          {/* Mastodon 验证链接：ourbeings.com 验证 Mastodon @ourbeings（按官方步骤添加到 header） */}
+          <a rel="me" href="https://mastodon.social/@ourbeings" style={{ display: 'none' }}>Mastodon</a>
         </Head>
 
         <body>

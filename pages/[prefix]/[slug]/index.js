@@ -1,6 +1,7 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
 import { resolvePostProps } from '@/lib/db/SiteDataApi'
+import { redirectIfCanonical } from '@/lib/utils/postTitleUrl'
 import Slug from '..'
 import { getStaticPathsBase } from '@/lib/build/staticPaths'
 import { isExport } from '@/lib/utils/buildMode'
@@ -38,6 +39,9 @@ export async function getStaticProps({ params: { prefix, slug }, locale, revalid
     locale,
     revalidateReason,
   })
+
+  const redirected = redirectIfCanonical(props)
+  if (redirected) return redirected
 
   return {
     props,

@@ -1,7 +1,13 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import { fetchGlobalAllData, finalizeListPageProps } from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
+import {
+  EXISTENCE_CATEGORY,
+  existenceRevalidateSeconds,
+  isExistenceCategory,
+  slimExistencePosts
+} from '@/themes/my-theme/existence'
 
 /**
  * 分类页
@@ -28,34 +34,51 @@ export async function getStaticProps({ params: { category }, locale }) {
 
   // 处理文章页数
   props.postCount = props.posts.length
-  // 处理分页
-  const POST_LIST_STYLE = siteConfig(
-    'POST_LIST_STYLE',
-    'page',
-    props?.NOTION_CONFIG
-  )
-  if (POST_LIST_STYLE === 'scroll') {
-    // 滚动列表 给前端返回所有数据
-  } else if (POST_LIST_STYLE === 'page') {
-    props.posts = props.posts?.slice(
-      0,
-      siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
+  if (isExistenceCategory(category) || category === EXISTENCE_CATEGORY) {
+    props.existencePosts = slimExistencePosts(props.posts)
+    props.posts = props.existencePosts
+    // SSR and the first client render must share a clock snapshot.
+    props.initialRenderTime = Date.now()
+    finalizeListPageProps(props, { slimPosts: false })
+  } else {
+    // 处理分页
+    const POST_LIST_STYLE = siteConfig(
+      'POST_LIST_STYLE',
+      'page',
+      props?.NOTION_CONFIG
     )
+    if (POST_LIST_STYLE === 'scroll') {
+      // 滚动列表 给前端返回所有数据
+    } else if (POST_LIST_STYLE === 'page') {
+      props.posts = props.posts?.slice(
+        0,
+        siteConfig('POSTS_PER_PAGE', 12, props?.NOTION_CONFIG)
+      )
+    }
+    finalizeListPageProps(props)
   }
-
-  delete props.allPages
 
   props = { ...props, category }
 
-  return {
-    props,
-    revalidate: process.env.EXPORT
-      ? undefined
+  const revalidate = process.env.EXPORT
+    ? undefined
+    : isExistenceCategory(category) || category === EXISTENCE_CATEGORY
+      ? existenceRevalidateSeconds(
+          siteConfig(
+            'NEXT_REVALIDATE_SECOND',
+            BLOG.NEXT_REVALIDATE_SECOND,
+            props.NOTION_CONFIG
+          )
+        )
       : siteConfig(
           'NEXT_REVALIDATE_SECOND',
           BLOG.NEXT_REVALIDATE_SECOND,
           props.NOTION_CONFIG
         )
+
+  return {
+    props,
+    revalidate
   }
 }
 

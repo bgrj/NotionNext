@@ -61,7 +61,7 @@ const ExternalPlugin = props => {
   const RIBBON = siteConfig('RIBBON', null, NOTION_CONFIG)
   const CUSTOM_RIGHT_CLICK_CONTEXT_MENU = siteConfig(
     'CUSTOM_RIGHT_CLICK_CONTEXT_MENU',
-    null,
+    false,
     NOTION_CONFIG
   )
   const CAN_COPY = siteConfig('CAN_COPY', null, NOTION_CONFIG)
@@ -117,6 +117,7 @@ const ExternalPlugin = props => {
   const IMG_SHADOW = siteConfig('IMG_SHADOW', null, NOTION_CONFIG)
   const ANIMATE_CSS_URL = siteConfig('ANIMATE_CSS_URL', null, NOTION_CONFIG)
   const MOUSE_FOLLOW = siteConfig('MOUSE_FOLLOW', null, NOTION_CONFIG)
+  const CLICK_THOUGHTS = siteConfig('CLICK_THOUGHTS', true, NOTION_CONFIG)
   const CUSTOM_EXTERNAL_CSS = siteConfig(
     'CUSTOM_EXTERNAL_CSS',
     null,
@@ -258,11 +259,14 @@ const ExternalPlugin = props => {
       <GlobalStyle />
       {ENABLE_ICON_FONT && <IconFont />}
       {MOUSE_FOLLOW && <MouseFollow />}
+      {CLICK_THOUGHTS && (
+        <ClickThoughts pages={innerLinkPages} currentPost={props?.post} />
+      )}
       {pluginsIdle && THEME_SWITCH && <ThemeSwitch />}
       {DEBUG && <DebugPanel />}
-      {ANALYTICS_ACKEE_TRACKER && <Ackee />}
-      {ANALYTICS_GOOGLE_ID && <Gtag />}
-      {ANALYTICS_VERCEL && <Analytics />}
+      {pluginsIdle && ANALYTICS_ACKEE_TRACKER && <Ackee />}
+      {pluginsIdle && ANALYTICS_GOOGLE_ID && <Gtag />}
+      {pluginsIdle && ANALYTICS_VERCEL && <Analytics />}
       {ANALYTICS_BUSUANZI_ENABLE && <Busuanzi />}
       {FACEBOOK_APP_ID && FACEBOOK_PAGE_ID && <Messenger />}
       {FIREWORKS && <Fireworks />}
@@ -274,7 +278,7 @@ const ExternalPlugin = props => {
       {COMMENT_TWIKOO_COUNT_ENABLE && <TwikooCommentCounter {...props} />}
       {RIBBON && <Ribbon />}
       {DIFY_CHATBOT_ENABLED && <DifyChatbot />}
-      {CUSTOM_RIGHT_CLICK_CONTEXT_MENU && (
+      {CUSTOM_RIGHT_CLICK_CONTEXT_MENU === true && (
         <CustomContextMenu {...props} canCopy={canCopy} />
       )}
       {!canCopy && <DisableCopy />}
@@ -284,7 +288,7 @@ const ExternalPlugin = props => {
       <VConsole />
       {ENABLE_NPROGRSS && <LoadingProgress />}
       {pluginsIdle && <AosAnimation />}
-      {ANALYTICS_51LA_ID && ANALYTICS_51LA_CK && <LA51 />}
+      {pluginsIdle && ANALYTICS_51LA_ID && ANALYTICS_51LA_CK && <LA51 />}
       {AI_CHAT_API || DOCS_CHAT_API ? <DocsChat /> : COZE_BOT_ID && <Coze />}
 
       {ANALYTICS_51LA_ID && ANALYTICS_51LA_CK && (
@@ -318,7 +322,7 @@ const ExternalPlugin = props => {
         </>
       )}
 
-      {CLARITY_ID && (
+      {pluginsIdle && CLARITY_ID && (
         <>
           <script
             async
@@ -527,6 +531,9 @@ const ThemeSwitch = dynamic(() => import('@/components/ThemeSwitch'), {
   ssr: false
 })
 const Fireworks = dynamic(() => import('@/components/Fireworks'), {
+  ssr: false
+})
+const ClickThoughts = dynamic(() => import('@/components/ClickThoughts'), {
   ssr: false
 })
 const MouseFollow = dynamic(() => import('@/components/MouseFollow'), {

@@ -63,6 +63,9 @@ output/
 package-lock.json
 # yarn.lock
 
+# Content-addressed site assets are verified/materialized from the source manifest.
+/public/assets/ourbeing/
+
 .notion-api-lock
 .tmp/
 .perf/

@@ -142,10 +142,11 @@ export default {
     const cache = caches.default
     const cacheKey = new Request(request.url, { method: 'GET' })
     const cached = await cache.match(cacheKey)
-    if (cached) {
+    if (cached?.ok && isImageResponse(cached)) {
       const hitHeaders = new Headers(cached.headers)
       setCacheHeaders(hitHeaders)
       setValidatorHeaders(hitHeaders)
+      setImageSecurityHeaders(hitHeaders)
       hitHeaders.set('X-Notion-Image-Proxy-Cache', 'HIT')
       if (isNotModified(request, hitHeaders)) {
         return notModifiedResponse(hitHeaders)
@@ -158,28 +159,41 @@ export default {
     }
 
     const upstreamUrl = new URL(url.pathname + url.search, NOTION_ORIGIN)
-    const response = await fetch(upstreamUrl, {
-      method: 'GET',
-      redirect: 'follow',
-      cf: {
-        cacheEverything: true,
-        cacheTtl: IMMUTABLE_TTL_SECONDS,
-        cacheKey: request.url
-      },
-      headers: {
-        'User-Agent': USER_AGENT,
-        Accept:
-          'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
-      }
-    })
+    let response
+    try {
+      response = await fetch(upstreamUrl, {
+        method: 'GET',
+        redirect: 'follow',
+        cf: {
+          cacheEverything: true,
+          cacheTtl: IMMUTABLE_TTL_SECONDS,
+          cacheKey: request.url
+        },
+        headers: {
+          'User-Agent': USER_AGENT,
+          Accept:
+            'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8'
+        }
+      })
+    } catch {
+      return imageError(502)
+    }
+
+    // Never serve/cache an upstream error or HTML document as a same-origin
+    // "image". In particular, expired signed-image errors must not be cached
+    // by browsers for a year.
+    if (!response.ok) {
+      return imageError(response.status >= 400 ? response.status : 502)
+    }
+    if (!isImageResponse(response)) return imageError(415)
 
     const headers = new Headers(response.headers)
     setCacheHeaders(headers)
     setValidatorHeaders(headers)
+    setImageSecurityHeaders(headers)
     headers.set('X-Notion-Image-Proxy', '1')
     headers.set('X-Notion-Image-Proxy-Cache', 'MISS')
     headers.delete('set-cookie')
-    headers.delete('content-security-policy')
     headers.delete('content-security-policy-report-only')
     headers.delete('vary')
 
@@ -202,6 +216,34 @@ export default {
 
 function isAllowedPath(pathname) {
   return pathname.startsWith('/image/') || pathname.startsWith('/images/')
+}
+
+function isImageResponse(response) {
+  return /^image\/[a-z0-9.+-]+(?:\s*;|$)/i.test(
+    response.headers.get('content-type') || ''
+  )
+}
+
+function setImageSecurityHeaders(headers) {
+  headers.set('X-Content-Type-Options', 'nosniff')
+  headers.set(
+    'Content-Security-Policy',
+    "default-src 'none'; img-src data:; style-src 'unsafe-inline'; sandbox"
+  )
+  if (/^image\/svg\+xml(?:;|$)/i.test(headers.get('content-type') || '')) {
+    headers.set('Content-Disposition', 'attachment')
+  }
+}
+
+function imageError(status) {
+  return new Response('Image unavailable', {
+    status,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
+    }
+  })
 }
 
 function setCacheHeaders(headers) {

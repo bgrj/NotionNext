@@ -5,6 +5,8 @@ module.exports = {
   // 文章URL前缀
   POST_URL_PREFIX: process.env.NEXT_PUBLIC_POST_URL_PREFIX ?? 'article',
   // POST类型文章的默认路径前缀，例如默认POST类型的路径是  /article/[slug]
+  POST_URL_APPEND_TITLE:
+    process.env.NEXT_PUBLIC_POST_URL_APPEND_TITLE ?? true, // 在现有文章路径末尾追加 /文章名
   // 如果此项配置为 '' 空， 则文章将没有前缀路径
   // 支援類似 WP 可自訂文章連結格式的功能：https://wordpress.org/documentation/article/customize-permalinks/，目前只先實作 %year%/%month%/%day%
   // 例：如想連結改成前綴 article + 時間戳記，可變更為： 'article/%year%/%month%/%day%'

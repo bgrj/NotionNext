@@ -1,6 +1,9 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps
+} from '@/lib/db/SiteDataApi'
 import { isBrowser } from '@/lib/utils'
 import { formatDateFmt } from '@/lib/utils/formatDate'
 import { DynamicLayout } from '@/themes/theme'
@@ -36,7 +39,7 @@ export async function getStaticProps({ locale }) {
   props.posts = props.allPages?.filter(
     page => page.type === 'Post' && page.status === 'Published'
   )
-  delete props.allPages
+  finalizeListPageProps(props)
 
   const postsSortByDate = Object.create(props.posts)
 
@@ -56,7 +59,6 @@ export async function getStaticProps({ locale }) {
   })
 
   props.archivePosts = archivePosts
-  delete props.allPages
 
   return {
     props,
