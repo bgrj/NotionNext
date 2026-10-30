@@ -16,7 +16,7 @@ const SignUp = props => {
 export async function getStaticProps(req) {
   const { locale } = req
 
-  const from = 'SignIn'
+  const from = 'SignUp'
   const props = await fetchGlobalAllData({ from, locale })
 
   delete props.allPages

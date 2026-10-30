@@ -1,5 +1,6 @@
 import { useClerk, useUser } from '@clerk/nextjs'
 import SmartLink from '@/components/SmartLink'
+import { OurBeingsAccountPrompt } from './OurBeingsAuth'
 import { useEffect, useMemo, useState } from 'react'
 import {
   BEING_ROOMS,
@@ -145,13 +146,7 @@ const BeingDesk = () => {
     }
   }
 
-  if (!enabled) {
-    return (
-      <div className='ob-desk'>
-        <p>登录通道还没接上密钥。</p>
-      </div>
-    )
-  }
+  if (!enabled) return <OurBeingsAccountPrompt available={false} />
 
   if (!isLoaded) {
     return (
@@ -161,18 +156,7 @@ const BeingDesk = () => {
     )
   }
 
-  if (!isSignedIn) {
-    return (
-      <div className='ob-desk'>
-        <p className='ob-desk__kicker'>我的档案</p>
-        <h1>先登录</h1>
-        <p>
-          用任何国家的邮箱进来，再坐下这个档案位。{' '}
-          <SmartLink href='/sign-up'>注册 / 登录</SmartLink>
-        </p>
-      </div>
-    )
-  }
+  if (!isSignedIn) return <OurBeingsAccountPrompt />
 
   return (
     <div className='ob-desk'>

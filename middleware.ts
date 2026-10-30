@@ -11,6 +11,7 @@ import {
   safeRedirectPath
 } from '@/lib/utils/notionRedirect'
 import BLOG from './blog.config'
+import { authHref } from '@/lib/beings/authNavigation'
 
 /**
  * Clerk 身份验证中间件
@@ -112,7 +113,7 @@ const noAuthMiddleware = async (req: NextRequest, ev: any) => {
 /**
  * 鉴权中间件
  */
-const authMiddleware = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+const authMiddleware = String(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '').trim()
   ? clerkMiddleware((auth, req) => {
       const refused = refuseAutomatedExistence(req)
       if (refused) return refused
@@ -121,8 +122,10 @@ const authMiddleware = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
       if (isTenantRoute(req)) {
         if (!userId) {
           // 用户未登录，重定向到 /sign-in
-          const url = new URL('/sign-in', req.url)
-          url.searchParams.set('redirectTo', req.url) // 保存重定向目标
+          const url = new URL(
+            authHref('in', `${req.nextUrl.pathname}${req.nextUrl.search}`),
+            req.url
+          )
           return NextResponse.redirect(url)
         }
       }

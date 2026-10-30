@@ -21,7 +21,7 @@ import PWAInstaller from '@/components/PWAInstaller'
 import SEO from '@/components/SEO'
 import { enUS, zhCN } from '@clerk/localizations'
 import dynamic from 'next/dynamic'
-import { DESK_HREF } from '@/themes/my-theme/beings'
+import { DESK_HREF, isClerkEnabled } from '@/themes/my-theme/beings'
 // import { ClerkProvider } from '@clerk/nextjs'
 const ClerkProvider = dynamic(() =>
   import('@clerk/nextjs').then(m => m.ClerkProvider)
@@ -83,7 +83,7 @@ const MyApp = ({ Component, pageProps }) => {
     [theme]
   )
 
-  const enableClerk = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+  const enableClerk = isClerkEnabled()
   const clerkLocale = String(route.locale || BLOG.LANG || '')
     .toLowerCase()
     .startsWith('zh')
@@ -106,8 +106,10 @@ const MyApp = ({ Component, pageProps }) => {
       {enableClerk ? (
         <ClerkProvider
           localization={clerkLocale}
-          afterSignInUrl={DESK_HREF}
-          afterSignUpUrl={DESK_HREF}>
+          signInUrl='/sign-in'
+          signUpUrl='/sign-up'
+          signInFallbackRedirectUrl={DESK_HREF}
+          signUpFallbackRedirectUrl={DESK_HREF}>
           {content}
         </ClerkProvider>
       ) : (
