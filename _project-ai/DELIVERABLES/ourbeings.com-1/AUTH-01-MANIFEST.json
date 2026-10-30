@@ -1,0 +1,59 @@
+{
+  "base_commit": "b8fe4c443c8a4310622ed33bdfb1a7d7b73fb74b",
+  "target_branch": "ourbeings.com-1",
+  "status": "review_only_not_applied_or_deployed",
+  "runtime_files": 6,
+  "test_files": 2,
+  "files": [
+    {
+      "path": "components/SmartLink.js",
+      "sha256": "458c2f83dc0b95cd6d3446c737798b1e198f159a9a15c5934878a159ceac30d3",
+      "new": false
+    },
+    {
+      "path": "lib/beings/authNavigation.js",
+      "sha256": "22cdb3ec5d316147a85d4b6b6099c37f9eddcb15234554b7fab795eeeda7e7a8",
+      "new": false
+    },
+    {
+      "path": "themes/my-theme/components/BeingDesk.js",
+      "sha256": "f561ea9f757c9aa42eb65d8c7e1c5c2f051038aaf1aa771509064bca42b53bd3",
+      "new": false
+    },
+    {
+      "path": "themes/my-theme/components/OurBeingsAuth.js",
+      "sha256": "49918699452c5d5fb506e41e4ed80e81149ca0bf779df41b9c9bd464629defa6",
+      "new": false
+    },
+    {
+      "path": "themes/my-theme/components/OurBeingsHeaderAuth.js",
+      "sha256": "82d2cfc75e345233bdfbf3caaafed2cfe9bfefdcefcebb34e49995ee5190960c",
+      "new": false
+    },
+    {
+      "path": "themes/my-theme/components/OurBeingsSignOut.js",
+      "sha256": "fb69dd4139c8cfd1770dcbdf6111e5444d0a2d19762e41f457aac0098409b89d",
+      "new": true
+    },
+    {
+      "path": "__tests__/lib/beings/account-journey.test.js",
+      "sha256": "91b1d9df823231c3432a63be95e79adf65596d8280319873556ba9b6525c3a91",
+      "new": true
+    },
+    {
+      "path": "__tests__/lib/beings/auth-query-isolation.test.js",
+      "sha256": "df6fec87398cf5357d625def0611def37333419603388c6b79b4f467e860e9e5",
+      "new": true
+    }
+  ],
+  "patch_sha256": "38d00311a9e85c7f81839eb1f7c64363f04f921d70bdbc08077cd1688464ef2c",
+  "checks": {
+    "targeted_jest_passed": 67,
+    "baseline_account_regressions_failed": 2,
+    "isolated_next_build": "passed",
+    "patch_apply_and_reverse_check": "passed",
+    "full_repo_build": "not_run",
+    "real_authentication": "not_verified",
+    "browser_layout": "not_verified"
+  }
+}

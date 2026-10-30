@@ -1,0 +1,819 @@
+diff --git a/components/SmartLink.js b/components/SmartLink.js
+index e2e1467e803068d4f31f3e6e715270be92606592..f587231c1144e3cb0f66e3863c99bee89e8ca949 100644
+--- a/components/SmartLink.js
++++ b/components/SmartLink.js
+@@ -1,15 +1,11 @@
+ import Link from 'next/link'
+ import { siteConfig } from '@/lib/config'
++import { isAuthFlowPath } from '@/lib/beings/authNavigation'
+ 
+ // 过滤 <a> 标签不能识别的 props
+ const filterDOMProps = props => {
+-  const {
+-    passHref,
+-    legacyBehavior,
+-    placeholderSrc,
+-    fallbackSrc,
+-    ...rest
+-  } = props
++  const { passHref, legacyBehavior, placeholderSrc, fallbackSrc, ...rest } =
++    props
+   return rest
+ }
+ 
+@@ -51,6 +47,7 @@ const SmartLink = ({ href, children, ...rest }) => {
+ 
+   const getPersistedQuery = () => {
+     if (typeof window === 'undefined') return {}
++    if (isAuthFlowPath(window.location.pathname)) return {}
+     const queryString = window.location.search?.slice(1) || ''
+     const params = new URLSearchParams(queryString)
+     const preserved = {}
+@@ -61,11 +58,13 @@ const SmartLink = ({ href, children, ...rest }) => {
+   }
+ 
+   const mergePreservedQueryForStringHref = value => {
+-    if (typeof value !== 'string' || !value || value.startsWith('#')) return value
++    if (typeof value !== 'string' || !value || value.startsWith('#'))
++      return value
+     const preservedQuery = getPersistedQuery()
+     if (Object.keys(preservedQuery).length === 0) return value
+ 
+-    const isAbsolute = value.startsWith('http://') || value.startsWith('https://')
++    const isAbsolute =
++      value.startsWith('http://') || value.startsWith('https://')
+     const url = new URL(value, LINK)
+     Object.entries(preservedQuery).forEach(([key, paramValue]) => {
+       if (!url.searchParams.has(key)) {
+@@ -100,7 +99,8 @@ const SmartLink = ({ href, children, ...rest }) => {
+         href={externalUrl}
+         target='_blank'
+         rel='noopener noreferrer'
+-        {...filterDOMProps(rest)}>
++        {...filterDOMProps(rest)}
++      >
+         {children}
+       </a>
+     )
+diff --git a/lib/beings/authNavigation.js b/lib/beings/authNavigation.js
+index a4411d71fb415f82324a90b0312539e059312731..207f762ff9a8851b3cca3d05f17689a75f4f48a3 100644
+--- a/lib/beings/authNavigation.js
++++ b/lib/beings/authNavigation.js
+@@ -4,6 +4,12 @@ const LOCAL_ORIGIN = 'https://auth-navigation.invalid'
+ const BLOCKED_PATH =
+   /^\/(?:sign-in|sign-up|auth|api|_next|\.well-known)(?:\/|$)/i
+ 
++export const isAuthFlowPath = value =>
++  typeof value === 'string' &&
++  /^\/(?:sign-in|sign-up|auth|sso-callback)(?:\/|$)/i.test(
++    value.split(/[?#]/)[0]
++  )
++
+ export function safeAuthReturnPath(value) {
+   if (typeof value !== 'string' || !value || value.length > 2048) {
+     return AUTH_DEFAULT_RETURN
+diff --git a/themes/my-theme/components/BeingDesk.js b/themes/my-theme/components/BeingDesk.js
+index 4b18a5f78b47af35d0d5e473acf58488c4f9eea3..8fcf13c63eed330e35a813d9a0c10b12852dd65c 100644
+--- a/themes/my-theme/components/BeingDesk.js
++++ b/themes/my-theme/components/BeingDesk.js
+@@ -1,6 +1,10 @@
+-import { useClerk, useUser } from '@clerk/nextjs'
++import { useUser } from '@clerk/nextjs'
+ import SmartLink from '@/components/SmartLink'
+-import { OurBeingsAccountPrompt } from './OurBeingsAuth'
++import {
++  OurBeingsAccountPending,
++  OurBeingsAccountPrompt
++} from './OurBeingsAuth'
++import OurBeingsSignOut from './OurBeingsSignOut'
+ import { useEffect, useMemo, useState } from 'react'
+ import {
+   BEING_ROOMS,
+@@ -33,15 +37,22 @@ const profileFromBeing = being => {
+ }
+ 
+ const BeingDesk = () => {
+-  const enabled = isClerkEnabled()
+-  const { isLoaded, isSignedIn, user } = enabled
+-    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
+-      useUser()
+-    : { isLoaded: true, isSignedIn: false, user: null }
+-  const { signOut } = enabled
+-    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
+-      useClerk()
+-    : { signOut: async () => {} }
++  if (!isClerkEnabled()) return <OurBeingsAccountPrompt available={false} />
++  return <ConnectedDesk />
++}
++
++const ConnectedDesk = () => {
++  const { isLoaded, isSignedIn, user } = useUser()
++  if (!isLoaded || (isSignedIn && !user?.id)) {
++    return <OurBeingsAccountPending />
++  }
++  if (!isSignedIn) return <OurBeingsAccountPrompt />
++  // A different account gets entirely new state, including unsaved drafts.
++  // Responses belonging to the unmounted account are ignored by its effects.
++  return <BeingDeskSession key={user.id} user={user} />
++}
++
++const BeingDeskSession = ({ user }) => {
+   const [me, setMe] = useState(null)
+   const [writings, setWritings] = useState([])
+   const [draft, setDraft] = useState(emptyDraft)
+@@ -60,7 +71,6 @@ const BeingDesk = () => {
+   }
+ 
+   useEffect(() => {
+-    if (!isSignedIn) return undefined
+     let cancelled = false
+     fetch('/api/beings/me', { method: 'POST' })
+       .then(async res => {
+@@ -78,7 +88,7 @@ const BeingDesk = () => {
+     return () => {
+       cancelled = true
+     }
+-  }, [isSignedIn])
++  }, [user.id])
+ 
+   useEffect(() => {
+     const tick = () => setNow(Date.now())
+@@ -130,6 +140,9 @@ const BeingDesk = () => {
+       applyPayload(data)
+       if (payload.writing) setDraft(emptyDraft)
+       return true
++    } catch {
++      setError('连接暂时中断。输入仍保留在这里，请稍后再试。')
++      return false
+     } finally {
+       setSaving(false)
+     }
+@@ -146,18 +159,6 @@ const BeingDesk = () => {
+     }
+   }
+ 
+-  if (!enabled) return <OurBeingsAccountPrompt available={false} />
+-
+-  if (!isLoaded) {
+-    return (
+-      <div className='ob-desk'>
+-        <p>正在确认登录状态…</p>
+-      </div>
+-    )
+-  }
+-
+-  if (!isSignedIn) return <OurBeingsAccountPrompt />
+-
+   return (
+     <div className='ob-desk'>
+       <p className='ob-desk__kicker'>我的档案</p>
+@@ -450,13 +451,7 @@ const BeingDesk = () => {
+             {' · '}
+           </>
+         ) : null}
+-        <button
+-          type='button'
+-          className='ob-desk__text'
+-          onClick={() => signOut({ redirectUrl: '/our-beings' })}
+-        >
+-          退出
+-        </button>
++        <OurBeingsSignOut />
+       </p>
+ 
+       <style jsx>{`
+diff --git a/themes/my-theme/components/OurBeingsAuth.js b/themes/my-theme/components/OurBeingsAuth.js
+index db72428dc832e927bd55f28058ef2660faf1de40..69e9a7ce637f95a3a2f8520813674f97c3fc6b6a 100644
+--- a/themes/my-theme/components/OurBeingsAuth.js
++++ b/themes/my-theme/components/OurBeingsAuth.js
+@@ -1,6 +1,7 @@
+ import { Component, useEffect, useMemo, useState } from 'react'
+ import dynamic from 'next/dynamic'
+ import Link from 'next/link'
++import Head from 'next/head'
+ import { useRouter } from 'next/router'
+ import { useClerk, useUser } from '@clerk/nextjs'
+ import {
+@@ -156,6 +157,7 @@ function useAuthAppearance() {
+ }
+ 
+ function SignedPanel({ signingUp, returnTo }) {
++  const router = useRouter()
+   const { isLoaded, isSignedIn } = useUser()
+   const { signOut } = useClerk()
+   const authAppearance = useAuthAppearance()
+@@ -193,6 +195,7 @@ function SignedPanel({ signingUp, returnTo }) {
+                 })
+               } catch {
+                 setError('未能退出，请稍后再试。')
++              } finally {
+                 setLeaving(false)
+               }
+             }}
+@@ -210,22 +213,29 @@ function SignedPanel({ signingUp, returnTo }) {
+     forceRedirectUrl: returnTo,
+     fallbackRedirectUrl: returnTo
+   }
+-  return signingUp ? (
+-    <ClerkSignUp
+-      {...shared}
+-      path='/sign-up'
+-      signInUrl={authHref('in', returnTo)}
+-      signInForceRedirectUrl={returnTo}
+-      signInFallbackRedirectUrl={returnTo}
+-    />
+-  ) : (
+-    <ClerkSignIn
+-      {...shared}
+-      path='/sign-in'
+-      signUpUrl={authHref('up', returnTo)}
+-      signUpForceRedirectUrl={returnTo}
+-      signUpFallbackRedirectUrl={returnTo}
+-    />
++  return (
++    <>
++      {router.query?.signed_out === '1' && (
++        <p role='status'>已退出登录。你可以继续阅读公开内容，或重新登录。</p>
++      )}
++      {signingUp ? (
++        <ClerkSignUp
++          {...shared}
++          path='/sign-up'
++          signInUrl={authHref('in', returnTo)}
++          signInForceRedirectUrl={returnTo}
++          signInFallbackRedirectUrl={returnTo}
++        />
++      ) : (
++        <ClerkSignIn
++          {...shared}
++          path='/sign-in'
++          signUpUrl={authHref('up', returnTo)}
++          signUpForceRedirectUrl={returnTo}
++          signUpFallbackRedirectUrl={returnTo}
++        />
++      )}
++    </>
+   )
+ }
+ 
+@@ -252,6 +262,12 @@ function AuthShell({
+ }) {
+   return (
+     <section className='ob-auth' aria-labelledby='ob-auth-title'>
++      <Head>
++        <title>
++          {prompt ? '我的空间' : signingUp ? '创建账户' : '登录'} · Our beings
++        </title>
++        <meta name='robots' content='noindex,nofollow' />
++      </Head>
+       <div className='ob-auth__intro'>
+         <p className='ob-auth__eyebrow'>
+           OUR BEINGS <span aria-hidden='true'>／</span> 吾在
+@@ -329,6 +345,7 @@ function AuthShell({
+           --ob-auth-control: #9b8a70;
+           --ob-auth-gold: #785620;
+           --ob-auth-soft: #f3eee4;
++          --ob-auth-forest: #314b3e;
+           display: grid;
+           grid-template-columns: minmax(0, 1fr) minmax(0, 28rem);
+           gap: clamp(2rem, 6vw, 5rem);
+@@ -356,9 +373,10 @@ function AuthShell({
+           margin: 0 0 1.5rem;
+           font-size: 0.875rem;
+           letter-spacing: 0.12em;
+-          color: var(--ob-auth-muted);
++          color: var(--ob-auth-forest);
+         }
+         .ob-auth h1 {
++          font-family: 'Noto Serif SC', 'Songti SC', SimSun, serif;
+           margin: 0 0 1.25rem;
+           font-size: clamp(1.75rem, 3vw, 2.5rem);
+           line-height: 1.3;
+@@ -587,6 +605,7 @@ function AuthShell({
+           max-width: 2.75rem;
+         }
+         :global(.dark) .ob-auth {
++          --ob-auth-forest: #b8cfba;
+           --ob-auth-ink: #f3eee5;
+           --ob-auth-muted: #c6bbaa;
+           --ob-auth-paper: #25221e;
+@@ -658,6 +677,14 @@ export function OurBeingsAccountPrompt({ available = true }) {
+   )
+ }
+ 
++export function OurBeingsAccountPending() {
++  return (
++    <AuthShell prompt>
++      <LoadingPanel />
++    </AuthShell>
++  )
++}
++
+ function OurBeingsJoinGate({ mode = 'in' }) {
+   const router = useRouter()
+   const signingUp = mode === 'up'
+diff --git a/themes/my-theme/components/OurBeingsHeaderAuth.js b/themes/my-theme/components/OurBeingsHeaderAuth.js
+index 4b12e95264ad0f736c6e29f51d7c5676b2c95a0d..19d01850fc6142024c859ef6ef9e89b137164349 100644
+--- a/themes/my-theme/components/OurBeingsHeaderAuth.js
++++ b/themes/my-theme/components/OurBeingsHeaderAuth.js
+@@ -1,16 +1,20 @@
+-import SmartLink from '@/components/SmartLink'
++import Link from 'next/link'
++import { useRouter } from 'next/router'
+ import { SignedIn, SignedOut } from '@clerk/nextjs'
++import { authHref } from '@/lib/beings/authNavigation'
+ import { DESK_HREF, isClerkEnabled } from '../beings'
++import OurBeingsSignOut from './OurBeingsSignOut'
+ 
+ const OurBeingsHeaderAuth = ({ english = false, onNavigate }) => {
++  const router = useRouter()
+   const guest = (
+     <div className='ob-settings-account-links'>
+-      <SmartLink href='/sign-in' onClick={onNavigate}>
++      <Link href={authHref('in', router.asPath)} onClick={onNavigate}>
+         {english ? 'Sign in' : '登录'}
+-      </SmartLink>
+-      <SmartLink href='/sign-up' onClick={onNavigate}>
++      </Link>
++      <Link href={authHref('up', router.asPath)} onClick={onNavigate}>
+         {english ? 'Create account' : '注册'}
+-      </SmartLink>
++      </Link>
+     </div>
+   )
+   if (!isClerkEnabled()) return guest
+@@ -19,9 +23,10 @@ const OurBeingsHeaderAuth = ({ english = false, onNavigate }) => {
+       <SignedOut>{guest}</SignedOut>
+       <SignedIn>
+         <div className='ob-settings-account-links'>
+-          <SmartLink href={DESK_HREF} onClick={onNavigate}>
+-            {english ? 'My profile' : '我的档案'}
+-          </SmartLink>
++          <Link href={DESK_HREF} onClick={onNavigate}>
++            {english ? 'My space' : '我的空间'}
++          </Link>
++          <OurBeingsSignOut english={english} />
+         </div>
+       </SignedIn>
+     </>
+diff --git a/themes/my-theme/components/OurBeingsSignOut.js b/themes/my-theme/components/OurBeingsSignOut.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..f0c83017f9816bdf76747e8c34491d9db61ca498
+--- /dev/null
++++ b/themes/my-theme/components/OurBeingsSignOut.js
+@@ -0,0 +1,78 @@
++import { useClerk } from '@clerk/nextjs'
++import { useRef, useState } from 'react'
++import { authHref } from '@/lib/beings/authNavigation'
++
++export default function OurBeingsSignOut({ english = false }) {
++  const { signOut } = useClerk()
++  const pending = useRef(false)
++  const [leaving, setLeaving] = useState(false)
++  const [failed, setFailed] = useState(false)
++
++  const leave = async () => {
++    if (pending.current) return
++    pending.current = true
++    setLeaving(true)
++    setFailed(false)
++    try {
++      await signOut({ redirectUrl: `${authHref('in')}&signed_out=1` })
++    } catch {
++      setFailed(true)
++    } finally {
++      pending.current = false
++      setLeaving(false)
++    }
++  }
++
++  return (
++    <span className='ob-sign-out'>
++      <button type='button' disabled={leaving} onClick={leave}>
++        {english
++          ? leaving
++            ? 'Signing out…'
++            : 'Sign out'
++          : leaving
++            ? '正在退出…'
++            : '退出登录'}
++      </button>
++      {failed && (
++        <span role='alert'>
++          {english
++            ? 'Sign out failed. Please retry.'
++            : '未能退出，请稍后再试。'}
++        </span>
++      )}
++      <style jsx>{`
++        .ob-sign-out {
++          display: inline-flex;
++          flex-direction: column;
++          vertical-align: middle;
++          max-width: 100%;
++        }
++        button {
++          min-width: 44px;
++          min-height: 44px;
++          padding: 0.35rem 0.65rem;
++          border: 0;
++          background: transparent;
++          color: inherit;
++          font: inherit;
++          cursor: pointer;
++          text-decoration: underline;
++          text-underline-offset: 0.2em;
++        }
++        button:disabled {
++          cursor: wait;
++          opacity: 0.65;
++        }
++        button:focus-visible {
++          outline: 2px solid currentColor;
++          outline-offset: 3px;
++        }
++        [role='alert'] {
++          font-size: 0.85rem;
++          overflow-wrap: anywhere;
++        }
++      `}</style>
++    </span>
++  )
++}
+diff --git a/__tests__/lib/beings/account-journey.test.js b/__tests__/lib/beings/account-journey.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..eeec74336eef7059fb7debab7e9a8aeb903764af
+--- /dev/null
++++ b/__tests__/lib/beings/account-journey.test.js
+@@ -0,0 +1,308 @@
++import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
++import { useRouter } from 'next/router'
++import BeingDesk from '@/themes/my-theme/components/BeingDesk'
++import OurBeingsHeaderAuth from '@/themes/my-theme/components/OurBeingsHeaderAuth'
++import OurBeingsSignOut from '@/themes/my-theme/components/OurBeingsSignOut'
++import {
++  LayoutSignIn,
++  LayoutSignUp
++} from '@/themes/my-theme/components/OurBeingsAuth'
++
++let mockSession
++let mockEnabled
++const mockSignOut = jest.fn()
++const mockSignIn = jest.fn(() => <div aria-label='Clerk 登录步骤' />)
++const mockSignUp = jest.fn(() => <div aria-label='Clerk 注册步骤' />)
++const mockUseUser = jest.fn(() => mockSession)
++
++jest.mock('@clerk/nextjs', () => ({
++  useUser: () => mockUseUser(),
++  useClerk: () => ({ signOut: mockSignOut }),
++  SignedIn: ({ children }) => (mockSession.isSignedIn ? children : null),
++  SignedOut: ({ children }) => (!mockSession.isSignedIn ? children : null),
++  SignIn: props => mockSignIn(props),
++  SignUp: props => mockSignUp(props)
++}))
++jest.mock('next/router', () => ({ useRouter: jest.fn() }))
++// Style layout is checked by the Next build/browser step. The shared setup
++// clears document.head before RTL unmounts, which conflicts with this registry.
++jest.mock('styled-jsx/style', () => {
++  const Style = () => null
++  Style.dynamic = () => ''
++  return { __esModule: true, default: Style }
++})
++jest.mock('next/link', () => ({
++  __esModule: true,
++  default: ({ children, href, ...props }) => (
++    <a href={href} {...props}>
++      {children}
++    </a>
++  )
++}))
++jest.mock('@/components/SmartLink', () => ({
++  __esModule: true,
++  default: ({ children, href, ...props }) => (
++    <a href={href} {...props}>
++      {children}
++    </a>
++  )
++}))
++jest.mock('next/dynamic', () => ({
++  __esModule: true,
++  default: loader => {
++    const React = require('react')
++    const Lazy = React.lazy(() =>
++      loader().then(component => ({ default: component }))
++    )
++    return function NativeStep(props) {
++      return (
++        <React.Suspense fallback={<p>准备步骤</p>}>
++          <Lazy {...props} />
++        </React.Suspense>
++      )
++    }
++  }
++}))
++jest.mock('@/themes/my-theme/beings', () => ({
++  ...jest.requireActual('@/themes/my-theme/beings'),
++  isClerkEnabled: () => mockEnabled
++}))
++
++const account = id => ({
++  id,
++  emailAddresses: [{ id: 'email', emailAddress: `${id}@example.invalid` }],
++  primaryEmailAddressId: 'email',
++  publicMetadata: { handle: id, name: id, seat: 2 }
++})
++const payload = (id, title = `${id}-private-note`) => ({
++  being: { id, handle: id, name: id, seat: 2, public: false },
++  writings: [{ id: `${id}-note`, room: 'existence', title, public: false }]
++})
++const ok = data => ({ ok: true, json: async () => data })
++const deferred = () => {
++  let resolve
++  let reject
++  const promise = new Promise((yes, no) => {
++    resolve = yes
++    reject = no
++  })
++  return { promise, resolve, reject }
++}
++const signedIn = id => {
++  mockSession = { isLoaded: true, isSignedIn: true, user: account(id) }
++}
++
++beforeEach(() => {
++  mockEnabled = true
++  mockSession = { isLoaded: true, isSignedIn: false, user: null }
++  mockSignOut.mockReset()
++  mockSignIn.mockClear()
++  mockSignUp.mockClear()
++  mockUseUser.mockClear()
++  useRouter.mockReturnValue({
++    isReady: true,
++    query: {},
++    asPath: '/our-beings/me'
++  })
++  fetch.mockReset()
++})
++
++test('disabled authentication does not invoke Clerk hooks or private API', () => {
++  mockEnabled = false
++  render(<BeingDesk />)
++  expect(
++    screen.getByRole('heading', { name: '登录服务暂未开放' })
++  ).toBeInTheDocument()
++  expect(mockUseUser).not.toHaveBeenCalled()
++  expect(fetch).not.toHaveBeenCalled()
++})
++
++test('guest has separate sign-in and sign-up destinations', () => {
++  render(<BeingDesk />)
++  expect(screen.getByRole('link', { name: '登录' })).toHaveAttribute(
++    'href',
++    '/sign-in?returnTo=%2Four-beings%2Fme'
++  )
++  expect(screen.getByRole('link', { name: '创建账户' })).toHaveAttribute(
++    'href',
++    '/sign-up?returnTo=%2Four-beings%2Fme'
++  )
++  expect(fetch).not.toHaveBeenCalled()
++})
++
++test('unconfirmed account does not display a previous desk or fetch private data', () => {
++  mockSession = { isLoaded: false, isSignedIn: undefined, user: null }
++  render(<BeingDesk />)
++  expect(screen.getByRole('status')).toHaveTextContent('正在准备登录')
++  expect(fetch).not.toHaveBeenCalled()
++})
++
++test('switching accounts clears fetched notes and unsaved private input before the next response', async () => {
++  signedIn('account-a')
++  const second = deferred()
++  fetch
++    .mockResolvedValueOnce(ok(payload('account-a')))
++    .mockReturnValueOnce(second.promise)
++  const view = render(<BeingDesk />)
++  await screen.findByText('account-a-private-note · 私密')
++  fireEvent.change(screen.getByLabelText('正文'), {
++    target: { value: 'A-unsaved-private-canary' }
++  })
++  signedIn('account-b')
++  view.rerender(<BeingDesk />)
++  expect(screen.queryByText(/account-a-private-note/)).not.toBeInTheDocument()
++  expect(screen.getByLabelText('正文')).toHaveValue('')
++  expect(fetch).toHaveBeenCalledTimes(2)
++  await act(async () => second.resolve(ok(payload('account-b'))))
++  expect(
++    await screen.findByText('account-b-private-note · 私密')
++  ).toBeInTheDocument()
++})
++
++test('late account A response cannot overwrite account B desk', async () => {
++  signedIn('account-a')
++  const first = deferred()
++  fetch
++    .mockReturnValueOnce(first.promise)
++    .mockResolvedValueOnce(ok(payload('account-b')))
++  const view = render(<BeingDesk />)
++  signedIn('account-b')
++  view.rerender(<BeingDesk />)
++  await screen.findByText('account-b-private-note · 私密')
++  await act(async () => first.resolve(ok(payload('account-a'))))
++  expect(screen.queryByText(/account-a-private-note/)).not.toBeInTheDocument()
++  expect(screen.getByText('account-b-private-note · 私密')).toBeInTheDocument()
++})
++
++test('signing out removes private content without waiting for a navigation', async () => {
++  signedIn('account-a')
++  fetch.mockResolvedValueOnce(ok(payload('account-a')))
++  const view = render(<BeingDesk />)
++  await screen.findByText('account-a-private-note · 私密')
++  mockSession = { isLoaded: true, isSignedIn: false, user: null }
++  view.rerender(<BeingDesk />)
++  expect(screen.queryByText(/account-a-private-note/)).not.toBeInTheDocument()
++  expect(screen.getByRole('link', { name: '登录' })).toBeInTheDocument()
++})
++
++test('network failure preserves the current draft and allows a retry', async () => {
++  signedIn('account-a')
++  fetch
++    .mockResolvedValueOnce(ok(payload('account-a')))
++    .mockRejectedValueOnce(new Error('synthetic offline'))
++  render(<BeingDesk />)
++  await screen.findByText('account-a-private-note · 私密')
++  fireEvent.change(screen.getByLabelText('正文'), {
++    target: { value: 'draft retained' }
++  })
++  fireEvent.click(screen.getByRole('button', { name: '放下', exact: true }))
++  await screen.findAllByText('连接暂时中断。输入仍保留在这里，请稍后再试。')
++  expect(screen.getByLabelText('正文')).toHaveValue('draft retained')
++  expect(
++    screen.getByRole('button', { name: '放下', exact: true })
++  ).toBeEnabled()
++  const sent = JSON.parse(fetch.mock.calls[1][1].body)
++  expect(sent.writing.public).toBe(false)
++})
++
++test('logout prevents duplicate submission and displays a recoverable failure', async () => {
++  const leaving = deferred()
++  mockSignOut
++    .mockReturnValueOnce(leaving.promise)
++    .mockResolvedValueOnce(undefined)
++  render(<OurBeingsSignOut />)
++  fireEvent.click(screen.getByRole('button', { name: '退出登录' }))
++  expect(screen.getByRole('button', { name: '正在退出…' })).toBeDisabled()
++  fireEvent.click(screen.getByRole('button', { name: '正在退出…' }))
++  expect(mockSignOut).toHaveBeenCalledTimes(1)
++  await act(async () => leaving.reject(new Error('synthetic sign out failure')))
++  expect(screen.getByRole('alert')).toHaveTextContent('未能退出')
++  fireEvent.click(screen.getByRole('button', { name: '退出登录' }))
++  await waitFor(() =>
++    expect(screen.getByRole('button', { name: '退出登录' })).toBeEnabled()
++  )
++  expect(screen.queryByRole('alert')).not.toBeInTheDocument()
++  expect(mockSignOut).toHaveBeenLastCalledWith({
++    redirectUrl: '/sign-in?returnTo=%2Four-beings%2Fme&signed_out=1'
++  })
++})
++
++test('header entry keeps a validated reading destination and exposes logout when signed in', () => {
++  useRouter.mockReturnValue({
++    isReady: true,
++    query: {},
++    asPath: '/category/%E9%81%93?topic=freedom'
++  })
++  const view = render(<OurBeingsHeaderAuth />)
++  const login = new URL(screen.getByRole('link', { name: '登录' }).href)
++  expect(login.searchParams.get('returnTo')).toBe(
++    '/category/%E9%81%93?topic=freedom'
++  )
++  signedIn('account-a')
++  view.rerender(<OurBeingsHeaderAuth />)
++  expect(screen.getByRole('link', { name: '我的空间' })).toHaveAttribute(
++    'href',
++    '/our-beings/me'
++  )
++  expect(screen.getByRole('button', { name: '退出登录' })).toBeInTheDocument()
++})
++
++test.each([
++  ['login', LayoutSignIn, mockSignIn, '/sign-in', 'signUpUrl', '/sign-up'],
++  ['signup', LayoutSignUp, mockSignUp, '/sign-up', 'signInUrl', '/sign-in']
++])(
++  '%s keeps native nested security steps and validated return targets',
++  async (mode, Page, widget, path, crossKey, crossPath) => {
++    useRouter.mockReturnValue({
++      isReady: true,
++      query: { returnTo: '/dashboard?tab=profile' },
++      asPath: path
++    })
++    render(<Page />)
++    await waitFor(() => expect(widget).toHaveBeenCalled())
++    const props = widget.mock.calls.at(-1)[0]
++    expect(props.routing).toBe('path')
++    expect(props.path).toBe(path)
++    expect(props.forceRedirectUrl).toBe('/dashboard?tab=profile')
++    expect(props[crossKey]).toBe(
++      `${crossPath}?returnTo=%2Fdashboard%3Ftab%3Dprofile`
++    )
++  }
++)
++
++test('already signed-in account sees a continue action without another credential form', () => {
++  signedIn('account-a')
++  useRouter.mockReturnValue({
++    isReady: true,
++    query: { returnTo: '/category/%E9%81%93' },
++    asPath: '/sign-in'
++  })
++  render(<LayoutSignIn />)
++  expect(screen.getByRole('link', { name: '继续访问' })).toHaveAttribute(
++    'href',
++    '/category/%E9%81%93'
++  )
++  expect(mockSignIn).not.toHaveBeenCalled()
++})
++
++test('slow loading gives retry feedback without pretending to be signed in', () => {
++  jest.useFakeTimers()
++  mockSession = { isLoaded: false, isSignedIn: undefined, user: null }
++  render(<BeingDesk />)
++  act(() => jest.advanceTimersByTime(12000))
++  expect(screen.getByRole('status')).toHaveTextContent('登录服务加载较慢')
++  expect(screen.getByRole('button', { name: '刷新重试' })).toBeInTheDocument()
++  expect(fetch).not.toHaveBeenCalled()
++  jest.useRealTimers()
++})
++
++test('signed-out feedback appears only after Clerk confirms the guest session', async () => {
++  useRouter.mockReturnValue({
++    isReady: true,
++    query: { signed_out: '1' },
++    asPath: '/sign-in?signed_out=1'
++  })
++  render(<LayoutSignIn />)
++  expect(screen.getByRole('status')).toHaveTextContent('已退出登录')
++  await waitFor(() => expect(mockSignIn).toHaveBeenCalled())
++})
+diff --git a/__tests__/lib/beings/auth-query-isolation.test.js b/__tests__/lib/beings/auth-query-isolation.test.js
+new file mode 100644
+index 0000000000000000000000000000000000000000..f27a33c435593074871aa06e3196f54004767dc6
+--- /dev/null
++++ b/__tests__/lib/beings/auth-query-isolation.test.js
+@@ -0,0 +1,57 @@
++import { render, screen } from '@testing-library/react'
++import SmartLink from '@/components/SmartLink'
++import { isAuthFlowPath } from '@/lib/beings/authNavigation'
++
++jest.mock('@/lib/config', () => ({ siteConfig: () => 'https://ourbeings.com' }))
++jest.mock('next/link', () => ({
++  __esModule: true,
++  default: ({ href, children, ...props }) => {
++    const url =
++      typeof href === 'string'
++        ? href
++        : `${href.pathname}?${new URLSearchParams(href.query)}`
++    return (
++      <a href={url} {...props}>
++        {children}
++      </a>
++    )
++  }
++}))
++
++afterEach(() => window.history.replaceState(null, '', '/'))
++
++test.each([
++  '/sign-in',
++  '/sign-in/factor-one',
++  '/sign-up/verify-email-address',
++  '/auth/callback',
++  '/sso-callback'
++])('recognizes authentication path %s', path => {
++  expect(isAuthFlowPath(path)).toBe(true)
++})
++test.each(['/our-beings', '/category/道', '/authorship', undefined])(
++  'does not confuse ordinary path %s with authentication',
++  path => {
++    expect(isAuthFlowPath(path)).toBe(false)
++  }
++)
++test.each(['/sign-in', '/sign-up/verify-email-address'])(
++  'leaving %s does not copy tickets or redirect queries to public links',
++  path => {
++    window.history.replaceState(
++      null,
++      '',
++      `${path}?__clerk_ticket=synthetic-ticket&returnTo=%2Fdashboard&redirect_url=%2Fdashboard`
++    )
++    render(<SmartLink href='/our-beings'>公开阅读</SmartLink>)
++    expect(
++      screen.getByRole('link', { name: '公开阅读' }).getAttribute('href')
++    ).toBe('/our-beings')
++  }
++)
++test('normal reading query behavior is preserved outside the authentication flow', () => {
++  window.history.replaceState(null, '', '/category/道?topic=freedom')
++  render(<SmartLink href='/our-beings'>公开阅读</SmartLink>)
++  const url = new URL(screen.getByRole('link', { name: '公开阅读' }).href)
++  expect(url.searchParams.get('topic')).toBe('freedom')
++})
