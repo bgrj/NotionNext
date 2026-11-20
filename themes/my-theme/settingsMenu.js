@@ -9,6 +9,7 @@ export function settingsMenu(menu, openSections) {
       if (item?.show === false) continue
       if (
         /^(https?:\/\/|\/(?!\/))/.test(href) &&
+        href !== '/#' &&
         !/[\\\u0000-\u001f]/.test(href)
       ) {
         let url

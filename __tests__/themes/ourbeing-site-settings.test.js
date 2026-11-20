@@ -176,7 +176,7 @@ test('Notion public menus appear without unpublished or all-category archive lin
     { title: '草稿', href: '/draft', status: 'Draft' },
     {
       title: '往期整理',
-      href: '#',
+      href: '/#',
       subMenus: [{ title: '历史归档', href: '/archive' }]
     },
     { title: '不合法地址', href: 'javascript:alert(1)' },

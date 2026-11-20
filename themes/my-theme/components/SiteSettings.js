@@ -461,6 +461,12 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
           outline-offset: 3px;
         }
         @media (max-width: 767px) {
+          /* A filtered ancestor makes fixed panels anchor to the navigation. */
+          #theme-my-theme .ob-sticky-nav.ob-nav-settings-open {
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+            transition: none;
+          }
           #theme-my-theme .ob-settings-panel {
             position: fixed;
             top: auto;
