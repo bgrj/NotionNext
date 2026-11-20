@@ -226,7 +226,11 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
     >
       <div className='ob-entry-preview-copy' role='status'>
         <strong>{selected.name}</strong>
-        <span>{available ? `阅读「${selected.name}」系列` : '开发中……'}</span>
+        {!(touchKey && available) && (
+          <span>
+            {available ? `阅读「${selected.name}」系列` : '开发中……'}
+          </span>
+        )}
       </div>
       {touchKey && (
         <div className='ob-entry-preview-actions'>
@@ -389,6 +393,7 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
       <style jsx global>{`
         .ob-entry-preview {
           position: absolute;
+          box-sizing: border-box;
           z-index: 22;
           left: 50%;
           bottom: 1.25rem;
@@ -425,16 +430,22 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           left: auto;
           bottom: auto;
           transform: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem 1rem;
+          flex-wrap: wrap;
           width: 100%;
           max-width: none;
-          padding: 1rem max(1rem, env(safe-area-inset-right))
-            max(1rem, env(safe-area-inset-bottom));
+          padding: 0.85rem max(1rem, env(safe-area-inset-right))
+            max(0.85rem, env(safe-area-inset-bottom));
           border-radius: 0;
           border-width: 1px 0 0;
           box-shadow: none;
         }
         .ob-entry-preview-touch .ob-entry-preview-copy {
-          justify-content: center;
+          justify-content: flex-start;
+          min-width: 0;
         }
         .ob-entry-preview-actions {
           display: flex;
@@ -442,17 +453,24 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           justify-content: center;
           margin-top: 0.75rem;
         }
+        .ob-entry-preview-touch .ob-entry-preview-actions {
+          margin-top: 0;
+          margin-left: auto;
+        }
         .ob-entry-preview-actions :is(a, button) {
           min-height: 44px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
+          flex: none;
           padding: 0.5rem 1rem;
           border: 1px solid rgba(130, 96, 48, 0.4);
           border-radius: 8px;
           color: inherit;
           background: transparent;
           font: inherit;
+          text-decoration: none;
+          white-space: nowrap;
           cursor: pointer;
         }
         .ob-entry-preview-actions a {

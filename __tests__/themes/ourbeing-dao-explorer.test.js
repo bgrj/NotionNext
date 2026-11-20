@@ -53,10 +53,9 @@ test('searches the full provided category and opens only matching article links'
 
 test('manual navigation, list and empty state work', () => {
   const { unmount } = render(<DaoExplorer daoPosts={posts} />)
+  expect(screen.queryByRole('button', { name: '暂停轮播' })).toBeNull()
   fireEvent.click(screen.getByRole('button', { name: '下一篇' }))
   expect(screen.getByRole('link', { name: '阅读：第二篇' })).toBeTruthy()
-  fireEvent.click(screen.getByRole('button', { name: '暂停轮播' }))
-  expect(screen.getByRole('button', { name: '继续轮播' })).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: '文章列表' }))
   expect(screen.getByText('3 篇')).toBeTruthy()
   unmount()
@@ -78,8 +77,5 @@ test('cycles on a timer and honours reduced motion', () => {
   render(<DaoExplorer daoPosts={posts} />)
   act(() => jest.advanceTimersByTime(14000))
   expect(screen.getByRole('link', { name: '阅读：第一篇' })).toBeTruthy()
-  expect(screen.getByRole('button', { name: '已减少动态效果' }).disabled).toBe(
-    true
-  )
   jest.useRealTimers()
 })

@@ -21,7 +21,6 @@ const searchable = post =>
 
 export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
   const [active, setActive] = useState(0)
-  const [paused, setPaused] = useState(false)
   const [interaction, setInteraction] = useState(false)
   const [reduced, setReduced] = useState(false)
   const [query, setQuery] = useState('')
@@ -52,35 +51,63 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
     return () => media.removeEventListener('change', update)
   }, [])
   useEffect(() => {
-    if (
-      paused ||
-      interaction ||
-      reduced ||
-      showList ||
-      query.trim() ||
-      posts.length < 2
-    )
+    if (interaction || reduced || showList || query.trim() || posts.length < 2)
       return undefined
     const timer = window.setInterval(
       () => setActive(index => (index + 1) % posts.length),
       PERIOD
     )
     return () => window.clearInterval(timer)
-  }, [paused, interaction, reduced, showList, query, posts.length])
+  }, [interaction, reduced, showList, query, posts.length])
   const move = delta =>
     setActive(index => (index + delta + posts.length) % posts.length)
   const slots =
-    posts.length === 1 ? [0] : posts.length === 2 ? [0, 1] : [-1, 0, 1]
+    posts.length === 1 ? [0] : posts.length === 2 ? [-1, 0] : [-1, 0, 1]
   const listOpen = showList || Boolean(query.trim())
+  const cardAt = offset => {
+    const post = posts[(active + offset + posts.length) % posts.length]
+    const selected = offset === 0
+    const slot = offset < 0 ? 'left' : offset > 0 ? 'right' : 'center'
+    const body = <CardContent post={post} />
+    return (
+      <div className={`dao-card dao-slot-${slot}`} key={post.id || post.href}>
+        {selected ? (
+          <SmartLink
+            href={post.href}
+            className='dao-card-inner'
+            aria-label={`阅读：${post.title}`}
+          >
+            {body}
+          </SmartLink>
+        ) : (
+          <button
+            type='button'
+            className='dao-card-inner'
+            onClick={() => move(offset)}
+            aria-label={`切换到：${post.title}`}
+          >
+            {body}
+          </button>
+        )}
+      </div>
+    )
+  }
+  const placed = Object.fromEntries(
+    slots.map(offset => [
+      offset < 0 ? 'left' : offset > 0 ? 'right' : 'center',
+      offset
+    ])
+  )
 
   return (
     <section
       className='dao-explorer'
       style={{
-        backgroundImage: `linear-gradient(rgba(247,242,233,.23), rgba(247,242,233,.42)), url(${JSON.stringify(background)})`
+        backgroundImage: `linear-gradient(rgba(247,242,233,.18), rgba(247,242,233,.34)), url(${JSON.stringify(background)})`
       }}
     >
       <div className='dao-shell'>
+        <h1 className='dao-title'>道</h1>
         <div className='dao-toolbar'>
           <button
             type='button'
@@ -110,11 +137,6 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
             />
           </label>
         </div>
-        <header className='dao-heading'>
-          <p>OUR BEINGS · 道</p>
-          <h1>道</h1>
-          <span>已经写出的思想</span>
-        </header>
         {!listOpen ? (
           <div
             className='dao-stage'
@@ -129,77 +151,42 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
             {current ? (
               <>
                 <div className='dao-orbit' aria-label='文章卡片轮播'>
-                  {slots.map(offset => {
-                    const index =
-                      (active + offset + posts.length) % posts.length
-                    const post = posts[index]
-                    const selected = offset === 0
-                    return (
-                      <div
-                        className={`dao-card dao-slot-${offset === -1 ? 'left' : offset === 1 ? 'right' : 'center'}`}
-                        key={post.id || post.href}
-                      >
-                        {selected ? (
-                          <SmartLink
-                            href={post.href}
-                            className='dao-card-inner'
-                            aria-label={`阅读：${post.title}`}
-                          >
-                            <CardContent post={post} />
-                          </SmartLink>
-                        ) : (
-                          <button
-                            type='button'
-                            className='dao-card-inner'
-                            onClick={() => move(offset)}
-                            aria-label={`切换到：${post.title}`}
-                          >
-                            <CardContent post={post} />
-                          </button>
-                        )}
-                      </div>
-                    )
-                  })}
-                </div>
-                <div className='dao-caption'>
-                  <p>
-                    {String(active + 1).padStart(2, '0')} <span>/</span>{' '}
-                    {String(posts.length).padStart(2, '0')}
-                  </p>
-                  <h2>{current.title}</h2>
-                </div>
-                <div className='dao-actions'>
                   <button
                     type='button'
+                    className='dao-arrow dao-arrow-prev'
                     onClick={() => move(-1)}
                     disabled={posts.length < 2}
                     aria-label='上一篇'
                   >
-                    ←
+                    <span aria-hidden='true'>‹</span>
                   </button>
+                  {placed.left === undefined ? (
+                    <div className='dao-card dao-slot-left' />
+                  ) : (
+                    cardAt(placed.left)
+                  )}
+                  {cardAt(placed.center)}
+                  {placed.right === undefined ? (
+                    <div className='dao-card dao-slot-right' />
+                  ) : (
+                    cardAt(placed.right)
+                  )}
                   <button
                     type='button'
-                    onClick={() => setPaused(value => !value)}
-                    disabled={reduced || posts.length < 2}
-                  >
-                    {reduced
-                      ? '已减少动态效果'
-                      : paused
-                        ? '继续轮播'
-                        : '暂停轮播'}
-                  </button>
-                  <button
-                    type='button'
+                    className='dao-arrow dao-arrow-next'
                     onClick={() => move(1)}
                     disabled={posts.length < 2}
                     aria-label='下一篇'
                   >
-                    →
+                    <span aria-hidden='true'>›</span>
                   </button>
                 </div>
-                <p className='dao-hint'>
-                  点击中央卡片阅读全文 · 悬停或聚焦时暂停
+                <p className='dao-count'>
+                  {String(active + 1).padStart(2, '0')}
+                  <span>/</span>
+                  {String(posts.length).padStart(2, '0')}
                 </p>
+                <p className='dao-hint'>点击中央卡片阅读全文</p>
               </>
             ) : (
               <p className='dao-empty'>这里暂时还没有已发布的文章。</p>
@@ -247,48 +234,97 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         )}
       </div>
       <style jsx global>{`
-        #theme-my-theme.ob-dao-layout #wrapper {
+        #theme-my-theme.ob-dao-layout,
+        .dark #theme-my-theme.ob-dao-layout {
+          background: transparent;
+        }
+        #theme-my-theme.ob-dao-layout #wrapper,
+        #theme-my-theme.ob-dao-layout #wrapper.ob-below-nav {
           background: transparent !important;
+          padding-top: 0 !important;
           padding-bottom: 0;
         }
+        #theme-my-theme.ob-dao-layout .ob-sticky-nav,
+        .dark #theme-my-theme.ob-dao-layout .ob-sticky-nav {
+          color: #2c241c;
+          background: transparent;
+          border-bottom-color: transparent;
+          box-shadow: none;
+          backdrop-filter: none;
+          -webkit-backdrop-filter: none;
+        }
+        .dark #theme-my-theme.ob-dao-layout .ob-nav-motto-title {
+          color: #65451f;
+        }
+        .dark #theme-my-theme.ob-dao-layout .ob-nav-motto-line {
+          color: #594c3b;
+        }
         .dao-explorer {
-          min-height: calc(100vh - 5.25rem);
+          min-height: 100vh;
           background-size: cover;
-          background-position: center center;
+          background-position: center top;
           background-attachment: fixed;
           color: #342b23;
-          padding: 24px 24px 56px;
+          padding: calc(var(--ob-below-nav, 5.25rem) + 8px) 28px 72px;
         }
         .dao-shell {
-          width: min(100%, 1100px);
+          width: min(100%, 1360px);
           margin: auto;
+        }
+        .dao-title {
+          margin: 4px 0 0;
+          text-align: center;
+          font-family: Georgia, 'Noto Serif SC', serif;
+          font-size: clamp(76px, 8vw, 124px);
+          font-weight: 400;
+          line-height: 1;
+          letter-spacing: 0.16em;
+          color: #2f2418;
         }
         .dao-toolbar {
           display: flex;
-          gap: 12px;
+          justify-content: center;
           align-items: center;
+          gap: 14px;
+          width: min(100%, 640px);
+          margin: 22px auto 0;
         }
         .dao-control,
         .dao-search,
-        .dao-actions button,
+        .dao-more,
+        .dao-arrow,
+        button.dao-card-inner {
+          font: inherit;
+        }
+        .dao-control,
+        .dao-arrow,
+        .dao-more,
+        button.dao-card-inner {
+          cursor: pointer;
+        }
+        button.dao-card-inner {
+          padding: 0;
+        }
+        .dao-control,
+        .dao-search,
         .dao-more {
-          border: 1px solid rgba(82, 66, 49, 0.25);
-          background: rgba(255, 252, 246, 0.9);
+          border: 1px solid rgba(82, 66, 49, 0.22);
+          background: rgba(255, 252, 246, 0.88);
           color: #342b23;
-          border-radius: 8px;
-          min-height: 44px;
+          border-radius: 999px;
+          min-height: 48px;
         }
         .dao-control {
-          padding: 0 17px;
+          padding: 0 22px;
           white-space: nowrap;
         }
         .dao-search {
           display: flex;
           align-items: center;
           gap: 8px;
-          padding: 0 12px;
-          width: min(320px, 100%);
-          font-size: 24px;
+          flex: 1;
+          min-width: 0;
+          padding: 0 18px;
         }
         .dao-search-label {
           font-size: 14px;
@@ -298,90 +334,88 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         .dao-search input {
           width: 100%;
           min-width: 0;
+          border: 0;
+          padding: 0;
           background: transparent;
           outline: none;
+          box-shadow: none;
           font-size: 15px;
           color: #342b23;
         }
         .dao-search input::placeholder {
           color: #71675e;
         }
-        .dao-heading {
-          text-align: center;
-          margin: 8px auto 0;
-        }
-        .dao-heading p {
-          font-size: 12px;
-          letter-spacing: 0.18em;
-          color: #695541;
-        }
-        .dao-heading h1 {
-          font-family: Georgia, 'Noto Serif SC', serif;
-          font-size: 56px;
-          line-height: 1.15;
-          margin: 3px 0;
-          color: #38291d;
-        }
-        .dao-heading span {
-          font-size: 15px;
-          letter-spacing: 0.16em;
-          color: #574637;
-        }
         .dao-stage {
-          padding-top: 20px;
+          margin-top: 28px;
         }
         .dao-orbit {
-          height: 455px;
-          position: relative;
-          max-width: 880px;
+          display: grid;
+          grid-template-columns: 76px minmax(0, 0.92fr) minmax(0, 1.16fr) minmax(0, 0.92fr) 76px;
+          align-items: end;
+          gap: 8px 26px;
+          width: min(100%, 1320px);
           margin: 0 auto;
-          perspective: 1000px;
         }
-        .dao-card {
-          position: absolute;
-          top: 12px;
-          left: 50%;
-          width: 250px;
-          height: 310px;
-          transition:
-            transform 1.1s ease,
-            opacity 1.1s ease;
-          filter: drop-shadow(0 8px 12px rgba(61, 42, 25, 0.16));
+        .dao-arrow {
+          width: 68px;
+          height: 68px;
+          justify-self: center;
+          align-self: center;
+          border: 0;
+          border-radius: 50%;
+          background: #3f3126;
+          color: #fffaf3;
+          font-size: 54px;
+          line-height: 0.8;
+          box-shadow: 0 12px 28px rgba(48, 32, 18, 0.28);
+          cursor: pointer;
         }
-        .dao-slot-center {
-          z-index: 3;
-          transform: translateX(-50%) translateY(105px);
+        .dao-arrow span {
+          display: block;
+          transform: translateY(-2px);
         }
-        .dao-slot-left {
-          z-index: 2;
-          transform: translateX(calc(-50% - 270px)) translateY(5px) scale(0.84);
-          opacity: 0.89;
+        .dao-arrow:hover {
+          background: #2a211a;
         }
-        .dao-slot-right {
-          z-index: 2;
-          transform: translateX(calc(-50% + 270px)) translateY(5px) scale(0.84);
-          opacity: 0.89;
+        .dao-arrow:disabled {
+          opacity: 0.35;
+          cursor: default;
         }
         .dao-card-inner {
           display: flex;
           width: 100%;
-          height: 100%;
+          min-height: 430px;
           flex-direction: column;
           text-align: left;
-          background: #fffcf6;
-          border: 1px solid rgba(108, 83, 56, 0.3);
-          border-radius: 9px;
+          background: rgba(255, 252, 246, 0.96);
+          border: 1px solid rgba(108, 83, 56, 0.22);
+          border-radius: 18px;
           overflow: hidden;
           color: #312820;
+          box-shadow: 0 16px 36px rgba(61, 42, 25, 0.14);
+        }
+        .dao-slot-center {
+          z-index: 2;
+        }
+        .dao-slot-center .dao-card-inner {
+          min-height: 540px;
+        }
+        .dao-slot-left,
+        .dao-slot-right {
+          margin-bottom: 52px;
         }
         .dao-card-inner:hover {
           border-color: #8d6944;
         }
         .dao-cover {
           width: 100%;
-          height: 145px;
+          height: 250px;
+          flex: none;
           object-fit: cover;
           background: #e9ddcb;
+        }
+        .dao-slot-center .dao-cover {
+          height: 310px;
         }
         .dao-cover-empty {
           display: flex;
@@ -389,86 +423,58 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           justify-content: center;
           color: #a08363;
           font-family: serif;
-          font-size: 48px;
+          font-size: 64px;
         }
         .dao-card-copy {
-          padding: 17px 19px;
+          padding: 22px 24px 20px;
           display: flex;
           flex: 1;
           min-height: 0;
           flex-direction: column;
         }
-        .dao-card-copy small {
-          color: #78644e;
-          letter-spacing: 0.1em;
-          font-size: 12px;
-        }
         .dao-card-copy strong {
           font-family: Georgia, 'Noto Serif SC', serif;
-          font-size: 18px;
-          line-height: 1.4;
+          font-size: 22px;
+          line-height: 1.45;
+          font-weight: 500;
           display: -webkit-box;
           -webkit-line-clamp: 3;
           -webkit-box-orient: vertical;
           overflow: hidden;
-          margin-top: 12px;
+        }
+        .dao-slot-center .dao-card-copy strong {
+          font-size: 28px;
         }
         .dao-card-copy time {
           margin-top: auto;
+          padding-top: 16px;
           color: #74675a;
-          font-size: 13px;
+          font-size: 14px;
         }
-        .dao-caption {
+        .dao-count {
+          margin: 28px 0 0;
           text-align: center;
-          min-height: 70px;
-          width: fit-content;
-          max-width: 95%;
-          margin: 0 auto;
-          padding: 6px 18px;
-          border-radius: 8px;
-          background: rgba(255, 252, 246, 0.91);
+          letter-spacing: 0.22em;
+          font-size: 13px;
+          color: #5c4d3e;
         }
-        .dao-caption p {
-          font-size: 12px;
-          letter-spacing: 0.18em;
-          color: #514335;
-        }
-        .dao-caption p span {
+        .dao-count span {
+          margin: 0 0.45em;
           color: #947d62;
-        }
-        .dao-caption h2 {
-          font-size: 17px;
-          line-height: 1.45;
-          font-weight: 500;
-          margin: 7px auto 0;
-          max-width: 700px;
-        }
-        .dao-actions {
-          display: flex;
-          justify-content: center;
-          gap: 10px;
-          margin-top: 16px;
-        }
-        .dao-actions button {
-          padding: 0 16px;
-        }
-        .dao-actions button:disabled {
-          opacity: 0.6;
-          cursor: default;
         }
         .dao-hint {
           text-align: center;
-          font-size: 13px;
+          font-size: 14px;
           color: #574a3d;
-          margin-top: 12px;
+          margin: 10px 0 0;
         }
         .dao-list-panel {
-          max-width: 850px;
-          margin: 30px auto 0;
-          padding: 24px 32px;
+          max-width: 920px;
+          margin: 36px auto 0;
+          padding: 28px 36px;
           background: rgba(255, 252, 247, 0.94);
           border: 1px solid rgba(94, 75, 53, 0.2);
-          border-radius: 12px;
+          border-radius: 16px;
         }
         .dao-list-head {
           display: flex;
@@ -478,7 +484,7 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           padding-bottom: 15px;
         }
         .dao-list-head h2 {
-          font-size: 21px;
+          font-size: 22px;
         }
         .dao-list-head span {
           color: #6b5f52;
@@ -501,7 +507,7 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           color: #342b23;
         }
         .dao-list h3 {
-          font-size: 17px;
+          font-size: 18px;
           font-weight: 600;
         }
         .dao-list p {
@@ -537,73 +543,146 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         }
         .dao-control:focus-visible,
         .dao-card-inner:focus-visible,
-        .dao-actions button:focus-visible,
+        .dao-arrow:focus-visible,
         .dao-search:focus-within,
         .dao-list a:focus-visible,
         .dao-more:focus-visible {
           outline: 3px solid #88643e;
           outline-offset: 3px;
         }
-        @media (max-width: 600px) {
-          .dao-explorer {
-            padding: 18px 16px 40px;
-            background-attachment: scroll;
-          }
-          .dao-toolbar {
-            gap: 8px;
-          }
-          .dao-control {
-            padding: 0 12px;
-          }
-          .dao-search {
-            flex: 1;
-          }
-          .dao-heading {
-            margin-top: 24px;
-          }
-          .dao-heading h1 {
-            font-size: 46px;
-          }
+        @media (max-width: 1100px) {
           .dao-orbit {
-            height: 320px;
-            overflow: hidden;
+            gap: 8px 16px;
+            grid-template-columns: 60px minmax(0, 0.9fr) minmax(0, 1.12fr) minmax(0, 0.9fr) 60px;
           }
-          .dao-card {
-            width: 206px;
-            height: 278px;
-            top: 10px;
+          .dao-arrow {
+            width: 56px;
+            height: 56px;
+            font-size: 44px;
           }
-          .dao-slot-center {
-            transform: translateX(-50%);
+          .dao-card-inner {
+            min-height: 360px;
           }
-          .dao-slot-left {
-            transform: translateX(calc(-50% - 145px)) translateY(25px)
-              scale(0.76);
-          }
-          .dao-slot-right {
-            transform: translateX(calc(-50% + 145px)) translateY(25px)
-              scale(0.76);
+          .dao-slot-center .dao-card-inner {
+            min-height: 450px;
           }
           .dao-cover {
-            height: 122px;
+            height: 190px;
           }
-          .dao-card-copy {
-            padding: 14px;
+          .dao-slot-center .dao-cover {
+            height: 240px;
           }
           .dao-card-copy strong {
-            font-size: 16px;
+            font-size: 18px;
+          }
+          .dao-slot-center .dao-card-copy strong {
+            font-size: 24px;
+          }
+        }
+        @media (max-width: 760px) {
+          .dao-explorer {
+            padding: calc(var(--ob-below-nav, 6.5rem) + 4px) 12px 48px;
+            background-attachment: scroll;
+            overflow-x: clip;
+          }
+          .dao-title {
+            font-size: 72px;
+            letter-spacing: 0.12em;
+          }
+          .dao-toolbar {
+            width: 100%;
+            margin-top: 16px;
+          }
+          .dao-stage {
+            margin-top: 18px;
+          }
+          .dao-orbit {
+            display: block;
+            position: relative;
+            height: 470px;
+            overflow: hidden;
+          }
+          .dao-arrow {
+            position: absolute;
+            top: 18%;
+            z-index: 4;
+            width: 52px;
+            height: 52px;
+            font-size: 42px;
+          }
+          .dao-arrow-prev {
+            left: 0;
+          }
+          .dao-arrow-next {
+            right: 0;
+          }
+          .dao-card {
+            position: absolute;
+            top: 18px;
+            left: 50%;
+            width: min(230px, 58vw);
+          }
+          .dao-slot-left,
+          .dao-slot-right {
+            margin-bottom: 0;
+          }
+          .dao-slot-left {
+            transform: translateX(calc(-50% - 46vw)) scale(0.82);
+            z-index: 1;
+          }
+          .dao-slot-right {
+            transform: translateX(calc(-50% + 46vw)) scale(0.82);
+            z-index: 1;
+          }
+          .dao-slot-left .dao-card-copy,
+          .dao-slot-right .dao-card-copy {
+            display: none;
+          }
+          .dao-slot-left .dao-card-inner,
+          .dao-slot-right .dao-card-inner {
+            min-height: 0;
+          }
+          .dao-slot-center {
+            width: min(300px, 74vw);
+            transform: translateX(-50%);
+            z-index: 3;
+          }
+          .dao-card-inner,
+          .dao-slot-center .dao-card-inner {
+            min-height: 390px;
+          }
+          .dao-cover,
+          .dao-slot-center .dao-cover {
+            height: 176px;
+          }
+          .dao-card-copy {
+            padding: 16px 16px 14px;
+          }
+          .dao-card-copy strong,
+          .dao-slot-center .dao-card-copy strong {
+            font-size: 20px;
           }
           .dao-list-panel {
-            padding: 20px 18px;
+            padding: 20px 16px;
           }
           .dao-list a {
             align-items: flex-start;
           }
-          .dao-list a > span {
-            font-size: 12px;
+        }
+        @media (max-width: 760px) and (max-height: 700px) {
+          .dao-title {
+            font-size: 60px;
           }
-          .dao-hint {
-            font-size: 12px;
+          .dao-orbit {
+            height: 390px;
+          }
+          .dao-card-inner,
+          .dao-slot-center .dao-card-inner {
+            min-height: 330px;
+          }
+          .dao-cover,
+          .dao-slot-center .dao-cover {
+            height: 140px;
           }
         }
         @media (prefers-reduced-motion: reduce) {
@@ -628,7 +707,6 @@ function CardContent({ post }) {
         </div>
       )}
       <div className='dao-card-copy'>
-        <small>OUR BEINGS · 道</small>
         <strong>{post.title}</strong>
         <time>{post.publishDay || post.lastEditedDay || ''}</time>
       </div>
