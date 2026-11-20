@@ -5,7 +5,7 @@ import SiteSettings from './SiteSettings'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
-const MOTTO_TITLE = '我们的存在'
+const MOTTO_TITLE = '吾在'
 const MOTTO_LINES = [
   '让我们的思想为时代所传唱，',
   '让我们的灵魂永世不朽，',
@@ -254,14 +254,14 @@ const Header = ({ siteInfo, customMenu }) => {
           }
           #theme-my-theme .ob-nav-motto-line {
             margin-top: 0;
-            font-size: 14px;
-            line-height: 1.4;
+            font-size: 12px;
+            line-height: 1.45;
             letter-spacing: 0.02em;
             white-space: normal;
           }
           #theme-my-theme .ob-nav-motto-line .ob-nav-wave {
-            display: inline;
-            white-space: normal;
+            display: inline-block;
+            white-space: nowrap;
             margin-left: 0;
           }
           #theme-my-theme .ob-nav-wave-char {

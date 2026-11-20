@@ -58,7 +58,7 @@ test('navigation keeps the complete motto and provides a reduced-motion alternat
     <Header siteInfo={{ title: 'Our beings' }} />
   )
   for (const text of [
-    '我们的存在',
+    '吾在',
     '让我们的思想为时代所传唱，',
     '让我们的灵魂永世不朽，',
     '让我们的存在与世界同在'

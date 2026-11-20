@@ -24,12 +24,12 @@ const Style = () => {
   const textDark = siteConfig('HEXO_COLOR_TEXT_DARK', '#d1d5db', CONFIG)
   const textSecondary = siteConfig(
     'HEXO_COLOR_TEXT_SECONDARY',
-    '#9ca3af',
+    '#5c534a',
     CONFIG
   )
   const textSecondaryDark = siteConfig(
     'HEXO_COLOR_TEXT_SECONDARY_DARK',
-    '#6b7280',
+    '#d9cbb8',
     CONFIG
   )
   const border = siteConfig('HEXO_COLOR_BORDER', '#e5e7eb', CONFIG)
@@ -106,8 +106,13 @@ const Style = () => {
         color: var(--hexo-color-text);
       }
 
-      #theme-my-theme #blog-post-card .text-gray-400 {
-        color: var(--hexo-color-text-secondary);
+      #theme-my-theme #blog-post-card .text-gray-400,
+      #theme-my-theme .ob-article-card .text-gray-400 {
+        color: #5c534a;
+      }
+      .dark #theme-my-theme #blog-post-card .text-gray-400,
+      .dark #theme-my-theme .ob-article-card .text-gray-400 {
+        color: #e6d5c0;
       }
 
       /*  菜单下划线动画 */
@@ -446,17 +451,37 @@ const Style = () => {
         background-color: rgba(255, 255, 255, ${readingOpacityLight});
         background-color: color-mix(
           in srgb,
-          var(--hexo-color-card) calc(var(--ob-reading-opacity) * 100%),
+          var(--hexo-color-card) calc(max(var(--ob-reading-opacity), 0.94) * 100%),
           transparent
         );
+        color: #221b15;
       }
       .dark #theme-my-theme.ob-article-layout .ob-article-card {
         background-color: rgba(16, 20, 20, ${readingOpacityDark});
         background-color: color-mix(
           in srgb,
-          var(--hexo-color-card) calc(var(--ob-reading-opacity) * 100%),
+          var(--hexo-color-card) calc(max(var(--ob-reading-opacity), 0.93) * 100%),
           transparent
         );
+        color: #f6f0e6;
+      }
+      #theme-my-theme.ob-article-layout .ob-article-body {
+        --fg-color: #221b15 !important;
+        --fg-color-2: rgba(34, 27, 21, 0.78) !important;
+        --fg-color-3: #3a3128 !important;
+        --notion-gray: #5c5146 !important;
+        --notion-yellow: #7a5600 !important;
+        color: #221b15;
+      }
+      .dark #theme-my-theme.ob-article-layout .ob-article-body {
+        --fg-color: #f6f0e6 !important;
+        --fg-color-2: rgba(246, 240, 230, 0.86) !important;
+        --fg-color-3: #f3eadf !important;
+        --notion-gray: #e7d8c6 !important;
+        --notion-yellow: #f2c14b !important;
+        --notion-gray_background: rgba(231, 216, 198, 0.16) !important;
+        --notion-yellow_background: rgba(242, 193, 75, 0.2) !important;
+        color: #f6f0e6;
       }
       #theme-my-theme.ob-article-layout .ob-article-comments,
       #theme-my-theme.ob-article-layout .ob-article-body .notion,
