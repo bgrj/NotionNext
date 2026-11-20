@@ -33,7 +33,7 @@ const MottoWave = ({ text, offset = 0, duration = 2.5, step = 0.1 }) => (
 /** Minimal theme chrome: brand, centered motto, unified site settings.
  * Navigation routes remain available; no authentication behavior is changed.
  */
-const Header = ({ siteInfo }) => {
+const Header = ({ siteInfo, customMenu }) => {
   const router = useRouter()
   const navRef = useRef(null)
   const [settingsOpen, setSettingsOpen] = useState(false)
@@ -93,7 +93,10 @@ const Header = ({ siteInfo }) => {
               {siteInfo?.title || siteConfig('TITLE')}
             </SmartLink>
             <div className='ob-nav-right'>
-              <SiteSettings onOpenChange={handleSettingsOpen} />
+              <SiteSettings
+                customMenu={customMenu}
+                onOpenChange={handleSettingsOpen}
+              />
             </div>
           </div>
           <div className='ob-nav-motto'>

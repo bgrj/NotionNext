@@ -1,30 +1,57 @@
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useId, useRef, useState } from 'react'
 import CONFIG from '../config'
 import { UI_LANGUAGE_LABELS, uiLanguageOptions } from '../readingSettings'
+import {
+  HOME_SECTIONS,
+  DEFAULT_HOME_SECTIONS,
+  DEFAULT_OPEN_SECTIONS,
+  homeSections,
+  openHomeSections
+} from '../homeSections'
+import { settingsMenu } from '../settingsMenu'
 
 const AccountLinks = dynamic(() => import('./OurBeingsHeaderAuth'), {
   ssr: false
 })
 
 /** A non-modal, keyboard-accessible popover; it never changes article content. */
-export default function SiteSettings({ onOpenChange } = {}) {
+export default function SiteSettings({ onOpenChange, customMenu } = {}) {
   const {
     lang = 'zh-CN',
     changeLang,
     isDarkMode,
-    toggleDarkMode
+    toggleDarkMode,
+    setDarkMode,
+    usesDefaultAppearance = false,
+    resetAppearance
   } = useGlobal() || {}
   const router = useRouter()
   const [open, setOpen] = useState(false)
+  const [sectionNotice, setSectionNotice] = useState('')
   const containerRef = useRef(null)
   const triggerRef = useRef(null)
   const panelId = useId()
   const english = lang.startsWith('en')
   const title = english ? 'Site settings' : '网站设置'
+  const visible = homeSections(
+    siteConfig('OURBEINGS_HOME_SECTIONS', DEFAULT_HOME_SECTIONS, CONFIG)
+  )
+  const available = openHomeSections(
+    siteConfig('OURBEINGS_OPEN_SECTIONS', DEFAULT_OPEN_SECTIONS, CONFIG)
+  )
+  const publicLinks = siteConfig('CUSTOM_MENU', true)
+    ? settingsMenu(customMenu, available)
+    : []
+  const selectAppearance = dark => {
+    if (!usesDefaultAppearance && Boolean(isDarkMode) === dark) return
+    if (setDarkMode) setDarkMode(dark)
+    else if (Boolean(isDarkMode) !== dark) toggleDarkMode?.()
+  }
   const languages = uiLanguageOptions(
     siteConfig('OURBEINGS_UI_LANGUAGES', CONFIG.OURBEINGS_UI_LANGUAGES, CONFIG),
     lang
@@ -96,7 +123,12 @@ export default function SiteSettings({ onOpenChange } = {}) {
           aria-label={title}
         >
           <div className='ob-settings-heading'>
-            <strong>{title}</strong>
+            <div>
+              <strong>{title}</strong>
+              <p className='ob-settings-subtitle'>
+                {english ? 'Reading & browsing' : '阅读与浏览'}
+              </p>
+            </div>
             <button
               type='button'
               className='ob-settings-close'
@@ -109,27 +141,90 @@ export default function SiteSettings({ onOpenChange } = {}) {
               ×
             </button>
           </div>
+          <div className='ob-settings-group ob-settings-divided'>
+            <h2>{english ? 'Explore' : '四个板块'}</h2>
+            <div className='ob-settings-sections'>
+              {HOME_SECTIONS.filter(section =>
+                visible.includes(section.key)
+              ).map(section => {
+                const enabled = available.includes(section.key)
+                const label = english ? section.english : section.name
+                const content = (
+                  <>
+                    <span>{label}</span>
+                    <small aria-hidden='true'>
+                      {enabled
+                        ? english
+                          ? 'Read articles'
+                          : '阅读文章'
+                        : english
+                          ? 'Coming soon'
+                          : '开发中……'}
+                    </small>
+                  </>
+                )
+                return enabled ? (
+                  <Link
+                    key={section.key}
+                    href={section.href}
+                    prefetch={false}
+                    aria-label={label}
+                    data-settings-first={
+                      section.key === 'dao' ? true : undefined
+                    }
+                    data-open='true'
+                    onClick={() => setOpen(false)}
+                  >
+                    {content}
+                  </Link>
+                ) : (
+                  <button
+                    key={section.key}
+                    type='button'
+                    aria-label={label}
+                    onClick={() =>
+                      setSectionNotice(
+                        `${label} · ${english ? 'Coming soon' : '开发中……'}`
+                      )
+                    }
+                  >
+                    {content}
+                  </button>
+                )
+              })}
+            </div>
+            {sectionNotice && (
+              <p className='ob-settings-hint' role='status'>
+                {sectionNotice}
+              </p>
+            )}
+          </div>
+          <div className='ob-settings-group ob-settings-divided'>
+            <h2>{english ? 'Reading preferences' : '阅读偏好'}</h2>
+          </div>
           <fieldset className='ob-settings-group'>
             <legend>{english ? 'Appearance' : '外观模式'}</legend>
             <div className='ob-settings-appearance'>
               <button
                 type='button'
-                data-settings-first
-                aria-pressed={!isDarkMode}
-                onClick={() => {
-                  if (isDarkMode) toggleDarkMode?.()
-                }}
+                aria-pressed={!usesDefaultAppearance && !isDarkMode}
+                onClick={() => selectAppearance(false)}
               >
                 {english ? 'Light' : '浅色'}
               </button>
               <button
                 type='button'
-                aria-pressed={Boolean(isDarkMode)}
-                onClick={() => {
-                  if (!isDarkMode) toggleDarkMode?.()
-                }}
+                aria-pressed={!usesDefaultAppearance && Boolean(isDarkMode)}
+                onClick={() => selectAppearance(true)}
               >
                 {english ? 'Dark' : '深色'}
+              </button>
+              <button
+                type='button'
+                aria-pressed={usesDefaultAppearance}
+                onClick={() => resetAppearance?.()}
+              >
+                {english ? 'Site default' : '跟随站点'}
               </button>
             </div>
           </fieldset>
@@ -154,10 +249,35 @@ export default function SiteSettings({ onOpenChange } = {}) {
                 : '切换界面文字，文章保持原文。'}
             </p>
           </div>
-          <div className='ob-settings-group'>
+          {publicLinks.length > 0 && (
+            <nav
+              className='ob-settings-group ob-settings-divided'
+              aria-label={english ? 'Site information' : '站点信息'}
+            >
+              <h2>{english ? 'Site information' : '站点信息'}</h2>
+              <div className='ob-settings-public-links'>
+                {publicLinks.map(item => (
+                  <Link
+                    key={item.href}
+                    href={item.href}
+                    prefetch={false}
+                    onClick={() => setOpen(false)}
+                  >
+                    {item.title}
+                  </Link>
+                ))}
+              </div>
+            </nav>
+          )}
+          <div className='ob-settings-group ob-settings-divided'>
             <h2>{english ? 'Account' : '账户'}</h2>
             <AccountLinks english={english} onNavigate={() => setOpen(false)} />
           </div>
+          <p className='ob-settings-hint ob-settings-device-note'>
+            {english
+              ? 'Preferences are saved on this device.'
+              : '阅读偏好保存在此设备。'}
+          </p>
         </section>
       )}
       <style jsx global>{`
@@ -183,26 +303,25 @@ export default function SiteSettings({ onOpenChange } = {}) {
         #theme-my-theme .ob-settings-close:hover {
           background: rgba(120, 104, 80, 0.12);
         }
-        #theme-my-theme
-          .ob-sticky-nav.ob-nav-settings-open {
+        #theme-my-theme .ob-sticky-nav.ob-nav-settings-open {
           transform: none;
         }
         #theme-my-theme .ob-settings-panel {
           position: absolute;
           top: calc(100% + 10px);
           right: 0;
-          width: min(22rem, calc(100vw - 2rem));
+          width: min(24rem, calc(100vw - 2rem));
           max-height: calc(100dvh - var(--ob-home-nav-height, 4rem) - 1.5rem);
           overflow-y: auto;
           overscroll-behavior: contain;
-          padding: 0.75rem 1rem 1rem;
+          padding: 1rem 1.25rem 1.25rem;
           border: 1px solid rgba(120, 104, 80, 0.25);
           border-radius: 16px;
           background: #fffaf2;
           color: #332b24;
           box-shadow: 0 14px 44px rgba(20, 16, 12, 0.2);
           text-align: left;
-          font-size: 15px;
+          font-size: 16px;
           line-height: 1.6;
         }
         .dark #theme-my-theme .ob-settings-panel {
@@ -217,7 +336,54 @@ export default function SiteSettings({ onOpenChange } = {}) {
           gap: 1rem;
         }
         #theme-my-theme .ob-settings-heading strong {
-          font-size: 16px;
+          font-size: 18px;
+        }
+        #theme-my-theme .ob-settings-subtitle {
+          margin: 0.1rem 0 0;
+          font-size: 14px;
+          opacity: 0.7;
+        }
+        #theme-my-theme .ob-settings-sections,
+        #theme-my-theme .ob-settings-public-links {
+          display: grid;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 0.5rem;
+        }
+        #theme-my-theme .ob-settings-sections :is(a, button) {
+          min-height: 64px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          justify-content: center;
+          gap: 2px;
+          padding: 0.65rem 0.8rem;
+          border: 1px solid rgba(120, 104, 80, 0.25);
+          border-radius: 10px;
+          background: transparent;
+          color: inherit;
+          font: inherit;
+          cursor: pointer;
+          text-align: left;
+        }
+        #theme-my-theme .ob-settings-sections [data-open='true'] {
+          border-color: rgba(174, 128, 57, 0.65);
+          background: rgba(201, 166, 107, 0.12);
+        }
+        #theme-my-theme .ob-settings-sections small {
+          font-size: 14px;
+          opacity: 0.65;
+        }
+        #theme-my-theme .ob-settings-public-links a {
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          padding: 0.5rem;
+          border-radius: 8px;
+          color: inherit;
+          overflow-wrap: anywhere;
+        }
+        #theme-my-theme .ob-settings-public-links a:hover {
+          background: rgba(201, 166, 107, 0.12);
         }
         #theme-my-theme .ob-settings-close {
           font-size: 25px;
@@ -228,6 +394,11 @@ export default function SiteSettings({ onOpenChange } = {}) {
           margin: 0.75rem 0 0;
           padding: 0;
           border: 0;
+        }
+        #theme-my-theme .ob-settings-group.ob-settings-divided {
+          margin-top: 1rem;
+          padding-top: 1rem;
+          border-top: 1px solid rgba(120, 104, 80, 0.2);
         }
         #theme-my-theme .ob-settings-group legend,
         #theme-my-theme .ob-settings-group label,
@@ -282,7 +453,7 @@ export default function SiteSettings({ onOpenChange } = {}) {
         }
         #theme-my-theme .ob-settings-hint {
           margin: 0.5rem 0 0;
-          font-size: 12px;
+          font-size: 14px;
           opacity: 0.8;
         }
         #theme-my-theme .ob-settings :is(button, select, a):focus-visible {
@@ -291,7 +462,14 @@ export default function SiteSettings({ onOpenChange } = {}) {
         }
         @media (max-width: 767px) {
           #theme-my-theme .ob-settings-panel {
-            top: calc(100% + 4px);
+            position: fixed;
+            top: auto;
+            right: 0.75rem;
+            left: 0.75rem;
+            bottom: max(0.75rem, env(safe-area-inset-bottom));
+            width: auto;
+            max-height: calc(100svh - var(--ob-home-nav-height, 4rem) - 1.5rem);
+            border-radius: 20px;
           }
         }
       `}</style>

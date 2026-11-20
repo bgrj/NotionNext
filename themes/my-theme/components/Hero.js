@@ -1,6 +1,7 @@
 import LazyImage from '@/components/LazyImage'
 import HandGlow from './HandGlow'
 import HeroPuzzle from './HeroPuzzle'
+import { useState } from 'react'
 
 /**
  * 顶部全屏大图。
@@ -8,6 +9,7 @@ import HeroPuzzle from './HeroPuzzle'
  */
 const Hero = props => {
   const { siteInfo } = props
+  const [previewHost, setPreviewHost] = useState(null)
 
   return (
     <header
@@ -16,23 +18,28 @@ const Hero = props => {
       className='ob-home-hero w-full relative bg-black'
       data-ob-minimal-hero='true'
     >
-      <HandGlow />
-      <HeroPuzzle NOTION_CONFIG={props.NOTION_CONFIG} />
-
-      <LazyImage
-        priority
-        id='header-cover'
-        alt={siteInfo?.title}
-        src='/assets/ourbeing/web-mainpage-downhand.90bc60e9a6ab.webp'
-        width={1920}
-        height={1080}
-        className='header-cover absolute inset-0 z-0 h-full w-full object-cover object-center'
-      />
+      <div className='ob-home-art'>
+        <HandGlow />
+        <HeroPuzzle
+          NOTION_CONFIG={props.NOTION_CONFIG}
+          previewHost={previewHost}
+        />
+        <LazyImage
+          priority
+          id='header-cover'
+          alt={siteInfo?.title}
+          src='/assets/ourbeing/web-mainpage-downhand.90bc60e9a6ab.webp'
+          width={1920}
+          height={1080}
+          className='header-cover absolute inset-0 z-0 h-full w-full object-cover object-center'
+        />
+      </div>
+      <div className='ob-entry-preview-host' ref={setPreviewHost} />
       <style jsx global>{`
         #theme-my-theme.ob-home-only #ob-home-main {
           padding-top: var(--ob-home-nav-height, 64px);
         }
-        #theme-my-theme .ob-home-hero {
+        #theme-my-theme .ob-home-art {
           position: relative;
           isolation: isolate;
           overflow: hidden;

@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import CONFIG from '../config'
-import { DEFAULT_HOME_SECTIONS, homeSections } from '../homeSections'
+import { DEFAULT_OPEN_SECTIONS, openHomeSections } from '../homeSections'
 import {
   NOTICE,
   NOTICE_RECENT_EXCLUDE_SLUGS,
@@ -131,8 +131,8 @@ const NoticeModal = ({ latestPosts } = {}) => {
 
   const primary = siteConfig('HEXO_COLOR_PRIMARY', '#C9A66B', CONFIG)
   const mottoLines = NOTICE.mottoLines || [NOTICE.motto]
-  const sections = homeSections(
-    siteConfig('OURBEINGS_HOME_SECTIONS', DEFAULT_HOME_SECTIONS, CONFIG)
+  const sections = openHomeSections(
+    siteConfig('OURBEINGS_OPEN_SECTIONS', DEFAULT_OPEN_SECTIONS, CONFIG)
   )
   const daoOnly = sections.length === 1 && sections[0] === 'dao'
   const live = pickLatestPublishedPost(
@@ -142,7 +142,7 @@ const NoticeModal = ({ latestPosts } = {}) => {
   )
   const body = daoOnly
     ? [
-        '目前开放「道」板块，收录已经写出的思想。点击首页的「道」，即可阅读这一系列文章。'
+        '首页呈现四个板块，目前开放「道」，收录已经写出的思想。其余板块开发中。点击首页的「道」，即可阅读这一系列文章。'
       ]
     : NOTICE.body
   const recent = live

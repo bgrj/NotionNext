@@ -36,24 +36,21 @@ const render = component => {
   return { markup, styles }
 }
 
-test('only Dao is rendered and linked in the default landing page', () => {
+test('all four plates render, and only Dao has an article link', () => {
   const { markup, styles } = render(<HeroPuzzle />)
   expect(markup).toContain('href="/category/道"')
   expect(markup).toContain('aria-label="道"')
   for (const name of ['我们的存在', '我的存在', '术']) {
     expect(markup).not.toContain(`href="/category/${name}"`)
-    expect(markup).not.toContain(`aria-label="${name}"`)
+    expect(markup).toContain(`aria-label="${name}"`)
   }
-  expect(markup.match(/class="[^"]*\bob-plate-link\b[^"]*"/g)).toHaveLength(1)
-  expect(markup).not.toContain('ob-ink-our')
-  expect(markup).not.toContain('ob-ink-self')
-  expect(markup).not.toContain('ob-ink-shu')
-  expect(markup).toContain('阅读「道」系列')
-  expect(markup).toContain('ob-entry-hints')
+  expect(markup.match(/class="[^"]*\bob-plate-link\b[^"]*"/g)).toHaveLength(4)
+  expect(markup).not.toContain('阅读「道」系列')
+  expect(markup).not.toContain('<aside')
   expect(styles).toContain(':focus-visible')
   expect(styles).toMatch(/\(hover:\s*none\)/)
   expect(styles).toContain('prefers-reduced-motion')
-  expect(styles).toContain('.ob-entry-hint')
+  expect(styles).toContain('.ob-entry-preview')
 })
 
 test('navigation keeps the complete motto and provides a reduced-motion alternative', () => {
@@ -74,19 +71,13 @@ test('navigation keeps the complete motto and provides a reduced-motion alternat
   expect(styles).not.toMatch(/&#(?:x27|39);|&quot;/)
 })
 
-test('Dao keeps a visible reading hint on touch layouts', () => {
+test('visibility configuration remains separate from the transient preview', () => {
   const { markup, styles } = render(
     <HeroPuzzle NOTION_CONFIG={{ OURBEINGS_HOME_SECTIONS: 'dao' }} />
   )
-  expect(markup).toContain('ob-entry-name')
-  expect(markup).not.toContain('进入')
-  expect(markup).not.toContain('ob-entry-action')
-  expect(markup).not.toContain('ob-entry-arrow')
-  expect(styles).toMatch(/@media\s*\(max-width:\s*767px\),\s*\(hover:\s*none\)/)
-  expect(styles).toMatch(/\.ob-entry-hints[^{}]*\{[^{}]*display:\s*none/)
-  expect(styles).toMatch(
-    /data-dao-only[^{}]*\.ob-entry-hints[^{}]*\{[^{}]*display:\s*block/
-  )
+  expect(markup.match(/class="[^"]*\bob-plate-link\b[^"]*"/g)).toHaveLength(1)
+  expect(markup).not.toContain('<aside')
+  expect(styles).toContain('.ob-entry-preview-touch')
 })
 
 test('self calligraphy uses separate vertical alignment for desktop and mobile', () => {

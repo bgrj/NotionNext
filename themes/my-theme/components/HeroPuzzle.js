@@ -1,8 +1,14 @@
 /* eslint-disable react/no-unknown-property */
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { siteConfig } from '@/lib/config'
-import { DEFAULT_HOME_SECTIONS, homeSections } from '../homeSections'
+import {
+  DEFAULT_HOME_SECTIONS,
+  DEFAULT_OPEN_SECTIONS,
+  homeSections,
+  openHomeSections
+} from '../homeSections'
 
 // 首页四块：整片天空沿手的外轮廓分成四块，每块一幅连体行书。
 // 字形取自「志莽行书」Zhi Mang Xing（SIL Open Font License 1.1），单位为字体单位，以字框中心为原点。
@@ -133,22 +139,122 @@ const Ink = ({ set, className }) => (
   </g>
 )
 
-export default function HeroPuzzle({ NOTION_CONFIG } = {}) {
+export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
   const router = useRouter()
   const sections = homeSections(
     siteConfig('OURBEINGS_HOME_SECTIONS', DEFAULT_HOME_SECTIONS, NOTION_CONFIG)
   )
+  const openSections = openHomeSections(
+    siteConfig('OURBEINGS_OPEN_SECTIONS', DEFAULT_OPEN_SECTIONS, NOTION_CONFIG)
+  )
   const pieces = PIECES.filter(piece => sections.includes(piece.key))
-  const daoOnly = pieces.length === 1 && pieces[0].key === 'dao'
   const [hover, setHover] = useState('')
   const [focused, setFocused] = useState('')
-  const active = focused || hover
-  const go = (event, href) => {
+  const [touchKey, setTouchKey] = useState('')
+  const pointerType = useRef('')
+  const hoverTimer = useRef(null)
+  const previewRef = useRef(null)
+  const rootRef = useRef(null)
+  const previewId = useId()
+  const active = touchKey || focused || hover
+  const selected = pieces.find(piece => piece.key === active)
+  const available = selected && openSections.includes(selected.key)
+  const clearHover = () => {
+    clearTimeout(hoverTimer.current)
+    hoverTimer.current = setTimeout(() => setHover(''), 160)
+  }
+  useEffect(() => () => clearTimeout(hoverTimer.current), [])
+  useEffect(() => {
+    if (!touchKey) return undefined
+    const dismiss = event => {
+      if (
+        !rootRef.current?.contains(event.target) &&
+        !previewRef.current?.contains(event.target)
+      )
+        setTouchKey('')
+    }
+    const escape = event => {
+      if (event.key === 'Escape') {
+        setTouchKey('')
+        setFocused('')
+      }
+    }
+    document.addEventListener('pointerdown', dismiss)
+    document.addEventListener('keydown', escape)
+    const frame = requestAnimationFrame(() =>
+      previewRef.current?.scrollIntoView?.({
+        block: 'nearest',
+        behavior: window.matchMedia?.('(prefers-reduced-motion: reduce)')
+          .matches
+          ? 'auto'
+          : 'smooth'
+      })
+    )
+    return () => {
+      cancelAnimationFrame(frame)
+      document.removeEventListener('pointerdown', dismiss)
+      document.removeEventListener('keydown', escape)
+    }
+  }, [touchKey])
+  const activate = (event, piece) => {
+    const enabled = openSections.includes(piece.key)
+    const touch = pointerType.current === 'touch' && event.detail !== 0
+    if (!enabled) {
+      event.preventDefault()
+      if (touch) setTouchKey(piece.key)
+      else setFocused(piece.key)
+      return
+    }
+    if (touch && touchKey !== piece.key) {
+      event.preventDefault()
+      setHover('')
+      setTouchKey(piece.key)
+      return
+    }
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     event.preventDefault()
-    router.push(href)
+    router.push(piece.href)
   }
-
+  const preview = selected && (
+    <aside
+      ref={previewRef}
+      id={previewId}
+      className={`ob-entry-preview${touchKey ? ' ob-entry-preview-touch' : ''}`}
+      aria-label={`${selected.name}板块预览`}
+      onPointerEnter={() => clearTimeout(hoverTimer.current)}
+      onPointerLeave={clearHover}
+    >
+      <div className='ob-entry-preview-copy' role='status'>
+        <strong>{selected.name}</strong>
+        <span>{available ? `阅读「${selected.name}」系列` : '开发中……'}</span>
+      </div>
+      {touchKey && (
+        <div className='ob-entry-preview-actions'>
+          {available && (
+            <a
+              href={selected.href}
+              onClick={event => {
+                event.preventDefault()
+                router.push(selected.href)
+              }}
+            >
+              阅读「{selected.name}」系列
+            </a>
+          )}
+          <button
+            type='button'
+            onClick={() => {
+              setTouchKey('')
+              setFocused('')
+              setHover('')
+            }}
+          >
+            收起
+          </button>
+        </div>
+      )}
+    </aside>
+  )
   return (
     <>
       <svg
@@ -200,65 +306,170 @@ export default function HeroPuzzle({ NOTION_CONFIG } = {}) {
           </g>
         ))}
       </svg>
-      <div className='ob-puzzle' data-hover={active} data-dao-only={daoOnly}>
+      <div
+        ref={rootRef}
+        className='ob-puzzle'
+        data-hover={active}
+        onKeyDown={event => {
+          if (event.key === 'Escape') {
+            setTouchKey('')
+            setFocused('')
+            setHover('')
+          }
+        }}
+      >
         <svg
           viewBox='0 0 2048 989'
           preserveAspectRatio='xMidYMid slice'
           role='group'
-          aria-label={pieces.map(piece => piece.name).join('、')}
+          aria-label='四个板块'
         >
-          {pieces.map(piece => (
-            <a
-              key={piece.key}
-              href={piece.href}
-              aria-label={piece.name}
-              className='ob-plate-link'
-              onClick={event => go(event, piece.href)}
-              onPointerEnter={event => {
-                if (event.pointerType !== 'touch') setHover(piece.key)
-              }}
-              onPointerLeave={() => setHover('')}
-              onPointerDown={() => {
-                setFocused('')
-                setHover(piece.key)
-              }}
-              onPointerUp={event => {
-                if (event.pointerType === 'touch') setHover('')
-              }}
-              onPointerCancel={() => setHover('')}
-              onFocus={event => {
-                if (event.currentTarget.matches(':focus-visible')) {
-                  setFocused(piece.key)
-                }
-              }}
-              onBlur={() => setFocused('')}
-            >
-              <path className='ob-plate' d={piece.plate} />
-            </a>
-          ))}
+          {pieces.map(piece => {
+            const enabled = openSections.includes(piece.key)
+            const Element = enabled ? 'a' : 'g'
+            return (
+              <Element
+                key={piece.key}
+                href={enabled ? piece.href : undefined}
+                role={enabled ? undefined : 'button'}
+                tabIndex={0}
+                aria-label={piece.name}
+                aria-describedby={active === piece.key ? previewId : undefined}
+                className='ob-plate-link'
+                data-section={piece.key}
+                data-open={enabled}
+                onClick={event => activate(event, piece)}
+                onPointerDown={event => {
+                  pointerType.current = event.pointerType
+                  setFocused('')
+                }}
+                onPointerEnter={event => {
+                  if (event.pointerType !== 'touch') {
+                    clearTimeout(hoverTimer.current)
+                    setHover(piece.key)
+                  }
+                }}
+                onPointerLeave={clearHover}
+                onFocus={event => {
+                  if (event.currentTarget.matches(':focus-visible'))
+                    setFocused(piece.key)
+                }}
+                onBlur={() => setFocused('')}
+                onKeyDown={event => {
+                  pointerType.current = 'keyboard'
+                  if (
+                    !enabled &&
+                    (event.key === 'Enter' || event.key === ' ')
+                  ) {
+                    event.preventDefault()
+                    setFocused(piece.key)
+                  }
+                }}
+              >
+                <path className='ob-plate' d={piece.plate} />
+              </Element>
+            )
+          })}
           <g className='ob-seam-glow'>
-            {!daoOnly &&
-              SEAM_GLOWS.map((d, index) => <path key={index} d={d} />)}
+            {SEAM_GLOWS.map((d, index) => (
+              <path key={index} d={d} />
+            ))}
           </g>
           <g className='ob-seam'>
-            {!daoOnly && SEAMS.map((d, index) => <path key={index} d={d} />)}
+            {SEAMS.map((d, index) => (
+              <path key={index} d={d} />
+            ))}
           </g>
           <path className='ob-hand-outline' d={HAND_OUTLINE} />
         </svg>
-        <div className='ob-entry-hints' aria-hidden='true'>
-          {pieces.map(piece => (
-            <span
-              key={piece.key}
-              className={`ob-entry-hint ob-entry-hint-${piece.key}`}
-            >
-              <span className='ob-entry-name'>
-                {daoOnly ? '阅读「道」系列' : piece.name}
-              </span>
-            </span>
-          ))}
-        </div>
+        {!touchKey && preview}
       </div>
+      {touchKey && (previewHost ? createPortal(preview, previewHost) : preview)}
+
       <style jsx global>{`
+        .ob-entry-preview {
+          position: absolute;
+          z-index: 22;
+          left: 50%;
+          bottom: 1.25rem;
+          transform: translateX(-50%);
+          width: max-content;
+          max-width: calc(100vw - 2rem);
+          padding: 0.85rem 1.25rem;
+          border: 1px solid rgba(130, 96, 48, 0.35);
+          border-radius: 12px;
+          color: #49351d;
+          background: rgba(255, 249, 237, 0.96);
+          box-shadow: 0 8px 28px rgba(47, 34, 18, 0.12);
+          pointer-events: auto;
+          font-size: 14px;
+          line-height: 1.6;
+        }
+        .ob-entry-preview-copy {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+        .ob-entry-preview-copy strong {
+          font-size: 18px;
+          font-weight: 500;
+        }
+        .ob-entry-preview-copy span {
+          opacity: 0.85;
+        }
+        .ob-entry-preview-host {
+          background: #f6efe2;
+        }
+        .ob-entry-preview-touch {
+          position: relative;
+          left: auto;
+          bottom: auto;
+          transform: none;
+          width: 100%;
+          max-width: none;
+          padding: 1rem max(1rem, env(safe-area-inset-right))
+            max(1rem, env(safe-area-inset-bottom));
+          border-radius: 0;
+          border-width: 1px 0 0;
+          box-shadow: none;
+        }
+        .ob-entry-preview-touch .ob-entry-preview-copy {
+          justify-content: center;
+        }
+        .ob-entry-preview-actions {
+          display: flex;
+          gap: 0.75rem;
+          justify-content: center;
+          margin-top: 0.75rem;
+        }
+        .ob-entry-preview-actions :is(a, button) {
+          min-height: 44px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.5rem 1rem;
+          border: 1px solid rgba(130, 96, 48, 0.4);
+          border-radius: 8px;
+          color: inherit;
+          background: transparent;
+          font: inherit;
+          cursor: pointer;
+        }
+        .ob-entry-preview-actions a {
+          background: rgba(201, 166, 107, 0.18);
+        }
+        .ob-entry-preview-actions :is(a, button):focus-visible {
+          outline: 2px solid #9f783c;
+          outline-offset: 3px;
+        }
+        html.dark .ob-entry-preview {
+          color: #f5e6cc;
+          background: rgba(36, 29, 21, 0.97);
+          border-color: rgba(223, 180, 108, 0.45);
+        }
+        html.dark .ob-entry-preview-host {
+          background: #241d15;
+        }
         .ob-ink-layer,
         .ob-puzzle {
           position: absolute;
@@ -326,72 +537,9 @@ export default function HeroPuzzle({ NOTION_CONFIG } = {}) {
           stroke-width: 3;
           vector-effect: non-scaling-stroke;
         }
-        .ob-puzzle[data-dao-only='true'] .ob-plate {
-          stroke: rgba(196, 150, 74, 0.55);
-          stroke-width: 1.2;
-          vector-effect: non-scaling-stroke;
-        }
-        .ob-puzzle[data-dao-only='true']
-          .ob-plate-link:focus-visible
-          .ob-plate {
-          stroke: #765020;
-          stroke-width: 3;
-        }
-        .ob-entry-hints {
-          position: absolute;
-          inset: 0;
-          pointer-events: none;
-        }
-        .ob-entry-hint {
-          position: absolute;
-          left: 25%;
-          top: 36%;
-          transform: translate(-50%, -50%) translateY(4px);
-          display: flex;
-          align-items: center;
-          gap: 10px;
-          padding: 8px 13px;
-          border: 1px solid rgba(109, 78, 36, 0.4);
-          border-radius: 4px;
-          background: rgba(255, 246, 227, 0.94);
-          color: #49351d;
-          font-size: 14px;
-          line-height: 1.5;
-          white-space: nowrap;
-          opacity: 0;
-          transition:
-            opacity 240ms ease,
-            transform 240ms ease;
-        }
-        .ob-entry-hint-self,
-        .ob-entry-hint-shu {
-          left: 75%;
-        }
-        .ob-entry-hint-dao,
-        .ob-entry-hint-shu {
-          top: 82%;
-        }
-        .ob-puzzle[data-hover='our'] .ob-entry-hint-our,
-        .ob-puzzle[data-hover='self'] .ob-entry-hint-self,
-        .ob-puzzle[data-hover='dao'] .ob-entry-hint-dao,
-        .ob-puzzle[data-hover='shu'] .ob-entry-hint-shu {
-          opacity: 1;
-          transform: translate(-50%, -50%);
-        }
-        .ob-puzzle[data-dao-only='true'] .ob-entry-hint-dao {
-          top: 91%;
-          opacity: 1;
-          transform: translate(-50%, -50%);
-        }
-        html.dark .ob-entry-hint {
-          background: rgba(31, 25, 18, 0.94);
-          color: #f6e5c5;
-          border-color: rgba(223, 180, 108, 0.65);
-        }
         @media (prefers-reduced-motion: reduce) {
           .ob-ink,
-          .ob-plate,
-          .ob-entry-hint {
+          .ob-plate {
             transition: none;
           }
         }
@@ -472,18 +620,6 @@ export default function HeroPuzzle({ NOTION_CONFIG } = {}) {
           .ob-ink-self .ob-type-desk {
             transform: translate(1150px, 300px) scale(0.54)
               translate(-1150px, -300px);
-          }
-        }
-        @media (max-width: 767px), (hover: none) {
-          .ob-entry-hints {
-            display: none;
-          }
-          .ob-puzzle[data-dao-only='true'] .ob-entry-hints {
-            display: block;
-          }
-          .ob-puzzle[data-dao-only='true'] .ob-entry-hint-dao {
-            left: 25%;
-            padding: 8px 10px;
           }
         }
         @media (hover: none) {

@@ -2,6 +2,7 @@ import React from 'react'
 import { fireEvent, render, screen } from '@testing-library/react'
 import SiteSettings from '@/themes/my-theme/components/SiteSettings'
 import Header from '@/themes/my-theme/components/Header'
+import { settingsMenu } from '@/themes/my-theme/settingsMenu'
 import {
   articleOpacity,
   articleBackground,
@@ -48,7 +49,7 @@ jest.mock(
 )
 jest.mock('@/components/SmartLink', () => ({
   __esModule: true,
-  default: ({ children, ...props }) => <a {...props}>{children}</a>
+  default: ({ children, passHref, ...props }) => <a {...props}>{children}</a>
 }))
 jest.mock('@/themes/my-theme/beings', () => ({
   DESK_HREF: '/our-beings/me',
@@ -64,6 +65,9 @@ beforeEach(() => {
   mockGlobal.isDarkMode = false
   mockSignedIn = false
   mockClerkEnabled = false
+  mockGlobal.usesDefaultAppearance = false
+  mockGlobal.setDarkMode = undefined
+  mockGlobal.resetAppearance = jest.fn()
 })
 const open = () =>
   fireEvent.click(screen.getByRole('button', { name: '网站设置' }))
@@ -75,7 +79,7 @@ test('hamburger opens an accessible dialog; Escape closes and restores focus', (
   expect(screen.queryByRole('dialog')).toBeNull()
   open()
   expect(trigger).toHaveAttribute('aria-expanded', 'true')
-  expect(screen.getByRole('button', { name: '浅色' })).toHaveFocus()
+  expect(screen.getByRole('link', { name: '道' })).toHaveFocus()
   fireEvent.keyDown(document, { key: 'Escape' })
   expect(screen.queryByRole('dialog')).toBeNull()
   expect(trigger).toHaveFocus()
@@ -133,6 +137,61 @@ test('navigation closes the panel', () => {
   open()
   fireEvent.click(screen.getByRole('link', { name: '登录' }))
   expect(screen.queryByRole('dialog')).toBeNull()
+})
+
+test('only Dao opens content; the three other sections give a coming-soon notice', () => {
+  render(<SiteSettings />)
+  open()
+  expect(screen.getByRole('link', { name: '道' })).toHaveAttribute(
+    'href',
+    '/category/道'
+  )
+  for (const name of ['我们的存在', '我的存在', '术']) {
+    expect(screen.queryByRole('link', { name })).toBeNull()
+    fireEvent.click(screen.getByRole('button', { name }))
+    expect(screen.getByRole('status')).toHaveTextContent(`${name} · 开发中……`)
+  }
+})
+
+test('site default can be restored and an explicit light preference is saved from auto mode', () => {
+  mockGlobal.usesDefaultAppearance = true
+  mockGlobal.setDarkMode = jest.fn()
+  render(<SiteSettings />)
+  open()
+  expect(screen.getByRole('button', { name: '跟随站点' })).toHaveAttribute(
+    'aria-pressed',
+    'true'
+  )
+  fireEvent.click(screen.getByRole('button', { name: '浅色' }))
+  expect(mockGlobal.setDarkMode).toHaveBeenCalledWith(false)
+  fireEvent.click(screen.getByRole('button', { name: '跟随站点' }))
+  expect(mockGlobal.resetAppearance).toHaveBeenCalledTimes(1)
+})
+
+test('Notion public menus appear without unpublished or all-category archive links', () => {
+  const menu = [
+    { title: '首页', href: '/', status: 'Published' },
+    { title: '意见反馈', href: '/feedback', status: 'Published' },
+    { title: '后台', href: '/private', status: 'Invisible' },
+    { title: '草稿', href: '/draft', status: 'Draft' },
+    {
+      title: '往期整理',
+      href: '#',
+      subMenus: [{ title: '历史归档', href: '/archive' }]
+    },
+    { title: '不合法地址', href: 'javascript:alert(1)' },
+    { title: '错误地址', href: 'https://%' }
+  ]
+  expect(settingsMenu(menu, ['dao']).map(x => x.title)).toEqual([
+    '首页',
+    '意见反馈'
+  ])
+  render(<SiteSettings customMenu={menu} />)
+  open()
+  expect(
+    screen.getByRole('navigation', { name: '站点信息' })
+  ).toHaveTextContent('意见反馈')
+  expect(screen.queryByRole('link', { name: '后台' })).toBeNull()
 })
 
 test.each([false, true])(

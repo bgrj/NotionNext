@@ -296,6 +296,14 @@ export const markUserDarkModeOverride = () => {
   localStorage.setItem(USER_DARK_MODE_SET_KEY, '1')
 }
 
+export const clearUserDarkModeOverride = () => {
+  if (!isBrowser) return
+  try {
+    localStorage.removeItem(USER_DARK_MODE_SET_KEY)
+    localStorage.removeItem('darkMode')
+  } catch (_) {}
+}
+
 const applyHtmlDarkClass = isDark => {
   const html = document.getElementsByTagName('html')[0]
   html?.classList?.remove(isDark ? 'light' : 'dark')
