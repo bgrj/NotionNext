@@ -1,6 +1,10 @@
 import BLOG from '@/blog.config'
 import { siteConfig } from '@/lib/config'
-import { fetchGlobalAllData, finalizeListPageProps } from '@/lib/db/SiteDataApi'
+import {
+  fetchGlobalAllData,
+  finalizeListPageProps,
+  cleanPostSummaries
+} from '@/lib/db/SiteDataApi'
 import { DynamicLayout } from '@/themes/theme'
 import { buildPublicHub } from '@/lib/site/publicHub'
 import { isOurBeingsCategory } from '@/themes/my-theme/beings'
@@ -36,6 +40,9 @@ export async function getStaticProps({ params: { category }, locale }) {
   props.posts = props.posts.filter(
     post => post && post.category && post.category.includes(category)
   )
+
+  // Search and list use the complete public category before pagination.
+  if (category === '道') props.daoPosts = cleanPostSummaries(props.posts)
 
   // 处理文章页数
   props.postCount = props.posts.length

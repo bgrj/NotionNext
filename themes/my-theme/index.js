@@ -25,6 +25,7 @@ import Footer from './components/Footer'
 import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
 import ExistenceLife from './components/ExistenceLife'
+import DaoExplorer from './components/DaoExplorer'
 import OurBeingsIndex from './components/OurBeingsIndex'
 import BeingLife from './components/BeingLife'
 import BeingDesk from './components/BeingDesk'
@@ -118,6 +119,10 @@ const LayoutBase = props => {
     asPath: router.asPath,
     slug: post?.slug || slugFromRouter(router)
   })
+  const dao =
+    props.category === '道' ||
+    decodePath(router.asPath) === '/category/道' ||
+    decodePath(router.asPath).startsWith('/category/道/page/')
   const existence = isExistencePath(router.asPath)
   const ourBeings = isOurBeingsPath(router.asPath)
   const auth = isOurBeingsAuthPath(router.asPath)
@@ -131,8 +136,8 @@ const LayoutBase = props => {
     hexoArticleRouteLoading && isArticleSlugPage && onLoading && !chromeLite
   // 所有文章共用全宽布局，不依赖分类、slug 或 Notion 的 fullWidth 开关。
   const articleLayout = Boolean(post) && !chromeLite
-  const wideMain = fullWidth || chromeLite || articleLayout
-  const listWithoutSidebar = !post && !chromeLite && !fullWidth
+  const wideMain = fullWidth || chromeLite || articleLayout || dao
+  const listWithoutSidebar = !post && !chromeLite && !fullWidth && !dao
 
   const headerSlot = chromeLite ? null : post ? (
     <PostHero {...props} />
@@ -175,7 +180,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}`}
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}${dao ? ' ob-dao-layout' : ''}`}
       >
         <Style />
 
@@ -208,7 +213,7 @@ const LayoutBase = props => {
         {!heroOnlyHome && (
           <main
             id='wrapper'
-            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full ${articleLayout ? 'px-0' : `px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'}`} pb-14 md:pb-16 min-h-screen relative`}
+            className={`${wrapperTop} bg-hexo-background-gray dark:bg-black w-full ${articleLayout || dao ? 'px-0' : `px-4 md:px-8 ${chromeLite ? 'lg:px-8' : 'lg:px-24'}`} pb-14 md:pb-16 min-h-screen relative`}
           >
             <div
               id='container-inner'
@@ -221,7 +226,9 @@ const LayoutBase = props => {
                   <ArticleSwitchPlaceholder />
                 ) : (
                   <Transition
-                    show={articleLayout || isArticleSlugPage ? true : !onLoading}
+                    show={
+                      articleLayout || isArticleSlugPage ? true : !onLoading
+                    }
                     appear={!articleLayout}
                     enter='transition ease-in-out duration-700 transform order-first'
                     enterFrom='opacity-0 translate-y-16'
@@ -282,6 +289,7 @@ const LayoutIndex = props => {
  */
 const LayoutPostList = props => {
   const router = useRouter()
+  if (props.category === '道') return <DaoExplorer {...props} />
   if (isExistenceCategory(props.category) || isExistencePath(router.asPath)) {
     return <ExistenceLife {...props} />
   }
