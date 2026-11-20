@@ -1,6 +1,8 @@
 /* eslint-disable react/no-unknown-property */
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { siteConfig } from '@/lib/config'
+import { DEFAULT_HOME_SECTIONS, homeSections } from '../homeSections'
 
 // 首页四块：整片天空沿手的外轮廓分成四块，每块一幅连体行书。
 // 字形取自「志莽行书」Zhi Mang Xing（SIL Open Font License 1.1），单位为字体单位，以字框中心为原点。
@@ -131,12 +133,18 @@ const Ink = ({ set, className }) => (
   </g>
 )
 
-export default function HeroPuzzle() {
+export default function HeroPuzzle({ NOTION_CONFIG } = {}) {
   const router = useRouter()
+  const sections = homeSections(
+    siteConfig('OURBEINGS_HOME_SECTIONS', DEFAULT_HOME_SECTIONS, NOTION_CONFIG)
+  )
+  const pieces = PIECES.filter(piece => sections.includes(piece.key))
+  const daoOnly = pieces.length === 1 && pieces[0].key === 'dao'
   const [hover, setHover] = useState('')
   const [focused, setFocused] = useState('')
   const active = focused || hover
   const go = (event, href) => {
+    if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     event.preventDefault()
     router.push(href)
   }
@@ -160,7 +168,7 @@ export default function HeroPuzzle() {
               vectorEffect='non-scaling-stroke'
             />
           ))}
-          {PIECES.map(piece => (
+          {pieces.map(piece => (
             <clipPath key={piece.key} id={`ob-clip-${piece.key}`}>
               <path d={piece.plate} />
             </clipPath>
@@ -176,7 +184,7 @@ export default function HeroPuzzle() {
             <feGaussianBlur stdDeviation='0.22' />
           </filter>
         </defs>
-        {PIECES.map(piece => (
+        {pieces.map(piece => (
           <g
             key={piece.key}
             className={`ob-ink ob-ink-${piece.key}`}
@@ -192,14 +200,14 @@ export default function HeroPuzzle() {
           </g>
         ))}
       </svg>
-      <div className='ob-puzzle' data-hover={active}>
+      <div className='ob-puzzle' data-hover={active} data-dao-only={daoOnly}>
         <svg
           viewBox='0 0 2048 989'
           preserveAspectRatio='xMidYMid slice'
           role='group'
-          aria-label='我们的存在、我的存在、道、术'
+          aria-label={pieces.map(piece => piece.name).join('、')}
         >
-          {PIECES.map(piece => (
+          {pieces.map(piece => (
             <a
               key={piece.key}
               href={piece.href}
@@ -229,24 +237,23 @@ export default function HeroPuzzle() {
             </a>
           ))}
           <g className='ob-seam-glow'>
-            {SEAM_GLOWS.map((d, index) => (
-              <path key={index} d={d} />
-            ))}
+            {!daoOnly &&
+              SEAM_GLOWS.map((d, index) => <path key={index} d={d} />)}
           </g>
           <g className='ob-seam'>
-            {SEAMS.map((d, index) => (
-              <path key={index} d={d} />
-            ))}
+            {!daoOnly && SEAMS.map((d, index) => <path key={index} d={d} />)}
           </g>
           <path className='ob-hand-outline' d={HAND_OUTLINE} />
         </svg>
         <div className='ob-entry-hints' aria-hidden='true'>
-          {PIECES.map(piece => (
+          {pieces.map(piece => (
             <span
               key={piece.key}
               className={`ob-entry-hint ob-entry-hint-${piece.key}`}
             >
-              <span className='ob-entry-name'>{piece.name}</span>
+              <span className='ob-entry-name'>
+                {daoOnly ? '阅读「道」系列' : piece.name}
+              </span>
             </span>
           ))}
         </div>
@@ -319,6 +326,17 @@ export default function HeroPuzzle() {
           stroke-width: 3;
           vector-effect: non-scaling-stroke;
         }
+        .ob-puzzle[data-dao-only='true'] .ob-plate {
+          stroke: rgba(196, 150, 74, 0.55);
+          stroke-width: 1.2;
+          vector-effect: non-scaling-stroke;
+        }
+        .ob-puzzle[data-dao-only='true']
+          .ob-plate-link:focus-visible
+          .ob-plate {
+          stroke: #765020;
+          stroke-width: 3;
+        }
         .ob-entry-hints {
           position: absolute;
           inset: 0;
@@ -357,6 +375,11 @@ export default function HeroPuzzle() {
         .ob-puzzle[data-hover='self'] .ob-entry-hint-self,
         .ob-puzzle[data-hover='dao'] .ob-entry-hint-dao,
         .ob-puzzle[data-hover='shu'] .ob-entry-hint-shu {
+          opacity: 1;
+          transform: translate(-50%, -50%);
+        }
+        .ob-puzzle[data-dao-only='true'] .ob-entry-hint-dao {
+          top: 91%;
           opacity: 1;
           transform: translate(-50%, -50%);
         }
@@ -454,6 +477,13 @@ export default function HeroPuzzle() {
         @media (max-width: 767px), (hover: none) {
           .ob-entry-hints {
             display: none;
+          }
+          .ob-puzzle[data-dao-only='true'] .ob-entry-hints {
+            display: block;
+          }
+          .ob-puzzle[data-dao-only='true'] .ob-entry-hint-dao {
+            left: 25%;
+            padding: 8px 10px;
           }
         }
         @media (hover: none) {

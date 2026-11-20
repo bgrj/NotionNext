@@ -4,7 +4,7 @@ import HeroPuzzle from './HeroPuzzle'
 
 /**
  * 顶部全屏大图。
- * 欢迎语在导航栏内居中；四个入口绕手轮廓拼合。
+ * 欢迎语在导航栏内居中；入口由 Notion 配置中心控制。
  */
 const Hero = props => {
   const { siteInfo } = props
@@ -17,7 +17,7 @@ const Hero = props => {
       data-ob-minimal-hero='true'
     >
       <HandGlow />
-      <HeroPuzzle />
+      <HeroPuzzle NOTION_CONFIG={props.NOTION_CONFIG} />
 
       <LazyImage
         priority

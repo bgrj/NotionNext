@@ -1,4 +1,7 @@
 const CONFIG = {
+  // 首页入口：our=我们的存在，self=我的存在，dao=道，shu=术。
+  // Notion 配置中心支持逗号分隔标识或 JSON 数组。
+  OURBEINGS_HOME_SECTIONS: ['dao'],
   // 文章阅读与顶栏设置（可由 Notion 配置中心同名键覆盖）
   OURBEINGS_ARTICLE_BACKGROUND:
     '/assets/ourbeing/web-mainpage-uphand.dc81786dbc79.webp',
@@ -86,8 +89,10 @@ const CONFIG = {
   FOOTER_WECHAT_ALBUM:
     'https://mp.weixin.qq.com/mp/appmsgalbum?__biz=Mzk0MDQ5NTg3Nw==&action=getalbum&album_id=3925629808377479169#wechat_redirect',
   FOOTER_AFDIAN_URL: 'https://afdian.com/a/ourbeings',
-  FOOTER_ALIPAY_QR: 'https://cdn.jsdelivr.net/gh/bgrj/bgrj-images@main/alipay.png',
-  FOOTER_WEPAY_QR: 'https://cdn.jsdelivr.net/gh/bgrj/bgrj-images@main/wepay.png',
+  FOOTER_ALIPAY_QR:
+    'https://cdn.jsdelivr.net/gh/bgrj/bgrj-images@main/alipay.png',
+  FOOTER_WEPAY_QR:
+    'https://cdn.jsdelivr.net/gh/bgrj/bgrj-images@main/wepay.png',
   FOOTER_ICP_TEXT: '存在者ICP备 2025032878号-1',
   FOOTER_ICP_URL: 'https://ourbeings.com/'
 }

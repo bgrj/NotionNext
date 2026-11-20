@@ -7,7 +7,7 @@ import Header from '@/themes/my-theme/components/Header'
 jest.mock('@/lib/global', () => ({ useGlobal: () => ({}) }))
 
 jest.mock('@/lib/config', () => ({
-  siteConfig: (_key, fallback) => fallback
+  siteConfig: (key, fallback, config = {}) => config?.[key] ?? fallback
 }))
 jest.mock('next/router', () => ({
   useRouter: () => ({ push: jest.fn(), events: { on() {}, off() {} } })
@@ -36,13 +36,19 @@ const render = component => {
   return { markup, styles }
 }
 
-test('four original category links and their non-interactive preview labels survive SSR', () => {
+test('only Dao is rendered and linked in the default landing page', () => {
   const { markup, styles } = render(<HeroPuzzle />)
-  for (const name of ['我们的存在', '我的存在', '道', '术']) {
-    expect(markup).toContain(`href="/category/${name}"`)
-    expect(markup).toContain(`aria-label="${name}"`)
+  expect(markup).toContain('href="/category/道"')
+  expect(markup).toContain('aria-label="道"')
+  for (const name of ['我们的存在', '我的存在', '术']) {
+    expect(markup).not.toContain(`href="/category/${name}"`)
+    expect(markup).not.toContain(`aria-label="${name}"`)
   }
-  expect(markup.match(/class="[^"]*\bob-plate-link\b[^"]*"/g)).toHaveLength(4)
+  expect(markup.match(/class="[^"]*\bob-plate-link\b[^"]*"/g)).toHaveLength(1)
+  expect(markup).not.toContain('ob-ink-our')
+  expect(markup).not.toContain('ob-ink-self')
+  expect(markup).not.toContain('ob-ink-shu')
+  expect(markup).toContain('阅读「道」系列')
   expect(markup).toContain('ob-entry-hints')
   expect(styles).toContain(':focus-visible')
   expect(styles).toMatch(/\(hover:\s*none\)/)
@@ -68,18 +74,28 @@ test('navigation keeps the complete motto and provides a reduced-motion alternat
   expect(styles).not.toMatch(/&#(?:x27|39);|&quot;/)
 })
 
-test('touch layouts hide previews and desktop previews contain names only', () => {
-  const { markup, styles } = render(<HeroPuzzle />)
+test('Dao keeps a visible reading hint on touch layouts', () => {
+  const { markup, styles } = render(
+    <HeroPuzzle NOTION_CONFIG={{ OURBEINGS_HOME_SECTIONS: 'dao' }} />
+  )
   expect(markup).toContain('ob-entry-name')
   expect(markup).not.toContain('进入')
   expect(markup).not.toContain('ob-entry-action')
   expect(markup).not.toContain('ob-entry-arrow')
   expect(styles).toMatch(/@media\s*\(max-width:\s*767px\),\s*\(hover:\s*none\)/)
   expect(styles).toMatch(/\.ob-entry-hints[^{}]*\{[^{}]*display:\s*none/)
+  expect(styles).toMatch(
+    /data-dao-only[^{}]*\.ob-entry-hints[^{}]*\{[^{}]*display:\s*block/
+  )
 })
 
 test('self calligraphy uses separate vertical alignment for desktop and mobile', () => {
-  const { markup } = render(<HeroPuzzle />)
+  const { markup } = render(
+    <HeroPuzzle
+      NOTION_CONFIG={{ OURBEINGS_HOME_SECTIONS: 'our,self,dao,shu' }}
+    />
+  )
+  expect(markup.match(/class="[^"]*\bob-plate-link\b[^"]*"/g)).toHaveLength(4)
   expect(markup).toContain('matrix(1 0 0 0.879267 0 -7.499528)')
   expect(markup).toContain(
     'matrix(1.066467 0 0 1.244622 -78.429887 -142.324481)'

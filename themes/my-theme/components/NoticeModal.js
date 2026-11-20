@@ -1,7 +1,9 @@
 import { siteConfig } from '@/lib/config'
+import Link from 'next/link'
 import { useEffect, useId, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import CONFIG from '../config'
+import { DEFAULT_HOME_SECTIONS, homeSections } from '../homeSections'
 import {
   NOTICE,
   NOTICE_RECENT_EXCLUDE_SLUGS,
@@ -129,14 +131,29 @@ const NoticeModal = ({ latestPosts } = {}) => {
 
   const primary = siteConfig('HEXO_COLOR_PRIMARY', '#C9A66B', CONFIG)
   const mottoLines = NOTICE.mottoLines || [NOTICE.motto]
-  const live = pickLatestPublishedPost(latestPosts)
+  const sections = homeSections(
+    siteConfig('OURBEINGS_HOME_SECTIONS', DEFAULT_HOME_SECTIONS, CONFIG)
+  )
+  const daoOnly = sections.length === 1 && sections[0] === 'dao'
+  const live = pickLatestPublishedPost(
+    daoOnly
+      ? latestPosts?.filter(post => post.category?.includes('道'))
+      : latestPosts
+  )
+  const body = daoOnly
+    ? [
+        '目前开放「道」板块，收录已经写出的思想。点击首页的「道」，即可阅读这一系列文章。'
+      ]
+    : NOTICE.body
   const recent = live
     ? {
         date: formatZhDate(live),
         title: live.title,
         href: live.href
       }
-    : NOTICE.recent
+    : daoOnly
+      ? null
+      : NOTICE.recent
 
   const node = (
     <div
@@ -144,14 +161,18 @@ const NoticeModal = ({ latestPosts } = {}) => {
       className='ob-notice-modal'
       role='dialog'
       aria-modal='true'
-      aria-labelledby={titleId}>
+      aria-labelledby={titleId}
+    >
       <button
         type='button'
         className='ob-notice-backdrop'
         aria-label='关闭公告'
         onClick={dismiss}
       />
-      <div className='ob-notice-panel' style={{ ['--ob-notice-accent']: primary }}>
+      <div
+        className='ob-notice-panel'
+        style={{ ['--ob-notice-accent']: primary }}
+      >
         <div className='ob-notice-head'>
           <div id={titleId} className='ob-notice-kicker'>
             <i className='fas fa-bullhorn' aria-hidden='true' />
@@ -162,7 +183,8 @@ const NoticeModal = ({ latestPosts } = {}) => {
             type='button'
             className='ob-notice-x'
             onClick={dismiss}
-            aria-label='关闭公告'>
+            aria-label='关闭公告'
+          >
             <i className='fas fa-times' aria-hidden='true' />
           </button>
         </div>
@@ -170,7 +192,8 @@ const NoticeModal = ({ latestPosts } = {}) => {
         <div
           className='ob-notice-body'
           onClick={onNoticeClick}
-          onAuxClick={onNoticeClick}>
+          onAuxClick={onNoticeClick}
+        >
           <p className='ob-notice-motto'>
             {mottoLines.map(line => (
               <span key={line}>{line}</span>
@@ -178,15 +201,21 @@ const NoticeModal = ({ latestPosts } = {}) => {
           </p>
           <p className='ob-notice-stamp'>{NOTICE.updatedAt}</p>
           <p className='ob-notice-lead'>{NOTICE.lead}</p>
-          {NOTICE.body.map(paragraph => (
+          {body.map(paragraph => (
             <p key={paragraph}>{paragraph}</p>
           ))}
+          {daoOnly && (
+            <p>
+              <Link href='/category/道' prefetch={false}>
+                阅读「道」系列文章
+              </Link>
+            </p>
+          )}
           {recent?.title && recent?.href && (
             <p>
               <span className='ob-notice-label'>{NOTICE.recentLabel}</span>
               {recent.date ? `${recent.date}，` : ''}发布《
-              <a href={recent.href}>{recent.title}</a>
-              》
+              <a href={recent.href}>{recent.title}</a>》
             </p>
           )}
           {NOTICE.album && (
