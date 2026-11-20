@@ -54,6 +54,8 @@ test('searches the full provided category and opens only matching article links'
 test('manual navigation, list and empty state work', () => {
   const { unmount } = render(<DaoExplorer daoPosts={posts} />)
   expect(screen.queryByRole('button', { name: '暂停轮播' })).toBeNull()
+  expect(screen.queryByText('点击中央卡片阅读全文')).toBeNull()
+  expect(screen.queryByText(/\d{2}\s*\/\s*\d{2}/)).toBeNull()
   fireEvent.click(screen.getByRole('button', { name: '下一篇' }))
   expect(screen.getByRole('link', { name: '阅读：第二篇' })).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: '文章列表' }))

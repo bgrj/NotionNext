@@ -181,12 +181,6 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
                     <span aria-hidden='true'>›</span>
                   </button>
                 </div>
-                <p className='dao-count'>
-                  {String(active + 1).padStart(2, '0')}
-                  <span>/</span>
-                  {String(posts.length).padStart(2, '0')}
-                </p>
-                <p className='dao-hint'>点击中央卡片阅读全文</p>
               </>
             ) : (
               <p className='dao-empty'>这里暂时还没有已发布的文章。</p>
@@ -260,22 +254,32 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           color: #594c3b;
         }
         .dao-explorer {
-          min-height: 100vh;
+          box-sizing: border-box;
+          height: 100vh;
+          height: 100dvh;
+          display: flex;
+          flex-direction: column;
+          overflow: hidden;
           background-size: cover;
           background-position: center top;
           background-attachment: fixed;
           color: #342b23;
-          padding: calc(var(--ob-below-nav, 5.25rem) + 8px) 28px 72px;
+          padding: calc(var(--ob-below-nav, 5.25rem) + 4px) 28px 18px;
         }
         .dao-shell {
-          width: min(100%, 1360px);
-          margin: auto;
+          width: min(100%, 1180px);
+          margin: 0 auto;
+          flex: 1;
+          min-height: 0;
+          display: flex;
+          flex-direction: column;
         }
         .dao-title {
-          margin: 4px 0 0;
+          margin: 0;
+          flex: none;
           text-align: center;
           font-family: Georgia, 'Noto Serif SC', serif;
-          font-size: clamp(76px, 8vw, 124px);
+          font-size: clamp(52px, 8vh, 84px);
           font-weight: 400;
           line-height: 1;
           letter-spacing: 0.16em;
@@ -285,9 +289,10 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           display: flex;
           justify-content: center;
           align-items: center;
+          flex: none;
           gap: 14px;
-          width: min(100%, 640px);
-          margin: 22px auto 0;
+          width: min(100%, 560px);
+          margin: 12px auto 0;
         }
         .dao-control,
         .dao-search,
@@ -346,26 +351,34 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           color: #71675e;
         }
         .dao-stage {
-          margin-top: 28px;
+          flex: 1;
+          min-height: 0;
+          display: flex;
+          margin-top: 14px;
         }
         .dao-orbit {
           display: grid;
-          grid-template-columns: 76px minmax(0, 0.92fr) minmax(0, 1.16fr) minmax(0, 0.92fr) 76px;
+          grid-template-columns: 64px minmax(0, 0.86fr) minmax(0, 1.05fr) minmax(0, 0.86fr) 64px;
           align-items: end;
-          gap: 8px 26px;
-          width: min(100%, 1320px);
+          gap: 8px 18px;
+          width: min(100%, 1180px);
+          height: 100%;
           margin: 0 auto;
         }
+        .dao-card {
+          height: 100%;
+          min-height: 0;
+        }
         .dao-arrow {
-          width: 68px;
-          height: 68px;
+          width: 56px;
+          height: 56px;
           justify-self: center;
           align-self: center;
           border: 0;
           border-radius: 50%;
           background: #3f3126;
           color: #fffaf3;
-          font-size: 54px;
+          font-size: 42px;
           line-height: 0.8;
           box-shadow: 0 12px 28px rgba(48, 32, 18, 0.28);
           cursor: pointer;
@@ -381,10 +394,23 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           opacity: 0.35;
           cursor: default;
         }
+        .dao-card {
+          min-height: 0;
+          max-height: 100%;
+        }
+        .dao-slot-left,
+        .dao-slot-right {
+          height: 86%;
+        }
+        .dao-slot-center {
+          z-index: 2;
+          height: 100%;
+        }
         .dao-card-inner {
           display: flex;
           width: 100%;
-          min-height: 430px;
+          height: 100%;
+          min-height: 0;
           flex-direction: column;
           text-align: left;
           background: rgba(255, 252, 246, 0.96);
@@ -394,28 +420,15 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           color: #312820;
           box-shadow: 0 16px 36px rgba(61, 42, 25, 0.14);
         }
-        .dao-slot-center {
-          z-index: 2;
-        }
-        .dao-slot-center .dao-card-inner {
-          min-height: 540px;
-        }
-        .dao-slot-left,
-        .dao-slot-right {
-          margin-bottom: 52px;
-        }
         .dao-card-inner:hover {
           border-color: #8d6944;
         }
         .dao-cover {
           width: 100%;
-          height: 250px;
-          flex: none;
+          flex: 1 1 auto;
+          min-height: 0;
           object-fit: cover;
           background: #e9ddcb;
-        }
-        .dao-slot-center .dao-cover {
-          height: 310px;
         }
         .dao-cover-empty {
           display: flex;
@@ -426,51 +439,37 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           font-size: 64px;
         }
         .dao-card-copy {
-          padding: 22px 24px 20px;
+          padding: 14px 16px 12px;
           display: flex;
-          flex: 1;
+          flex: none;
           min-height: 0;
           flex-direction: column;
         }
         .dao-card-copy strong {
           font-family: Georgia, 'Noto Serif SC', serif;
-          font-size: 22px;
-          line-height: 1.45;
+          font-size: 18px;
+          line-height: 1.4;
           font-weight: 500;
           display: -webkit-box;
-          -webkit-line-clamp: 3;
+          -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
         }
         .dao-slot-center .dao-card-copy strong {
-          font-size: 28px;
+          font-size: 22px;
         }
         .dao-card-copy time {
-          margin-top: auto;
-          padding-top: 16px;
+          margin-top: 8px;
           color: #74675a;
-          font-size: 14px;
-        }
-        .dao-count {
-          margin: 28px 0 0;
-          text-align: center;
-          letter-spacing: 0.22em;
           font-size: 13px;
-          color: #5c4d3e;
-        }
-        .dao-count span {
-          margin: 0 0.45em;
-          color: #947d62;
-        }
-        .dao-hint {
-          text-align: center;
-          font-size: 14px;
-          color: #574a3d;
-          margin: 10px 0 0;
         }
         .dao-list-panel {
           max-width: 920px;
-          margin: 36px auto 0;
+          width: 100%;
+          flex: 1;
+          min-height: 0;
+          margin: 16px auto 0;
+          overflow: auto;
           padding: 28px 36px;
           background: rgba(255, 252, 247, 0.94);
           border: 1px solid rgba(94, 75, 53, 0.2);
@@ -552,63 +551,60 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         }
         @media (max-width: 1100px) {
           .dao-orbit {
-            gap: 8px 16px;
-            grid-template-columns: 60px minmax(0, 0.9fr) minmax(0, 1.12fr) minmax(0, 0.9fr) 60px;
+            gap: 8px 12px;
+            grid-template-columns: 52px minmax(0, 0.9fr) minmax(0, 1.08fr) minmax(0, 0.9fr) 52px;
           }
           .dao-arrow {
-            width: 56px;
-            height: 56px;
-            font-size: 44px;
+            width: 48px;
+            height: 48px;
+            font-size: 36px;
           }
-          .dao-card-inner {
-            min-height: 360px;
-          }
-          .dao-slot-center .dao-card-inner {
-            min-height: 450px;
-          }
-          .dao-cover {
-            height: 190px;
-          }
-          .dao-slot-center .dao-cover {
-            height: 240px;
-          }
-          .dao-card-copy strong {
-            font-size: 18px;
-          }
+          .dao-card-copy strong,
           .dao-slot-center .dao-card-copy strong {
-            font-size: 24px;
+            font-size: 17px;
           }
         }
         @media (max-width: 760px) {
           .dao-explorer {
-            padding: calc(var(--ob-below-nav, 6.5rem) + 4px) 12px 48px;
+            padding:
+              calc(var(--ob-below-nav, 6.5rem) + 2px)
+              max(12px, env(safe-area-inset-right))
+              max(10px, env(safe-area-inset-bottom))
+              max(12px, env(safe-area-inset-left));
             background-attachment: scroll;
-            overflow-x: clip;
+            overflow: hidden;
           }
           .dao-title {
-            font-size: 72px;
+            font-size: clamp(40px, 7vh, 60px);
             letter-spacing: 0.12em;
           }
           .dao-toolbar {
             width: 100%;
-            margin-top: 16px;
+            margin-top: 8px;
+          }
+          .dao-search-label {
+            display: none;
+          }
+          .dao-search input {
+            font-size: 16px;
           }
           .dao-stage {
-            margin-top: 18px;
+            margin-top: 8px;
           }
           .dao-orbit {
             display: block;
             position: relative;
-            height: 470px;
+            width: 100%;
+            height: 100%;
             overflow: hidden;
           }
           .dao-arrow {
             position: absolute;
-            top: 18%;
+            top: 24%;
             z-index: 4;
-            width: 52px;
-            height: 52px;
-            font-size: 42px;
+            width: 44px;
+            height: 44px;
+            font-size: 34px;
           }
           .dao-arrow-prev {
             left: 0;
@@ -618,71 +614,78 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           }
           .dao-card {
             position: absolute;
-            top: 18px;
+            top: 0;
             left: 50%;
-            width: min(230px, 58vw);
+            width: min(168px, 44vw);
+            height: 58%;
           }
           .dao-slot-left,
           .dao-slot-right {
-            margin-bottom: 0;
+            height: 58%;
           }
           .dao-slot-left {
-            transform: translateX(calc(-50% - 46vw)) scale(0.82);
+            transform: translateX(calc(-50% - 34vw)) scale(0.92);
             z-index: 1;
           }
           .dao-slot-right {
-            transform: translateX(calc(-50% + 46vw)) scale(0.82);
+            transform: translateX(calc(-50% + 34vw)) scale(0.92);
             z-index: 1;
           }
           .dao-slot-left .dao-card-copy,
           .dao-slot-right .dao-card-copy {
             display: none;
           }
-          .dao-slot-left .dao-card-inner,
-          .dao-slot-right .dao-card-inner {
-            min-height: 0;
-          }
           .dao-slot-center {
-            width: min(300px, 74vw);
+            top: 0;
+            width: min(280px, calc(100% - 88px));
+            height: 100%;
             transform: translateX(-50%);
             z-index: 3;
           }
           .dao-card-inner,
           .dao-slot-center .dao-card-inner {
-            min-height: 390px;
-          }
-          .dao-cover,
-          .dao-slot-center .dao-cover {
-            height: 176px;
+            min-height: 0;
+            height: 100%;
           }
           .dao-card-copy {
-            padding: 16px 16px 14px;
+            padding: 12px 14px 12px;
           }
           .dao-card-copy strong,
           .dao-slot-center .dao-card-copy strong {
-            font-size: 20px;
+            font-size: 17px;
+            line-height: 1.45;
+            -webkit-line-clamp: 3;
+          }
+          .dao-card-copy time {
+            font-size: 13px;
           }
           .dao-list-panel {
-            padding: 20px 16px;
+            margin-top: 10px;
+            padding: 16px 14px;
           }
           .dao-list a {
             align-items: flex-start;
+            padding: 16px 0;
+          }
+          .dao-list h3 {
+            font-size: 17px;
+            line-height: 1.45;
+          }
+          .dao-list p {
+            font-size: 15px;
+            line-height: 1.55;
           }
         }
         @media (max-width: 760px) and (max-height: 700px) {
           .dao-title {
-            font-size: 60px;
+            font-size: 36px;
           }
-          .dao-orbit {
-            height: 390px;
+          .dao-toolbar,
+          .dao-stage {
+            margin-top: 6px;
           }
-          .dao-card-inner,
-          .dao-slot-center .dao-card-inner {
-            min-height: 330px;
-          }
-          .dao-cover,
-          .dao-slot-center .dao-cover {
-            height: 140px;
+          .dao-card-copy {
+            padding: 10px 12px 8px;
           }
         }
         @media (prefers-reduced-motion: reduce) {
