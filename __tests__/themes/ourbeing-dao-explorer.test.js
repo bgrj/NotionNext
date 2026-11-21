@@ -68,7 +68,7 @@ test('manual navigation, list and empty state work', () => {
 test('cycles on a timer and honours reduced motion', () => {
   jest.useFakeTimers()
   const { unmount } = render(<DaoExplorer daoPosts={posts} />)
-  act(() => jest.advanceTimersByTime(7000))
+  act(() => jest.advanceTimersByTime(3000))
   expect(screen.getByRole('link', { name: '阅读：第二篇' })).toBeTruthy()
   unmount()
   window.matchMedia.mockImplementation(() => ({
@@ -77,7 +77,7 @@ test('cycles on a timer and honours reduced motion', () => {
     removeEventListener: jest.fn()
   }))
   render(<DaoExplorer daoPosts={posts} />)
-  act(() => jest.advanceTimersByTime(14000))
+  act(() => jest.advanceTimersByTime(6000))
   expect(screen.getByRole('link', { name: '阅读：第一篇' })).toBeTruthy()
   jest.useRealTimers()
 })

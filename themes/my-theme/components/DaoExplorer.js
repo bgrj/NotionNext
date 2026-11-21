@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react'
 import CONFIG from '../config'
 import { articleBackground } from '../readingSettings'
 
-const PERIOD = 7000
+const PERIOD = 3000
 const text = value => (typeof value === 'string' ? value : '')
 const searchable = post =>
   [
@@ -474,10 +474,9 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           font-size: 18px;
           line-height: 1.65;
           font-weight: 500;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          -webkit-box-orient: vertical;
-          overflow: hidden;
+          display: block;
+          white-space: normal;
+          overflow-wrap: anywhere;
         }
         .dao-slot-center .dao-card-copy strong {
           font-size: 22px;
@@ -684,7 +683,6 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           .dao-slot-center .dao-card-copy strong {
             font-size: 20px;
             line-height: 1.65;
-            -webkit-line-clamp: 3;
           }
           .dao-card-copy time {
             font-size: 13px;
