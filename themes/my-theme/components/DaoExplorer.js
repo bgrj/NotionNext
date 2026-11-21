@@ -358,7 +358,10 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         }
         .dao-orbit {
           display: grid;
-          grid-template-columns: 64px minmax(0, 0.86fr) minmax(0, 1.05fr) minmax(0, 0.86fr) 64px;
+          grid-template-columns: 64px minmax(0, 0.86fr) minmax(
+              0,
+              1.05fr
+            ) minmax(0, 0.86fr) 64px;
           align-items: end;
           gap: 8px 18px;
           width: min(100%, 1180px);
@@ -412,7 +415,7 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
           height: 100%;
           min-height: 0;
           flex-direction: column;
-          text-align: left;
+          text-align: center;
           background: rgba(255, 252, 246, 0.96);
           border: 1px solid rgba(108, 83, 56, 0.22);
           border-radius: 18px;
@@ -423,12 +426,21 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         .dao-card-inner:hover {
           border-color: #8d6944;
         }
+        .dao-cover-frame {
+          width: 100%;
+          flex: 1 1 0;
+          min-height: 0;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          overflow: hidden;
+          background: #e9ddcb;
+        }
         .dao-cover {
           width: 100%;
-          flex: 1 1 auto;
-          min-height: 0;
-          object-fit: cover;
-          background: #e9ddcb;
+          height: 100%;
+          object-fit: contain;
+          object-position: center;
         }
         .dao-cover-empty {
           display: flex;
@@ -552,7 +564,10 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         @media (max-width: 1100px) {
           .dao-orbit {
             gap: 8px 12px;
-            grid-template-columns: 52px minmax(0, 0.9fr) minmax(0, 1.08fr) minmax(0, 0.9fr) 52px;
+            grid-template-columns: 52px minmax(0, 0.9fr) minmax(
+                0,
+                1.08fr
+              ) minmax(0, 0.9fr) 52px;
           }
           .dao-arrow {
             width: 48px;
@@ -566,8 +581,7 @@ export default function DaoExplorer({ daoPosts = [], NOTION_CONFIG }) {
         }
         @media (max-width: 760px) {
           .dao-explorer {
-            padding:
-              calc(var(--ob-below-nav, 6.5rem) + 2px)
+            padding: calc(var(--ob-below-nav, 6.5rem) + 2px)
               max(12px, env(safe-area-inset-right))
               max(10px, env(safe-area-inset-bottom))
               max(12px, env(safe-area-inset-left));
@@ -703,9 +717,11 @@ function CardContent({ post }) {
   return (
     <>
       {cover ? (
-        <img className='dao-cover' src={cover} alt='' loading='lazy' />
+        <div className='dao-cover-frame'>
+          <img className='dao-cover' src={cover} alt='' loading='lazy' />
+        </div>
       ) : (
-        <div className='dao-cover dao-cover-empty' aria-hidden='true'>
+        <div className='dao-cover-frame dao-cover-empty' aria-hidden='true'>
           道
         </div>
       )}

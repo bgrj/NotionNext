@@ -36,25 +36,32 @@ export default function DaoReadingStyle() {
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-hero {
         position: relative;
         isolation: isolate;
-        padding: calc(var(--ob-home-nav-height, 64px) + 3rem) 1.5rem 2.75rem;
+        padding: calc(var(--ob-home-nav-height, 64px) + 1.5rem) 1.5rem 2.75rem;
         overflow: hidden;
         background: var(--ob-paper);
         border-bottom: 1px solid var(--ob-rule);
       }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-cover {
-        position: absolute;
-        inset: 0;
-        z-index: -1;
-        opacity: 0.08;
-        filter: saturate(0.45);
-        pointer-events: none;
+        width: 100%;
+        height: clamp(240px, 30vw, 420px);
+        margin: 1.25rem auto 0;
+        overflow: hidden;
+        border-radius: 10px;
+        background: var(--ob-inset);
       }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-cover > div {
         height: 100%;
       }
+      #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-cover img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        object-position: center;
+      }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-heading {
-        max-width: 45rem;
+        max-width: 64rem;
         margin: auto;
+        text-align: center;
       }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-nav {
         display: flex;
@@ -83,7 +90,8 @@ export default function DaoReadingStyle() {
         color: var(--ob-link);
       }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-heading h1 {
-        margin: 1rem 0 1.5rem;
+        max-width: 50rem;
+        margin: 1.75rem auto 1.25rem;
         font-size: clamp(1.75rem, 3.3vw, 2.6rem);
         font-weight: 600;
         line-height: 1.5;
@@ -94,12 +102,32 @@ export default function DaoReadingStyle() {
       }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-meta {
         display: flex;
+        justify-content: center;
         flex-wrap: wrap;
         gap: 0.35rem 1.25rem;
         font-size: 14px;
         line-height: 1.8;
         font-weight: 400;
         color: var(--ob-muted);
+      }
+      #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-stats {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 0.4rem 1.5rem;
+        margin-top: 0.65rem;
+        font-size: 14px;
+        line-height: 1.8;
+        font-weight: 400;
+        color: var(--ob-muted);
+        font-variant-numeric: tabular-nums;
+      }
+      #theme-my-theme.ob-dao-reading.ob-article-layout
+        .ob-reading-stats
+        span
+        span {
+        margin-left: 0.25rem;
+        color: var(--ob-ink);
       }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-article-card {
         max-width: 52rem;
@@ -302,6 +330,14 @@ export default function DaoReadingStyle() {
       @media (max-width: 767px) {
         #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-tools {
           display: none;
+        }
+        #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-cover {
+          height: clamp(180px, 52vw, 300px);
+          margin-top: 1rem;
+        }
+        #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-stats {
+          font-size: 13px;
+          gap: 0.35rem 1rem;
         }
         #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-hero {
           padding: calc(var(--ob-home-nav-height, 92px) + 1.5rem) 1.25rem 2rem;

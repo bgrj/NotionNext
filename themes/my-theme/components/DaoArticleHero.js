@@ -1,5 +1,6 @@
 import LazyImage from '@/components/LazyImage'
 import SmartLink from '@/components/SmartLink'
+import { siteConfig } from '@/lib/config'
 
 const isoDay = value => {
   const parts = String(value || '').match(/^(\d{4})-(\d{1,2})-(\d{1,2})$/)
@@ -8,22 +9,13 @@ const isoDay = value => {
     : undefined
 }
 
-/** Quiet article masthead; the title remains readable above a subdued cover. */
-export default function DaoArticleHero({ post, onOpenContents }) {
+/** Full cover, centered article information and the existing visit counters. */
+export default function DaoArticleHero({ post, siteInfo, onOpenContents }) {
   if (!post) return null
+  const cover = post.pageCover || siteInfo?.pageCover
+  const showVisits = siteConfig('ANALYTICS_BUSUANZI_ENABLE', true)
   return (
     <header id='header' className='ob-reading-hero'>
-      {post.pageCover && (
-        <div className='ob-reading-cover' aria-hidden='true'>
-          <LazyImage
-            src={post.pageCover}
-            alt=''
-            priority
-            width={1200}
-            className='w-full h-full object-cover'
-          />
-        </div>
-      )}
       <div className='ob-reading-heading'>
         <nav className='ob-reading-nav' aria-label='文章导航'>
           <SmartLink href='/category/道' className='ob-reading-back'>
@@ -39,6 +31,17 @@ export default function DaoArticleHero({ post, onOpenContents }) {
             </button>
           )}
         </nav>
+        {cover && (
+          <figure className='ob-reading-cover'>
+            <LazyImage
+              src={cover}
+              alt={`${post.title}的封面`}
+              priority
+              width={1600}
+              className='w-full h-full object-contain'
+            />
+          </figure>
+        )}
         <h1>{post.title}</h1>
         <div className='ob-reading-meta'>
           {post.publishDay && (
@@ -56,6 +59,20 @@ export default function DaoArticleHero({ post, onOpenContents }) {
             </span>
           )}
         </div>
+        {showVisits && (
+          <div
+            className='ob-reading-stats'
+            aria-label='文章访问统计'
+            aria-live='polite'
+          >
+            <span className='busuanzi_container_page_pv'>
+              访问次数 <span className='busuanzi_value_page_pv'>–</span>
+            </span>
+            <span className='busuanzi_container_page_uv'>
+              访问人数 <span className='busuanzi_value_page_uv'>–</span>
+            </span>
+          </div>
+        )}
       </div>
     </header>
   )
