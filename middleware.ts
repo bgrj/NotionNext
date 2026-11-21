@@ -1,4 +1,8 @@
-import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server'
+import {
+  clerkMiddleware,
+  createRouteMatcher,
+  type ClerkMiddlewareAuth
+} from '@clerk/nextjs/server'
 import { NextRequest, NextResponse } from 'next/server'
 import {
   EXISTENCE_ROBOTS_TAG,
@@ -123,7 +127,7 @@ const publishableKey = String(
  * Clerk route protection. Exported so tests can call it without the
  * development-instance handshake that clerkMiddleware performs first.
  */
-export const handleClerkAuth = (auth, req) => {
+export const handleClerkAuth = (auth: ClerkMiddlewareAuth, req: NextRequest) => {
   const refused = refuseAutomatedExistence(req)
   if (refused) return refused
   const { userId } = auth()
