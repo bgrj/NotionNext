@@ -27,6 +27,12 @@ export default function DaoReadingStyle() {
       .dark #theme-my-theme.ob-dao-reading.ob-article-layout::before {
         opacity: 0.06;
       }
+      #theme-my-theme.ob-dao-reading.ob-article-layout .ob-sticky-nav {
+        background: var(--ob-paper) !important;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+        border-bottom: 1px solid var(--ob-rule);
+      }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-reading-hero {
         position: relative;
         isolation: isolate;
