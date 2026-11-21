@@ -296,6 +296,14 @@ export default function DaoReadingStyle() {
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-article-body strong {
         font-weight: 600;
       }
+      #theme-my-theme.ob-dao-reading.ob-article-layout
+        .ob-article-body
+        .notion {
+        text-align: left;
+        line-break: strict;
+        word-break: normal;
+        overflow-wrap: anywhere;
+      }
       #theme-my-theme.ob-dao-reading.ob-article-layout .ob-article-comments {
         margin-top: 2rem;
         padding-top: 1.5rem;
@@ -360,13 +368,13 @@ export default function DaoReadingStyle() {
           .ob-article-body
           .notion-page {
           font-size: 18px;
-          line-height: 1.9;
+          line-height: 2.05;
           letter-spacing: 0.015em;
         }
         #theme-my-theme.ob-dao-reading.ob-article-layout
           .ob-article-body
           .notion-text {
-          margin-bottom: 1.05em !important;
+          margin-bottom: 1.4em !important;
         }
         #theme-my-theme.ob-dao-reading.ob-article-layout
           .ob-article-body

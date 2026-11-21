@@ -226,11 +226,17 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
     >
       <div className='ob-entry-preview-copy' role='status'>
         <strong>{selected.name}</strong>
-        {!(touchKey && available) && (
-          <span>
-            {available ? `阅读「${selected.name}」系列` : '开发中……'}
-          </span>
-        )}
+        <span
+          className={
+            touchKey && available ? 'ob-entry-preview-series' : undefined
+          }
+        >
+          {available
+            ? touchKey
+              ? '系列文章'
+              : `阅读「${selected.name}」系列`
+            : '开发中……'}
+        </span>
       </div>
       {touchKey && (
         <div className='ob-entry-preview-actions'>
@@ -243,17 +249,31 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
               }}
             >
               阅读「{selected.name}」系列
+              <span aria-hidden='true'>→</span>
             </a>
           )}
           <button
             type='button'
+            aria-label='收起板块预览'
+            title='收起'
             onClick={() => {
               setTouchKey('')
               setFocused('')
               setHover('')
             }}
           >
-            收起
+            <svg
+              width='18'
+              height='18'
+              viewBox='0 0 24 24'
+              fill='none'
+              stroke='currentColor'
+              strokeWidth='1.5'
+              strokeLinecap='round'
+              aria-hidden='true'
+            >
+              <path d='m6 6 12 12M18 6 6 18' />
+            </svg>
           </button>
         </div>
       )}
@@ -400,9 +420,9 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           transform: translateX(-50%);
           width: max-content;
           max-width: calc(100vw - 2rem);
-          padding: 0.85rem 1.25rem;
+          padding: 12px 18px;
           border: 1px solid rgba(130, 96, 48, 0.35);
-          border-radius: 12px;
+          border-radius: 16px;
           color: #49351d;
           background: rgba(255, 249, 237, 0.96);
           box-shadow: 0 8px 28px rgba(47, 34, 18, 0.12);
@@ -423,7 +443,11 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           opacity: 0.85;
         }
         .ob-entry-preview-host {
-          background: #f6efe2;
+          background: #e7dfcc;
+          padding: 1px 0;
+        }
+        .ob-entry-preview-host:empty {
+          display: none;
         }
         .ob-entry-preview-touch {
           position: relative;
@@ -433,29 +457,39 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           display: flex;
           align-items: center;
           justify-content: space-between;
-          gap: 0.75rem 1rem;
-          flex-wrap: wrap;
-          width: 100%;
+          gap: 12px;
+          width: min(520px, calc(100% - 32px));
           max-width: none;
-          padding: 0.85rem max(1rem, env(safe-area-inset-right))
-            max(0.85rem, env(safe-area-inset-bottom));
-          border-radius: 0;
-          border-width: 1px 0 0;
-          box-shadow: none;
+          margin: 12px auto max(12px, env(safe-area-inset-bottom));
+          padding: 10px 12px;
+          border-radius: 18px;
+          box-shadow: 0 4px 18px rgba(47, 34, 18, 0.08);
         }
         .ob-entry-preview-touch .ob-entry-preview-copy {
           justify-content: flex-start;
           min-width: 0;
+          gap: 10px;
+        }
+        .ob-entry-preview-touch .ob-entry-preview-copy strong {
+          font-size: 25px;
+          line-height: 1.2;
+          flex: none;
+        }
+        .ob-entry-preview-touch .ob-entry-preview-copy span {
+          font-size: 13px;
+          line-height: 1.5;
+          white-space: nowrap;
         }
         .ob-entry-preview-actions {
           display: flex;
-          gap: 0.75rem;
+          gap: 6px;
           justify-content: center;
           margin-top: 0.75rem;
         }
         .ob-entry-preview-touch .ob-entry-preview-actions {
           margin-top: 0;
           margin-left: auto;
+          flex: none;
         }
         .ob-entry-preview-actions :is(a, button) {
           min-height: 44px;
@@ -463,18 +497,33 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           align-items: center;
           justify-content: center;
           flex: none;
-          padding: 0.5rem 1rem;
+          padding: 8px 12px;
           border: 1px solid rgba(130, 96, 48, 0.4);
-          border-radius: 8px;
+          border-radius: 12px;
           color: inherit;
           background: transparent;
-          font: inherit;
+          font:
+            14px/1.5 system-ui,
+            sans-serif;
           text-decoration: none;
           white-space: nowrap;
           cursor: pointer;
         }
         .ob-entry-preview-actions a {
-          background: rgba(201, 166, 107, 0.18);
+          gap: 8px;
+          background: #4b3b27;
+          color: #fff8e9;
+          border-color: transparent;
+        }
+        .ob-entry-preview-actions button {
+          width: 44px;
+          padding: 8px;
+          border: 0;
+          opacity: 0.7;
+        }
+        .ob-entry-preview-actions button:hover {
+          background: rgba(130, 96, 48, 0.1);
+          opacity: 1;
         }
         .ob-entry-preview-actions :is(a, button):focus-visible {
           outline: 2px solid #9f783c;
@@ -485,8 +534,14 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           background: rgba(36, 29, 21, 0.97);
           border-color: rgba(223, 180, 108, 0.45);
         }
-        html.dark .ob-entry-preview-host {
-          background: #241d15;
+        html.dark .ob-entry-preview-actions a {
+          background: #dbc197;
+          color: #2b251c;
+        }
+        @media (max-width: 359px) {
+          .ob-entry-preview-series {
+            display: none;
+          }
         }
         .ob-ink-layer,
         .ob-puzzle {
