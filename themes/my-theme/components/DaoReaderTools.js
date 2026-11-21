@@ -71,6 +71,9 @@ export default function DaoReaderTools({
   const marked = useRef(null)
   const mounted = useRef(true)
   const mediaCommands = useRef({})
+  const pendingFetch = useRef(null)
+  const temporaryAudio = useRef(null)
+  const nextBuffer = useRef(null)
   const panelId = useId()
   const languages = uiLanguageOptions(
     siteConfig('OURBEINGS_UI_LANGUAGES', CONFIG.OURBEINGS_UI_LANGUAGES, CONFIG),
@@ -98,6 +101,60 @@ export default function DaoReaderTools({
           : 'smooth'
       })
   }
+  const releaseBuffer = () => {
+    pendingFetch.current?.abort()
+    pendingFetch.current = null
+    if (temporaryAudio.current) {
+      URL.revokeObjectURL(temporaryAudio.current)
+      temporaryAudio.current = null
+    }
+  }
+  const releaseNext = () => {
+    const next = nextBuffer.current
+    nextBuffer.current = null
+    if (!next) return
+    next.cancelled = true
+    next.controller?.abort()
+    if (next.url) URL.revokeObjectURL(next.url)
+  }
+  const preloadNext = (index, selectedVoice) => {
+    if (typeof URL.createObjectURL !== 'function' || !chunks.current[index + 1])
+      return
+    if (
+      nextBuffer.current?.index === index + 1 &&
+      nextBuffer.current.voice === selectedVoice
+    )
+      return
+    releaseNext()
+    const slot = {
+      index: index + 1,
+      voice: selectedVoice,
+      controller:
+        typeof AbortController === 'function' ? new AbortController() : null,
+      url: null,
+      cancelled: false
+    }
+    nextBuffer.current = slot
+    slot.promise = (async () => {
+      try {
+        const response = await fetch(
+          daoSpeechUrl(chunks.current[slot.index].text, selectedVoice),
+          { cache: 'no-store', signal: slot.controller?.signal }
+        )
+        if (
+          !response.ok ||
+          !response.headers.get('content-type')?.includes('audio/mpeg')
+        )
+          return null
+        const blob = await response.blob()
+        if (slot.cancelled) return null
+        slot.url = URL.createObjectURL(blob)
+        return slot.url
+      } catch (_) {
+        return null
+      }
+    })()
+  }
   const playPart = async (index, selectedVoice = voiceRef.current) => {
     const parts = prepare(),
       player = audio.current
@@ -107,10 +164,18 @@ export default function DaoReaderTools({
     }
     const target = Math.max(0, Math.min(index, parts.length - 1))
     const attempt = ++requestId.current
+    const queued =
+      nextBuffer.current?.index === target &&
+      nextBuffer.current.voice === selectedVoice
+        ? nextBuffer.current
+        : null
+    if (queued) nextBuffer.current = null
+    else releaseNext()
+    releaseBuffer()
     wantsPlay.current = true
     loading.current = true
     player.pause()
-    player.src = daoSpeechUrl(parts[target].text, selectedVoice)
+    if (!queued) player.src = daoSpeechUrl(parts[target].text, selectedVoice)
     player.playbackRate = rateRef.current
     current.current = target
     setPosition(target)
@@ -118,13 +183,70 @@ export default function DaoReaderTools({
     setState('loading')
     mark(target)
     try {
+      if (queued) {
+        pendingFetch.current = queued.controller
+        const source = queued.url || (await queued.promise)
+        if (requestId.current !== attempt) {
+          if (source) URL.revokeObjectURL(source)
+          return
+        }
+        if (source) {
+          temporaryAudio.current = source
+          player.src = source
+        } else player.src = daoSpeechUrl(parts[target].text, selectedVoice)
+      }
+      player.defaultPlaybackRate = rateRef.current
+      player.playbackRate = rateRef.current
+      if ('preservesPitch' in player) player.preservesPitch = true
       await player.play()
       if (requestId.current === attempt) {
         loading.current = false
         setState('playing')
+        preloadNext(target, selectedVoice)
       }
     } catch (reason) {
       if (requestId.current !== attempt) return
+      // Some embedded browsers cannot play an HTTP stream without byte ranges.
+      // Generate this passage now and buffer it only in memory, then use the same
+      // native player. No recordings are created or persisted on the server.
+      if (
+        reason.name !== 'NotAllowedError' &&
+        reason.name !== 'AbortError' &&
+        typeof URL.createObjectURL === 'function'
+      ) {
+        try {
+          loading.current = true
+          setState('loading')
+          const controller =
+            typeof AbortController === 'function' ? new AbortController() : null
+          pendingFetch.current = controller
+          const response = await fetch(
+            daoSpeechUrl(parts[target].text, selectedVoice),
+            { cache: 'no-store', signal: controller?.signal }
+          )
+          if (
+            !response.ok ||
+            !response.headers.get('content-type')?.includes('audio/mpeg')
+          )
+            throw new Error('audio')
+          const blob = await response.blob()
+          if (requestId.current !== attempt) return
+          temporaryAudio.current = URL.createObjectURL(blob)
+          player.src = temporaryAudio.current
+          player.playbackRate = rateRef.current
+          wantsPlay.current = true
+          await player.play()
+          if (requestId.current === attempt) {
+            loading.current = false
+            setState('playing')
+            preloadNext(target, selectedVoice)
+          }
+          return
+        } catch (fallbackError) {
+          if (requestId.current !== attempt) return
+          reason = fallbackError
+        }
+      }
       wantsPlay.current = false
       loading.current = false
       setState('paused')
@@ -133,6 +255,8 @@ export default function DaoReaderTools({
   }
   const stop = () => {
     requestId.current++
+    releaseBuffer()
+    releaseNext()
     wantsPlay.current = false
     loading.current = false
     audio.current?.pause()
@@ -145,6 +269,11 @@ export default function DaoReaderTools({
     setError('')
   }
   const pause = () => {
+    if (loading.current) {
+      requestId.current++
+      pendingFetch.current?.abort()
+      loading.current = false
+    }
     wantsPlay.current = false
     audio.current?.pause()
     setState('paused')
@@ -160,8 +289,13 @@ export default function DaoReaderTools({
     }
     // Resuming the same HTML audio element preserves the buffered live stream.
     const player = audio.current
-    if (state === 'paused' && !error && player?.getAttribute('src')) {
+    if (
+      state === 'paused' &&
+      (!error || error === 'gesture') &&
+      player?.getAttribute('src')
+    ) {
       wantsPlay.current = true
+      setError('')
       try {
         await player.play()
         setState('playing')
@@ -179,6 +313,8 @@ export default function DaoReaderTools({
       return
     }
     requestId.current++
+    releaseBuffer()
+    releaseNext()
     audio.current?.pause()
     audio.current?.removeAttribute('src')
     audio.current?.load()
@@ -240,13 +376,29 @@ export default function DaoReaderTools({
         setVoice(saved)
         voiceRef.current = saved
       }
+      const savedRate = Number(localStorage.getItem('ob-reading-rate'))
+      if (savedRate >= 0.5 && savedRate <= 3.5) {
+        setRate(savedRate)
+        rateRef.current = savedRate
+      }
     } catch (_) {}
     const player = audio.current
     const pendingRequest = requestId
+    const fetchInProgress = pendingFetch
+    const bufferedUrl = temporaryAudio
+    const queuedAudio = nextBuffer
     return () => {
       mounted.current = false
       pendingRequest.current++
       wantsPlay.current = false
+      fetchInProgress.current?.abort()
+      if (bufferedUrl.current) URL.revokeObjectURL(bufferedUrl.current)
+      if (queuedAudio.current) {
+        queuedAudio.current.cancelled = true
+        queuedAudio.current.controller?.abort()
+        if (queuedAudio.current.url)
+          URL.revokeObjectURL(queuedAudio.current.url)
+      }
       player?.pause()
       player?.removeAttribute('src')
       player?.load()
@@ -286,6 +438,8 @@ export default function DaoReaderTools({
     if (wantsPlay.current) playPart(current.current, value)
     else {
       requestId.current++
+      releaseBuffer()
+      releaseNext()
       audio.current?.removeAttribute('src')
       audio.current?.load()
       setState('paused')
@@ -301,6 +455,9 @@ export default function DaoReaderTools({
       <audio
         ref={audio}
         preload='none'
+        onLoadedMetadata={() => {
+          if (audio.current) audio.current.playbackRate = rateRef.current
+        }}
         onPlaying={() => {
           if (!mounted.current) return
           loading.current = false
@@ -462,31 +619,68 @@ export default function DaoReaderTools({
                   value={voice}
                   onChange={event => switchVoice(event.target.value)}
                 >
-                  {DAO_VOICES.map(item => (
-                    <option key={item.id} value={item.id}>
-                      {english ? item.english : item.name}
-                    </option>
+                  {['female', 'male'].map(gender => (
+                    <optgroup
+                      key={gender}
+                      label={
+                        english
+                          ? gender === 'female'
+                            ? 'Female voices · 5'
+                            : 'Male voices · 5'
+                          : gender === 'female'
+                            ? '女声 · 五种'
+                            : '男声 · 五种'
+                      }
+                    >
+                      {DAO_VOICES.filter(item => item.gender === gender).map(
+                        item => (
+                          <option key={item.id} value={item.id}>
+                            {english ? item.english : item.name}
+                          </option>
+                        )
+                      )}
+                    </optgroup>
                   ))}
                 </select>
               </label>
-              <label>
+              <p className='ob-reader-note ob-reader-voice-advice'>
+                {english
+                  ? 'For essays: Xiaoxiao for warm narration, Yunyang for analysis, Yunjian for expressive history.'
+                  : '思辨分析可选云扬，温和叙事可选晓晓，历史叙事可试云健。'}
+              </p>
+              <label
+                className='ob-reader-speed-label'
+                htmlFor={panelId + '-rate'}
+              >
                 {english ? 'Speed' : '播放速度'}
-                <select
-                  value={rate}
-                  onChange={event => {
-                    const value = Number(event.target.value)
-                    setRate(value)
-                    rateRef.current = value
-                    if (audio.current) audio.current.playbackRate = value
-                  }}
-                >
-                  {[0.8, 1, 1.15, 1.3].map(value => (
-                    <option key={value} value={value}>
-                      {value}×
-                    </option>
-                  ))}
-                </select>
+                <span aria-hidden='true'>{rate.toFixed(2)}×</span>
               </label>
+              <input
+                type='range'
+                id={panelId + '-rate'}
+                aria-label={english ? 'Speed' : '播放速度'}
+                aria-valuetext={rate.toFixed(2) + (english ? ' times' : '倍速')}
+                min='0.5'
+                max='3.5'
+                step='0.05'
+                value={rate}
+                onChange={event => {
+                  const value = Number(event.target.value)
+                  setRate(value)
+                  rateRef.current = value
+                  if (audio.current) {
+                    audio.current.defaultPlaybackRate = value
+                    audio.current.playbackRate = value
+                  }
+                  try {
+                    localStorage.setItem('ob-reading-rate', String(value))
+                  } catch (_) {}
+                }}
+              />
+              <div className='ob-reader-time'>
+                <span>0.5×</span>
+                <span>3.5×</span>
+              </div>
               <div className='ob-reader-playback'>
                 <button
                   type='button'
@@ -748,6 +942,14 @@ export default function DaoReaderTools({
           width: 18px;
           height: 18px;
           accent-color: var(--ob-link);
+        }
+        .ob-reader-panel .ob-reader-speed-label {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+        }
+        .ob-reader-voice-advice {
+          margin: 8px 0 0;
         }
         #theme-my-theme.ob-dao-reading [data-ob-speaking='true'] {
           background: var(--ob-inset);

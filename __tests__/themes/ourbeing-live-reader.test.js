@@ -12,15 +12,22 @@ const mockGlobal = {
 }
 jest.mock('@/lib/global', () => ({ useGlobal: () => mockGlobal }))
 jest.mock('@/lib/config', () => ({ siteConfig: (key, fallback) => fallback }))
+const firstText =
+  '第一段，当前文章的原文。' + '让每个完整论点都能自然连贯地被听见。'.repeat(8)
+const secondText =
+  '第二段，继续按原文朗读。' +
+  '句子之间保持自然节奏，不必反复等待连接。'.repeat(8)
+const thirdText =
+  '最后一段。' + '读完这一段后可以停止，也可以回到文章开头。'.repeat(8)
 const view = (props = {}, locked = false) =>
   render(
     <div id='theme-my-theme' className='ob-dao-reading'>
       <div className='ob-article-body'>
         {!locked && (
           <div id='notion-article'>
-            <p className='notion-text'>第一段，当前文章的原文。</p>
-            <p className='notion-text'>第二段，继续按原文朗读。</p>
-            <p className='notion-text'>最后一段。</p>
+            <p className='notion-text'>{firstText}</p>
+            <p className='notion-text'>{secondText}</p>
+            <p className='notion-text'>{thirdText}</p>
           </div>
         )}
       </div>
@@ -30,7 +37,19 @@ const view = (props = {}, locked = false) =>
 beforeEach(() => {
   jest.clearAllMocks()
   localStorage.clear()
-  global.fetch = jest.fn()
+  global.fetch = jest
+    .fn()
+    .mockResolvedValue({
+      ok: true,
+      headers: { get: () => 'audio/mpeg' },
+      blob: async () => new Blob(['live audio'], { type: 'audio/mpeg' })
+    })
+  URL.createObjectURL = jest
+    .fn()
+    .mockImplementation(
+      () => 'blob:passage-' + URL.createObjectURL.mock.calls.length
+    )
+  URL.revokeObjectURL = jest.fn()
   jest
     .spyOn(HTMLMediaElement.prototype, 'play')
     .mockImplementation(function () {
@@ -57,13 +76,25 @@ test('starts live speech on click, pauses/resumes the same stream, advances and 
   expect(audio.getAttribute('src')).toBeNull()
   expect(
     screen.getByLabelText('朗读音色').querySelectorAll('option')
-  ).toHaveLength(3)
+  ).toHaveLength(10)
+  expect(
+    screen
+      .getByLabelText('朗读音色')
+      .querySelectorAll('optgroup')[0]
+      .querySelectorAll('option')
+  ).toHaveLength(5)
+  expect(
+    screen
+      .getByLabelText('朗读音色')
+      .querySelectorAll('optgroup')[1]
+      .querySelectorAll('option')
+  ).toHaveLength(5)
   await act(async () =>
     fireEvent.click(screen.getByRole('button', { name: '播放', exact: true }))
   )
   const first = new URL(audio.src)
   expect(first.pathname).toBe('/api/dao-speech')
-  expect(first.searchParams.get('text')).toBe('第一段，当前文章的原文。')
+  expect(first.searchParams.get('text')).toBe(firstText)
   expect(first.searchParams.get('voice')).toBe('xiaoxiao')
   expect(screen.getByRole('button', { name: '暂停' })).toBeTruthy()
   fireEvent.click(screen.getByRole('button', { name: '暂停' }))
@@ -73,9 +104,12 @@ test('starts live speech on click, pauses/resumes the same stream, advances and 
   )
   expect(audio.getAttribute('src')).toBe(pausedSrc)
   await act(async () => fireEvent.ended(audio))
-  expect(new URL(audio.src).searchParams.get('text')).toBe(
-    '第二段，继续按原文朗读。'
-  )
+  expect(audio.src).toMatch(/^blob:/)
+  expect(
+    new URL(fetch.mock.calls[0][0], 'https://ourbeings.com').searchParams.get(
+      'text'
+    )
+  ).toBe(secondText)
   await act(async () =>
     fireEvent.change(screen.getByLabelText('朗读音色'), {
       target: { value: 'yunxi' }
@@ -84,12 +118,17 @@ test('starts live speech on click, pauses/resumes the same stream, advances and 
   expect(new URL(audio.src).searchParams.get('voice')).toBe('yunxi')
   expect(localStorage.getItem('ob-reading-voice')).toBe('yunxi')
   fireEvent.change(screen.getByLabelText('播放速度'), {
-    target: { value: '1.15' }
+    target: { value: '0.5' }
   })
-  expect(audio.playbackRate).toBe(1.15)
+  expect(audio.playbackRate).toBe(0.5)
+  fireEvent.change(screen.getByLabelText('播放速度'), {
+    target: { value: '3.5' }
+  })
+  expect(audio.playbackRate).toBe(3.5)
+  expect(localStorage.getItem('ob-reading-rate')).toBe('3.5')
   fireEvent.click(screen.getByRole('button', { name: '停止' }))
   expect(audio.getAttribute('src')).toBeNull()
-  expect(fetch).not.toHaveBeenCalled()
+  expect(URL.revokeObjectURL).toHaveBeenCalled()
   unmount()
   expect(HTMLMediaElement.prototype.pause).toHaveBeenCalled()
 })
@@ -144,4 +183,26 @@ test('splits long Chinese and English text without losing characters or duplicat
   root.innerHTML =
     '<div class="notion-callout"><p class="notion-text">只读一次。</p></div><pre><span class="notion-text">不读代码</span></pre>'
   expect(collectDaoSpeech(root).map(x => x.text)).toEqual(['只读一次。'])
+  root.innerHTML =
+    '<p class="notion-text">短段一。</p><p class="notion-text">短段二。</p>'
+  const combined = collectDaoSpeech(root)
+  expect(combined).toHaveLength(1)
+  expect(combined[0].text).toContain('短段一。\n\n短段二。')
+})
+
+test('falls back to temporary in-memory audio when a browser rejects the live HTTP stream', async () => {
+  HTMLMediaElement.prototype.play.mockRejectedValueOnce(
+    Object.assign(new Error('stream'), { name: 'NotSupportedError' })
+  )
+  const { container } = view()
+  fireEvent.click(screen.getByRole('button', { name: '文章朗读' }))
+  await act(async () =>
+    fireEvent.click(screen.getByRole('button', { name: '播放', exact: true }))
+  )
+  const audio = container.querySelector('audio')
+  expect(audio.src).toMatch(/^blob:/)
+  expect(screen.getByRole('button', { name: '暂停' })).toBeTruthy()
+  const active = audio.src
+  fireEvent.click(screen.getByRole('button', { name: '停止' }))
+  expect(URL.revokeObjectURL).toHaveBeenCalledWith(active)
 })

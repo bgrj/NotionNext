@@ -12,6 +12,13 @@ VOICES = {
     'xiaoxiao': 'zh-CN-XiaoxiaoNeural',
     'yunxi': 'zh-CN-YunxiNeural',
     'xiaoyi': 'zh-CN-XiaoyiNeural',
+    'hsiaochen': 'zh-TW-HsiaoChenNeural',
+    'hsiaoyu': 'zh-TW-HsiaoYuNeural',
+    'xiaobei': 'zh-CN-liaoning-XiaobeiNeural',
+    'yunyang': 'zh-CN-YunyangNeural',
+    'yunjian': 'zh-CN-YunjianNeural',
+    'yunxia': 'zh-CN-YunxiaNeural',
+    'yunjhe': 'zh-TW-YunJheNeural',
 }
 
 
