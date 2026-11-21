@@ -26,6 +26,9 @@ import Header from './components/Header'
 import FriendLinks from './components/FriendLinks'
 import ExistenceLife from './components/ExistenceLife'
 import DaoExplorer from './components/DaoExplorer'
+import DaoArticleHero from './components/DaoArticleHero'
+import DaoReadingStyle from './daoReadingStyle'
+import { isDaoReadingPost } from './readingSettings'
 import OurBeingsIndex from './components/OurBeingsIndex'
 import BeingLife from './components/BeingLife'
 import BeingDesk from './components/BeingDesk'
@@ -136,11 +139,24 @@ const LayoutBase = props => {
     hexoArticleRouteLoading && isArticleSlugPage && onLoading && !chromeLite
   // 所有文章共用全宽布局，不依赖分类、slug 或 Notion 的 fullWidth 开关。
   const articleLayout = Boolean(post) && !chromeLite
+  const daoReading = articleLayout && isDaoReadingPost(post)
   const wideMain = fullWidth || chromeLite || articleLayout || dao
   const listWithoutSidebar = !post && !chromeLite && !fullWidth && !dao
+  const drawerRight = useRef(null)
 
   const headerSlot = chromeLite ? null : post ? (
-    <PostHero {...props} />
+    daoReading ? (
+      <DaoArticleHero
+        {...props}
+        onOpenContents={
+          post?.toc?.length > 1
+            ? () => drawerRight.current?.handleSwitchVisible()
+            : undefined
+        }
+      />
+    ) : (
+      <PostHero {...props} />
+    )
   ) : router.route === '/' &&
     siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
     <Hero {...props} />
@@ -153,7 +169,6 @@ const LayoutBase = props => {
   const heroOnlyHome = !post && router.route === '/' && hasHero
   const wrapperTop = hasHero ? 'pt-0' : 'ob-below-nav'
 
-  const drawerRight = useRef(null)
   const tocRef = isBrowser ? document.getElementById('article-wrapper') : null
 
   // 悬浮按钮内容
@@ -180,9 +195,10 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}${dao ? ' ob-dao-layout' : ''}`}
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}${dao ? ' ob-dao-layout' : ''}${daoReading ? ' ob-dao-reading' : ''}`}
       >
         <Style />
+        {daoReading && <DaoReadingStyle />}
 
         {/* 顶部导航 */}
         <Header {...props} />
@@ -256,7 +272,9 @@ const LayoutBase = props => {
         )}
 
         {/* 悬浮菜单 */}
-        <RightFloatArea floatSlot={floatSlot} />
+        <div className='ob-reading-tools'>
+          <RightFloatArea floatSlot={floatSlot} />
+        </div>
 
         {/* 全文搜索 */}
         <AlgoliaSearchModal cRef={searchModal} {...props} />
@@ -440,6 +458,15 @@ const LayoutSlug = props => {
                   <ArticleRecommend {...props} />
                   <ArticleAdjacent {...props} />
                 </>
+              )}
+              {isDaoReadingPost(post) && (
+                <nav
+                  className='ob-reading-footer-nav'
+                  aria-label='文章阅读导航'
+                >
+                  <SmartLink href='/category/道'>← 返回「道」系列</SmartLink>
+                  <a href='#header'>返回顶部 ↑</a>
+                </nav>
               )}
             </article>
 

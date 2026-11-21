@@ -1,6 +1,11 @@
 export const ARTICLE_BACKGROUND =
   '/assets/ourbeing/web-mainpage-uphand.dc81786dbc79.webp'
 
+export const isDaoReadingPost = post =>
+  post?.type === 'Post' &&
+  (post.category === '道' ||
+    (Array.isArray(post.category) && post.category.includes('道')))
+
 export const articleOpacity = (value, fallback) => {
   if (value === '' || value == null || typeof value === 'boolean')
     return fallback

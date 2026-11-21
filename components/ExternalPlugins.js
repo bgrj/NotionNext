@@ -13,6 +13,7 @@ import WebWhiz from './Webwhiz'
 import { useGlobal } from '@/lib/global'
 import IconFont from './IconFont'
 import { getPageCanCopy } from '@/lib/utils/copyPermission'
+import { isDaoReadingPost } from '@/themes/my-theme/readingSettings'
 
 /**
  * 各种插件脚本
@@ -22,6 +23,9 @@ import { getPageCanCopy } from '@/lib/utils/copyPermission'
 const ExternalPlugin = props => {
   // 读取自Notion的配置
   const { NOTION_CONFIG } = props
+  const quietReading =
+    siteConfig('THEME', null, NOTION_CONFIG) === 'my-theme' &&
+    isDaoReadingPost(props.post)
   const { lang } = useGlobal()
   const [pluginsIdle, setPluginsIdle] = useState(false)
   const innerLinkPages = props?.allLinkPages || props?.allNavPages
@@ -258,8 +262,8 @@ const ExternalPlugin = props => {
       {/* 全局样式嵌入 */}
       <GlobalStyle />
       {ENABLE_ICON_FONT && <IconFont />}
-      {MOUSE_FOLLOW && <MouseFollow />}
-      {CLICK_THOUGHTS && (
+      {MOUSE_FOLLOW && !quietReading && <MouseFollow />}
+      {CLICK_THOUGHTS && !quietReading && (
         <ClickThoughts pages={innerLinkPages} currentPost={props?.post} />
       )}
       {pluginsIdle && THEME_SWITCH && <ThemeSwitch />}
@@ -470,7 +474,12 @@ const ExternalPlugin = props => {
 
       {/* UMAMI 统计 */}
       {UMAMI_ID && (
-        <script async defer src={UMAMI_HOST} data-website-id={UMAMI_ID}></script>
+        <script
+          async
+          defer
+          src={UMAMI_HOST}
+          data-website-id={UMAMI_ID}
+        ></script>
       )}
 
       {/* 谷歌统计 */}

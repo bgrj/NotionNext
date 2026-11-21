@@ -24,6 +24,14 @@ jest.mock('@/lib/config', () => ({
   }
 }))
 jest.mock('@/lib/utils', () => ({ isBrowser: true }))
+jest.mock('@/components/SmartLink', () => ({
+  __esModule: true,
+  default: ({ href, children, className }) => (
+    <a href={href} className={className}>
+      {children}
+    </a>
+  )
+}))
 // The shared Jest setup clears document.head before RTL cleanup; render CSS inline.
 jest.mock('styled-jsx/style', () => ({
   __esModule: true,
@@ -65,7 +73,6 @@ jest.mock('@/components/NotionPage', () => ({
 const emptyModules = [
   '@/components/Mark',
   '@/components/ShareBar',
-  '@/components/SmartLink',
   '@/themes/hexo/components/ArticleAdjacent',
   '@/themes/hexo/components/ArticleCopyright',
   '@/themes/hexo/components/ArticleRecommend',
@@ -122,6 +129,8 @@ jest.mock('@/components/Comment', () => ({
 const { LayoutBase, LayoutSlug } = require('@/themes/my-theme')
 const postFor = category => ({
   type: 'Post',
+  title: '一篇关于思想与日常的长文',
+  publishDay: '2026-4-24',
   category,
   slug: mockRouter.asPath.slice(1),
   toc: [{ id: 'a' }, { id: 'b' }]
@@ -162,31 +171,64 @@ test.each(['道', '术', '我的存在', '我们的存在'])(
   }
 )
 
-test('the TOC can open and close without a desktop-hidden ancestor', () => {
-  const { container } = render(article(postFor('术')))
-  const button = screen.getByTitle('目录')
-  expect(button.parentElement).not.toHaveClass('lg:hidden')
-  expect(container.querySelector('.ob-article-toc')).not.toHaveClass(
-    'lg:hidden'
+test('Dao posts use the reading masthead while other article layouts stay independent', () => {
+  const { container, unmount } = render(article(postFor('道')))
+  expect(container.querySelector('#theme-my-theme')).toHaveClass(
+    'ob-dao-reading'
   )
-  fireEvent.click(button)
-  expect(container.querySelector('#right-drawer-background')).toHaveClass(
-    'block'
+  expect(container.querySelector('.ob-reading-heading h1')).toHaveTextContent(
+    '一篇关于思想与日常的长文'
   )
-  fireEvent.click(container.querySelector('#right-drawer-background'))
-  expect(container.querySelector('#right-drawer-background')).toHaveClass(
-    'hidden'
+  expect(container.querySelector('.ob-reading-back')).toHaveAttribute(
+    'href',
+    '/category/道'
   )
+  expect(container.querySelector('time')).toHaveAttribute(
+    'datetime',
+    '2026-04-24'
+  )
+  unmount()
+  const other = render(article(postFor('术')))
+  expect(other.container.querySelector('#theme-my-theme')).not.toHaveClass(
+    'ob-dao-reading'
+  )
+  expect(screen.getByTestId('post-hero')).toBeTruthy()
 })
 
-test('locked articles keep the full-width shell without rendering protected content', () => {
-  const { container } = render(article(postFor('术'), { lock: true }))
-  expect(container.querySelector('#theme-my-theme')).toHaveClass(
-    'ob-article-layout'
-  )
-  expect(screen.getByTestId('article-lock')).toBeTruthy()
-  expect(container.querySelector('#notion-article')).toBeNull()
-})
+test.each(['道', '术'])(
+  'the %s TOC can open and close without a desktop-hidden ancestor',
+  category => {
+    const { container } = render(article(postFor(category)))
+    const button =
+      category === '道'
+        ? container.querySelector('.ob-reading-contents')
+        : screen.getByTitle('目录')
+    expect(button.parentElement).not.toHaveClass('lg:hidden')
+    expect(container.querySelector('.ob-article-toc')).not.toHaveClass(
+      'lg:hidden'
+    )
+    fireEvent.click(button)
+    expect(container.querySelector('#right-drawer-background')).toHaveClass(
+      'block'
+    )
+    fireEvent.click(container.querySelector('#right-drawer-background'))
+    expect(container.querySelector('#right-drawer-background')).toHaveClass(
+      'hidden'
+    )
+  }
+)
+
+test.each(['道', '术'])(
+  'locked %s articles keep the shell without rendering protected content',
+  category => {
+    const { container } = render(article(postFor(category), { lock: true }))
+    expect(container.querySelector('#theme-my-theme')).toHaveClass(
+      'ob-article-layout'
+    )
+    expect(screen.getByTestId('article-lock')).toBeTruthy()
+    expect(container.querySelector('#notion-article')).toBeNull()
+  }
+)
 
 test('category lists retain their constrained layout', () => {
   mockRouter.asPath = '/category/术'
