@@ -106,7 +106,9 @@ describe('existence crawl guard', () => {
     expect(robots).toContain('Allow: /')
     expect(robots).toContain('Disallow: /diaries')
     expect(robots).toContain('Disallow: /category/我的存在')
-    expect(robots).toContain('User-agent: GPTBot')
-    expect(robots.split('\n')).not.toContain('Disallow: /')
+    expect(robots).toContain('User-agent: GPTBot\nDisallow: /')
+    const defaultAgent = robots.split('\n\n')[0]
+    expect(defaultAgent).toContain('User-agent: *')
+    expect(defaultAgent.split('\n')).not.toContain('Disallow: /')
   })
 })

@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react'
 import SmartLink from '@/components/SmartLink'
-import { useUser } from '@clerk/nextjs'
+import { useClerkSession } from '@/components/ClerkSession'
 import { DESK_HREF, beingFromClerkUser } from '../beings'
 
 const OurBeingsJoinStatus = ({ gated } = {}) => {
-  const { isLoaded, isSignedIn, user } = useUser()
+  const { isLoaded, isSignedIn, user } = useClerkSession()
   const [me, setMe] = useState(null)
 
   useEffect(() => {

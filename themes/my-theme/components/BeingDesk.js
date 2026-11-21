@@ -1,5 +1,5 @@
-import { useClerk, useUser } from '@clerk/nextjs'
 import SmartLink from '@/components/SmartLink'
+import { useClerkSession } from '@/components/ClerkSession'
 import { OurBeingsAccountPrompt } from './OurBeingsAuth'
 import { useEffect, useMemo, useState } from 'react'
 import {
@@ -34,14 +34,10 @@ const profileFromBeing = being => {
 
 const BeingDesk = () => {
   const enabled = isClerkEnabled()
-  const { isLoaded, isSignedIn, user } = enabled
-    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
-      useUser()
-    : { isLoaded: true, isSignedIn: false, user: null }
-  const { signOut } = enabled
-    ? /* eslint-disable-next-line react-hooks/rules-of-hooks */
-      useClerk()
-    : { signOut: async () => {} }
+  const session = useClerkSession()
+  const { isLoaded, isSignedIn, user, signOut } = enabled
+    ? session
+    : { isLoaded: true, isSignedIn: false, user: null, signOut: async () => {} }
   const [me, setMe] = useState(null)
   const [writings, setWritings] = useState([])
   const [draft, setDraft] = useState(emptyDraft)

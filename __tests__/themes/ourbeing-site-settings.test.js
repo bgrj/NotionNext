@@ -55,6 +55,15 @@ jest.mock('@/themes/my-theme/beings', () => ({
   DESK_HREF: '/our-beings/me',
   isClerkEnabled: () => mockClerkEnabled
 }))
+jest.mock('@/components/ClerkSession', () => ({
+  useClerkSession: () => ({
+    active: mockSignedIn,
+    isLoaded: true,
+    isSignedIn: mockSignedIn,
+    user: null,
+    signOut: async () => {}
+  })
+}))
 jest.mock('@clerk/nextjs', () => ({
   SignedIn: ({ children }) => (mockSignedIn ? children : null),
   SignedOut: ({ children }) => (mockSignedIn ? null : children)

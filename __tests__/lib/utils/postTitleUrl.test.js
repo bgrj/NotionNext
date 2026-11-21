@@ -99,12 +99,12 @@ describe('postTitleUrl', () => {
     })
   })
 
-  it('normalizes ourbeings links to https://www', () => {
+  it('normalizes ourbeings links to the apex host', () => {
     expect(canonicalOrigin('http://www.ourbeings.com')).toBe(
-      'https://www.ourbeings.com'
+      'https://ourbeings.com'
     )
     expect(canonicalOrigin('https://ourbeings.com')).toBe(
-      'https://www.ourbeings.com'
+      'https://ourbeings.com'
     )
     expect(
       displayPostUrl('http://www.ourbeings.com', {
@@ -114,7 +114,7 @@ describe('postTitleUrl', () => {
         slugBase: 'philosophy/2026/10/23/18'
       })
     ).toBe(
-      `https://www.ourbeings.com/philosophy/2026/10/23/18/${safeTitle}`
+      `https://ourbeings.com/philosophy/2026/10/23/18/${safeTitle}`
     )
     expect(
       publicPostUrl('http://www.ourbeings.com', {
@@ -123,6 +123,6 @@ describe('postTitleUrl', () => {
         slug: `philosophy/2026/10/23/18/${safeTitle}`,
         slugBase: 'philosophy/2026/10/23/18'
       })
-    ).toBe('https://www.ourbeings.com/philosophy/2026/10/23/18')
+    ).toBe('https://ourbeings.com/philosophy/2026/10/23/18')
   })
 })

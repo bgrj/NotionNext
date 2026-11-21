@@ -1,11 +1,13 @@
 import { UserProfile } from '@clerk/nextjs'
+import { useClerkSession } from '@/components/ClerkSession'
 /**
  * 控制台用户账号面板
  * @returns
  */
 export default function DashboardUser() {
+  const session = useClerkSession()
   const enableClerk = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
-  if (!enableClerk) {
+  if (!enableClerk || !session.active) {
     return null
   }
   return (

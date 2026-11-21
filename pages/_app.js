@@ -10,7 +10,7 @@ import useAdjustStyle from '@/hooks/useAdjustStyle'
 import { GlobalContextProvider } from '@/lib/global'
 import { getBaseLayoutByTheme } from '@/themes/theme'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { getQueryParam } from '../lib/utils'
 import ErrorHandler from '@/lib/utils/errorHandler'
 
@@ -22,6 +22,8 @@ import SEO from '@/components/SEO'
 import { enUS, zhCN } from '@clerk/localizations'
 import dynamic from 'next/dynamic'
 import { DESK_HREF, isClerkEnabled } from '@/themes/my-theme/beings'
+import { ClerkSessionBridge, ClerkSessionProvider } from '@/components/ClerkSession'
+import { isEmbeddedWebview } from '@/lib/security/visitorAccess'
 // import { ClerkProvider } from '@clerk/nextjs'
 const ClerkProvider = dynamic(() =>
   import('@clerk/nextjs').then(m => m.ClerkProvider)
@@ -84,6 +86,13 @@ const MyApp = ({ Component, pageProps }) => {
   )
 
   const enableClerk = isClerkEnabled()
+  const [clerkOn, setClerkOn] = useState(false)
+  useEffect(() => {
+    if (!enableClerk) return undefined
+    if (isEmbeddedWebview(window.navigator.userAgent || '')) return undefined
+    setClerkOn(true)
+    return undefined
+  }, [enableClerk])
   const clerkLocale = String(route.locale || BLOG.LANG || '')
     .toLowerCase()
     .startsWith('zh')
@@ -102,20 +111,21 @@ const MyApp = ({ Component, pageProps }) => {
     </AppErrorBoundary>
   )
   return (
-    <>
-      {enableClerk ? (
+    <ClerkSessionProvider>
+      {clerkOn ? (
         <ClerkProvider
           localization={clerkLocale}
           signInUrl='/sign-in'
           signUpUrl='/sign-up'
           signInFallbackRedirectUrl={DESK_HREF}
           signUpFallbackRedirectUrl={DESK_HREF}>
+          <ClerkSessionBridge />
           {content}
         </ClerkProvider>
       ) : (
         content
       )}
-    </>
+    </ClerkSessionProvider>
   )
 }
 

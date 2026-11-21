@@ -25,6 +25,15 @@ jest.mock('@clerk/nextjs', () => ({
   useUser: () => mockUser,
   useClerk: () => ({ signOut: mockSignOut })
 }))
+jest.mock('@/components/ClerkSession', () => ({
+  useClerkSession: () => ({
+    active: true,
+    isLoaded: mockUser.isLoaded,
+    isSignedIn: mockUser.isSignedIn,
+    user: mockUser,
+    signOut: mockSignOut
+  })
+}))
 jest.mock('next/dynamic', () => ({
   __esModule: true,
   default: loader => {

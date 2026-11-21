@@ -7,6 +7,11 @@ import {
   shouldRefuseExistenceCrawl
 } from '@/lib/security/existenceCrawl'
 import {
+  isContentScraper,
+  isEmbeddedWebview,
+  readUserAgent
+} from '@/lib/security/visitorAccess'
+import {
   getNotionRedirectId,
   safeRedirectPath
 } from '@/lib/utils/notionRedirect'
@@ -110,39 +115,70 @@ const noAuthMiddleware = async (req: NextRequest, ev: any) => {
   }
   return markExistenceRobots(NextResponse.next(), req.nextUrl.pathname)
 }
+const publishableKey = String(
+  process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || ''
+).trim()
+
 /**
- * 鉴权中间件
+ * Clerk route protection. Exported so tests can call it without the
+ * development-instance handshake that clerkMiddleware performs first.
  */
-const authMiddleware = String(process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY || '').trim()
-  ? clerkMiddleware((auth, req) => {
-      const refused = refuseAutomatedExistence(req)
-      if (refused) return refused
-      const { userId } = auth()
-      // 处理 /dashboard 路由的登录保护
-      if (isTenantRoute(req)) {
-        if (!userId) {
-          // 用户未登录，重定向到 /sign-in
-          const url = new URL(
-            authHref('in', `${req.nextUrl.pathname}${req.nextUrl.search}`),
-            req.url
-          )
-          return NextResponse.redirect(url)
-        }
-      }
+export const handleClerkAuth = (auth, req) => {
+  const refused = refuseAutomatedExistence(req)
+  if (refused) return refused
+  const { userId } = auth()
+  if (isTenantRoute(req)) {
+    if (!userId) {
+      const url = new URL(
+        authHref('in', `${req.nextUrl.pathname}${req.nextUrl.search}`),
+        req.url
+      )
+      return NextResponse.redirect(url)
+    }
+  }
 
-      // 处理管理员相关权限保护
-      if (isTenantAdminRoute(req)) {
-        auth().protect(has => {
-          return (
-            has({ permission: 'org:sys_memberships:manage' }) ||
-            has({ permission: 'org:sys_domains_manage' })
-          )
-        })
-      }
-
-      // 默认继续处理请求
-      return markExistenceRobots(NextResponse.next(), req.nextUrl.pathname)
+  if (isTenantAdminRoute(req)) {
+    auth().protect(has => {
+      return (
+        has({ permission: 'org:sys_memberships:manage' }) ||
+        has({ permission: 'org:sys_domains_manage' })
+      )
     })
+  }
+
+  return markExistenceRobots(NextResponse.next(), req.nextUrl.pathname)
+}
+
+const clerkProtected = publishableKey
+  ? clerkMiddleware(handleClerkAuth)
   : noAuthMiddleware
 
-export default authMiddleware
+const refuseContentScraper = (req: NextRequest) => {
+  const pathname = req.nextUrl?.pathname || ''
+  if (pathname.startsWith('/api') || pathname.startsWith('/_next')) return null
+  const userAgent = readUserAgent(req)
+  if (!isContentScraper(userAgent)) return null
+  return new NextResponse('此页面不向自动抓取工具提供。', {
+    status: 403,
+    headers: {
+      'Content-Type': 'text/plain; charset=utf-8',
+      'Cache-Control': 'private, no-store',
+      'X-Robots-Tag': 'noindex, nofollow, noarchive, nosnippet'
+    }
+  })
+}
+
+/**
+ * In-app browsers such as WeChat never enter Clerk's dev-browser handshake.
+ * That handshake is a cross-site redirect their webview does not finish,
+ * so the page otherwise never opens. Scripted clients are refused here.
+ */
+export default async function middleware(req: NextRequest, ev: any) {
+  const scraped = refuseContentScraper(req)
+  if (scraped) return scraped
+  const userAgent = readUserAgent(req)
+  if (!publishableKey || (userAgent && isEmbeddedWebview(userAgent))) {
+    return noAuthMiddleware(req, ev)
+  }
+  return clerkProtected(req, ev)
+}

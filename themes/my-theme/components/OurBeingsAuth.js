@@ -3,6 +3,8 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useClerk, useUser } from '@clerk/nextjs'
+import { useClerkSession } from '@/components/ClerkSession'
+import { isEmbeddedWebview } from '@/lib/security/visitorAccess'
 import {
   authHref,
   authReturnFromQuery,
@@ -239,6 +241,22 @@ function UnavailablePanel() {
         className='ob-auth__button ob-auth__button--quiet'
       >
         浏览我们的存在
+      </Link>
+    </div>
+  )
+}
+
+function OpenInBrowserPanel() {
+  return (
+    <div className='ob-auth__state' role='status'>
+      <h2>请用系统浏览器登录</h2>
+      <p>
+        微信、QQ
+        这类窗口打不开登录服务。页面本身可以继续阅读。登录时，用系统自带的浏览器打开
+        ourbeings.com。
+      </p>
+      <Link href='/' className='ob-auth__button ob-auth__button--quiet'>
+        回到首页
       </Link>
     </div>
   )
@@ -660,17 +678,20 @@ export function OurBeingsAccountPrompt({ available = true }) {
 
 function OurBeingsJoinGate({ mode = 'in' }) {
   const router = useRouter()
+  const session = useClerkSession()
   const signingUp = mode === 'up'
   const returnTo = authReturnFromQuery(router.query)
+  const [embedded, setEmbedded] = useState(false)
+  useEffect(() => {
+    setEmbedded(isEmbeddedWebview(window.navigator.userAgent || ''))
+  }, [])
+  let panel = <SignedPanel signingUp={signingUp} returnTo={returnTo} />
+  if (!isClerkEnabled()) panel = <UnavailablePanel />
+  else if (embedded) panel = <OpenInBrowserPanel />
+  else if (!router.isReady || !session.active) panel = <LoadingPanel />
   return (
     <AuthShell signingUp={signingUp} returnTo={returnTo}>
-      {!isClerkEnabled() ? (
-        <UnavailablePanel />
-      ) : !router.isReady ? (
-        <LoadingPanel />
-      ) : (
-        <SignedPanel signingUp={signingUp} returnTo={returnTo} />
-      )}
+      {panel}
     </AuthShell>
   )
 }
