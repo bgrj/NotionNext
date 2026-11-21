@@ -18,6 +18,26 @@ export const HOME_SECTIONS = [
   { key: 'shu', name: '术', english: 'Practice', href: '/category/术' }
 ]
 
+// 术的分类页还没作为板块开放。主页和设置里的「术」暂时去雅思练习。
+// 删掉这一项后，术会回到「开发中……」。
+export const TEMPORARY_SECTION_LINKS = {
+  shu: {
+    href: 'https://ourbeings.com/ielts/',
+    label: '进入雅思练习',
+    shortLabel: '雅思练习',
+    labelEn: 'Open IELTS practice',
+    shortLabelEn: 'IELTS practice'
+  }
+}
+
+export function temporarySectionLink(key) {
+  return TEMPORARY_SECTION_LINKS[key] || null
+}
+
+export function isExternalSectionHref(href) {
+  return /^https?:\/\//i.test(href)
+}
+
 const SECTION_KEYS = ['our', 'self', 'dao', 'shu']
 
 export function homeSections(value, fallback = DEFAULT_HOME_SECTIONS) {

@@ -11,7 +11,8 @@ import {
   DEFAULT_HOME_SECTIONS,
   DEFAULT_OPEN_SECTIONS,
   homeSections,
-  openHomeSections
+  openHomeSections,
+  temporarySectionLink
 } from '../homeSections'
 import { settingsMenu } from '../settingsMenu'
 
@@ -147,36 +148,54 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
               {HOME_SECTIONS.filter(section =>
                 visible.includes(section.key)
               ).map(section => {
-                const enabled = available.includes(section.key)
+                const temporary = temporarySectionLink(section.key)
+                const enabled =
+                  available.includes(section.key) || Boolean(temporary)
+                const href = temporary?.href || section.href
                 const label = english ? section.english : section.name
+                const hint = temporary
+                  ? english
+                    ? temporary.shortLabelEn
+                    : temporary.shortLabel
+                  : enabled
+                    ? english
+                      ? 'Read articles'
+                      : '阅读文章'
+                    : english
+                      ? 'Coming soon'
+                      : '开发中……'
                 const content = (
                   <>
                     <span>{label}</span>
-                    <small aria-hidden='true'>
-                      {enabled
-                        ? english
-                          ? 'Read articles'
-                          : '阅读文章'
-                        : english
-                          ? 'Coming soon'
-                          : '开发中……'}
-                    </small>
+                    <small aria-hidden='true'>{hint}</small>
                   </>
                 )
                 return enabled ? (
-                  <Link
-                    key={section.key}
-                    href={section.href}
-                    prefetch={false}
-                    aria-label={label}
-                    data-settings-first={
-                      section.key === 'dao' ? true : undefined
-                    }
-                    data-open='true'
-                    onClick={() => setOpen(false)}
-                  >
-                    {content}
-                  </Link>
+                  /^https?:\/\//i.test(href) ? (
+                    <a
+                      key={section.key}
+                      href={href}
+                      aria-label={label}
+                      data-open='true'
+                      onClick={() => setOpen(false)}
+                    >
+                      {content}
+                    </a>
+                  ) : (
+                    <Link
+                      key={section.key}
+                      href={href}
+                      prefetch={false}
+                      aria-label={label}
+                      data-settings-first={
+                        section.key === 'dao' ? true : undefined
+                      }
+                      data-open='true'
+                      onClick={() => setOpen(false)}
+                    >
+                      {content}
+                    </Link>
+                  )
                 ) : (
                   <button
                     key={section.key}

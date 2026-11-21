@@ -7,7 +7,9 @@ import {
   DEFAULT_HOME_SECTIONS,
   DEFAULT_OPEN_SECTIONS,
   homeSections,
-  openHomeSections
+  isExternalSectionHref,
+  openHomeSections,
+  temporarySectionLink
 } from '../homeSections'
 
 // 首页四块：整片天空沿手的外轮廓分成四块，每块一幅连体行书。
@@ -158,7 +160,10 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
   const previewId = useId()
   const active = touchKey || focused || hover
   const selected = pieces.find(piece => piece.key === active)
-  const available = selected && openSections.includes(selected.key)
+  const selectedLink = selected && temporarySectionLink(selected.key)
+  const available =
+    selected && (selectedLink || openSections.includes(selected.key))
+  const selectedHref = selectedLink?.href || selected?.href
   const clearHover = () => {
     clearTimeout(hoverTimer.current)
     hoverTimer.current = setTimeout(() => setHover(''), 160)
@@ -197,7 +202,8 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
     }
   }, [touchKey])
   const activate = (event, piece) => {
-    const enabled = openSections.includes(piece.key)
+    const link = temporarySectionLink(piece.key)
+    const enabled = Boolean(link) || openSections.includes(piece.key)
     const touch = pointerType.current === 'touch' && event.detail !== 0
     if (!enabled) {
       event.preventDefault()
@@ -212,8 +218,10 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
       return
     }
     if (event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
+    const href = link?.href || piece.href
+    if (isExternalSectionHref(href)) return
     event.preventDefault()
-    router.push(piece.href)
+    router.push(href)
   }
   const preview = selected && (
     <aside
@@ -233,8 +241,8 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
         >
           {available
             ? touchKey
-              ? '系列文章'
-              : `阅读「${selected.name}」系列`
+              ? selectedLink?.shortLabel || '系列文章'
+              : selectedLink?.label || `阅读「${selected.name}」系列`
             : '开发中……'}
         </span>
       </div>
@@ -242,13 +250,21 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
         <div className='ob-entry-preview-actions'>
           {available && (
             <a
-              href={selected.href}
+              href={selectedHref}
               onClick={event => {
+                if (
+                  event.metaKey ||
+                  event.ctrlKey ||
+                  event.shiftKey ||
+                  event.altKey ||
+                  isExternalSectionHref(selectedHref)
+                )
+                  return
                 event.preventDefault()
-                router.push(selected.href)
+                router.push(selectedHref)
               }}
             >
-              阅读「{selected.name}」系列
+              {selectedLink?.label || `阅读「${selected.name}」系列`}
               <span aria-hidden='true'>→</span>
             </a>
           )}
@@ -349,12 +365,13 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
           aria-label='四个板块'
         >
           {pieces.map(piece => {
-            const enabled = openSections.includes(piece.key)
+            const link = temporarySectionLink(piece.key)
+            const enabled = Boolean(link) || openSections.includes(piece.key)
             const Element = enabled ? 'a' : 'g'
             return (
               <Element
                 key={piece.key}
-                href={enabled ? piece.href : undefined}
+                href={enabled ? link?.href || piece.href : undefined}
                 role={enabled ? undefined : 'button'}
                 tabIndex={0}
                 aria-label={piece.name}

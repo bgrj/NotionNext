@@ -148,14 +148,18 @@ test('navigation closes the panel', () => {
   expect(screen.queryByRole('dialog')).toBeNull()
 })
 
-test('only Dao opens content; the three other sections give a coming-soon notice', () => {
+test('Dao opens its series and 术 temporarily opens IELTS practice', () => {
   render(<SiteSettings />)
   open()
   expect(screen.getByRole('link', { name: '道' })).toHaveAttribute(
     'href',
     '/category/道'
   )
-  for (const name of ['我们的存在', '我的存在', '术']) {
+  expect(screen.getByRole('link', { name: '术' })).toHaveAttribute(
+    'href',
+    'https://ourbeings.com/ielts/'
+  )
+  for (const name of ['我们的存在', '我的存在']) {
     expect(screen.queryByRole('link', { name })).toBeNull()
     fireEvent.click(screen.getByRole('button', { name }))
     expect(screen.getByRole('status')).toHaveTextContent(`${name} · 开发中……`)

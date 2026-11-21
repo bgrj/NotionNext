@@ -59,7 +59,45 @@ test('a second touch on Dao can also enter the series', () => {
   expect(mockPush).toHaveBeenCalledTimes(1)
 })
 
-test.each(['我们的存在', '我的存在', '术'])(
+test('术 temporarily opens the IELTS practice', () => {
+  render(<HeroPuzzle />)
+  const shu = screen.getByRole('link', { name: '术' })
+  expect(shu).toHaveAttribute('href', 'https://ourbeings.com/ielts/')
+  fireEvent.pointerEnter(shu)
+  expect(screen.getByRole('status')).toHaveTextContent('进入雅思练习')
+  const event = createEvent.click(shu)
+  fireEvent(shu, event)
+  expect(event.defaultPrevented).toBe(false)
+  expect(mockPush).not.toHaveBeenCalled()
+})
+
+test('first touch previews 术; the practice link opens IELTS', () => {
+  render(<HeroPuzzle />)
+  const shu = screen.getByRole('link', { name: '术' })
+  touch(shu)
+  expect(mockPush).not.toHaveBeenCalled()
+  expect(screen.getByRole('status')).toHaveTextContent('术')
+  expect(screen.getByRole('status')).toHaveTextContent('雅思练习')
+  const action = screen.getByRole('link', { name: '进入雅思练习' })
+  expect(action).toHaveAttribute('href', 'https://ourbeings.com/ielts/')
+  const event = createEvent.click(action)
+  fireEvent(action, event)
+  expect(event.defaultPrevented).toBe(false)
+  expect(mockPush).not.toHaveBeenCalled()
+})
+
+test('a second touch on 术 opens the IELTS practice', () => {
+  render(<HeroPuzzle />)
+  const shu = screen.getByRole('link', { name: '术' })
+  touch(shu)
+  const event = createEvent.click(shu)
+  Object.defineProperty(event, 'detail', { value: 1 })
+  fireEvent(shu, event)
+  expect(event.defaultPrevented).toBe(false)
+  expect(mockPush).not.toHaveBeenCalled()
+})
+
+test.each(['我们的存在', '我的存在'])(
   '%s never navigates and supports keyboard previews',
   name => {
     render(<HeroPuzzle />)

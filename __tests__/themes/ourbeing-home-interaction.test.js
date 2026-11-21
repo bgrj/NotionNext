@@ -40,7 +40,10 @@ test('all four plates render, and only Dao has an article link', () => {
   const { markup, styles } = render(<HeroPuzzle />)
   expect(markup).toContain('href="/category/道"')
   expect(markup).toContain('aria-label="道"')
-  for (const name of ['我们的存在', '我的存在', '术']) {
+  expect(markup).toContain('href="https://ourbeings.com/ielts/"')
+  expect(markup).toContain('aria-label="术"')
+  expect(markup).not.toContain('href="/category/术"')
+  for (const name of ['我们的存在', '我的存在']) {
     expect(markup).not.toContain(`href="/category/${name}"`)
     expect(markup).toContain(`aria-label="${name}"`)
   }
