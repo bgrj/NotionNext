@@ -4,6 +4,7 @@ import NotionPage from '@/components/NotionPage'
 import ShareBar from '@/components/ShareBar'
 import { siteConfig } from '@/lib/config'
 import { syncPrettyPostUrl } from '@/lib/utils/postTitleUrl'
+import { hasEnabledComments } from '@/lib/utils/comments'
 import { useGlobal } from '@/lib/global'
 import { isBrowser } from '@/lib/utils'
 import { Transition } from '@headlessui/react'
@@ -27,6 +28,7 @@ import FriendLinks from './components/FriendLinks'
 import ExistenceLife from './components/ExistenceLife'
 import DaoExplorer from './components/DaoExplorer'
 import DaoArticleHero from './components/DaoArticleHero'
+import DaoReaderTools from './components/DaoReaderTools'
 import DaoReadingStyle from './daoReadingStyle'
 import { isDaoReadingPost } from './readingSettings'
 import OurBeingsIndex from './components/OurBeingsIndex'
@@ -272,9 +274,30 @@ const LayoutBase = props => {
         )}
 
         {/* 悬浮菜单 */}
-        <div className='ob-reading-tools'>
-          <RightFloatArea floatSlot={floatSlot} />
-        </div>
+        {daoReading ? (
+          <DaoReaderTools
+            key={post.id || post.slug}
+            articleId={post.id}
+            title={post.title}
+            onOpenComments={
+              post.comment !== 'Hide' && hasEnabledComments(siteConfig)
+                ? () =>
+                    document
+                      .getElementById('comment')
+                      ?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+                : undefined
+            }
+            onOpenContents={
+              post?.toc?.length > 1
+                ? () => drawerRight.current?.handleSwitchVisible()
+                : undefined
+            }
+          />
+        ) : (
+          <div className='ob-reading-tools'>
+            <RightFloatArea floatSlot={floatSlot} />
+          </div>
+        )}
 
         {/* 全文搜索 */}
         <AlgoliaSearchModal cRef={searchModal} {...props} />
