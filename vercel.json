@@ -3,5 +3,11 @@
   "trailingSlash": false,
   "installCommand": "yarn install --frozen-lockfile",
   "ignoreCommand": "case \"$VERCEL_GIT_COMMIT_MESSAGE\" in *\"[skip-version]\"*) exit 0;; *) exit 1;; esac",
-  "headers": []
+  "headers": [],
+  "functions": {
+    "api/dao-speech.py": {
+      "maxDuration": 60,
+      "excludeFiles": "{node_modules/**,public/**,docs/**,themes/**,__tests__/**,.tmp/**,.git/**}"
+    }
+  }
 }
