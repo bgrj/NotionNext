@@ -194,19 +194,7 @@ const SEO = props => {
         />
       )}
       {ADSENSE_GOOGLE_ID && (
-        <>
-          <meta name='google-adsense-account' content={ADSENSE_GOOGLE_ID} />
-          <link
-            rel='preconnect'
-            href='https://pagead2.googlesyndication.com'
-            crossOrigin='anonymous'
-          />
-          <script
-            async
-            src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_GOOGLE_ID}`}
-            crossOrigin='anonymous'
-          />
-        </>
+        <meta name='google-adsense-account' content={ADSENSE_GOOGLE_ID} />
       )}
 
       {/* 基础SEO元数据 */}
@@ -304,12 +292,10 @@ const SEO = props => {
         }}
       />
 
-      {/* DNS预取和预连接 */}
+      {/* 国内网络访问不到谷歌。不要在首屏预连接统计或广告域名，否则微信会一直等这些连接。 */}
       {hasGoogleFontsUrl && (
         <link rel='dns-prefetch' href='//fonts.googleapis.com' />
       )}
-      <link rel='dns-prefetch' href='//www.google-analytics.com' />
-      <link rel='dns-prefetch' href='//www.googletagmanager.com' />
       {hasGoogleFontsUrl && (
         <link
           rel='preconnect'

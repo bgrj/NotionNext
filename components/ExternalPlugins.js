@@ -1,4 +1,5 @@
 import { siteConfig } from '@/lib/config'
+import { isEmbeddedWebview } from '@/lib/security/visitorAccess'
 import { convertInnerUrl } from '@/lib/db/notion/convertInnerUrl'
 import { isBrowser, loadExternalResource } from '@/lib/utils'
 import dynamic from 'next/dynamic'
@@ -206,7 +207,10 @@ const ExternalPlugin = props => {
   const router = useRouter()
   useEffect(() => {
     // 异步渲染谷歌广告
-    if (ADSENSE_GOOGLE_ID) {
+    if (
+      ADSENSE_GOOGLE_ID &&
+      !isEmbeddedWebview(window.navigator.userAgent || '')
+    ) {
       setTimeout(() => {
         initGoogleAdsense(ADSENSE_GOOGLE_ID)
       }, 3000)
