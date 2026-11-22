@@ -149,6 +149,17 @@ beforeEach(() => {
   mockRouter.route = mockRouter.pathname
 })
 
+test('the theme displays a public summary before the body and hides it while locked', () => {
+  const post = { ...postFor('道'), aiSummary: 'SUMMARY_VISIBILITY_CANARY' }
+  const { container, unmount } = render(article(post))
+  const body = container.querySelector('.ob-article-body')
+  expect(body.firstElementChild).toHaveAttribute('data-ai-summary')
+  expect(screen.getByText('SUMMARY_VISIBILITY_CANARY')).toBeInTheDocument()
+  unmount()
+  render(article(post, { lock: true }))
+  expect(screen.queryByText('SUMMARY_VISIBILITY_CANARY')).toBeNull()
+})
+
 test.each(['道', '术', '我的存在', '我们的存在'])(
   '%s articles are full width without Notion fullWidth enabled',
   category => {

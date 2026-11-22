@@ -1,4 +1,5 @@
 import Comment from '@/components/Comment'
+import AISummary from '@/components/AISummary'
 import replaceSearchResult from '@/components/Mark'
 import NotionPage from '@/components/NotionPage'
 import ShareBar from '@/components/ShareBar'
@@ -470,6 +471,7 @@ const LayoutSlug = props => {
             >
               {/* Notion文章主体 */}
               <section className='ob-article-body w-full min-w-0 mx-auto'>
+                <AISummary aiSummary={post.aiSummary} provider='DeepSeek' />
                 {post && <NotionPage post={post} />}
               </section>
 
