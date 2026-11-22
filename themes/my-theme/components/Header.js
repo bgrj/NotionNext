@@ -1,6 +1,7 @@
 import { siteConfig } from '@/lib/config'
 import throttle from 'lodash.throttle'
 import SmartLink from '@/components/SmartLink'
+import HeaderCommunity from './HeaderCommunity'
 import SiteSettings from './SiteSettings'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
@@ -93,6 +94,7 @@ const Header = ({ siteInfo, customMenu }) => {
               {siteInfo?.title || siteConfig('TITLE')}
             </SmartLink>
             <div className='ob-nav-right'>
+              <HeaderCommunity />
               <SiteSettings
                 customMenu={customMenu}
                 onOpenChange={handleSettingsOpen}
@@ -127,6 +129,7 @@ const Header = ({ siteInfo, customMenu }) => {
           z-index: 2;
           display: flex;
           align-items: center;
+          gap: 0.35rem;
         }
         #theme-my-theme .ob-logo {
           position: relative;
@@ -244,13 +247,14 @@ const Header = ({ siteInfo, customMenu }) => {
             padding: 0 12px 6px;
           }
           #theme-my-theme .ob-nav-motto-title {
-            position: absolute;
-            top: 12px;
-            left: 50%;
-            transform: translateX(-50%);
+            position: static;
+            transform: none;
             white-space: nowrap;
             font-size: 14px;
             letter-spacing: 0.16em;
+          }
+          #theme-my-theme .ob-nav-right {
+            gap: 2px;
           }
           #theme-my-theme .ob-nav-motto-line {
             margin-top: 0;

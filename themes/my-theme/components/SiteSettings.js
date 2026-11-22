@@ -127,7 +127,7 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
             <div>
               <strong>{title}</strong>
               <p className='ob-settings-subtitle'>
-                {english ? 'Reading & browsing' : '阅读与浏览'}
+                {english ? 'Reading, appearance, language' : '阅读、外观与语言'}
               </p>
             </div>
             <button
@@ -327,82 +327,114 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
         }
         #theme-my-theme .ob-settings-panel {
           position: absolute;
-          top: calc(100% + 10px);
+          top: calc(100% + 8px);
           right: 0;
-          width: min(24rem, calc(100vw - 2rem));
+          width: min(22.5rem, calc(100vw - 1.5rem));
           max-height: calc(100dvh - var(--ob-home-nav-height, 4rem) - 1.5rem);
           overflow-y: auto;
           overscroll-behavior: contain;
-          padding: 1rem 1.25rem 1.25rem;
-          border: 1px solid rgba(120, 104, 80, 0.25);
-          border-radius: 16px;
-          background: #fffaf2;
-          color: #332b24;
-          box-shadow: 0 14px 44px rgba(20, 16, 12, 0.2);
+          padding: 1.05rem 1.2rem 1.15rem;
+          border: 1px solid rgba(90, 64, 32, 0.14);
+          border-radius: 18px;
+          background: #f7f1e6;
+          color: #2c241c;
+          box-shadow: 0 18px 48px rgba(40, 28, 16, 0.16);
           text-align: left;
           font-size: 16px;
-          line-height: 1.6;
+          line-height: 1.55;
         }
         .dark #theme-my-theme .ob-settings-panel {
-          background: #1b1c1b;
-          color: #f0e8dc;
-          border-color: rgba(242, 201, 132, 0.28);
+          background: #16130f;
+          color: #f6efe4;
+          border-color: rgba(226, 196, 138, 0.18);
+          box-shadow: 0 18px 48px rgba(0, 0, 0, 0.4);
         }
         #theme-my-theme .ob-settings-heading {
           display: flex;
-          align-items: center;
+          align-items: flex-start;
           justify-content: space-between;
           gap: 1rem;
+          padding-bottom: 0.35rem;
         }
         #theme-my-theme .ob-settings-heading strong {
-          font-size: 18px;
+          font-family: Palatino, 'Songti SC', 'Noto Serif SC', Georgia, serif;
+          font-size: 1.35rem;
+          font-weight: 500;
+          letter-spacing: 0.06em;
         }
         #theme-my-theme .ob-settings-subtitle {
-          margin: 0.1rem 0 0;
-          font-size: 14px;
-          opacity: 0.7;
+          margin: 0.15rem 0 0;
+          font-size: 13px;
+          letter-spacing: 0.08em;
+          color: #8a6230;
+          opacity: 1;
+        }
+        .dark #theme-my-theme .ob-settings-subtitle {
+          color: #e2c48a;
         }
         #theme-my-theme .ob-settings-sections,
         #theme-my-theme .ob-settings-public-links {
-          display: grid;
-          grid-template-columns: repeat(2, minmax(0, 1fr));
-          gap: 0.5rem;
-        }
-        #theme-my-theme .ob-settings-sections :is(a, button) {
-          min-height: 64px;
           display: flex;
           flex-direction: column;
-          align-items: flex-start;
-          justify-content: center;
-          gap: 2px;
-          padding: 0.65rem 0.8rem;
-          border: 1px solid rgba(120, 104, 80, 0.25);
-          border-radius: 10px;
+        }
+        #theme-my-theme .ob-settings-sections :is(a, button) {
+          min-height: 48px;
+          display: flex;
+          flex-direction: row;
+          align-items: baseline;
+          justify-content: space-between;
+          gap: 12px;
+          padding: 0.55rem 0.1rem;
+          border: 0;
+          border-bottom: 1px solid rgba(90, 64, 32, 0.12);
+          border-radius: 0;
           background: transparent;
           color: inherit;
           font: inherit;
           cursor: pointer;
           text-align: left;
         }
+        #theme-my-theme .ob-settings-sections :is(a, button):hover {
+          color: #6b4a22;
+        }
+        .dark #theme-my-theme .ob-settings-sections :is(a, button) {
+          border-bottom-color: rgba(246, 239, 228, 0.1);
+        }
+        .dark #theme-my-theme .ob-settings-sections :is(a, button):hover {
+          color: #f0ddb8;
+        }
         #theme-my-theme .ob-settings-sections [data-open='true'] {
-          border-color: rgba(174, 128, 57, 0.65);
-          background: rgba(201, 166, 107, 0.12);
+          border-bottom-color: rgba(174, 128, 57, 0.45);
+          background: transparent;
         }
         #theme-my-theme .ob-settings-sections small {
-          font-size: 14px;
-          opacity: 0.65;
+          font-size: 13px;
+          letter-spacing: 0.04em;
+          color: #8a7360;
+          opacity: 1;
+        }
+        #theme-my-theme .ob-settings-sections [data-open='true'] small {
+          color: #8a6230;
+        }
+        .dark #theme-my-theme .ob-settings-sections small {
+          color: #cbbba6;
+        }
+        .dark #theme-my-theme .ob-settings-sections [data-open='true'] small {
+          color: #e2c48a;
         }
         #theme-my-theme .ob-settings-public-links a {
-          min-height: 44px;
+          min-height: 40px;
           display: flex;
           align-items: center;
-          padding: 0.5rem;
-          border-radius: 8px;
+          padding: 0.35rem 0.1rem;
+          border-bottom: 1px solid rgba(90, 64, 32, 0.1);
+          border-radius: 0;
           color: inherit;
           overflow-wrap: anywhere;
         }
         #theme-my-theme .ob-settings-public-links a:hover {
-          background: rgba(201, 166, 107, 0.12);
+          color: #8a6230;
+          background: transparent;
         }
         #theme-my-theme .ob-settings-close {
           font-size: 25px;
@@ -438,10 +470,10 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
         #theme-my-theme .ob-settings-appearance button,
         #theme-my-theme .ob-settings-account-links a,
         #theme-my-theme .ob-settings-group select {
-          min-height: 44px;
-          border: 1px solid rgba(120, 104, 80, 0.4);
-          border-radius: 8px;
-          padding: 0.55rem 0.8rem;
+          min-height: 40px;
+          border: 1px solid rgba(90, 64, 32, 0.16);
+          border-radius: 999px;
+          padding: 0.4rem 0.85rem;
           background: transparent;
           color: inherit;
           font: inherit;
@@ -453,13 +485,19 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
           cursor: pointer;
         }
         #theme-my-theme .ob-settings-appearance button[aria-pressed='true'] {
-          border-color: var(--theme-color, #c9a66b);
-          background: rgba(201, 166, 107, 0.2);
+          border-color: transparent;
+          background: #4a3422;
+          color: #f7f1e6;
           font-weight: 600;
+        }
+        .dark #theme-my-theme .ob-settings-appearance button[aria-pressed='true'] {
+          background: #e2c48a;
+          color: #1a140e;
         }
         #theme-my-theme .ob-settings-group select {
           display: block;
           width: 100%;
+          border-radius: 12px;
           cursor: pointer;
         }
         #theme-my-theme .ob-settings-group option {
