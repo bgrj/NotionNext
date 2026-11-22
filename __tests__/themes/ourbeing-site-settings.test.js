@@ -88,7 +88,7 @@ test('hamburger opens an accessible dialog; Escape closes and restores focus', (
   expect(screen.queryByRole('dialog')).toBeNull()
   open()
   expect(trigger).toHaveAttribute('aria-expanded', 'true')
-  expect(screen.getByRole('link', { name: '道' })).toHaveFocus()
+  expect(screen.getByRole('button', { name: '浅色' })).toHaveFocus()
   fireEvent.keyDown(document, { key: 'Escape' })
   expect(screen.queryByRole('dialog')).toBeNull()
   expect(trigger).toHaveFocus()
@@ -148,21 +148,16 @@ test('navigation closes the panel', () => {
   expect(screen.queryByRole('dialog')).toBeNull()
 })
 
-test('Dao opens its series and 术 temporarily opens IELTS practice', () => {
+test('settings keep interface controls and leave the home plates on the page', () => {
   render(<SiteSettings />)
   open()
-  expect(screen.getByRole('link', { name: '道' })).toHaveAttribute(
-    'href',
-    '/category/道'
-  )
-  expect(screen.getByRole('link', { name: '术' })).toHaveAttribute(
-    'href',
-    'https://ourbeings.com/ielts/'
-  )
-  for (const name of ['我们的存在', '我的存在']) {
+  const dialog = screen.getByRole('dialog', { name: '网站设置' })
+  expect(dialog).toHaveTextContent('外观模式')
+  expect(dialog).toHaveTextContent('界面语言')
+  expect(dialog).toHaveTextContent('账户')
+  for (const name of ['道', '术', '我们的存在', '我的存在']) {
     expect(screen.queryByRole('link', { name })).toBeNull()
-    fireEvent.click(screen.getByRole('button', { name }))
-    expect(screen.getByRole('status')).toHaveTextContent(`${name} · 开发中……`)
+    expect(screen.queryByRole('button', { name })).toBeNull()
   }
 })
 
@@ -202,7 +197,7 @@ test('Notion public menus appear without unpublished or all-category archive lin
   render(<SiteSettings customMenu={menu} />)
   open()
   expect(
-    screen.getByRole('navigation', { name: '站点信息' })
+    screen.getByRole('navigation', { name: '网站介绍' })
   ).toHaveTextContent('意见反馈')
   expect(screen.queryByRole('link', { name: '后台' })).toBeNull()
 })

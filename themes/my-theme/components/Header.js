@@ -223,50 +223,43 @@ const Header = ({ siteInfo, customMenu }) => {
         }
         @media (max-width: 767px) {
           #theme-my-theme {
-            --ob-below-nav: 6.5rem;
+            --ob-below-nav: 3.75rem;
           }
           html:has(#theme-my-theme) {
-            scroll-padding-top: 6.5rem;
+            scroll-padding-top: 3.75rem;
           }
           #theme-my-theme .ob-nav-row {
-            min-height: 44px;
-            padding: 0 12px;
+            min-height: 52px;
+            padding: 0 10px;
           }
           #theme-my-theme .ob-logo {
-            font-size: 14px;
+            font-size: 15px;
+            padding-left: 0;
           }
           #theme-my-theme .ob-nav-right {
             min-width: 44px;
             min-height: 44px;
             justify-content: flex-end;
+            gap: 2px;
           }
           #theme-my-theme .ob-nav-motto {
-            position: static;
-            transform: none;
-            max-width: none;
-            padding: 0 12px 6px;
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%);
+            max-width: 4.5rem;
+            padding: 0;
           }
           #theme-my-theme .ob-nav-motto-title {
             position: static;
             transform: none;
             white-space: nowrap;
-            font-size: 14px;
-            letter-spacing: 0.16em;
-          }
-          #theme-my-theme .ob-nav-right {
-            gap: 2px;
+            font-size: 16px;
+            letter-spacing: 0.22em;
+            text-indent: 0.22em;
           }
           #theme-my-theme .ob-nav-motto-line {
-            margin-top: 0;
-            font-size: 12px;
-            line-height: 1.45;
-            letter-spacing: 0.02em;
-            white-space: normal;
-          }
-          #theme-my-theme .ob-nav-motto-line .ob-nav-wave {
-            display: inline-block;
-            white-space: nowrap;
-            margin-left: 0;
+            display: none;
           }
           #theme-my-theme .ob-nav-wave-char {
             animation-name: ob-nav-mobile-wave;

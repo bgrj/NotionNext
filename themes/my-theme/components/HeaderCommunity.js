@@ -165,22 +165,24 @@ export default function HeaderCommunity() {
       <button
         type='button'
         className='ob-community-entry'
+        aria-label={english ? 'Support' : '支持'}
         aria-haspopup='dialog'
         aria-expanded={open === 'support'}
         onClick={event => show('support', event)}
       >
         <Heart />
-        <span>{english ? 'Support' : '支持'}</span>
+        <span aria-hidden='true'>{english ? 'Support' : '支持'}</span>
       </button>
       <button
         type='button'
         className='ob-community-entry'
+        aria-label={english ? 'Ideas' : '意见'}
         aria-haspopup='dialog'
         aria-expanded={open === 'feedback'}
         onClick={event => show('feedback', event)}
       >
         <Chat />
-        <span>{english ? 'Ideas' : '意见'}</span>
+        <span aria-hidden='true'>{english ? 'Ideas' : '意见'}</span>
       </button>
       {dialog}
       <style jsx global>{`
@@ -312,15 +314,32 @@ export default function HeaderCommunity() {
           outline-offset: 3px;
         }
         @media (max-width: 767px) {
+          #theme-my-theme .ob-community {
+            gap: 4px;
+          }
           #theme-my-theme .ob-community-entry {
-            min-height: 32px;
-            padding: 0 0.45rem;
-            font-size: 13px;
-            gap: 0.15rem;
+            position: relative;
+            width: 36px;
+            min-width: 36px;
+            min-height: 36px;
+            justify-content: center;
+            padding: 0;
+            gap: 0;
+          }
+          #theme-my-theme .ob-community-entry span {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            margin: -1px;
+            padding: 0;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border: 0;
           }
           #theme-my-theme .ob-community-entry svg {
-            width: 14px;
-            height: 14px;
+            width: 18px;
+            height: 18px;
           }
           .ob-community-codes {
             grid-template-columns: 1fr;

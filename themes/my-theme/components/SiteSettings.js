@@ -6,14 +6,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useId, useRef, useState } from 'react'
 import CONFIG from '../config'
 import { UI_LANGUAGE_LABELS, uiLanguageOptions } from '../readingSettings'
-import {
-  HOME_SECTIONS,
-  DEFAULT_HOME_SECTIONS,
-  DEFAULT_OPEN_SECTIONS,
-  homeSections,
-  openHomeSections,
-  temporarySectionLink
-} from '../homeSections'
+import { DEFAULT_OPEN_SECTIONS, openHomeSections } from '../homeSections'
 import { settingsMenu } from '../settingsMenu'
 
 const AccountLinks = dynamic(() => import('./OurBeingsHeaderAuth'), {
@@ -33,15 +26,11 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
   } = useGlobal() || {}
   const router = useRouter()
   const [open, setOpen] = useState(false)
-  const [sectionNotice, setSectionNotice] = useState('')
   const containerRef = useRef(null)
   const triggerRef = useRef(null)
   const panelId = useId()
   const english = lang.startsWith('en')
   const title = english ? 'Site settings' : '网站设置'
-  const visible = homeSections(
-    siteConfig('OURBEINGS_HOME_SECTIONS', DEFAULT_HOME_SECTIONS, CONFIG)
-  )
   const available = openHomeSections(
     siteConfig('OURBEINGS_OPEN_SECTIONS', DEFAULT_OPEN_SECTIONS, CONFIG)
   )
@@ -127,7 +116,7 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
             <div>
               <strong>{title}</strong>
               <p className='ob-settings-subtitle'>
-                {english ? 'Reading, appearance, language' : '阅读、外观与语言'}
+                {english ? 'Appearance, language, account' : '外观、语言与账户'}
               </p>
             </div>
             <button
@@ -142,90 +131,12 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
               ×
             </button>
           </div>
-          <div className='ob-settings-group ob-settings-divided'>
-            <h2>{english ? 'Explore' : '四个板块'}</h2>
-            <div className='ob-settings-sections'>
-              {HOME_SECTIONS.filter(section =>
-                visible.includes(section.key)
-              ).map(section => {
-                const temporary = temporarySectionLink(section.key)
-                const enabled =
-                  available.includes(section.key) || Boolean(temporary)
-                const href = temporary?.href || section.href
-                const label = english ? section.english : section.name
-                const hint = temporary
-                  ? english
-                    ? temporary.shortLabelEn
-                    : temporary.shortLabel
-                  : enabled
-                    ? english
-                      ? 'Read articles'
-                      : '阅读文章'
-                    : english
-                      ? 'Coming soon'
-                      : '开发中……'
-                const content = (
-                  <>
-                    <span>{label}</span>
-                    <small aria-hidden='true'>{hint}</small>
-                  </>
-                )
-                return enabled ? (
-                  /^https?:\/\//i.test(href) ? (
-                    <a
-                      key={section.key}
-                      href={href}
-                      aria-label={label}
-                      data-open='true'
-                      onClick={() => setOpen(false)}
-                    >
-                      {content}
-                    </a>
-                  ) : (
-                    <Link
-                      key={section.key}
-                      href={href}
-                      prefetch={false}
-                      aria-label={label}
-                      data-settings-first={
-                        section.key === 'dao' ? true : undefined
-                      }
-                      data-open='true'
-                      onClick={() => setOpen(false)}
-                    >
-                      {content}
-                    </Link>
-                  )
-                ) : (
-                  <button
-                    key={section.key}
-                    type='button'
-                    aria-label={label}
-                    onClick={() =>
-                      setSectionNotice(
-                        `${label} · ${english ? 'Coming soon' : '开发中……'}`
-                      )
-                    }
-                  >
-                    {content}
-                  </button>
-                )
-              })}
-            </div>
-            {sectionNotice && (
-              <p className='ob-settings-hint' role='status'>
-                {sectionNotice}
-              </p>
-            )}
-          </div>
-          <div className='ob-settings-group ob-settings-divided'>
-            <h2>{english ? 'Reading preferences' : '阅读偏好'}</h2>
-          </div>
-          <fieldset className='ob-settings-group'>
+          <fieldset className='ob-settings-group ob-settings-divided'>
             <legend>{english ? 'Appearance' : '外观模式'}</legend>
             <div className='ob-settings-appearance'>
               <button
                 type='button'
+                data-settings-first='true'
                 aria-pressed={!usesDefaultAppearance && !isDarkMode}
                 onClick={() => selectAppearance(false)}
               >
@@ -271,9 +182,9 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
           {publicLinks.length > 0 && (
             <nav
               className='ob-settings-group ob-settings-divided'
-              aria-label={english ? 'Site information' : '站点信息'}
+              aria-label={english ? 'About the site' : '网站介绍'}
             >
-              <h2>{english ? 'Site information' : '站点信息'}</h2>
+              <h2>{english ? 'About the site' : '网站介绍'}</h2>
               <div className='ob-settings-public-links'>
                 {publicLinks.map(item => (
                   <Link
@@ -354,7 +265,12 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
           align-items: flex-start;
           justify-content: space-between;
           gap: 1rem;
-          padding-bottom: 0.35rem;
+          padding-bottom: 0.85rem;
+          margin-bottom: 0.15rem;
+          border-bottom: 1px solid rgba(90, 64, 32, 0.14);
+        }
+        .dark #theme-my-theme .ob-settings-heading {
+          border-bottom-color: rgba(226, 196, 138, 0.18);
         }
         #theme-my-theme .ob-settings-heading strong {
           font-family: Palatino, 'Songti SC', 'Noto Serif SC', Georgia, serif;
@@ -372,69 +288,34 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
         .dark #theme-my-theme .ob-settings-subtitle {
           color: #e2c48a;
         }
-        #theme-my-theme .ob-settings-sections,
         #theme-my-theme .ob-settings-public-links {
           display: flex;
           flex-direction: column;
-        }
-        #theme-my-theme .ob-settings-sections :is(a, button) {
-          min-height: 48px;
-          display: flex;
-          flex-direction: row;
-          align-items: baseline;
-          justify-content: space-between;
-          gap: 12px;
-          padding: 0.55rem 0.1rem;
-          border: 0;
-          border-bottom: 1px solid rgba(90, 64, 32, 0.12);
-          border-radius: 0;
-          background: transparent;
-          color: inherit;
-          font: inherit;
-          cursor: pointer;
-          text-align: left;
-        }
-        #theme-my-theme .ob-settings-sections :is(a, button):hover {
-          color: #6b4a22;
-        }
-        .dark #theme-my-theme .ob-settings-sections :is(a, button) {
-          border-bottom-color: rgba(246, 239, 228, 0.1);
-        }
-        .dark #theme-my-theme .ob-settings-sections :is(a, button):hover {
-          color: #f0ddb8;
-        }
-        #theme-my-theme .ob-settings-sections [data-open='true'] {
-          border-bottom-color: rgba(174, 128, 57, 0.45);
-          background: transparent;
-        }
-        #theme-my-theme .ob-settings-sections small {
-          font-size: 13px;
-          letter-spacing: 0.04em;
-          color: #8a7360;
-          opacity: 1;
-        }
-        #theme-my-theme .ob-settings-sections [data-open='true'] small {
-          color: #8a6230;
-        }
-        .dark #theme-my-theme .ob-settings-sections small {
-          color: #cbbba6;
-        }
-        .dark #theme-my-theme .ob-settings-sections [data-open='true'] small {
-          color: #e2c48a;
+          gap: 0.4rem;
         }
         #theme-my-theme .ob-settings-public-links a {
-          min-height: 40px;
+          min-height: 44px;
           display: flex;
           align-items: center;
-          padding: 0.35rem 0.1rem;
-          border-bottom: 1px solid rgba(90, 64, 32, 0.1);
-          border-radius: 0;
-          color: inherit;
+          padding: 0.4rem 0.85rem;
+          border: 1px solid rgba(90, 64, 32, 0.12);
+          border-radius: 12px;
+          background: rgba(255, 250, 242, 0.72);
+          color: #2c241c;
           overflow-wrap: anywhere;
         }
         #theme-my-theme .ob-settings-public-links a:hover {
-          color: #8a6230;
-          background: transparent;
+          color: #6b4a22;
+          background: #fffaf2;
+        }
+        .dark #theme-my-theme .ob-settings-public-links a {
+          border-color: rgba(246, 239, 228, 0.12);
+          background: rgba(246, 239, 228, 0.05);
+          color: #f6efe4;
+        }
+        .dark #theme-my-theme .ob-settings-public-links a:hover {
+          color: #f0ddb8;
+          background: rgba(246, 239, 228, 0.09);
         }
         #theme-my-theme .ob-settings-close {
           font-size: 25px;
@@ -456,10 +337,17 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
         #theme-my-theme .ob-settings-group h2 {
           display: block;
           padding: 0;
-          margin: 0 0 0.45rem;
-          font-size: 14px;
-          font-weight: 600;
-          color: inherit;
+          margin: 0 0 0.55rem;
+          font-size: 12px;
+          font-weight: 650;
+          letter-spacing: 0.16em;
+          line-height: 1.4;
+          color: #8a6230;
+        }
+        .dark #theme-my-theme .ob-settings-group legend,
+        .dark #theme-my-theme .ob-settings-group label,
+        .dark #theme-my-theme .ob-settings-group h2 {
+          color: #e2c48a;
         }
         #theme-my-theme .ob-settings-appearance,
         #theme-my-theme .ob-settings-account-links {
@@ -510,8 +398,14 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
         }
         #theme-my-theme .ob-settings-hint {
           margin: 0.5rem 0 0;
-          font-size: 14px;
-          opacity: 0.8;
+          font-size: 13px;
+          line-height: 1.5;
+          letter-spacing: 0;
+          color: #8a7360;
+          opacity: 1;
+        }
+        .dark #theme-my-theme .ob-settings-hint {
+          color: #cbbba6;
         }
         #theme-my-theme .ob-settings :is(button, select, a):focus-visible {
           outline: 2px solid var(--theme-color, #c9a66b);
