@@ -1,12 +1,12 @@
 export const DEFAULT_HOME_SECTIONS = ['our', 'self', 'dao', 'shu']
-export const DEFAULT_OPEN_SECTIONS = ['dao']
+export const DEFAULT_OPEN_SECTIONS = ['our', 'dao']
 
 export const HOME_SECTIONS = [
   {
     key: 'our',
     name: '我们的存在',
     english: 'Our beings',
-    href: '/category/我们的存在'
+    href: '/our-beings'
   },
   {
     key: 'self',

@@ -36,12 +36,13 @@ const render = component => {
   return { markup, styles }
 }
 
-test('all four plates render, and only Dao has an article link', () => {
+test('all four plates render with the Wuzai hub, Dao articles and IELTS links', () => {
   const { markup, styles } = render(<HeroPuzzle />)
   expect(markup).toContain('href="/category/道"')
   expect(markup).toContain('aria-label="道"')
   expect(markup).toContain('href="https://ourbeings.com/ielts/"')
   expect(markup).toContain('aria-label="术"')
+  expect(markup).toContain('href="/our-beings"')
   expect(markup).not.toContain('href="/category/术"')
   for (const name of ['我们的存在', '我的存在']) {
     expect(markup).not.toContain(`href="/category/${name}"`)

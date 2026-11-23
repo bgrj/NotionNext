@@ -97,7 +97,29 @@ test('a second touch on 术 opens the IELTS practice', () => {
   expect(mockPush).not.toHaveBeenCalled()
 })
 
-test.each(['我们的存在', '我的存在'])(
+test('our beings opens the Wuzai web hub on desktop and on a second touch', () => {
+  render(<HeroPuzzle />)
+  const hub = screen.getByRole('link', { name: '我们的存在' })
+  expect(hub).toHaveAttribute('href', '/our-beings')
+  fireEvent.pointerEnter(hub)
+  expect(screen.getByRole('status')).toHaveTextContent('进入吾在')
+  fireEvent.click(hub)
+  expect(mockPush).toHaveBeenLastCalledWith('/our-beings')
+  mockPush.mockClear()
+  touch(hub)
+  expect(mockPush).not.toHaveBeenCalled()
+  expect(screen.getByRole('status')).toHaveTextContent('阅读与交流')
+  expect(screen.getByRole('status')).not.toHaveTextContent('开发中')
+  const action = screen.getByRole('link', { name: '进入吾在' })
+  expect(action).toHaveAttribute('href', '/our-beings')
+  fireEvent.click(action)
+  expect(mockPush).toHaveBeenLastCalledWith('/our-beings')
+  mockPush.mockClear()
+  touch(hub)
+  expect(mockPush).toHaveBeenCalledWith('/our-beings')
+})
+
+test.each(['我的存在'])(
   '%s never navigates and supports keyboard previews',
   name => {
     render(<HeroPuzzle />)

@@ -29,7 +29,9 @@ const PIECES = [
   {
     key: 'our',
     name: '我们的存在',
-    href: '/category/我们的存在',
+    href: '/our-beings',
+    label: '进入吾在',
+    shortLabel: '阅读与交流',
     shift: [0, 0],
     plate:
       'M-40 -40L928.3 -40L928.3 0.7L928.5 4L933.1 21.2L933.7 25.7L938.1 39.2L942.6 61.7L949.4 82.7L951 90.5L959 108.6L969 126.6L970.1 127.6L971 126.9L970.4 127.2L969.3 136.7L969.1 153.3L964.4 164.4L961.2 177.3L960.4 184.8L958.1 195L958.4 205.3L960.9 216.5L969.6 233.2L977.8 242.3L1000.7 262.3L1010.5 269.2L1023.9 280.7L1022.7 288.6L1022.5 299.2L1017.8 318.1L1014.9 325.1L1010.5 331.2L1008 339.3L1003.6 349.7L993.8 369.5L990.2 381.1L988.4 394.1L989.4 407.6L997 453.9L994.5 460.3L994.8 461.2L995.9 461.2L993.2 464.3L989.2 472L965.9 469.9L942.4 469.6L918.9 470.1L895.4 469.5L871.9 469.9L848.2 472.1L824.4 476L800.7 479L777.1 479.8L753.8 477.6L730.6 472.9L707.5 467.3L684.2 464.3L660.8 462.9L637.5 459.5L614.4 453.4L591.4 447L568.2 441.9L545 437.7L521.5 437.4L497.8 440.4L474.2 441.4L450.9 438.6L427.8 433.1L404.7 427.9L381.5 423.2L358.2 419.7L334.9 417.3L311.7 412.6L288.7 405.3L265.7 398.6L242.5 394L219 394.1L195.5 393.9L171.7 397.7L148.1 399L124.4 401.6L100.9 401.4L77.4 402.2L53.8 403.2L30.2 404.9L6.7 404.9L-16.7 403L-40 400Z',
@@ -241,8 +243,10 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
         >
           {available
             ? touchKey
-              ? selectedLink?.shortLabel || '系列文章'
-              : selectedLink?.label || `阅读「${selected.name}」系列`
+              ? selectedLink?.shortLabel || selected.shortLabel || '系列文章'
+              : selectedLink?.label ||
+                selected.label ||
+                `阅读「${selected.name}」系列`
             : '开发中……'}
         </span>
       </div>
@@ -264,7 +268,9 @@ export default function HeroPuzzle({ NOTION_CONFIG, previewHost } = {}) {
                 router.push(selectedHref)
               }}
             >
-              {selectedLink?.label || `阅读「${selected.name}」系列`}
+              {selectedLink?.label ||
+                selected.label ||
+                `阅读「${selected.name}」系列`}
               <span aria-hidden='true'>→</span>
             </a>
           )}

@@ -3,7 +3,7 @@ const CONFIG = {
   // Notion 配置中心支持逗号分隔标识或 JSON 数组。
   // 术暂时不看这份开放列表，主页入口在 homeSections.js 指向雅思练习。
   OURBEINGS_HOME_SECTIONS: ['our', 'self', 'dao', 'shu'],
-  OURBEINGS_OPEN_SECTIONS: ['dao'],
+  OURBEINGS_OPEN_SECTIONS: ['our', 'dao'],
   // 文章阅读与顶栏设置（可由 Notion 配置中心同名键覆盖）
   OURBEINGS_ARTICLE_BACKGROUND:
     '/assets/ourbeing/web-mainpage-uphand.dc81786dbc79.webp',
