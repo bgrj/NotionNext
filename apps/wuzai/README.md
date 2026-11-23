@@ -12,4 +12,6 @@
 
 `miniprogram/common/activities.js` 同时供网站后端使用，包含纯 JavaScript 业务规则。客户端云函数只信任微信服务端上下文中的身份，不信任页面传入的 OPENID。
 
+网站仓库中运行 `node scripts/check-wuzai-package.js` 检查源码；本机装有微信开发者工具时，可加 `--compiler-dir "<安装目录>/resources/app.asar.unpacked/node_modules/wcc-exec"`，由官方编译器校验全部五页 WXML 与 WXSS。WXML 的 `{{ }}` 内使用原始 `&&`，不要替换成 HTML 实体。独立仓库 `bgrj/Our-Being` 也提供同名检查脚本。
+
 当前为可复制的原生源码包；静态检查通过不代表已上传云函数、完成微信真机验收或获得审核通过。完整设计与接口见网站仓库的 `docs/operations/our-beings-activities-2026-11-24.md`。

@@ -5,7 +5,7 @@
   <view wx:if="{{error}}" class="error"><text>{{error}}</text><button bindtap="load">重新读取</button></view>
   <view wx:for="{{visible}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="open"><text class="badge">{{item.statusLabel}}</text><text class="card-title">{{item.title}}</text><text class="muted">{{item.book}}</text><text class="facts">{{item.timeLabel}} · 北京时间</text><text class="facts">{{item.location}} · {{item.booked}} / {{item.capacity}} 人</text></view>
   <view wx:if="{{loading}}" class="empty">正在整理相遇…</view>
-  <view wx:elif="{{!visible.length &amp;&amp; !error}}" class="empty"><text class="heading">为下一次相遇，留一页空白</text><text class="muted">这个范围里暂时没有活动。不妨从一本想读的书开始。</text></view>
+  <view wx:elif="{{!visible.length && !error}}" class="empty"><text class="heading">为下一次相遇，留一页空白</text><text class="muted">这个范围里暂时没有活动。不妨从一本想读的书开始。</text></view>
   <button wx:if="{{nextOffset !== null}}" loading="{{loading}}" disabled="{{loading}}" bindtap="more">继续查看</button>
   <view class="section"><text class="heading">留出时间，带着问题来</text><text class="muted">预约成功后，按发起人的说明加入活动微信群。微信群由每场活动的发起人建立和维护。</text></view>
 </view>

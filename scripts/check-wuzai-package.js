@@ -3,6 +3,8 @@ const path = require('node:path')
 const vm = require('node:vm')
 const { createRequire } = require('node:module')
 const assert = require('node:assert/strict')
+const os = require('node:os')
+const { spawnSync } = require('node:child_process')
 const root = path.resolve(__dirname, '../apps/wuzai')
 const project = JSON.parse(
   fs.readFileSync(path.join(root, 'project.config.json'), 'utf8')
@@ -34,7 +36,8 @@ function check(directory) {
     }
   }
 }
-check(root)
+check(native)
+check(path.join(root, project.cloudfunctionRoot, 'wuzaiApi'))
 for (const page of app.pages) {
   const base = path.join(native, page)
   for (const ext of ['js', 'json', 'wxml', 'wxss'])
@@ -51,6 +54,11 @@ for (const page of app.pages) {
     { filename: `${base}.js` }
   )
   const wxml = fs.readFileSync(`${base}.wxml`, 'utf8')
+  for (const binding of wxml.matchAll(/\{\{[\s\S]*?\}\}/g))
+    assert(
+      !/&amp;\s*&amp;/.test(binding[0]),
+      `Invalid WXML expression in ${page}: use && directly, not HTML entities`
+    )
   for (const match of wxml.matchAll(
     /(?:bind|catch)(?:tap|input|change|submit|confirm)=["']([A-Za-z][\w]*)["']/g
   ))
@@ -72,3 +80,51 @@ assert(
 console.log(
   `Native package validated: ${app.pages.length} pages, ${files} source/config files; JSON, JS, page routes and WXML handlers checked.`
 )
+
+const compilerOption = process.argv.indexOf('--compiler-dir')
+if (compilerOption !== -1) {
+  const compilerDirectory = process.argv[compilerOption + 1]
+  assert(compilerDirectory, '--compiler-dir requires the wcc-exec directory')
+  const outputDirectory = fs.mkdtempSync(
+    path.join(os.tmpdir(), 'wuzai-compile-')
+  )
+  try {
+    for (const [name, args, output] of [
+      ['wcc', app.pages.map(page => `${page}.wxml`), 'wxml.js'],
+      [
+        'wcsc',
+        ['-lc', 'app.wxss', ...app.pages.map(page => `${page}.wxss`)],
+        'wxss.js'
+      ]
+    ]) {
+      const executable = path.join(
+        compilerDirectory,
+        name + (process.platform === 'win32' ? '.exe' : '')
+      )
+      const result = spawnSync(
+        executable,
+        ['-o', path.join(outputDirectory, output), ...args],
+        {
+          cwd: native,
+          encoding: 'utf8',
+          timeout: 30000,
+          windowsHide: true
+        }
+      )
+      assert.equal(
+        result.status,
+        0,
+        `${name} failed: ${result.error?.message || result.stderr || result.stdout}`
+      )
+      console.log(
+        `${name}: official compiler passed for all ${app.pages.length} pages`
+      )
+    }
+  } finally {
+    for (const output of ['wxml.js', 'wxss.js']) {
+      const file = path.join(outputDirectory, output)
+      if (fs.existsSync(file)) fs.unlinkSync(file)
+    }
+    fs.rmdirSync(outputDirectory)
+  }
+}

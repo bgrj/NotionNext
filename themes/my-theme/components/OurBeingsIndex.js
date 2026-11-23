@@ -322,6 +322,7 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
           --ink: #342c24;
           --muted: #766a5f;
           --accent: #926631;
+          --on-accent: #fffaf3;
           --line: rgba(75, 57, 38, 0.16);
           --paper: rgba(255, 252, 247, 0.88);
           width: min(52rem, 100%);
@@ -651,6 +652,7 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
           --ink: #f1e9dc;
           --muted: #beb1a0;
           --accent: #dfbd80;
+          --on-accent: #231b12;
           --line: rgba(241, 233, 220, 0.2);
           --paper: rgba(27, 24, 21, 0.9);
         }

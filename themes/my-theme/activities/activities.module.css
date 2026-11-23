@@ -110,7 +110,7 @@
 }
 .hub .primary {
   background: var(--accent, #926631);
-  color: #fffaf3;
+  color: var(--on-accent, #fffaf3);
   border: 1px solid var(--accent, #926631);
 }
 .hub .secondary {

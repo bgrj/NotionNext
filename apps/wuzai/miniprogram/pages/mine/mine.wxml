@@ -3,6 +3,6 @@
   <button class="primary" bindtap="create">发起活动</button>
   <view wx:if="{{error}}" class="error">{{error}}<button bindtap="load">重新读取</button></view>
   <view wx:for="{{visible}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="open"><text class="badge">{{item.isHost ? '我发起的' : item.reservation === 'confirmed' ? '已预约' : '已取消预约'}} · {{item.statusLabel}}</text><text class="card-title">{{item.title}}</text><text class="facts">{{item.timeLabel}} · 北京时间</text><text class="muted">{{item.location}}</text></view>
-  <view wx:if="{{loading}}" class="empty">正在读取…</view><view wx:elif="{{!visible.length &amp;&amp; !error}}" class="empty"><text class="heading">下一次相遇，从这里开始</text><text class="muted">发起与预约的活动，都会留在这里。</text></view>
+  <view wx:if="{{loading}}" class="empty">正在读取…</view><view wx:elif="{{!visible.length && !error}}" class="empty"><text class="heading">下一次相遇，从这里开始</text><text class="muted">发起与预约的活动，都会留在这里。</text></view>
   <button wx:if="{{nextOffset !== null}}" bindtap="more" disabled="{{loading}}">继续查看</button><button bindtap="privacy">隐私与使用说明</button>
 </view>

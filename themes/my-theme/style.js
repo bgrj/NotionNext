@@ -36,14 +36,26 @@ const Style = () => {
   const borderDark = siteConfig('HEXO_COLOR_BORDER_DARK', '#000000', CONFIG)
 
   const readingBackground = articleBackground(
-    siteConfig('OURBEINGS_ARTICLE_BACKGROUND', CONFIG.OURBEINGS_ARTICLE_BACKGROUND, CONFIG)
+    siteConfig(
+      'OURBEINGS_ARTICLE_BACKGROUND',
+      CONFIG.OURBEINGS_ARTICLE_BACKGROUND,
+      CONFIG
+    )
   )
   const readingOpacityLight = articleOpacity(
-    siteConfig('OURBEINGS_ARTICLE_OPACITY_LIGHT', CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT, CONFIG),
+    siteConfig(
+      'OURBEINGS_ARTICLE_OPACITY_LIGHT',
+      CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT,
+      CONFIG
+    ),
     CONFIG.OURBEINGS_ARTICLE_OPACITY_LIGHT
   )
   const readingOpacityDark = articleOpacity(
-    siteConfig('OURBEINGS_ARTICLE_OPACITY_DARK', CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK, CONFIG),
+    siteConfig(
+      'OURBEINGS_ARTICLE_OPACITY_DARK',
+      CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK,
+      CONFIG
+    ),
     CONFIG.OURBEINGS_ARTICLE_OPACITY_DARK
   )
 
@@ -451,7 +463,8 @@ const Style = () => {
         background-color: rgba(255, 255, 255, ${readingOpacityLight});
         background-color: color-mix(
           in srgb,
-          var(--hexo-color-card) calc(max(var(--ob-reading-opacity), 0.94) * 100%),
+          var(--hexo-color-card)
+            calc(max(var(--ob-reading-opacity), 0.94) * 100%),
           transparent
         );
         color: #221b15;
@@ -460,7 +473,8 @@ const Style = () => {
         background-color: rgba(16, 20, 20, ${readingOpacityDark});
         background-color: color-mix(
           in srgb,
-          var(--hexo-color-card) calc(max(var(--ob-reading-opacity), 0.93) * 100%),
+          var(--hexo-color-card)
+            calc(max(var(--ob-reading-opacity), 0.93) * 100%),
           transparent
         );
         color: #f6f0e6;
@@ -513,8 +527,12 @@ const Style = () => {
       #theme-my-theme .ob-article-content {
         overflow-x: auto;
       }
-      #theme-my-theme .ob-article-body video::-internal-media-controls-download-button,
-      #theme-my-theme .ob-article-body video::-webkit-media-controls-download-button {
+      #theme-my-theme
+        .ob-article-body
+        video::-internal-media-controls-download-button,
+      #theme-my-theme
+        .ob-article-body
+        video::-webkit-media-controls-download-button {
         display: none !important;
       }
 
@@ -538,6 +556,15 @@ const Style = () => {
       #theme-my-theme.ob-ex-layout #container-inner > div {
         max-width: none;
         overflow: visible;
+      }
+      /* 深色阅读页必须同时压暗背景图，避免浅字直接叠在亮色天空上。 */
+      .dark #theme-my-theme.ob-ex-layout #wrapper {
+        background-color: #14110e !important;
+        background-image:
+          linear-gradient(rgba(20, 17, 14, 0.94), rgba(20, 17, 14, 0.94)),
+          url(${JSON.stringify(readingBackground)}) !important;
+        color: #f1e9dc;
+        color-scheme: dark;
       }
       #theme-my-theme.ob-fl-layout #container-inner {
         max-width: none;
