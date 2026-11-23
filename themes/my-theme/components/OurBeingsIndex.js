@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import SmartLink from '@/components/SmartLink'
 import { useEffect, useState } from 'react'
+import ActivityHub from '../activities/ActivityHub'
 import {
   DESK_HREF,
   OUR_BEINGS_JOIN_PRICE_YUAN,
@@ -103,159 +104,164 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
         </button>
       </nav>
 
-      <section
-        id='ob-hub-panel'
-        className='ob-beings__panel'
-        aria-labelledby='ob-hub-title'
-      >
-        <div className='ob-beings__section-head'>
-          <div>
-            <p className='ob-beings__eyebrow'>
-              {isEvents ? '一起读，也一起想' : '从一个人的思考，到我们的对话'}
-            </p>
-            <h2 id='ob-hub-title'>{isEvents ? '阅读活动' : '近期公开内容'}</h2>
-          </div>
-          <span className='ob-beings__quiet'>
-            {isEvents ? '线上 · 线下' : '生命记录 · 道 · 术'}
-          </span>
-        </div>
-
-        {!isEvents && (
-          <div className='ob-beings__filters' aria-label='筛选公开内容'>
-            {FILTERS.map(filter => (
-              <button
-                key={filter.id}
-                type='button'
-                aria-pressed={domain === filter.id}
-                onClick={() => {
-                  setDomain(filter.id)
-                  setVisibleCount(6)
-                }}
-              >
-                {filter.label}
-              </button>
-            ))}
-          </div>
-        )}
-
-        {visible.length > 0 ? (
-          <>
-            <ul className='ob-beings__entries'>
-              {visible.map(item => (
-                <li key={item.id}>
-                  <article className='ob-beings__entry'>
-                    <p className='ob-beings__meta'>
-                      <span>{item.label}</span>
-                      {item.date && (
-                        <>
-                          <span aria-hidden='true'> / </span>
-                          <time dateTime={item.date}>
-                            {isEvents ? '发布于 ' : ''}
-                            {item.date}
-                          </time>
-                        </>
-                      )}
-                    </p>
-                    <h3>
-                      <SmartLink href={item.href}>
-                        <span>{item.title}</span>
-                        <span className='ob-beings__arrow' aria-hidden='true'>
-                          ↗
-                        </span>
-                      </SmartLink>
-                    </h3>
-                    {item.summary && (
-                      <p className='ob-beings__summary'>{item.summary}</p>
-                    )}
-                  </article>
-                </li>
-              ))}
-            </ul>
-            {visible.length < items.length && (
-              <button
-                className='ob-beings__more'
-                type='button'
-                onClick={() => setVisibleCount(count => count + 6)}
-              >
-                再读几篇 <span aria-hidden='true'>↓</span>
-              </button>
-            )}
-            {isEvents && (
-              <p className='ob-beings__note'>
-                这里先呈现已发布的活动介绍。参与方式请查看活动原文，站内报名尚未接通。
-              </p>
-            )}
-          </>
-        ) : (
-          <div className='ob-beings__empty'>
-            <svg
-              width='36'
-              height='32'
-              viewBox='0 0 36 32'
-              fill='none'
-              aria-hidden='true'
-            >
-              <path
-                d='M18 7C13 3 7 3 2 5v22c6-2 11-1 16 2 5-3 10-4 16-2V5c-5-2-11-2-16 2Z'
-                stroke='currentColor'
-                strokeWidth='1.2'
-                strokeLinejoin='round'
-              />
-              <path
-                d='M18 7v22M7 11c2-.5 4 0 6 1M7 17c2-.5 4 0 6 1M23 12c2-1 4-1.5 6-1M23 18c2-1 4-1.5 6-1'
-                stroke='currentColor'
-                strokeWidth='1.2'
-                strokeLinecap='round'
-              />
-            </svg>
-            <h3>
-              {isEvents ? '为下一次相遇，留一页空白' : '这里还没有公开的篇章'}
-            </h3>
-            <p>
-              {isEvents
-                ? '暂时没有可展示的已发布活动。活动发布与站内报名，将在后续逐步开放。'
-                : '这个分类暂时没有可展示的内容。私密记录会留在各自的空间里。'}
-            </p>
-            {isEvents ? (
-              <button
-                className='ob-beings__text-button'
-                type='button'
-                onClick={() => chooseView('posts')}
-              >
-                先读一些思考 <span aria-hidden='true'>→</span>
-              </button>
-            ) : (
-              <SmartLink className='ob-beings__link' href={DESK_HREF}>
-                回到我的空间
-              </SmartLink>
-            )}
-          </div>
-        )}
-
-        {!isEvents && (
-          <div className='ob-beings__reading-paths'>
-            <p>慢慢读，也带走可用的方法。</p>
+      {isEvents && <ActivityHub legacyEvents={events} />}
+      {!isEvents && (
+        <section
+          id='ob-hub-panel'
+          className='ob-beings__panel'
+          aria-labelledby='ob-hub-title'
+        >
+          <div className='ob-beings__section-head'>
             <div>
-              <SmartLink href='/category/道'>
-                继续读「道」 <span aria-hidden='true'>↗</span>
-              </SmartLink>
-              <SmartLink href='/category/术'>
-                去看看「术」 <span aria-hidden='true'>↗</span>
-              </SmartLink>
+              <p className='ob-beings__eyebrow'>
+                {isEvents ? '一起读，也一起想' : '从一个人的思考，到我们的对话'}
+              </p>
+              <h2 id='ob-hub-title'>
+                {isEvents ? '阅读活动' : '近期公开内容'}
+              </h2>
             </div>
-            {Number(publicHub?.postsTotal) > posts.length && (
-              <small>
-                此处汇集最近 {posts.length} 篇内容，更多文章可从对应板块阅读。
-              </small>
-            )}
+            <span className='ob-beings__quiet'>
+              {isEvents ? '线上 · 线下' : '生命记录 · 道 · 术'}
+            </span>
           </div>
-        )}
-        {isEvents && Number(publicHub?.eventsTotal) > events.length && (
-          <p className='ob-beings__note'>
-            此处显示最近 {events.length} 份活动介绍。
-          </p>
-        )}
-      </section>
+
+          {!isEvents && (
+            <div className='ob-beings__filters' aria-label='筛选公开内容'>
+              {FILTERS.map(filter => (
+                <button
+                  key={filter.id}
+                  type='button'
+                  aria-pressed={domain === filter.id}
+                  onClick={() => {
+                    setDomain(filter.id)
+                    setVisibleCount(6)
+                  }}
+                >
+                  {filter.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          {visible.length > 0 ? (
+            <>
+              <ul className='ob-beings__entries'>
+                {visible.map(item => (
+                  <li key={item.id}>
+                    <article className='ob-beings__entry'>
+                      <p className='ob-beings__meta'>
+                        <span>{item.label}</span>
+                        {item.date && (
+                          <>
+                            <span aria-hidden='true'> / </span>
+                            <time dateTime={item.date}>
+                              {isEvents ? '发布于 ' : ''}
+                              {item.date}
+                            </time>
+                          </>
+                        )}
+                      </p>
+                      <h3>
+                        <SmartLink href={item.href}>
+                          <span>{item.title}</span>
+                          <span className='ob-beings__arrow' aria-hidden='true'>
+                            ↗
+                          </span>
+                        </SmartLink>
+                      </h3>
+                      {item.summary && (
+                        <p className='ob-beings__summary'>{item.summary}</p>
+                      )}
+                    </article>
+                  </li>
+                ))}
+              </ul>
+              {visible.length < items.length && (
+                <button
+                  className='ob-beings__more'
+                  type='button'
+                  onClick={() => setVisibleCount(count => count + 6)}
+                >
+                  再读几篇 <span aria-hidden='true'>↓</span>
+                </button>
+              )}
+              {isEvents && (
+                <p className='ob-beings__note'>
+                  这里先呈现已发布的活动介绍。参与方式请查看活动原文，站内报名尚未接通。
+                </p>
+              )}
+            </>
+          ) : (
+            <div className='ob-beings__empty'>
+              <svg
+                width='36'
+                height='32'
+                viewBox='0 0 36 32'
+                fill='none'
+                aria-hidden='true'
+              >
+                <path
+                  d='M18 7C13 3 7 3 2 5v22c6-2 11-1 16 2 5-3 10-4 16-2V5c-5-2-11-2-16 2Z'
+                  stroke='currentColor'
+                  strokeWidth='1.2'
+                  strokeLinejoin='round'
+                />
+                <path
+                  d='M18 7v22M7 11c2-.5 4 0 6 1M7 17c2-.5 4 0 6 1M23 12c2-1 4-1.5 6-1M23 18c2-1 4-1.5 6-1'
+                  stroke='currentColor'
+                  strokeWidth='1.2'
+                  strokeLinecap='round'
+                />
+              </svg>
+              <h3>
+                {isEvents ? '为下一次相遇，留一页空白' : '这里还没有公开的篇章'}
+              </h3>
+              <p>
+                {isEvents
+                  ? '暂时没有可展示的已发布活动。活动发布与站内报名，将在后续逐步开放。'
+                  : '这个分类暂时没有可展示的内容。私密记录会留在各自的空间里。'}
+              </p>
+              {isEvents ? (
+                <button
+                  className='ob-beings__text-button'
+                  type='button'
+                  onClick={() => chooseView('posts')}
+                >
+                  先读一些思考 <span aria-hidden='true'>→</span>
+                </button>
+              ) : (
+                <SmartLink className='ob-beings__link' href={DESK_HREF}>
+                  回到我的空间
+                </SmartLink>
+              )}
+            </div>
+          )}
+
+          {!isEvents && (
+            <div className='ob-beings__reading-paths'>
+              <p>慢慢读，也带走可用的方法。</p>
+              <div>
+                <SmartLink href='/category/道'>
+                  继续读「道」 <span aria-hidden='true'>↗</span>
+                </SmartLink>
+                <SmartLink href='/category/术'>
+                  去看看「术」 <span aria-hidden='true'>↗</span>
+                </SmartLink>
+              </div>
+              {Number(publicHub?.postsTotal) > posts.length && (
+                <small>
+                  此处汇集最近 {posts.length} 篇内容，更多文章可从对应板块阅读。
+                </small>
+              )}
+            </div>
+          )}
+          {isEvents && Number(publicHub?.eventsTotal) > events.length && (
+            <p className='ob-beings__note'>
+              此处显示最近 {events.length} 份活动介绍。
+            </p>
+          )}
+        </section>
+      )}
 
       <details className='ob-beings__archive'>
         <summary>存在者名录与现行加入方式</summary>

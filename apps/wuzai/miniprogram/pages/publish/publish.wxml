@@ -1,0 +1,16 @@
+<view class="page"><text class="eyebrow">留一段时间，邀请彼此走近</text><text class="title">发起一次相遇</text><text class="muted intro">先保存草稿，再确认发布。时间均为北京时间。</text>
+<view wx:if="{{error}}" class="error">{{error}}</view><view wx:if="{{loading}}" class="empty">正在读取安排…</view>
+<block wx:if="{{!cannotEdit &amp;&amp; !loading}}">
+<label class="label">活动名称</label><input value="{{title}}" data-field="title" bindinput="input" maxlength="80" placeholder="一起读一本书、聊一个问题" />
+<label class="label">相遇方式</label><picker range="{{['共读','交流']}}" bindchange="chooseKind"><view class="picker">{{kind === 'reading' ? '共读' : '交流'}}</view></picker>
+<label class="label">书名、材料或主题</label><input value="{{book}}" data-field="book" bindinput="input" maxlength="120" />
+<label class="label">活动介绍</label><textarea value="{{description}}" data-field="description" bindinput="input" maxlength="4000" placeholder="为什么相遇？会读什么，需要准备什么？" />
+<label class="label">开始日期与时间</label><picker mode="date" value="{{date}}" data-field="date" bindchange="input"><view class="picker">{{date || '选择开始日期'}}</view></picker><picker mode="time" value="{{time}}" data-field="time" bindchange="input"><view class="picker">{{time}}</view></picker>
+<label class="label">结束日期与时间</label><picker mode="date" value="{{endDate}}" data-field="endDate" bindchange="input"><view class="picker">{{endDate || '同开始日期'}}</view></picker><picker mode="time" value="{{endTime}}" data-field="endTime" bindchange="input"><view class="picker">{{endTime}}</view></picker>
+<label class="label">预约截止日期与时间</label><picker mode="date" value="{{deadlineDate}}" data-field="deadlineDate" bindchange="input"><view class="picker">{{deadlineDate || '活动开始前均可预约'}}</view></picker><picker wx:if="{{deadlineDate}}" mode="time" value="{{deadlineTime}}" data-field="deadlineTime" bindchange="input"><view class="picker">{{deadlineTime}}</view></picker>
+<label class="label">名额（不含发起人，1–500）</label><input type="number" value="{{capacity}}" data-field="capacity" bindinput="input" />
+<label class="label">活动形式</label><picker range="{{['线上','线下']}}" bindchange="chooseFormat"><view class="picker">{{format === 'online' ? '线上' : '线下'}}</view></picker>
+<label class="label">城市、场地或线上方式（公开）</label><input value="{{location}}" data-field="location" bindinput="input" maxlength="160" />
+<label class="label">你的活动微信群 · 入群说明</label><textarea value="{{joinInstructions}}" data-field="joinInstructions" bindinput="input" maxlength="1000" placeholder="由你建立活动微信群。填写参与者如何联系你入群等说明。" /><text class="hint">仅预约成功后可见。请勿在公开介绍中填写私人联系方式。</text>
+<button class="primary" loading="{{busy}}" disabled="{{busy}}" bindtap="save">{{id ? '保存安排' : '保存草稿'}}</button>
+</block></view>

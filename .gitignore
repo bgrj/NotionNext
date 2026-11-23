@@ -2,6 +2,10 @@
 
 # dependencies
 /node_modules
+/apps/wuzai/**/node_modules/
+/apps/wuzai/project.private.config.json
+/apps/wuzai/**/.env
+/apps/wuzai/**/.env.local
 /.pnp
 .pnp.js
 
@@ -61,6 +65,7 @@ output/
 
 # yarn
 package-lock.json
+!apps/wuzai/cloudfunctions/wuzaiApi/package-lock.json
 # yarn.lock
 
 # Content-addressed site assets are verified/materialized from the source manifest.

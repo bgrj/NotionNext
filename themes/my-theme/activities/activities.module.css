@@ -1,0 +1,511 @@
+.hub {
+  color: var(--ink, #342c24);
+  font-size: 1rem;
+  line-height: 1.8;
+  padding-top: 0.5rem;
+}
+.hub * {
+  box-sizing: border-box;
+}
+.hub button,
+.hub input,
+.hub textarea,
+.hub select {
+  font: inherit;
+}
+.hub button,
+.hub a {
+  -webkit-tap-highlight-color: transparent;
+}
+.hub button {
+  cursor: pointer;
+}
+.hub button:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.hub :is(button, a, input, select, textarea):focus-visible {
+  outline: 2px solid var(--accent, #926631);
+  outline-offset: 4px;
+}
+.hub h2,
+.hub h3,
+.hub p {
+  margin-top: 0;
+}
+.hub h2,
+.hub h3 {
+  font-family: inherit;
+  font-weight: 500;
+}
+.hub h3 {
+  font-size: 1.08rem;
+}
+.eyebrow {
+  display: block;
+  color: var(--accent, #926631);
+  font-size: 0.875rem;
+  letter-spacing: 0.08em;
+  margin: 0 0 0.6rem;
+}
+.muted {
+  color: var(--muted, #766a5f);
+  font-size: 0.875rem;
+}
+.invitation {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 2rem;
+  align-items: center;
+  padding: 2rem 0 2.8rem;
+}
+.invitation h2 {
+  font-size: clamp(1.85rem, 5vw, 2.8rem);
+  line-height: 1.55;
+  letter-spacing: 0.06em;
+  margin-bottom: 1rem;
+}
+.invitation p:not(.eyebrow) {
+  color: var(--muted, #766a5f);
+  line-height: 1.95;
+  margin-bottom: 1.5rem;
+}
+.bookMark {
+  width: 10rem;
+  height: 13rem;
+  padding: 1.8rem 1rem 1.2rem 1.6rem;
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  border-left: 5px double var(--accent, #926631);
+  background: var(--paper, rgba(255, 252, 247, 0.88));
+  color: var(--accent, #926631);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 5px 5px 0 rgba(146, 102, 49, 0.055);
+  transform: rotate(4deg);
+  margin: 1rem;
+}
+.bookMark span {
+  font-size: 2.5rem;
+  line-height: 1.4;
+  font-family: serif;
+}
+.bookMark small {
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  margin-top: 1rem;
+}
+.primary,
+.secondary,
+.textButton {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 44px;
+  border-radius: 4px;
+  padding: 0.6rem 1.1rem;
+  text-decoration: none;
+  font-size: 0.875rem;
+}
+.hub .primary {
+  background: var(--accent, #926631);
+  color: #fffaf3;
+  border: 1px solid var(--accent, #926631);
+}
+.hub .secondary {
+  background: transparent;
+  color: var(--ink, #342c24);
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+}
+.hub .textButton {
+  padding: 0.5rem 0;
+  border: 0;
+  background: transparent;
+  color: var(--accent, #926631);
+}
+.toolbar {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 0;
+  border-top: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  border-bottom: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+}
+.tabs {
+  display: flex;
+  gap: 1.25rem;
+}
+.tabs button {
+  background: none;
+  border: 0;
+  padding: 0.5rem 0;
+  min-height: 44px;
+  font-size: 0.875rem;
+  color: var(--muted, #766a5f);
+  white-space: nowrap;
+}
+.tabs button[aria-pressed='true'] {
+  color: var(--accent, #926631);
+  text-decoration: underline;
+  text-underline-offset: 0.55em;
+}
+.formatSelect select,
+.form select {
+  appearance: none;
+  background-color: transparent;
+  background-image: url("data:image/svg+xml,%3Csvg width='12' height='8' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%23766a5f'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.65rem center;
+  padding: 0.6rem 2rem 0.6rem 0.5rem;
+  min-height: 44px;
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  border-radius: 4px;
+  color: inherit;
+  font-size: 0.875rem;
+}
+.cards {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.card {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 7.2rem 1fr;
+  text-align: left;
+  background: transparent;
+  color: inherit;
+  border: 0;
+  border-bottom: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  padding: 1.7rem 0;
+  gap: 1.8rem;
+}
+.card:hover strong {
+  color: var(--accent, #926631);
+}
+.cardDate {
+  display: block;
+  font-size: 1.7rem;
+  line-height: 1.5;
+  color: var(--accent, #926631);
+  padding-top: 0.2rem;
+}
+.cardDate small {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted, #766a5f);
+}
+.cardContent {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+  min-width: 0;
+}
+.cardContent strong {
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 1.7;
+}
+.cardTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+.cardTop .eyebrow {
+  margin: 0;
+}
+.cardBottom {
+  color: var(--muted, #766a5f);
+  font-size: 0.875rem;
+}
+.badge {
+  color: var(--accent, #926631);
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  border-radius: 3px;
+  padding: 0.12rem 0.6rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+.empty {
+  text-align: center;
+  padding: 3rem 1.25rem;
+  margin: 1.5rem 0;
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  background: var(--paper, rgba(255, 252, 247, 0.88));
+}
+.emptyGlyph {
+  display: block;
+  margin: 0 auto 1rem;
+  font-family: serif;
+  font-size: 2rem;
+  color: var(--accent, #926631);
+}
+.empty h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.6rem;
+}
+.empty p {
+  max-width: 29rem;
+  margin: 0 auto 1.5rem;
+  color: var(--muted, #766a5f);
+  font-size: 0.875rem;
+}
+.howItWorks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.7rem;
+  padding: 2rem 0;
+}
+.howItWorks h3 {
+  margin-bottom: 0.5rem;
+}
+.howItWorks p {
+  color: var(--muted, #766a5f);
+  font-size: 0.875rem;
+  margin: 0;
+}
+.error {
+  color: #a03b2f;
+  border-left: 2px solid currentColor;
+  padding: 0.8rem 1rem;
+  margin: 1rem 0;
+  font-size: 0.875rem;
+}
+.error p {
+  margin: 0;
+}
+.detailHeader {
+  padding: 1.4rem 0;
+}
+.detailHeader .badge {
+  display: inline-block;
+  margin-bottom: 1rem;
+}
+.detailHeader h2 {
+  font-size: clamp(1.65rem, 5vw, 2.3rem);
+  line-height: 1.7;
+  margin-bottom: 0.65rem;
+}
+.facts {
+  margin: 0 0 2rem;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.2rem;
+  padding: 1.5rem 0;
+  border-block: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+}
+.facts dt {
+  color: var(--muted, #766a5f);
+  font-size: 0.875rem;
+  margin-bottom: 0.25rem;
+}
+.facts dd {
+  margin: 0;
+}
+.description p,
+.privateNote p,
+.announcements li p,
+.messages li div {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+.description {
+  margin-bottom: 2rem;
+}
+.reservationBar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.4rem;
+  margin: 1.8rem 0;
+  background: var(--paper, rgba(255, 252, 247, 0.88));
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+}
+.reservationBar strong {
+  font-weight: 500;
+}
+.reservationBar p {
+  margin: 0.25rem 0 0;
+}
+.privateNote {
+  border-left: 2px solid var(--accent, #926631);
+  padding: 1rem 1.2rem;
+  background: var(--paper, rgba(255, 252, 247, 0.88));
+  margin: 1.3rem 0;
+}
+.privateNote small,
+.form small {
+  color: var(--muted, #766a5f);
+  font-size: 0.8125rem;
+  line-height: 1.8;
+  font-weight: 400;
+}
+.announcements,
+.hostPanel,
+.conversation {
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+}
+.announcements ol,
+.messages {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.announcements li,
+.messages li {
+  padding: 1rem 0;
+  border-bottom: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+}
+.announcements time,
+.messages time {
+  font-size: 0.75rem;
+  color: var(--muted, #766a5f);
+}
+.announcements p {
+  margin: 0.4rem 0 0;
+}
+.messages {
+  max-height: 30rem;
+  overflow: auto;
+  margin-bottom: 1.2rem;
+}
+.messages li p {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.7rem;
+  margin: 0 0 0.4rem;
+}
+.messages strong {
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.85rem;
+  margin: 1rem 0;
+}
+.form {
+  padding: 1.7rem 0;
+}
+.form h2 {
+  font-size: 1.6rem;
+  margin-bottom: 0.7rem;
+}
+.form label,
+.conversation label,
+.hostPanel label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  margin: 1.1rem 0;
+}
+.form input,
+.form textarea,
+.form select,
+.conversation textarea,
+.hostPanel textarea {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  padding: 0.7rem;
+  border: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  border-radius: 4px;
+  color: inherit;
+  background: var(--paper, rgba(255, 252, 247, 0.88));
+  min-height: 44px;
+}
+.form textarea,
+.conversation textarea,
+.hostPanel textarea {
+  resize: vertical;
+}
+.twoColumns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0 1.3rem;
+}
+.legacy {
+  border-top: 1px solid var(--line, rgba(75, 57, 38, 0.16));
+  padding: 1rem 0;
+  font-size: 0.875rem;
+}
+.legacy summary {
+  min-height: 44px;
+  cursor: pointer;
+  padding: 0.5rem 0;
+}
+.legacy a {
+  color: var(--accent, #926631);
+}
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+}
+@media (max-width: 600px) {
+  .invitation {
+    gap: 1rem;
+  }
+  .bookMark {
+    width: 6.5rem;
+    height: 10rem;
+    margin: 0 0.2rem 0 0;
+    padding: 1rem 0.5rem;
+  }
+  .bookMark span {
+    font-size: 1.8rem;
+  }
+  .bookMark small {
+    font-size: 0.5rem;
+  }
+  .invitation h2 {
+    font-size: 1.75rem;
+  }
+  .toolbar {
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+  .tabs {
+    gap: 1rem;
+  }
+  .formatSelect {
+    margin-left: auto;
+  }
+  .card {
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .cardDate {
+    display: flex;
+    align-items: baseline;
+    gap: 0.7rem;
+    font-size: 1.25rem;
+  }
+  .cardContent strong {
+    font-size: 1.15rem;
+  }
+  .howItWorks {
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+  }
+  .facts,
+  .twoColumns {
+    grid-template-columns: 1fr;
+  }
+  .reservationBar {
+    padding: 1rem;
+  }
+}

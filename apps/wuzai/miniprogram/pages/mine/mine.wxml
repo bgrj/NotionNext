@@ -1,0 +1,8 @@
+<view class="page"><text class="eyebrow">我的相遇</text><text class="title">把时间留给彼此。</text>
+  <view class="nickname"><label class="label" for="nickname">希望大家怎么称呼你</label><input id="nickname" value="{{nickname}}" maxlength="30" bindinput="nicknameInput" placeholder="共读时使用的称呼，可选" /><button bindtap="saveNickname">保存称呼</button><text class="hint">不需要填写手机号或私人联系方式。</text></view>
+  <button class="primary" bindtap="create">发起活动</button>
+  <view wx:if="{{error}}" class="error">{{error}}<button bindtap="load">重新读取</button></view>
+  <view wx:for="{{visible}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="open"><text class="badge">{{item.isHost ? '我发起的' : item.reservation === 'confirmed' ? '已预约' : '已取消预约'}} · {{item.statusLabel}}</text><text class="card-title">{{item.title}}</text><text class="facts">{{item.timeLabel}} · 北京时间</text><text class="muted">{{item.location}}</text></view>
+  <view wx:if="{{loading}}" class="empty">正在读取…</view><view wx:elif="{{!visible.length &amp;&amp; !error}}" class="empty"><text class="heading">下一次相遇，从这里开始</text><text class="muted">发起与预约的活动，都会留在这里。</text></view>
+  <button wx:if="{{nextOffset !== null}}" bindtap="more" disabled="{{loading}}">继续查看</button><button bindtap="privacy">隐私与使用说明</button>
+</view>

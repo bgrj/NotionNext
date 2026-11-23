@@ -1,0 +1,2 @@
+.intro { padding:20rpx 0 28rpx; }
+.intro .primary { display:inline-flex; }

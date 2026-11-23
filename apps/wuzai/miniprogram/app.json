@@ -1,0 +1,27 @@
+{
+  "pages": [
+    "pages/index/index",
+    "pages/detail/detail",
+    "pages/publish/publish",
+    "pages/mine/mine",
+    "pages/privacy/privacy"
+  ],
+  "window": {
+    "navigationBarTitleText": "吾在",
+    "navigationBarBackgroundColor": "#faf7f1",
+    "navigationBarTextStyle": "black",
+    "backgroundColor": "#faf7f1"
+  },
+  "tabBar": {
+    "color": "#766a5f",
+    "selectedColor": "#926631",
+    "backgroundColor": "#faf7f1",
+    "list": [
+      { "pagePath": "pages/index/index", "text": "相遇" },
+      { "pagePath": "pages/mine/mine", "text": "我的活动" }
+    ]
+  },
+  "__usePrivacyCheck__": true,
+  "lazyCodeLoading": "requiredComponents",
+  "sitemapLocation": "sitemap.json"
+}

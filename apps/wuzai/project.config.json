@@ -1,0 +1,18 @@
+{
+  "appid": "wx5e2090025edf9077",
+  "projectname": "wuzai-reading",
+  "compileType": "miniprogram",
+  "miniprogramRoot": "miniprogram/",
+  "cloudfunctionRoot": "cloudfunctions/",
+  "setting": {
+    "es6": true,
+    "enhance": true,
+    "minified": true,
+    "urlCheck": true,
+    "postcss": true
+  },
+  "packOptions": {
+    "ignore": [{ "type": "folder", "value": "docs" }],
+    "include": []
+  }
+}

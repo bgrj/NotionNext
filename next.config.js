@@ -452,6 +452,9 @@ const nextConfig = {
   },
   experimental: {
     // cpus: 1,
+    ...(process.env.LOCAL_LOW_MEMORY_BUILD === 'true'
+      ? { cpus: 2, webpackMemoryOptimizations: true, webpackBuildWorker: true }
+      : {}),
     scrollRestoration: true,
     // 性能优化实验性功能
     optimizePackageImports: ['@heroicons/react', 'lodash']
