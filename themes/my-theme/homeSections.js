@@ -54,5 +54,10 @@ export function homeSections(value, fallback = DEFAULT_HOME_SECTIONS) {
   return valid.length ? valid : fallback
 }
 
-export const openHomeSections = value =>
-  homeSections(value, DEFAULT_OPEN_SECTIONS)
+export const openHomeSections = value => {
+  const sections = homeSections(value, DEFAULT_OPEN_SECTIONS)
+  // 兼容配置中心尚未刷新的旧默认值，避免已上线的吾在入口仍被锁住。
+  return sections.length === 1 && sections[0] === 'dao'
+    ? DEFAULT_OPEN_SECTIONS
+    : sections
+}

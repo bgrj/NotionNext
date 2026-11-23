@@ -36,8 +36,10 @@ const render = component => {
   return { markup, styles }
 }
 
-test('all four plates render with the Wuzai hub, Dao articles and IELTS links', () => {
-  const { markup, styles } = render(<HeroPuzzle />)
+test('the legacy Dao-only configuration opens the Wuzai hub alongside Dao and IELTS', () => {
+  const { markup, styles } = render(
+    <HeroPuzzle NOTION_CONFIG={{ OURBEINGS_OPEN_SECTIONS: 'dao' }} />
+  )
   expect(markup).toContain('href="/category/道"')
   expect(markup).toContain('aria-label="道"')
   expect(markup).toContain('href="https://ourbeings.com/ielts/"')
