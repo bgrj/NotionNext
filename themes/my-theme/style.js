@@ -557,8 +557,14 @@ const Style = () => {
         max-width: none;
         overflow: visible;
       }
+      #theme-my-theme.ob-beings-layout #wrapper {
+        background: #faf7f1;
+      }
+      .dark #theme-my-theme.ob-beings-layout #wrapper {
+        background: #181411 !important;
+      }
       /* 深色阅读页必须同时压暗背景图，避免浅字直接叠在亮色天空上。 */
-      .dark #theme-my-theme.ob-ex-layout #wrapper {
+      .dark #theme-my-theme.ob-ex-layout:not(.ob-beings-layout) #wrapper {
         background-color: #14110e !important;
         background-image:
           linear-gradient(rgba(20, 17, 14, 0.94), rgba(20, 17, 14, 0.94)),

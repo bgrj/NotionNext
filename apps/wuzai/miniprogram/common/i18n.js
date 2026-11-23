@@ -1,0 +1,491 @@
+// Interface copy only. Reader writing and quoted sources retain their original language.
+const en = {
+  统计说明: 'How we count',
+  如何参与: 'How to take part',
+  '先登录，再继续': 'Sign in to continue',
+  '已有账户直接登录；第一次来，可以创建账户。':
+    'Sign in to your account, or create one if this is your first visit.',
+  登录: 'Sign in',
+  创建账户: 'Create account',
+  '预约成功后，按发起人的说明加入本场交流。':
+    'After reserving, follow the host’s instructions to join the conversation.',
+  '留出时间，带着问题来': 'Make time. Bring a question.',
+  '档案位还没坐下。稍后再试。':
+    'Your profile could not be loaded. Please try again.',
+  '没有放下。稍后再试。': 'Could not save. Please try again.',
+  '正在确认登录状态…': 'Checking sign-in…',
+  我的档案: 'My profile',
+  存在者: 'A being',
+  ' · 站主': ' · Founder',
+  '你已经进来。这里是你的档案位：箴言和生命钟的数据可以改，倒计时公式不能改。存在、道、术分三间屋子。默认私密，公开的才进公共池。':
+    'A space of your own: a motto, a life clock, and writing on life, ideas and practice. Private by default. Share only what you choose.',
+  生命钟: 'Life clock',
+  出生: 'Born',
+  未写下: 'Not recorded',
+  '· 目标': '· Aim',
+  岁: 'years',
+  蒙昧: 'Before awakening',
+  挣脱蒙昧后还余: 'Time beyond awakening',
+  先写下挣脱蒙昧和目标岁数: 'Add your awakening date and intended lifespan',
+  '倒计时按挣脱蒙昧日 + 目标岁数来算，公式固定。':
+    'The clock uses your awakening date and intended lifespan. The formula stays fixed.',
+  邀请码: 'Invitation code',
+  '前一百人可以把这张码分给后来的人。席位满了之后，没有码就付 5 元水电费。不是课程。':
+    'The first 100 members can share an invitation. Later arrivals without a code contribute CNY 5 towards running costs. This is not a course.',
+  已复制: 'Copied',
+  复制邀请码: 'Copy invitation',
+  公开: 'Public',
+  '把档案放进名录。不勾选时，访客看不见你。':
+    'List your profile publicly. Leave unchecked to keep it private.',
+  自己的数据: 'Your details',
+  '箴言、出生、蒙昧、目标岁数都可以改。不要改倒计时本身。':
+    'Edit your motto and life dates. The clock’s formula remains fixed.',
+  显示名: 'Display name',
+  箴言: 'Motto',
+  挣脱蒙昧: 'Awakening',
+  首次写下: 'First writing',
+  目标岁数: 'Intended lifespan',
+  生命岁数: 'Lifespan',
+  '正在放下…': 'Saving…',
+  放下这些数据: 'Save these details',
+  三间屋子: 'Three rooms',
+  进入: 'Enter',
+  '。站主仍在原来的分区写，署自己的名。':
+    '. The founder’s writing stays in its own sections, under their own name.',
+  ' · 公开': ' · Public',
+  ' · 私密': ' · Private',
+  '还没有放下。默认私密。': 'Nothing written yet. Private by default.',
+  放下一段: 'Leave a thought',
+  '勾选公开的道 / 术会进全站分区，题目后面署你们的名。私密的只留在自己档案里。存在进「我们的存在」，不进站主的「我的存在」。':
+    'Published ideas and practices appear in the shared sections under your name. Private writing stays in your profile. Life writing belongs to Our Beings, separate from the founder’s personal space.',
+  屋子: 'Room',
+  题目: 'Title',
+  正文: 'Writing',
+  这段公开: 'Publish this piece',
+  放下: 'Save',
+  回到名录: 'Back to our people',
+  公开的生命钟: 'Public life clock',
+  退出: 'Sign out',
+  交流渠道: 'Conversation channel',
+  站内交流: 'On this website',
+  其他: 'Other',
+  入群与参与说明: 'Joining instructions',
+  发起人的交流群: 'The host’s group',
+  '预约后查看发起人的交流群加入说明。':
+    'Reserve a place to see how to join the host’s group.',
+  '请填写预约后的交流群加入说明。': 'Add private group joining instructions.',
+  '选择渠道，填写群链接、入群方式或联系说明。':
+    'Choose a channel and add a group link or joining instructions.',
+  '约每 30 秒更新；仅统计平台前台活动，不包含外部聊天软件的在线人数。':
+    'Updates about every 30 seconds. Active platform sessions only; external chat app activity is not available.',
+  '吾在 · 阅读与交流': 'Our Being · Read & converse',
+  '把一本书，': 'Open a book,',
+  '读成一次相遇。': 'meet another world.',
+  '从一段共读、一场对话开始。':
+    'Begin with a shared reading or a conversation.',
+  '带着问题来，也带着自己的生活来。': 'Bring your questions. Bring your life.',
+  '从一段共读、一场对话开始。带着问题来，也带着自己的生活来。':
+    'Read together. Bring your questions and your life.',
+  发起一次相遇: 'Host a gathering',
+  共: 'READ',
+  读: 'TOGETHER',
+  活动时间: 'When',
+  即将相遇: 'Upcoming',
+  往期相遇: 'Past',
+  我的活动: 'My gatherings',
+  活动形式: 'Format',
+  全部形式: 'All formats',
+  线上: 'Online',
+  线下: 'In person',
+  重新读取: 'Try again',
+  先让我们认识你: 'A place for you',
+  '浏览活动无需登录。预约、发起活动与进入交流群，需要使用自己的账号。':
+    'Browse freely. Sign in to host, reserve a place or join a conversation.',
+  '登录 / 注册': 'Sign in / Join',
+  先看看: 'Keep browsing',
+  '正在整理这次相遇…': 'Loading gatherings…',
+  '正在整理相遇…': 'Loading gatherings…',
+  '· 北京时间': '· Beijing time (UTC+08:00)',
+  共读: 'Reading',
+  交流: 'Conversation',
+  人: 'people',
+  ' · 我发起的': ' · Hosting',
+  ' · 已预约': ' · Reserved',
+  '你的下一次相遇，从这里开始': 'Your next gathering begins here',
+  '相遇的回声，会留在这里': 'A record of time shared',
+  '为下一次相遇，留一页空白': 'A page for the next gathering',
+  '预约与发起的活动都会留在这里。':
+    'The gatherings you host and join will appear here.',
+  '这个范围里暂时没有已结束的活动。': 'No past gatherings match these filters.',
+  '这个范围里还没有活动。不妨从你想读的一本书、想聊的一个问题开始。':
+    'No gatherings here yet. Begin with a book or a question.',
+  '这个范围里暂时没有活动。不妨从一本想读的书开始。':
+    'No gatherings here yet. Begin with a book you want to read.',
+  发起活动: 'Host a gathering',
+  '读取中…': 'Loading…',
+  继续查看活动: 'More gatherings',
+  继续查看: 'Show more',
+  留出时间: 'Make time',
+  '看看主题与安排，预约一个适合自己的位置。':
+    'Find a topic and a time that speak to you.',
+  带着问题来: 'Bring a question',
+  '预约后查看参与说明，加入本场交流。':
+    'Reserve a place, then follow the joining instructions.',
+  让相遇继续: 'Keep the conversation',
+  '活动通知、共读与对话，都留在这次相遇里。':
+    'Find updates and conversations with each gathering.',
+  此前发布的活动介绍: 'Earlier introductions',
+  活动链接已复制: 'Gathering link copied',
+  请复制浏览器地址栏中的活动链接: 'Please copy the link from your address bar.',
+  返回活动广场: 'Back to gatherings',
+  一起共读: 'Read together',
+  一起交流: 'Converse together',
+  线上相遇: 'Online',
+  线下相遇: 'In person',
+  由: 'Hosted by',
+  发起: '',
+  '发起 ·': '·',
+  '相遇时间 · 北京时间': 'When · Beijing time (UTC+08:00)',
+  至: 'to',
+  在哪里: 'Where',
+  留出的名额: 'Places',
+  '人已预约 · 还余': 'reserved · available:',
+  位: '',
+  '人已预约 · 余': 'reserved · available:',
+  预约截止: 'Reserve by',
+  关于这次相遇: 'About this gathering',
+  你发起的相遇: 'You are hosting',
+  已为你留好一个位置: 'Your place is reserved',
+  你已取消预约: 'Your reservation was cancelled',
+  '为一次认真的对话，留出时间': 'Make time for a thoughtful conversation',
+  为对话留出一点时间: 'Make time to converse',
+  '预约后查看发起人的微信群加入说明。':
+    'Reserve a place to see how to join the host’s WeChat group.',
+  '预约成功后，就可以进入本场站内交流群。':
+    'After reserving, join this gathering’s conversation here.',
+  预约这次相遇: 'Reserve a place',
+  登录后预约: 'Sign in to reserve',
+  取消预约: 'Cancel reservation',
+  发起人的活动微信群: 'The host’s WeChat group',
+  参与说明: 'Joining instructions',
+  '仅向本场发起人和已预约者展示。':
+    'Visible only to the host and confirmed participants.',
+  '仅向发起人和已预约者展示。':
+    'Visible only to the host and confirmed participants.',
+  活动通知: 'Updates',
+  '发起人尚未发布新的通知，参与前请再来看看。':
+    'No updates yet. Check again before joining.',
+  '还没有新的通知，参与前请再来看看。':
+    'No updates yet. Check again before joining.',
+  发起人的安排: 'Host tools',
+  公开发布活动: 'Publish gathering',
+  编辑安排: 'Edit details',
+  取消这场活动: 'Cancel gathering',
+  '取消后将停止预约，并在活动通知中说明。':
+    'Reservations will close and a cancellation notice will be posted.',
+  确认取消活动: 'Confirm cancellation',
+  保留活动: 'Keep gathering',
+  发布一条活动通知: 'Post an update',
+  '更新准备材料、时间安排或集合提醒。':
+    'Share reading materials, changes or a reminder.',
+  发布通知: 'Post update',
+  '本场活动的交流群仅向发起人和已预约者开放。':
+    'The conversation is open to the host and confirmed participants.',
+  复制活动链接: 'Copy gathering link',
+  只在这次相遇之中: 'Within this gathering',
+  活动交流群: 'Conversation',
+  '仅发起人和已预约者可进入。保留最近 100 条交流，长篇思考可以另存到自己的空间。':
+    'For the host and confirmed participants. The latest 100 messages are kept; save longer reflections in your own space.',
+  '正在读取交流…': 'Loading conversation…',
+  '还没有人开口。带着一个问题来，也很好。':
+    'No messages yet. A question is a good beginning.',
+  写给一起参与的人: 'To those sharing this gathering',
+  '发送中…': 'Sending…',
+  发送: 'Send',
+  '交流已归档，或你的参与状态已改变。':
+    'This conversation is archived or your participation has changed.',
+  '留一段时间，邀请彼此走近': 'Make time. Invite another perspective.',
+  编辑活动安排: 'Edit gathering',
+  '先保存为草稿，确认安排后再公开发布。所有时间均为北京时间。':
+    'Save a private draft, then publish when ready. Times use your local timezone.',
+  '先保存草稿，再确认发布。时间均为北京时间。':
+    'Save a private draft, then publish. Times use your local timezone.',
+  活动名称: 'Gathering title',
+  '例如：一起读《我与你》': 'For example: Reading I and Thou together',
+  相遇的方式: 'Gathering type',
+  想读的书或材料: 'Book or material',
+  '书名、篇章或主题，可选': 'Book, chapter or topic (optional)',
+  活动介绍: 'Introduction',
+  '我们为什么相遇？会读什么、聊什么，需要做哪些准备？':
+    'Why meet? What will we read or discuss? How can we prepare?',
+  开始时间: 'Starts',
+  结束时间: 'Ends',
+  '留空时，活动开始前均可预约。':
+    'Leave blank to accept reservations until the start.',
+  参与名额: 'Places available',
+  '不含发起人；已有预约后不能减少到已预约人数以下。':
+    'Excludes the host; cannot be fewer than existing reservations.',
+  '城市、场地或线上方式': 'City, venue or online format',
+  '例如：线上语音 / 杭州·某书店':
+    'For example: online audio / a local bookshop',
+  '此处公开展示，请勿填写私人联系方式。':
+    'Publicly visible. Keep private contact details out of this field.',
+  活动交流: 'Where to converse',
+  本站活动交流群: 'Conversation on this website',
+  发起人自建微信群: 'Host’s WeChat group',
+  微信群加入说明: 'WeChat group instructions',
+  预约后的参与说明: 'Private joining instructions',
+  '填写如何联系你入群、入群口令等，由你建立和维护活动微信群。':
+    'Explain how to join the WeChat group you create and maintain.',
+  '可填写线上会议入口、集合提示等。':
+    'Meeting links, directions or other joining details.',
+  '仅向发起人和已预约的参与者显示。':
+    'Only the host and confirmed participants can see this.',
+  '正在保存…': 'Saving…',
+  保存安排: 'Save changes',
+  保存草稿: 'Save draft',
+  返回: 'Back',
+  全部: 'All',
+  生命记录: 'Life writing',
+  道: 'Ways of seeing',
+  术: 'Ways of doing',
+  'OUR BEINGS · 共在': 'OUR BEINGS · TOGETHER',
+  我们的存在: 'Our Beings',
+  我的空间: 'My Being',
+  '一个人与自己周旋，也与他人相遇。':
+    'Time with yourself. Encounters with others.',
+  '在这里共读，留下思考，交换值得反复进入的世界。':
+    'Read together, leave a thought and discover another world.',
+  '每个人都有自己的私人空间。只有你主动公开的内容，才在这里相遇。':
+    'Your space stays private. Only what you choose to publish appears here.',
+  浏览我们的存在: 'Explore Our Beings',
+  阅读活动: 'Gatherings',
+  公开内容: 'Shared writing',
+  '一起读，也一起想': 'Read and think together',
+  '从一个人的思考，到我们的对话':
+    'From a personal thought to a shared conversation',
+  近期公开内容: 'Recent shared writing',
+  '线上 · 线下': 'Online · In person',
+  '生命记录 · 道 · 术': 'Life · Seeing · Doing',
+  筛选公开内容: 'Filter shared writing',
+  '发布于 ': 'Published ',
+  再读几篇: 'Read more',
+  这里还没有公开的篇章: 'No shared writing here yet',
+  '这个分类暂时没有可展示的内容。私密记录会留在各自的空间里。':
+    'No shared writing in this category. Private writing stays in each person’s space.',
+  先读一些思考: 'Read some reflections',
+  回到我的空间: 'Back to my space',
+  '慢慢读，也带走可用的方法。': 'Read slowly. Take something with you.',
+  '继续读「道」': 'Explore ways of seeing',
+  '去看看「术」': 'Explore ways of doing',
+  此处汇集最近: 'Showing the latest',
+  '篇内容，更多文章可从对应板块阅读。':
+    'pieces. Explore each section for more.',
+  此处显示最近: 'Showing the latest',
+  '份活动介绍。': 'gathering introductions.',
+  存在者名录与现行加入方式: 'Our people & joining',
+  '这里保留已公开的存在者档案。每个人的私人记录，仍属于自己。':
+    'Public profiles live here. Private records remain their owners’ own.',
+  已留下: 'Published',
+  ' · 前一百席位已满': ' · The first 100 places are full',
+  已公开的存在者: 'Public profiles',
+  档案: 'profiles',
+  进入站主的生命钟: 'Visit the founder’s life clock',
+  进入这份存在: 'Visit this being',
+  现行加入方式: 'Joining',
+  前: 'The first',
+  '人点右上角人像，用任何国家的邮箱免费占一个档案位。进来后会得到一张邀请码。不需要微信，也不需要中国手机号。席位满了之后，要么用老会员分享的邀请码，要么付':
+    'people may join free using an email from any country. Members receive an invitation code. No WeChat or Chinese phone number is required. After those places fill, join with a member’s invitation or pay',
+  '元占一个档案位。这是水电费，不是课程。':
+    'CNY for a profile. This supports running costs, not a course.',
+  '进来的人可以写自己的存在、道、术，默认私密，公开的才进公共池。访客只读公开内容。':
+    'Members can write about life, ideas and practice. Writing is private by default. Visitors only see what is published.',
+  '前一百席位已满。之后只接受邀请码或付款。':
+    'The first 100 places are full. An invitation or payment is now required.',
+  '前一百席位仍开放。登录密钥尚未接入，现在还不能真正进来。':
+    'The first 100 places are open. Sign-in is not configured yet.',
+  已使用微信登录: 'Signed in with WeChat',
+  用微信留住每次相遇: 'Your gatherings, with WeChat',
+  '发起与预约的活动会归属于当前微信账号。':
+    'Your hosted and reserved gatherings belong to this WeChat account.',
+  '登录后可查看你发起和预约的活动。':
+    'Sign in to see the gatherings you host and join.',
+  '正在微信登录…': 'Signing in…',
+  微信登录: 'Sign in with WeChat',
+  我发起的: 'Hosting',
+  已预约: 'Reserved',
+  已取消预约: 'Cancelled reservation',
+  我的相遇: 'My gatherings',
+  '把时间留给彼此。': 'Time for ourselves and each other.',
+  '无需另设密码，也不需要手机号。微信与网站账号目前独立。':
+    'No new password or phone number needed. WeChat and website accounts are currently separate.',
+  希望大家怎么称呼你: 'What would you like to be called?',
+  保存称呼: 'Save name',
+  '不需要填写手机号或私人联系方式。':
+    'No phone number or private contact details needed.',
+  '正在读取…': 'Loading…',
+  '下一次相遇，从这里开始': 'Your next gathering begins here',
+  '发起与预约的活动，都会留在这里。':
+    'The gatherings you host and join appear here.',
+  隐私与使用说明: 'Privacy & use',
+  '共读时使用的称呼，可选': 'Name for shared reading (optional)',
+  '正在读取这次相遇…': 'Loading gathering…',
+  复制参与说明: 'Copy joining instructions',
+  '本场活动使用网站交流群，预约后请在网站中参与。':
+    'This gathering uses a conversation on the website.',
+  '微信账号与网站账号目前独立，网站仍需使用已预约的账号进入。':
+    'WeChat and website accounts are separate. Enter on the website with an account that has a reservation.',
+  复制网站活动链接: 'Copy website link',
+  发布活动通知: 'Post an update',
+  取消活动: 'Cancel gathering',
+  分享这次相遇: 'Share gathering',
+  '准备材料、集合与时间提醒': 'Materials, directions or a reminder',
+  选择开始日期: 'Choose start date',
+  同开始日期: 'Same as start date',
+  活动开始前均可预约: 'Reservations open until the start',
+  '正在读取安排…': 'Loading details…',
+  相遇方式: 'Gathering type',
+  '书名、材料或主题': 'Book, material or topic',
+  开始日期与时间: 'Start date & time',
+  结束日期与时间: 'End date & time',
+  预约截止日期与时间: 'Reservation deadline',
+  '名额（不含发起人，1–500）': 'Places (excluding host, 1–500)',
+  '城市、场地或线上方式（公开）': 'City, venue or online format (public)',
+  '你的活动微信群 · 入群说明': 'Your WeChat group · Joining instructions',
+  '仅预约成功后可见。请勿在公开介绍中填写私人联系方式。':
+    'Visible after reserving. Keep private contact details out of the public introduction.',
+  '一起读一本书、聊一个问题': 'A book to read, a question to explore',
+  '为什么相遇？会读什么，需要准备什么？':
+    'Why meet? What will we read? How can we prepare?',
+  '由你建立活动微信群。填写参与者如何联系你入群等说明。':
+    'Create a group for your gathering and explain how participants can join.',
+  '认真对待每次相遇。': 'Care for each gathering.',
+  账号与预约: 'Accounts & reservations',
+  '使用云开发提供的微信身份标识区分预约和发起人。你可以自愿填写一个共读时的称呼，不要求手机号、定位或通讯录。':
+    'Verified WeChat identity identifies hosts and reservations. A reading name is optional. No phone number, location or contacts are required.',
+  '微信与网站账号目前独立，不会根据相同称呼自动合并。活动本身使用同一套数据。':
+    'WeChat and website accounts are separate and never merged by name. Gathering data is shared.',
+  公开与私密: 'Public & private',
+  '草稿只对发起人可见。活动公开后，标题、介绍、时间、地点、发起人称呼和通知可以被其他人查看。':
+    'Drafts are private to the host. Once published, titles, introductions, times, locations, the host’s name and updates are public.',
+  '活动入群与参与说明仅向发起人和已预约者提供。取消预约后将失去这些说明的访问权限。':
+    'Joining instructions are for hosts and confirmed participants. Cancelling a reservation revokes access.',
+  交流与活动通知: 'Conversations & updates',
+  '微信活动由发起人建立、维护微信群。预约不会自动把你拉入微信群，请按活动说明联系发起人。':
+    'Hosts create and maintain their WeChat groups. Reserving does not add you automatically; follow the joining instructions.',
+  '本版本的活动通知展示在详情页，请在参与前查看。不会在未获得你授权时发送微信订阅消息。':
+    'Updates appear on gathering pages. WeChat subscription notifications are not enabled.',
+  需要帮助: 'Need help?',
+  '活动安排请联系该活动发起人。': 'Ask the host about gathering arrangements.',
+  '平台支持：': 'Support:',
+  '发布和参与时，请尊重他人，不在公开内容中填写他人的私人信息。':
+    'Respect others. Do not publish someone else’s private information.',
+  草稿: 'Draft',
+  可预约: 'Open',
+  名额已满: 'Full',
+  预约已截止: 'Closed',
+  进行中: 'In progress',
+  已结束: 'Ended',
+  已取消: 'Cancelled',
+  '请先登录，再参与这次相遇。': 'Please sign in to participate.',
+  '请填写 2–80 字的活动名称。': 'Use 2–80 characters for the title.',
+  '请填写活动介绍，最多 4000 字。':
+    'Add an introduction of up to 4,000 characters.',
+  '请检查开始、结束和预约截止时间。':
+    'Check the start, end and reservation deadline.',
+  '名额需为 1–500 人。': 'Choose 1–500 places.',
+  '请选择线上或线下。': 'Choose online or in person.',
+  '请选择交流方式。': 'Choose where to converse.',
+  '请填写城市、场地或线上参与方式。': 'Add a city, venue or online format.',
+  '请填写预约后的微信群加入说明。': 'Add WeChat joining instructions.',
+  '这场活动暂未公开。': 'This gathering is not public.',
+  '只有发起人可以管理这场活动。': 'Only the host can manage this gathering.',
+  '活动开始或取消后，不能再更改安排。':
+    'Arrangements cannot change after the start or cancellation.',
+  '开始时间需在未来，名额不能少于已预约人数。':
+    'The start must be in the future; capacity cannot be below existing reservations.',
+  '已有预约后，请保留原交流方式。':
+    'Keep the conversation format once people have reserved.',
+  '活动安排已更新，请重新查看时间、地点与参与说明。':
+    'Arrangements changed. Check the time, place and joining instructions.',
+  '请先调整活动时间，再发布。': 'Update the schedule before publishing.',
+  '你是活动发起人，无需预约。': 'You are the host; no reservation needed.',
+  '本场活动已满额、截止或结束，请查看其他活动。':
+    'This gathering is full, closed or ended. Explore another gathering.',
+  '发起人已取消本场活动。感谢你为相遇留出的时间。':
+    'The host cancelled this gathering. Thank you for making time.',
+  '预约成功后才能进入本站活动交流群。':
+    'Reserve a place before entering this conversation.',
+  '这场活动的交流已归档。': 'This conversation is archived.',
+  '稍等片刻，再发送下一条。': 'Please wait a moment before sending again.',
+  '发布活动后才能发送通知。': 'Publish the gathering before posting updates.',
+  '暂不支持这个操作。': 'This action is not supported.',
+  '暂时没能完成，请稍后重试。': 'Unable to complete this. Please try again.',
+  '活动服务暂未就绪，请稍后再来。':
+    'The gathering service is not ready. Please try later.',
+  '暂时没能连接到活动服务，请稍后重试。':
+    'Unable to connect. Please try again.',
+  '微信登录未完成，请重试。':
+    'WeChat sign-in did not complete. Please try again.',
+  '未能验证微信身份，请重新打开小程序后登录。':
+    'WeChat identity could not be verified. Reopen the mini program and sign in.',
+  '请更新微信后再试。': 'Please update WeChat and try again.',
+  '请检查内容后再提交，或稍后重试。':
+    'Please review your text and submit again, or try later.',
+  '没有找到这场活动。': 'Gathering not found.',
+  '只有发起人可以编辑这场活动。': 'Only the host can edit this gathering.',
+  '请在网站编辑这场站内交流活动。':
+    'Please edit this gathering on the website.',
+  称呼已保存: 'Name saved',
+  与世界同在: 'Present in the world',
+  与自我疏离: 'Detached from myself',
+  我的存在: 'My Being',
+  全球共读共话: 'Read and converse, worldwide',
+  '欢迎世界各地的你，也欢迎生活在中国的国际朋友。':
+    'For readers around the world, and international neighbours living in China.',
+  城市: 'City',
+  所有城市: 'All cities',
+  搜索世界各地城市: 'Find a city worldwide',
+  其他城市: 'Another city',
+  使用这座城市: 'Use this city',
+  交流语言: 'Conversation language',
+  全部语言: 'All languages',
+  中文: '中文',
+  英文: 'English',
+  中英双语: '中文 & English',
+  本地时间: 'Your local time',
+  平台实时在线: 'Live on the platform',
+  在线交流人数: 'People online',
+  在线交流组数: 'Groups online',
+  暂不可用: 'Unavailable',
+  '约每 30 秒更新；仅统计平台前台活动，非外部微信群在线人数。':
+    'Updates about every 30 seconds. Counts active platform sessions, not external WeChat group members.',
+  取消: 'Cancel',
+  选择城市: 'Choose a city',
+  发起共读: 'Host a reading',
+  发起共话: 'Host a conversation',
+  我的发起: 'Gatherings I host',
+  我的预约: 'My reservations',
+  我的称呼: 'My name',
+  '学习、思考、创作，与他人相遇。':
+    'Learn, reflect, create. Meet another perspective.',
+  '请填写有效时区。': 'Please choose a valid timezone.',
+  '请填写城市名称。': 'Enter a city name.'
+}
+function language(value) {
+  return String(value || '')
+    .toLowerCase()
+    .startsWith('zh')
+    ? 'zh'
+    : 'en'
+}
+function translate(value, locale = 'zh') {
+  if (locale !== 'en' || typeof value !== 'string') return value
+  return Object.prototype.hasOwnProperty.call(en, value) ? en[value] : value
+}
+function words(locale) {
+  return Object.fromEntries(
+    Object.keys(en).map(key => [key, translate(key, locale)])
+  )
+}
+module.exports = { en, language, translate, words }

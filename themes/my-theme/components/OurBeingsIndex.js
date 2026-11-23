@@ -1,7 +1,15 @@
+import {
+  ActivityLanguageProvider,
+  LanguageSwitch,
+  useActivityLanguage
+} from '../activities/language'
 import dynamic from 'next/dynamic'
 import SmartLink from '@/components/SmartLink'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import ActivityHub from '../activities/ActivityHub'
+import BeingMasthead from '../activities/BeingMasthead'
+import PhilosophyNav from '../activities/PhilosophyNav'
+import surface from '../activities/being-surface.module.css'
 import {
   DESK_HREF,
   OUR_BEINGS_JOIN_PRICE_YUAN,
@@ -25,9 +33,12 @@ const FILTERS = [
 ]
 
 const OurBeingsIndex = ({ beings, publicHub } = {}) => {
+  const { t, locale } = useActivityLanguage()
   const [extra, setExtra] = useState(Array.isArray(beings) ? beings : [])
   const [takenSeats, setTakenSeats] = useState(null)
   const [view, setView] = useState('events')
+  const [requestedKind, setRequestedKind] = useState(null)
+  const clearRequestedKind = useCallback(() => setRequestedKind(null), [])
   const [domain, setDomain] = useState('all')
   const [visibleCount, setVisibleCount] = useState(6)
 
@@ -66,33 +77,30 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
   }
 
   return (
-    <div className='ob-beings'>
-      <header className='ob-beings__head'>
-        <p className='ob-beings__kicker'>OUR BEINGS · 共在</p>
-        <div className='ob-beings__heading'>
-          <h1 className='ob-beings__title'>我们的存在</h1>
-          <SmartLink href={DESK_HREF} className='ob-beings__desk'>
-            我的空间 <span aria-hidden='true'>↗</span>
-          </SmartLink>
-        </div>
-        <p className='ob-beings__lead'>
-          一个人与自己周旋，也与他人相遇。
-          <br />
-          在这里共读，留下思考，交换值得反复进入的世界。
-        </p>
-        <p className='ob-beings__privacy'>
-          每个人都有自己的私人空间。只有你主动公开的内容，才在这里相遇。
-        </p>
-      </header>
+    <div
+      className={`ob-beings ${surface.surface}`}
+      lang={locale === 'en' ? 'en' : 'zh-CN'}
+    >
+      <LanguageSwitch />
+      <BeingMasthead />
+      {!isEvents && (
+        <PhilosophyNav
+          onCreate={kind => {
+            setRequestedKind(kind)
+            chooseView('events')
+          }}
+        />
+      )}
 
-      <nav className='ob-beings__views' aria-label='浏览我们的存在'>
+      <nav className='ob-beings__views' aria-label={t('浏览我们的存在')}>
         <button
           type='button'
           aria-pressed={isEvents}
           aria-controls='ob-hub-panel'
           onClick={() => chooseView('events')}
         >
-          阅读活动
+          {' '}
+          {t('阅读活动')}{' '}
         </button>
         <button
           type='button'
@@ -100,11 +108,18 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
           aria-controls='ob-hub-panel'
           onClick={() => chooseView('posts')}
         >
-          公开内容
+          {' '}
+          {t('公开内容')}{' '}
         </button>
       </nav>
 
-      {isEvents && <ActivityHub legacyEvents={events} />}
+      {isEvents && (
+        <ActivityHub
+          legacyEvents={events}
+          requestedKind={requestedKind}
+          onCreateHandled={clearRequestedKind}
+        />
+      )}
       {!isEvents && (
         <section
           id='ob-hub-panel'
@@ -114,19 +129,21 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
           <div className='ob-beings__section-head'>
             <div>
               <p className='ob-beings__eyebrow'>
-                {isEvents ? '一起读，也一起想' : '从一个人的思考，到我们的对话'}
+                {isEvents
+                  ? t('一起读，也一起想')
+                  : t('从一个人的思考，到我们的对话')}
               </p>
               <h2 id='ob-hub-title'>
-                {isEvents ? '阅读活动' : '近期公开内容'}
+                {isEvents ? t('阅读活动') : t('近期公开内容')}
               </h2>
             </div>
             <span className='ob-beings__quiet'>
-              {isEvents ? '线上 · 线下' : '生命记录 · 道 · 术'}
+              {isEvents ? t('线上 · 线下') : t('生命记录 · 道 · 术')}
             </span>
           </div>
 
           {!isEvents && (
-            <div className='ob-beings__filters' aria-label='筛选公开内容'>
+            <div className='ob-beings__filters' aria-label={t('筛选公开内容')}>
               {FILTERS.map(filter => (
                 <button
                   key={filter.id}
@@ -137,7 +154,7 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
                     setVisibleCount(6)
                   }}
                 >
-                  {filter.label}
+                  {t(filter.label)}
                 </button>
               ))}
             </div>
@@ -155,7 +172,7 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
                           <>
                             <span aria-hidden='true'> / </span>
                             <time dateTime={item.date}>
-                              {isEvents ? '发布于 ' : ''}
+                              {isEvents ? t('发布于 ') : ''}
                               {item.date}
                             </time>
                           </>
@@ -182,12 +199,16 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
                   type='button'
                   onClick={() => setVisibleCount(count => count + 6)}
                 >
-                  再读几篇 <span aria-hidden='true'>↓</span>
+                  {' '}
+                  {t('再读几篇')} <span aria-hidden='true'>↓</span>
                 </button>
               )}
               {isEvents && (
                 <p className='ob-beings__note'>
-                  这里先呈现已发布的活动介绍。参与方式请查看活动原文，站内报名尚未接通。
+                  {' '}
+                  {t(
+                    '这里先呈现已发布的活动介绍。参与方式请查看活动原文，站内报名尚未接通。'
+                  )}{' '}
                 </p>
               )}
             </>
@@ -214,12 +235,18 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
                 />
               </svg>
               <h3>
-                {isEvents ? '为下一次相遇，留一页空白' : '这里还没有公开的篇章'}
+                {isEvents
+                  ? t('为下一次相遇，留一页空白')
+                  : t('这里还没有公开的篇章')}
               </h3>
               <p>
                 {isEvents
-                  ? '暂时没有可展示的已发布活动。活动发布与站内报名，将在后续逐步开放。'
-                  : '这个分类暂时没有可展示的内容。私密记录会留在各自的空间里。'}
+                  ? t(
+                      '暂时没有可展示的已发布活动。活动发布与站内报名，将在后续逐步开放。'
+                    )
+                  : t(
+                      '这个分类暂时没有可展示的内容。私密记录会留在各自的空间里。'
+                    )}
               </p>
               {isEvents ? (
                 <button
@@ -227,11 +254,13 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
                   type='button'
                   onClick={() => chooseView('posts')}
                 >
-                  先读一些思考 <span aria-hidden='true'>→</span>
+                  {' '}
+                  {t('先读一些思考')} <span aria-hidden='true'>→</span>
                 </button>
               ) : (
                 <SmartLink className='ob-beings__link' href={DESK_HREF}>
-                  回到我的空间
+                  {' '}
+                  {t('回到我的空间')}{' '}
                 </SmartLink>
               )}
             </div>
@@ -239,66 +268,83 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
 
           {!isEvents && (
             <div className='ob-beings__reading-paths'>
-              <p>慢慢读，也带走可用的方法。</p>
+              <p>{t('慢慢读，也带走可用的方法。')}</p>
               <div>
                 <SmartLink href='/category/道'>
-                  继续读「道」 <span aria-hidden='true'>↗</span>
+                  {' '}
+                  {t('继续读「道」')} <span aria-hidden='true'>↗</span>
                 </SmartLink>
                 <SmartLink href='/category/术'>
-                  去看看「术」 <span aria-hidden='true'>↗</span>
+                  {' '}
+                  {t('去看看「术」')} <span aria-hidden='true'>↗</span>
                 </SmartLink>
               </div>
               {Number(publicHub?.postsTotal) > posts.length && (
                 <small>
-                  此处汇集最近 {posts.length} 篇内容，更多文章可从对应板块阅读。
+                  {' '}
+                  {t('此处汇集最近')} {posts.length}{' '}
+                  {t('篇内容，更多文章可从对应板块阅读。')}{' '}
                 </small>
               )}
             </div>
           )}
           {isEvents && Number(publicHub?.eventsTotal) > events.length && (
             <p className='ob-beings__note'>
-              此处显示最近 {events.length} 份活动介绍。
+              {' '}
+              {t('此处显示最近')} {events.length} {t('份活动介绍。')}{' '}
             </p>
           )}
         </section>
       )}
 
       <details className='ob-beings__archive'>
-        <summary>存在者名录与现行加入方式</summary>
+        <summary>{t('存在者名录与现行加入方式')}</summary>
         <div className='ob-beings__archive-body'>
           <p className='ob-beings__archive-intro'>
-            这里保留已公开的存在者档案。每个人的私人记录，仍属于自己。
+            {' '}
+            {t(
+              '这里保留已公开的存在者档案。每个人的私人记录，仍属于自己。'
+            )}{' '}
           </p>
           <p className='ob-beings__count'>
-            已留下 {taken} / {OUR_BEINGS_SEATS}
+            {' '}
+            {t('已留下')} {taken} / {OUR_BEINGS_SEATS}
             {remaining > 0
               ? ` · 还余 ${remaining} 个前一百席位`
-              : ' · 前一百席位已满'}
+              : t(' · 前一百席位已满')}
           </p>
-          <section className='ob-beings__list' aria-label='已公开的存在者'>
+          <section className='ob-beings__list' aria-label={t('已公开的存在者')}>
             {archive.map(being => (
               <article key={being.id} className='ob-beings__card'>
-                <p className='ob-beings__seat'>档案 {formatSeat(being.seat)}</p>
+                <p className='ob-beings__seat'>
+                  {t('档案')} {formatSeat(being.seat)}
+                </p>
                 <h2 className='ob-beings__name'>{being.name}</h2>
                 {being.motto ? (
                   <p className='ob-beings__motto'>{being.motto}</p>
                 ) : null}
                 <SmartLink href={being.href} className='ob-beings__link'>
-                  {being.isAuthor ? '进入站主的生命钟' : '进入这份存在'}
+                  {being.isAuthor ? t('进入站主的生命钟') : t('进入这份存在')}
                 </SmartLink>
               </article>
             ))}
           </section>
           <section id='join' className='ob-beings__join'>
-            <h2>现行加入方式</h2>
+            <h2>{t('现行加入方式')}</h2>
             <p>
-              前 {OUR_BEINGS_SEATS}{' '}
-              人点右上角人像，用任何国家的邮箱免费占一个档案位。进来后会得到一张邀请码。不需要微信，也不需要中国手机号。席位满了之后，要么用老会员分享的邀请码，要么付{' '}
+              {' '}
+              {t('前')} {OUR_BEINGS_SEATS}{' '}
+              {t(
+                '人点右上角人像，用任何国家的邮箱免费占一个档案位。进来后会得到一张邀请码。不需要微信，也不需要中国手机号。席位满了之后，要么用老会员分享的邀请码，要么付'
+              )}{' '}
               {OUR_BEINGS_JOIN_PRICE_YUAN}{' '}
-              元占一个档案位。这是水电费，不是课程。
+              {t('元占一个档案位。这是水电费，不是课程。')}{' '}
             </p>
             <p>
-              进来的人可以写自己的存在、道、术，默认私密，公开的才进公共池。访客只读公开内容。
+              {' '}
+              {t(
+                '进来的人可以写自己的存在、道、术，默认私密，公开的才进公共池。访客只读公开内容。'
+              )}{' '}
             </p>
             <p className='ob-beings__en'>
               Sign in with any email, from anywhere. WeChat and a Chinese phone
@@ -309,8 +355,10 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
             ) : (
               <p className='ob-beings__status'>
                 {gated
-                  ? '前一百席位已满。之后只接受邀请码或付款。'
-                  : '前一百席位仍开放。登录密钥尚未接入，现在还不能真正进来。'}
+                  ? t('前一百席位已满。之后只接受邀请码或付款。')
+                  : t(
+                      '前一百席位仍开放。登录密钥尚未接入，现在还不能真正进来。'
+                    )}
               </p>
             )}
           </section>
@@ -319,15 +367,8 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
 
       <style jsx>{`
         .ob-beings {
-          --ink: #342c24;
-          --muted: #766a5f;
-          --accent: #926631;
-          --on-accent: #fffaf3;
-          --line: rgba(75, 57, 38, 0.16);
-          --paper: rgba(255, 252, 247, 0.88);
           width: min(52rem, 100%);
           margin: 0 auto;
-          padding: 1rem 0 3rem;
           color: var(--ink);
           overflow-wrap: anywhere;
         }
@@ -648,14 +689,6 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
           outline-offset: 5px;
           border-radius: 2px;
         }
-        :global(.dark) .ob-beings {
-          --ink: #f1e9dc;
-          --muted: #beb1a0;
-          --accent: #dfbd80;
-          --on-accent: #231b12;
-          --line: rgba(241, 233, 220, 0.2);
-          --paper: rgba(27, 24, 21, 0.9);
-        }
         @media (max-width: 540px) {
           .ob-beings {
             padding-top: 0.5rem;
@@ -697,4 +730,10 @@ const OurBeingsIndex = ({ beings, publicHub } = {}) => {
   )
 }
 
-export default OurBeingsIndex
+export default function LocalizedOurBeings(props) {
+  return (
+    <ActivityLanguageProvider>
+      <OurBeingsIndex {...props} />
+    </ActivityLanguageProvider>
+  )
+}

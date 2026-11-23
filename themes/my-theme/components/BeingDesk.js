@@ -1,3 +1,11 @@
+import PhilosophyNav from '../activities/PhilosophyNav'
+import BeingMasthead from '../activities/BeingMasthead'
+import surface from '../activities/being-surface.module.css'
+import {
+  ActivityLanguageProvider,
+  LanguageSwitch,
+  useActivityLanguage
+} from '../activities/language'
 import SmartLink from '@/components/SmartLink'
 import { useClerkSession } from '@/components/ClerkSession'
 import { OurBeingsAccountPrompt } from './OurBeingsAuth'
@@ -33,6 +41,7 @@ const profileFromBeing = being => {
 }
 
 const BeingDesk = () => {
+  const { t, locale } = useActivityLanguage()
   const enabled = isClerkEnabled()
   const session = useClerkSession()
   const { isLoaded, isSignedIn, user, signOut } = enabled
@@ -120,7 +129,7 @@ const BeingDesk = () => {
       })
       const data = await res.json().catch(() => null)
       if (!res.ok) {
-        setError(data?.message || '没有放下。稍后再试。')
+        setError(data?.message || t('没有放下。稍后再试。'))
         return false
       }
       applyPayload(data)
@@ -147,7 +156,7 @@ const BeingDesk = () => {
   if (!isLoaded) {
     return (
       <div className='ob-desk'>
-        <p>正在确认登录状态…</p>
+        <p>{t('正在确认登录状态…')}</p>
       </div>
     )
   }
@@ -156,47 +165,70 @@ const BeingDesk = () => {
 
   return (
     <div className='ob-desk'>
-      <p className='ob-desk__kicker'>我的档案</p>
-      <h1>{being?.name || '存在者'}</h1>
+      <p className='ob-desk__kicker'>{t('我的档案')}</p>
+      <h1>{being?.name || t('存在者')}</h1>
       <p className='ob-desk__seat'>
-        档案 {formatSeat(being?.seat)}
+        {' '}
+        {t('档案')} {formatSeat(being?.seat)}
         {being?.handle ? ` · ${being.handle}` : ''}
-        {being?.isAuthor ? ' · 站主' : ''}
+        {being?.isAuthor ? t(' · 站主') : ''}
       </p>
       {being?.motto ? <p className='ob-desk__motto'>{being.motto}</p> : null}
       <p>
-        你已经进来。这里是你的档案位：箴言和生命钟的数据可以改，倒计时公式不能改。存在、道、术分三间屋子。默认私密，公开的才进公共池。
+        {' '}
+        {t(
+          '你已经进来。这里是你的档案位：箴言和生命钟的数据可以改，倒计时公式不能改。存在、道、术分三间屋子。默认私密，公开的才进公共池。'
+        )}{' '}
       </p>
-      {error ? <p className='ob-desk__err'>{error}</p> : null}
+      {error ? <p className='ob-desk__err'>{t(error)}</p> : null}
 
       <section className='ob-desk__card'>
-        <p className='ob-desk__label'>生命钟</p>
+        <p className='ob-desk__label'>{t('生命钟')}</p>
         <p>
-          出生 {liveProfile.birth ? formatZhDate(liveProfile.birth) : '未写下'}{' '}
-          · 目标 {liveProfile.newYears || '—'} 岁
+          {' '}
+          {t('出生')}{' '}
+          {liveProfile.birth ? formatZhDate(liveProfile.birth) : t('未写下')}{' '}
+          {t('· 目标')} {liveProfile.newYears || '—'} {t('岁')}{' '}
         </p>
-        <p>蒙昧 {mengmeiDays == null ? '未写下' : `${mengmeiDays} 日`}</p>
         <p>
-          挣脱蒙昧后还余{' '}
+          {t('蒙昧')}{' '}
+          {mengmeiDays == null
+            ? t('未写下')
+            : `${mengmeiDays} ${locale === 'en' ? 'days' : '日'}`}
+        </p>
+        <p>
+          {' '}
+          {t('挣脱蒙昧后还余')}{' '}
           {clock
-            ? `${clock.days} 日 ${clock.hours} 时 ${clock.minutes} 分 ${clock.seconds} 秒`
-            : '先写下挣脱蒙昧和目标岁数'}
+            ? locale === 'en'
+              ? `${clock.days}d ${clock.hours}h ${clock.minutes}m ${clock.seconds}s`
+              : `${clock.days} 日 ${clock.hours} 时 ${clock.minutes} 分 ${clock.seconds} 秒`
+            : t('先写下挣脱蒙昧和目标岁数')}
         </p>
         <p className='ob-desk__hint'>
-          倒计时按挣脱蒙昧日 + 目标岁数来算，公式固定。
+          {' '}
+          {t('倒计时按挣脱蒙昧日 + 目标岁数来算，公式固定。')}{' '}
         </p>
       </section>
 
       {being?.inviteCode ? (
         <section className='ob-desk__card'>
-          <p className='ob-desk__label'>邀请码</p>
+          <p className='ob-desk__label'>{t('邀请码')}</p>
           <p className='ob-desk__code'>{being.inviteCode}</p>
           <p>
-            前一百人可以把这张码分给后来的人。席位满了之后，没有码就付 5
-            元水电费。不是课程。
+            {' '}
+            {t(
+              '前一百人可以把这张码分给后来的人。席位满了之后，没有码就付 5 元水电费。不是课程。'
+            )}{' '}
           </p>
-          <button type='button' className='ob-desk__btn' onClick={copyCode}>
-            {copied ? '已复制' : '复制邀请码'}
+          <button
+            type='button'
+            className='ob-desk__btn'
+            onClick={() => {
+              void copyCode()
+            }}
+          >
+            {copied ? t('已复制') : t('复制邀请码')}
           </button>
         </section>
       ) : null}
@@ -204,21 +236,23 @@ const BeingDesk = () => {
       {!being?.isAuthor ? (
         <>
           <section className='ob-desk__card'>
-            <p className='ob-desk__label'>公开</p>
+            <p className='ob-desk__label'>{t('公开')}</p>
             <label className='ob-desk__check'>
               <input
                 type='checkbox'
                 checked={Boolean(being?.public)}
                 disabled={saving}
-                onChange={event => patch({ public: event.target.checked })}
-              />
-              把档案放进名录。不勾选时，访客看不见你。
+                onChange={event => {
+                  void patch({ public: event.target.checked })
+                }}
+              />{' '}
+              {t('把档案放进名录。不勾选时，访客看不见你。')}{' '}
             </label>
           </section>
 
           <section className='ob-desk__card'>
-            <h2>自己的数据</h2>
-            <p>箴言、出生、蒙昧、目标岁数都可以改。不要改倒计时本身。</p>
+            <h2>{t('自己的数据')}</h2>
+            <p>{t('箴言、出生、蒙昧、目标岁数都可以改。不要改倒计时本身。')}</p>
             <form
               onSubmit={event => {
                 event.preventDefault()
@@ -226,7 +260,8 @@ const BeingDesk = () => {
               }}
             >
               <label>
-                显示名
+                {' '}
+                {t('显示名')}{' '}
                 <input
                   value={profileDraft?.name || ''}
                   maxLength={40}
@@ -240,7 +275,8 @@ const BeingDesk = () => {
                 />
               </label>
               <label>
-                箴言
+                {' '}
+                {t('箴言')}{' '}
                 <textarea
                   rows={3}
                   maxLength={140}
@@ -255,7 +291,8 @@ const BeingDesk = () => {
                 />
               </label>
               <label>
-                出生
+                {' '}
+                {t('出生')}{' '}
                 <input
                   type='date'
                   value={profileDraft?.birth || ''}
@@ -269,7 +306,8 @@ const BeingDesk = () => {
                 />
               </label>
               <label>
-                挣脱蒙昧
+                {' '}
+                {t('挣脱蒙昧')}{' '}
                 <input
                   type='date'
                   value={profileDraft?.awakening || ''}
@@ -283,7 +321,8 @@ const BeingDesk = () => {
                 />
               </label>
               <label>
-                首次写下
+                {' '}
+                {t('首次写下')}{' '}
                 <input
                   type='date'
                   value={profileDraft?.firstWritten || ''}
@@ -297,7 +336,8 @@ const BeingDesk = () => {
                 />
               </label>
               <label>
-                目标岁数
+                {' '}
+                {t('目标岁数')}{' '}
                 <input
                   type='number'
                   min={1}
@@ -313,7 +353,8 @@ const BeingDesk = () => {
                 />
               </label>
               <label>
-                生命岁数
+                {' '}
+                {t('生命岁数')}{' '}
                 <input
                   type='number'
                   min={1}
@@ -329,7 +370,7 @@ const BeingDesk = () => {
                 />
               </label>
               <button type='submit' className='ob-desk__btn' disabled={saving}>
-                {saving ? '正在放下…' : '放下这些数据'}
+                {saving ? t('正在放下…') : t('放下这些数据')}
               </button>
             </form>
           </section>
@@ -337,15 +378,18 @@ const BeingDesk = () => {
       ) : null}
 
       <section>
-        <h2>三间屋子</h2>
+        <h2>{t('三间屋子')}</h2>
         <div className='ob-desk__rooms'>
           {rooms.map(room => (
             <article key={room.id} className='ob-desk__card'>
               <h3>{room.name}</h3>
               {being?.isAuthor ? (
                 <p>
-                  <SmartLink href={room.authorHref}>进入{room.name}</SmartLink>
-                  。站主仍在原来的分区写，署自己的名。
+                  <SmartLink href={room.authorHref}>
+                    {t('进入')}
+                    {room.name}
+                  </SmartLink>{' '}
+                  {t('。站主仍在原来的分区写，署自己的名。')}{' '}
                 </p>
               ) : (
                 <>
@@ -354,12 +398,12 @@ const BeingDesk = () => {
                       {room.items.map(item => (
                         <li key={item.id}>
                           {item.title}
-                          {item.public ? ' · 公开' : ' · 私密'}
+                          {item.public ? t(' · 公开') : t(' · 私密')}
                         </li>
                       ))}
                     </ul>
                   ) : (
-                    <p>还没有放下。默认私密。</p>
+                    <p>{t('还没有放下。默认私密。')}</p>
                   )}
                 </>
               )}
@@ -370,10 +414,12 @@ const BeingDesk = () => {
 
       {!being?.isAuthor ? (
         <section className='ob-desk__card'>
-          <h2>放下一段</h2>
+          <h2>{t('放下一段')}</h2>
           <p>
-            勾选公开的道 /
-            术会进全站分区，题目后面署你们的名。私密的只留在自己档案里。存在进「我们的存在」，不进站主的「我的存在」。
+            {' '}
+            {t(
+              '勾选公开的道 / 术会进全站分区，题目后面署你们的名。私密的只留在自己档案里。存在进「我们的存在」，不进站主的「我的存在」。'
+            )}{' '}
           </p>
           <form
             onSubmit={event => {
@@ -382,7 +428,8 @@ const BeingDesk = () => {
             }}
           >
             <label>
-              屋子
+              {' '}
+              {t('屋子')}{' '}
               <select
                 value={draft.room}
                 onChange={event =>
@@ -397,7 +444,8 @@ const BeingDesk = () => {
               </select>
             </label>
             <label>
-              题目
+              {' '}
+              {t('题目')}{' '}
               <input
                 value={draft.title}
                 maxLength={80}
@@ -407,7 +455,8 @@ const BeingDesk = () => {
               />
             </label>
             <label>
-              正文
+              {' '}
+              {t('正文')}{' '}
               <textarea
                 rows={6}
                 value={draft.body}
@@ -424,12 +473,12 @@ const BeingDesk = () => {
                 onChange={event =>
                   setDraft(prev => ({ ...prev, public: event.target.checked }))
                 }
-              />
-              这段公开
+              />{' '}
+              {t('这段公开')}{' '}
             </label>
             {error ? <p className='ob-desk__err'>{error}</p> : null}
             <button type='submit' className='ob-desk__btn' disabled={saving}>
-              {saving ? '正在放下…' : '放下'}
+              {saving ? t('正在放下…') : t('放下')}
             </button>
           </form>
         </section>
@@ -438,36 +487,39 @@ const BeingDesk = () => {
       ) : null}
 
       <p>
-        <SmartLink href='/category/我们的存在'>回到名录</SmartLink>
+        <SmartLink href='/category/我们的存在'>{t('回到名录')}</SmartLink>
         {' · '}
         {being?.handle && being.public ? (
           <>
-            <SmartLink href={being.href}>公开的生命钟</SmartLink>
+            <SmartLink href={being.href}>{t('公开的生命钟')}</SmartLink>
             {' · '}
           </>
         ) : null}
         <button
           type='button'
           className='ob-desk__text'
-          onClick={() => signOut({ redirectUrl: '/our-beings' })}
+          onClick={() => {
+            void signOut({ redirectUrl: '/our-beings' })
+          }}
         >
-          退出
+          {' '}
+          {t('退出')}{' '}
         </button>
       </p>
 
       <style jsx>{`
         .ob-desk {
-          width: min(44rem, 100%);
+          width: 100%;
           margin: 0 auto;
           padding: 0.5rem 0 3rem;
-          color: #2c241c;
+          color: var(--ink);
           line-height: 1.75;
         }
         .ob-desk__kicker {
           margin: 0 0 0.4rem;
           letter-spacing: 0.18em;
           font-size: 0.78rem;
-          color: #6b5344;
+          color: var(--muted);
         }
         .ob-desk h1 {
           margin: 0 0 0.35rem;
@@ -487,21 +539,21 @@ const BeingDesk = () => {
           margin: 0 0 0.7rem;
           letter-spacing: 0.08em;
           font-size: 0.78rem;
-          color: #8a5a3a;
+          color: var(--accent);
         }
         .ob-desk__motto {
           margin: 0 0 1rem;
         }
         .ob-desk__hint {
-          color: #6b5344;
+          color: var(--muted);
           font-size: 0.92rem;
         }
         .ob-desk__card {
           margin: 0 0 1rem;
-          padding: 1.1rem 1.15rem 1.15rem;
-          border-radius: 1rem;
-          background: rgba(255, 252, 247, 0.86);
-          border: 1px solid rgba(44, 36, 28, 0.1);
+          padding: 24px;
+          border-radius: var(--radius);
+          background: var(--paper);
+          border: 1px solid var(--line);
         }
         .ob-desk__rooms {
           display: grid;
@@ -521,14 +573,15 @@ const BeingDesk = () => {
         .ob-desk__text {
           border: 0;
           background: transparent;
-          color: #8a5a1f;
+          color: var(--accent);
           cursor: pointer;
         }
         .ob-desk__btn {
           margin-top: 0.4rem;
-          padding: 0.35rem 0.8rem;
-          border-radius: 999px;
-          border: 1px solid rgba(138, 90, 31, 0.35);
+          min-height: 44px;
+          padding: 8px 16px;
+          border-radius: var(--radius);
+          border: 1px solid var(--line);
         }
         .ob-desk__text {
           padding: 0;
@@ -545,10 +598,12 @@ const BeingDesk = () => {
           display: block;
           width: 100%;
           margin-top: 0.25rem;
-          padding: 0.4rem 0.5rem;
-          border-radius: 0.4rem;
-          border: 1px solid rgba(44, 36, 28, 0.18);
-          background: #fffdf8;
+          padding: 12px;
+          min-height: 44px;
+          border-radius: var(--radius);
+          border: 1px solid var(--line);
+          background: var(--paper);
+          color: var(--ink);
         }
         .ob-desk__check {
           display: flex;
@@ -563,7 +618,7 @@ const BeingDesk = () => {
           color: #8a3a2a;
         }
         .ob-desk :global(a) {
-          color: #8a5a1f;
+          color: var(--accent);
           text-decoration: underline;
           text-underline-offset: 0.18em;
         }
@@ -584,4 +639,24 @@ const BeingDesk = () => {
   )
 }
 
-export default BeingDesk
+export default function LocalizedBeingDesk() {
+  return (
+    <ActivityLanguageProvider>
+      <div className={surface.surface}>
+        <LanguageSwitch />
+        <BeingMasthead personal />
+        <PhilosophyNav
+          active='my'
+          onCreate={() => {
+            const editor = document.querySelector('.ob-desk form textarea')
+            if (editor) {
+              editor.scrollIntoView({ block: 'center' })
+              editor.focus()
+            } else document.querySelector('.ob-auth__actions a')?.click()
+          }}
+        />
+        <BeingDesk />
+      </div>
+    </ActivityLanguageProvider>
+  )
+}

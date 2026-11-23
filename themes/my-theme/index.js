@@ -198,7 +198,7 @@ const LayoutBase = props => {
     <ThemeGlobalHexo.Provider value={{ searchModal }}>
       <div
         id='theme-my-theme'
-        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}${dao ? ' ob-dao-layout' : ''}${daoReading ? ' ob-dao-reading' : ''}`}
+        className={`${siteConfig('FONT_STYLE')} dark:bg-black scroll-smooth${friendLinks ? ' ob-fl-layout' : ''}${existence || ourBeings || auth ? ' ob-ex-layout' : ''}${ourBeings ? ' ob-beings-layout' : ''}${listWithoutSidebar && !heroOnlyHome ? ' ob-list-layout' : ''}${heroOnlyHome ? ' ob-home-only' : ''}${articleLayout ? ' ob-article-layout' : ''}${dao ? ' ob-dao-layout' : ''}${daoReading ? ' ob-dao-reading' : ''}`}
       >
         <Style />
         {daoReading && <DaoReadingStyle />}

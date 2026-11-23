@@ -1,2 +1,3 @@
+const { localizePage } = require('../../common/localize-page')
 const settings = require('../../settings')
-Page({ data: { supportEmail: settings.supportEmail } })
+Page(localizePage({ data: { supportEmail: settings.supportEmail } }))

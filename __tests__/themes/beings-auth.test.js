@@ -51,6 +51,7 @@ jest.mock('next/dynamic', () => ({
 }))
 
 beforeEach(() => {
+  localStorage.setItem('ourbeing:language', 'zh')
   process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY = 'pk_test_placeholder'
   mockUser = { isLoaded: true, isSignedIn: false }
   mockRouter = { isReady: true, query: {} }

@@ -1,32 +1,54 @@
-page { --ink:#342c24; --muted:#766a5f; --accent:#926631; --line:#e3dbce; --paper:#fffdf9; background:#faf7f1; color:var(--ink); font:32rpx/1.85 -apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif; }
+page {
+  --ink:#342c24; --muted:#766a5f; --accent:#926631; --line:#e3dbce; --paper:#fffdf9; --ground:#faf7f1; --on-accent:#fffaf3;
+  background:var(--ground); color:var(--ink); font:32rpx/1.8 "PingFang SC","Microsoft YaHei",sans-serif;
+}
 view,input,textarea,button { box-sizing:border-box; }
-.page { padding:36rpx 36rpx 64rpx; overflow-wrap:break-word; }
+.page { padding:16rpx 32rpx calc(240rpx + env(safe-area-inset-bottom)); overflow-wrap:break-word; }
 .eyebrow { color:var(--accent); font-size:26rpx; letter-spacing:3rpx; margin-bottom:16rpx; display:block; }
-.title { font:normal 54rpx/1.6 "Songti SC",serif; letter-spacing:3rpx; margin:16rpx 0 24rpx; display:block; }
+.title { font:normal 52rpx/1.5 "Songti SC",serif; letter-spacing:2rpx; margin:16rpx 0 24rpx; display:block; }
 .heading { font:normal 38rpx/1.6 "Songti SC",serif; display:block; margin:16rpx 0; }
 .muted { color:var(--muted); font-size:28rpx; display:block; }
-.lead { line-height:2; color:var(--muted); margin-bottom:32rpx; }
-button { min-height:88rpx; font-size:28rpx; line-height:1.8; display:flex; justify-content:center; align-items:center; padding:18rpx 28rpx; margin:18rpx 0; border-radius:8rpx; background:transparent; color:var(--ink); border:1rpx solid var(--line); }
+.lead { line-height:1.8; color:var(--muted); margin-bottom:32rpx; }
+button { min-height:88rpx; font-size:28rpx; line-height:1.6; display:flex; justify-content:center; align-items:center; padding:16rpx 24rpx; margin:16rpx 0; border-radius:16rpx; background:transparent; color:var(--ink); border:1rpx solid var(--line); }
 button::after { border:0; }
-button.primary { background:var(--accent); color:#fffaf3; border-color:var(--accent); }
+button.primary { background:var(--accent); color:var(--on-accent); border-color:var(--accent); }
 button[disabled] { opacity:.55; }
-.actions { display:flex; flex-wrap:wrap; gap:18rpx; align-items:center; }
-.actions button { margin:12rpx 0; }
-.tabs { display:flex; gap:28rpx; border-block:1rpx solid var(--line); margin:32rpx 0 8rpx; }
-.tabs button { border:0; padding:18rpx 0; margin:0; font-size:28rpx; color:var(--muted); }
+button.quiet { border:0; margin:0; padding:8rpx 0; min-height:80rpx; justify-content:flex-start; color:var(--muted); }
+.actions { display:flex; flex-wrap:wrap; gap:16rpx; align-items:center; }
+.actions button { margin:8rpx 0; }
+.tabs { display:flex; flex-wrap:wrap; gap:24rpx; border-block:1rpx solid var(--line); margin:32rpx 0 8rpx; }
+.tabs button { border:0; padding:16rpx 0; margin:0; font-size:28rpx; color:var(--muted); }
 .tabs .active { color:var(--accent); border-bottom:3rpx solid var(--accent); border-radius:0; }
 .section { border-top:1rpx solid var(--line); padding:32rpx 0; margin-top:32rpx; }
-.empty { text-align:center; padding:64rpx 24rpx; margin:24rpx 0; border:1rpx solid var(--line); background:var(--paper); }
+.empty { text-align:center; padding:48rpx 24rpx; margin:24rpx 0; border-block:1rpx solid var(--line); }
 .error { color:#a03b2f; padding:24rpx; border-left:3rpx solid currentColor; margin:24rpx 0; }
 .card { padding:32rpx 0; border-bottom:1rpx solid var(--line); }
-.card-title { font:normal 38rpx/1.7 "Songti SC",serif; margin:12rpx 0; display:block; }
-.badge { font-size:24rpx; color:var(--accent); border:1rpx solid var(--line); padding:3rpx 14rpx; border-radius:6rpx; display:inline-block; }
+.card-title { font:normal 38rpx/1.6 "Songti SC",serif; margin:16rpx 0; display:block; }
+.badge { font-size:26rpx; color:var(--accent); border:1rpx solid var(--line); padding:4rpx 16rpx; border-radius:8rpx; display:inline-block; }
 .facts { display:block; font-size:28rpx; color:var(--muted); margin-top:8rpx; }
 .private { background:var(--paper); border-left:3rpx solid var(--accent); padding:24rpx; margin:32rpx 0; }
 .body { white-space:pre-wrap; }
-.label { display:block; font-size:28rpx; margin:28rpx 0 12rpx; }
-input,textarea,.picker { width:100%; min-height:88rpx; border:1rpx solid var(--line); padding:20rpx; border-radius:8rpx; background:var(--paper); font-size:30rpx; color:var(--ink); }
+.label { display:block; font-size:28rpx; margin:32rpx 0 16rpx; }
+input,textarea,.picker { width:100%; min-height:88rpx; border:1rpx solid var(--line); padding:16rpx 24rpx; border-radius:16rpx; background:var(--paper); font-size:30rpx; color:var(--ink); }
 textarea { min-height:200rpx; }
-.hint { font-size:26rpx; color:var(--muted); margin:10rpx 0; display:block; }
+.hint { font-size:26rpx; line-height:1.8; color:var(--muted); margin:8rpx 0; display:block; }
 .notice { border-bottom:1rpx solid var(--line); padding:24rpx 0; }
-.notice .body { display:block; margin-top:12rpx; }
+.notice .body { display:block; margin-top:16rpx; }
+.language-switch { display:flex; gap:8rpx; justify-content:flex-end; }
+.language-switch button { margin:0; min-height:88rpx; padding:8rpx 16rpx; font-size:28rpx; border:0; color:var(--muted); }
+.language-switch .active { color:var(--ink); text-decoration:underline; text-underline-offset:8rpx; }
+.philosophy-head { position:relative; overflow:hidden; isolation:isolate; text-align:center; height:440rpx; padding:64rpx 32rpx; margin:16rpx 0 32rpx; border-radius:16rpx; display:flex; flex-direction:column; align-items:center; justify-content:center; background:var(--ground); }
+.philosophy-head .scene { position:absolute; inset:0; width:100%; height:100%; transform:rotate(180deg); opacity:.72; z-index:-2; }
+.philosophy-head::after { content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,rgba(250,247,241,.28),rgba(250,247,241,.9) 36%,rgba(250,247,241,.9) 64%,rgba(250,247,241,.28)); }
+.philosophy-head .title { margin:0; font-size:56rpx; }
+.philosophy-head .eyebrow { color:#5d452e; margin-bottom:24rpx; }
+.philosophy-head .slogan { color:#5e5042; margin-top:24rpx; font-size:32rpx; }
+.presence { display:flex; flex-wrap:wrap; gap:16rpx 32rpx; padding:24rpx 0; border-bottom:1rpx solid var(--line); margin-bottom:16rpx; font-size:28rpx; color:var(--muted); }
+.presence .hint,.presence-help { width:100%; margin:0; }
+@media(prefers-color-scheme:dark) {
+  page { --ink:#f1e9dc; --muted:#c1b5a3; --accent:#dfbd80; --line:#4a3f34; --paper:#211c17; --ground:#181411; --on-accent:#21180d; }
+  .philosophy-head .scene { opacity:.26; }
+  .philosophy-head::after { background:linear-gradient(90deg,rgba(24,20,17,.35),rgba(24,20,17,.9) 36%,rgba(24,20,17,.9) 64%,rgba(24,20,17,.35)); }
+  .philosophy-head .eyebrow,.philosophy-head .slogan { color:var(--muted); }
+  .error { color:#ffaea0; }
+}

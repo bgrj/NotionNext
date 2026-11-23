@@ -1,4 +1,4 @@
-const READS = new Set(['list', 'get', 'mine', 'messages'])
+const READS = new Set(['list', 'get', 'mine', 'messages', 'presenceStats'])
 export async function activityRequest(action, input = {}) {
   const read = READS.has(action)
   const query = new URLSearchParams({ action, ...input })

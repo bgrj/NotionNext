@@ -1,0 +1,171 @@
+.surface {
+  --ink: #342c24;
+  --muted: #766a5f;
+  --accent: #926631;
+  --on-accent: #fffaf3;
+  --line: rgba(75, 57, 38, 0.16);
+  --paper: #fffdf9;
+  --ground: #faf7f1;
+  --radius: 8px;
+  width: min(52rem, 100%);
+  margin: 0 auto;
+  padding: 8px 0 calc(120px + env(safe-area-inset-bottom));
+  color: var(--ink);
+  font:
+    1rem/1.8 'PingFang SC',
+    'Microsoft YaHei',
+    'Segoe UI',
+    sans-serif;
+  overflow-wrap: anywhere;
+  color-scheme: light;
+}
+.surface * {
+  box-sizing: border-box;
+}
+.surface ::selection {
+  background: #dfbd80;
+  color: #342c24;
+}
+.surface :is(input, textarea) {
+  caret-color: var(--accent);
+}
+.surface :is(button, a, input, textarea, select, summary):focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+.surface :is(h1, h2, h3) {
+  font-family: 'Songti SC', 'Noto Serif CJK SC', 'Times New Roman', serif;
+}
+.masthead {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  padding: 40px 24px;
+  margin: 8px 0 32px;
+  border-radius: var(--radius);
+  background: var(--ground);
+  text-align: center;
+}
+.masthead::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  background: url('/assets/ourbeing/meeting-sky.jpg') center 51% / cover
+    no-repeat;
+  transform: rotate(180deg);
+  opacity: 0.72;
+}
+.masthead::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(250, 247, 241, 0.88) 34%,
+    rgba(250, 247, 241, 0.88) 66%,
+    transparent
+  );
+}
+.masthead p {
+  margin: 0;
+}
+.masthead .eyebrow {
+  color: #5d452e;
+  font-size: 0.8125rem;
+  letter-spacing: 0.16em;
+  margin-bottom: 12px;
+}
+.masthead h1 {
+  margin: 0;
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: 0.04em;
+}
+.masthead .slogan {
+  color: #5e5042;
+  margin-top: 12px;
+  font-size: 1rem;
+}
+.languageSwitch {
+  display: flex;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.surface .languageSwitch button {
+  min-width: 48px;
+  min-height: 44px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: var(--radius);
+  font: inherit;
+  font-size: 0.875rem;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+}
+.surface .languageSwitch button[aria-pressed='true'] {
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 6px;
+}
+:global(.dark) .surface {
+  --ink: #f1e9dc;
+  --muted: #c1b5a3;
+  --accent: #dfbd80;
+  --on-accent: #21180d;
+  --line: rgba(234, 216, 187, 0.2);
+  --paper: #211c17;
+  --ground: #181411;
+  color-scheme: dark;
+}
+:global(.dark) .masthead::before {
+  opacity: 0.26;
+}
+:global(.dark) .masthead::after {
+  background: linear-gradient(
+    90deg,
+    rgba(24, 20, 17, 0.25),
+    rgba(24, 20, 17, 0.88) 34%,
+    rgba(24, 20, 17, 0.88) 66%,
+    rgba(24, 20, 17, 0.25)
+  );
+}
+:global(.dark) .masthead .eyebrow,
+:global(.dark) .masthead .slogan {
+  color: var(--muted);
+}
+@media (max-width: 600px) {
+  .masthead {
+    min-height: 232px;
+    margin-bottom: 24px;
+    padding: 32px 16px;
+  }
+  .masthead::after {
+    background: linear-gradient(
+      90deg,
+      rgba(250, 247, 241, 0.28),
+      rgba(250, 247, 241, 0.9) 36%,
+      rgba(250, 247, 241, 0.9) 64%,
+      rgba(250, 247, 241, 0.28)
+    );
+  }
+  :global(.dark) .masthead::after {
+    background: linear-gradient(
+      90deg,
+      rgba(24, 20, 17, 0.35),
+      rgba(24, 20, 17, 0.9) 36%,
+      rgba(24, 20, 17, 0.9) 64%,
+      rgba(24, 20, 17, 0.35)
+    );
+  }
+}

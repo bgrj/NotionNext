@@ -2,6 +2,10 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import ActivityHub from '@/themes/my-theme/activities/ActivityHub'
 import ActivityForm from '@/themes/my-theme/activities/ActivityForm'
 import ActivityDetail from '@/themes/my-theme/activities/ActivityDetail'
+import {
+  ActivityLanguageProvider,
+  LanguageSwitch
+} from '@/themes/my-theme/activities/language'
 
 const mockPush = jest.fn()
 let mockSignedIn = false
@@ -48,6 +52,32 @@ const reply = data =>
     ok: true,
     json: () => Promise.resolve({ version: 1, ...data })
   })
+test('language switching persists and all international group channels are available', async () => {
+  localStorage.setItem('ourbeing:language', 'zh')
+  render(
+    <ActivityLanguageProvider>
+      <LanguageSwitch />
+      <ActivityForm onSave={jest.fn()} onClose={jest.fn()} />
+    </ActivityLanguageProvider>
+  )
+  fireEvent.click(screen.getByRole('button', { name: 'English', exact: true }))
+  expect(await screen.findByLabelText('Gathering title')).toBeInTheDocument()
+  for (const channel of [
+    'WeChat',
+    'QQ',
+    'Telegram',
+    'WhatsApp',
+    'LINE',
+    'Other'
+  ])
+    expect(
+      screen.getByRole('option', { name: channel, exact: true })
+    ).toBeInTheDocument()
+  expect(localStorage.getItem('ourbeing:language')).toBe('en')
+  fireEvent.click(screen.getByRole('button', { name: '中文', exact: true }))
+  expect(screen.getByLabelText('活动名称')).toBeInTheDocument()
+  localStorage.removeItem('ourbeing:language')
+})
 beforeEach(() => {
   mockSignedIn = false
   global.fetch = jest
@@ -94,20 +124,30 @@ test('signed-in people create a private draft before explicit publication', asyn
   fireEvent.click(screen.getByRole('button', { name: '保存草稿' }))
   await waitFor(() => expect(mockPush).toHaveBeenCalled())
   const writes = global.fetch.mock.calls.filter(
-    ([, options]) => options?.method === 'POST'
+    ([, options]) =>
+      options?.method === 'POST' && JSON.parse(options.body).action === 'create'
   )
   expect(writes).toHaveLength(1)
   expect(JSON.parse(writes[0][1].body)).toMatchObject({
     action: 'create',
-    startsAt: '2030-01-02T19:30:00+08:00'
+    startsAt: new Date('2030-01-02T19:30:00').toISOString()
   })
+})
+
+test('creating from shared writing keeps the chosen conversation type after the hub loads', async () => {
+  mockSignedIn = true
+  const handled = jest.fn()
+  render(<ActivityHub requestedKind='conversation' onCreateHandled={handled} />)
+  await screen.findByLabelText('活动名称')
+  expect(screen.getByLabelText('相遇的方式')).toHaveValue('conversation')
+  expect(handled).toHaveBeenCalledTimes(1)
 })
 test('the form changes WeChat participation fields and disables submit while saving', () => {
   render(<ActivityForm busy onSave={jest.fn()} onClose={jest.fn()} />)
   fireEvent.change(screen.getByLabelText('活动交流'), {
     target: { value: 'wechat' }
   })
-  expect(screen.getByLabelText(/微信群加入说明/)).toBeRequired()
+  expect(screen.getByLabelText(/入群与参与说明/)).toBeRequired()
   expect(screen.getByRole('button', { name: '正在保存…' })).toBeDisabled()
 })
 test('group instructions are absent for guests and shown only in member responses', () => {

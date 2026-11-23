@@ -5,9 +5,10 @@ import {
   resolveActivityActor
 } from '@/lib/activities/identity'
 import { fail } from '@/apps/wuzai/miniprogram/common/activities'
+import { activityPresence } from '@/lib/activities/presence'
 
 export const config = { api: { bodyParser: { sizeLimit: '16kb' } } }
-const READS = ['list', 'get', 'mine', 'messages']
+const READS = ['list', 'get', 'mine', 'messages', 'presenceStats']
 const WRITES = [
   'create',
   'edit',
@@ -16,7 +17,8 @@ const WRITES = [
   'cancelReservation',
   'cancelEvent',
   'announce',
-  'message'
+  'message',
+  'presence'
 ]
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store')
@@ -48,11 +50,10 @@ export default async function handler(req, res) {
     const redis = activityRedis()
     const actor = await resolveActivityActor(req, redis)
     await limitActivityRequest(redis, actor, req)
-    const result = await createActivityService(redisActivityStore(redis))(
-      action,
-      input,
-      actor
-    )
+    const service = createActivityService(redisActivityStore(redis))
+    const result = ['presence', 'presenceStats'].includes(action)
+      ? await activityPresence(redis, action, input, actor, service)
+      : await service(action, input, actor)
     return res.status(200).json({ version: 1, ...result })
   } catch (error) {
     const status = Number(error.status) || 503

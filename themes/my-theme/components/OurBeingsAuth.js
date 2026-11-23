@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useClerk, useUser } from '@clerk/nextjs'
 import { useClerkSession } from '@/components/ClerkSession'
+import { useActivityLanguage } from '../activities/language'
 import { isEmbeddedWebview } from '@/lib/security/visitorAccess'
 import {
   authHref,
@@ -163,6 +164,18 @@ function SignedPanel({ signingUp, returnTo }) {
   const authAppearance = useAuthAppearance()
   const [leaving, setLeaving] = useState(false)
   const [error, setError] = useState('')
+  const switchAccount = async () => {
+    setLeaving(true)
+    setError('')
+    try {
+      await signOut({
+        redirectUrl: authHref(signingUp ? 'up' : 'in', returnTo)
+      })
+    } catch {
+      setError('未能退出，请稍后再试。')
+      setLeaving(false)
+    }
+  }
   if (!isLoaded) return <LoadingPanel />
   if (isSignedIn) {
     return (
@@ -186,17 +199,8 @@ function SignedPanel({ signingUp, returnTo }) {
             type='button'
             disabled={leaving}
             className='ob-auth__button ob-auth__button--quiet'
-            onClick={async () => {
-              setLeaving(true)
-              setError('')
-              try {
-                await signOut({
-                  redirectUrl: authHref(signingUp ? 'up' : 'in', returnTo)
-                })
-              } catch {
-                setError('未能退出，请稍后再试。')
-                setLeaving(false)
-              }
+            onClick={() => {
+              void switchAccount()
             }}
           >
             {leaving ? '正在退出…' : '退出并切换账号'}
@@ -651,21 +655,22 @@ function AuthShell({
 }
 
 export function OurBeingsAccountPrompt({ available = true }) {
+  const { t } = useActivityLanguage()
   return (
     <AuthShell prompt>
       {available ? (
         <div className='ob-auth__state'>
-          <h2>先登录，再继续</h2>
-          <p>已有账户直接登录；第一次来，可以创建账户。</p>
+          <h2>{t('先登录，再继续')}</h2>
+          <p>{t('已有账户直接登录；第一次来，可以创建账户。')}</p>
           <div className='ob-auth__actions'>
             <Link className='ob-auth__button' href={authHref('in')}>
-              登录
+              {t('登录')}
             </Link>
             <Link
               className='ob-auth__button ob-auth__button--quiet'
               href={authHref('up')}
             >
-              创建账户
+              {t('创建账户')}
             </Link>
           </div>
         </div>

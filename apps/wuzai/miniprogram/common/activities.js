@@ -1,5 +1,6 @@
 /* Shared by native WeChat pages and the website. No DOM, React, wx or secrets. */
 const VERSION = 1
+const { canonicalCity } = require('./global')
 const STATUS_LABELS = {
   draft: '草稿',
   open: '可预约',
@@ -59,13 +60,24 @@ function normalizeInput(input = {}) {
     fail('invalid_capacity', '名额需为 1–500 人。')
   if (!['online', 'offline'].includes(input.format))
     fail('invalid_format', '请选择线上或线下。')
-  if (!['site', 'wechat'].includes(input.discussion))
+  if (!['site', 'wechat', 'external'].includes(input.discussion))
     fail('invalid_discussion', '请选择交流方式。')
   const location = text(input.location, 160)
   const joinInstructions = text(input.joinInstructions, 1000)
   if (!location) fail('invalid_location', '请填写城市、场地或线上参与方式。')
-  if (input.discussion === 'wechat' && !joinInstructions)
-    fail('missing_group', '请填写预约后的微信群加入说明。')
+  if (input.discussion !== 'site' && !joinInstructions)
+    fail('missing_group', '请填写预约后的交流群加入说明。')
+  const timezone = text(input.timezone, 80) || 'Asia/Shanghai'
+  if (!/^UTC[+-](0\d|1[0-4]):[0-5]\d$/.test(timezone)) {
+    try {
+      if (typeof Intl !== 'undefined')
+        new Intl.DateTimeFormat('en', { timeZone: timezone })
+      else if (!/^[A-Za-z_]+\/[A-Za-z_\/-]+$/.test(timezone))
+        throw new Error('timezone')
+    } catch {
+      fail('invalid_timezone', '请填写有效时区。')
+    }
+  }
   return {
     title,
     description,
@@ -75,11 +87,25 @@ function normalizeInput(input = {}) {
     capacity,
     format: input.format,
     discussion: input.discussion,
+    channel:
+      input.discussion === 'site'
+        ? 'site'
+        : input.discussion === 'wechat'
+          ? 'wechat'
+          : ['wechat', 'qq', 'telegram', 'whatsapp', 'line', 'other'].includes(
+                input.channel
+              )
+            ? input.channel
+            : 'other',
     location,
     joinInstructions,
     book: text(input.book, 120),
     kind: input.kind === 'conversation' ? 'conversation' : 'reading',
-    timezone: 'Asia/Shanghai'
+    timezone,
+    city: canonicalCity(text(input.city, 80)),
+    language: ['zh', 'en', 'bilingual'].includes(input.language)
+      ? input.language
+      : 'zh'
   }
 }
 const bookedCount = event =>
@@ -114,10 +140,14 @@ function publicEvent(event, actor, now = Date.now()) {
     format: event.format,
     location: event.location,
     discussion: event.discussion,
+    channel:
+      event.channel || (event.discussion === 'wechat' ? 'wechat' : 'site'),
     startsAt: event.startsAt,
     endsAt: event.endsAt,
     deadline: event.deadline,
     timezone: event.timezone,
+    city: event.city || '',
+    language: event.language || 'zh',
     capacity: event.capacity,
     booked: bookedCount(event),
     remaining: Math.max(0, event.capacity - bookedCount(event)),
@@ -154,7 +184,11 @@ function changeEvent(event, action, input, actor, now = Date.now()) {
       fields.capacity < bookedCount(event)
     )
       fail('invalid_update', '开始时间需在未来，名额不能少于已预约人数。')
-    if (bookedCount(event) && fields.discussion !== event.discussion)
+    if (
+      bookedCount(event) &&
+      (fields.discussion !== event.discussion ||
+        fields.channel !== (event.channel || event.discussion))
+    )
       fail('group_locked', '已有预约后，请保留原交流方式。', 409)
     Object.assign(event, fields)
     if (event.state === 'published')
@@ -236,10 +270,21 @@ function formatTime(value) {
   const pad = number => String(number).padStart(2, '0')
   return `${china.getUTCFullYear()}.${pad(china.getUTCMonth() + 1)}.${pad(china.getUTCDate())} ${pad(china.getUTCHours())}:${pad(china.getUTCMinutes())}`
 }
-function filterEvents(events, { scope = 'upcoming', format = 'all' } = {}) {
+function filterEvents(
+  events,
+  { scope = 'upcoming', format = 'all', city = '', language = 'all' } = {}
+) {
   const items = events.filter(
     item =>
       (format === 'all' || item.format === format) &&
+      (!city ||
+        item.format === 'online' ||
+        canonicalCity(item.city) === canonicalCity(city) ||
+        (!item.city &&
+          item.location?.toLowerCase().includes(city.toLowerCase()))) &&
+      (language === 'all' ||
+        (item.language || 'zh') === language ||
+        item.language === 'bilingual') &&
       (scope === 'mine' ||
         (scope === 'past'
           ? ['ended', 'cancelled'].includes(item.status)

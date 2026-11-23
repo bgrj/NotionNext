@@ -52,13 +52,21 @@ exports.main = async event => {
     const identity = cloud.getWXContext()
     const secret = process.env.WUZAI_MINI_BRIDGE_SECRET
     const origin = process.env.WUZAI_API_ORIGIN || 'https://ourbeings.com'
-    if (!identity.OPENID || !identity.APPID || !secret)
+    if (!identity.OPENID || !identity.APPID)
+      return {
+        error: 'wechat_login_required',
+        message: '未能验证微信身份，请重新打开小程序后登录。'
+      }
+    if (!secret)
       return {
         error: 'not_configured',
         message: '活动服务暂未就绪，请稍后再来。'
       }
     if (!/^https:\/\//.test(origin)) throw new Error('invalid_origin')
     const allowed = [
+      'login',
+      'presence',
+      'presenceStats',
       'list',
       'get',
       'mine',
@@ -84,6 +92,7 @@ exports.main = async event => {
         input.description,
         input.book,
         input.location,
+        input.city,
         input.joinInstructions,
         input.body,
         event.nickname
@@ -103,8 +112,8 @@ exports.main = async event => {
         }
     }
     const payload = {
-      ...input,
-      action: event.action,
+      ...(event.action === 'login' ? {} : input),
+      action: event.action === 'login' ? 'mine' : event.action,
       identity: {
         appId: identity.APPID,
         openId: identity.OPENID,
@@ -114,7 +123,13 @@ exports.main = async event => {
             : ''
       }
     }
-    return await forward(new URL('/api/our-beings/v1', origin), payload, secret)
+    const result = await forward(new URL('/api/our-beings/v1', origin), payload, secret)
+    // Verify both WeChat identity and the website bridge before showing login success.
+    if (event.action === 'login' && !result.error) {
+      if (result.version !== 1) throw new Error('invalid_response')
+      return { version: 1, user: { authenticated: true, platform: 'wechat' } }
+    }
+    return result
   } catch (error) {
     console.error('[wuzaiApi]', error.code || error.name)
     return {

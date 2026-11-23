@@ -181,6 +181,8 @@ beforeEach(() => {
 
 // Cleanup after each test
 afterEach(() => {
+  // Unmount React before clearing styled-jsx nodes from the document head.
+  require('@testing-library/react/pure').cleanup()
   // Cleanup any side effects
   if (typeof document !== 'undefined') {
     document.body.innerHTML = ''

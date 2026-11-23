@@ -1,11 +1,56 @@
 <view class="page">
-  <view class="intro"><text class="eyebrow">吾在 · 阅读与交流</text><view class="title">把一本书，<view>读成一次相遇。</view></view><view class="lead">从一段共读、一场对话开始。带着问题来，也带着自己的生活来。</view><button class="primary" bindtap="create">发起一次相遇</button></view>
-  <view class="tabs"><button class="{{scope === 'upcoming' ? 'active' : ''}}" data-scope="upcoming" bindtap="scopeTap">即将相遇</button><button class="{{scope === 'past' ? 'active' : ''}}" data-scope="past" bindtap="scopeTap">往期相遇</button></view>
-  <picker range="{{['全部形式','线上','线下']}}" bindchange="formatTap"><view class="picker">{{format === 'all' ? '全部形式' : format === 'online' ? '线上' : '线下'}}</view></picker>
-  <view wx:if="{{error}}" class="error"><text>{{error}}</text><button bindtap="load">重新读取</button></view>
-  <view wx:for="{{visible}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="open"><text class="badge">{{item.statusLabel}}</text><text class="card-title">{{item.title}}</text><text class="muted">{{item.book}}</text><text class="facts">{{item.timeLabel}} · 北京时间</text><text class="facts">{{item.location}} · {{item.booked}} / {{item.capacity}} 人</text></view>
-  <view wx:if="{{loading}}" class="empty">正在整理相遇…</view>
-  <view wx:elif="{{!visible.length && !error}}" class="empty"><text class="heading">为下一次相遇，留一页空白</text><text class="muted">这个范围里暂时没有活动。不妨从一本想读的书开始。</text></view>
-  <button wx:if="{{nextOffset !== null}}" loading="{{loading}}" disabled="{{loading}}" bindtap="more">继续查看</button>
-  <view class="section"><text class="heading">留出时间，带着问题来</text><text class="muted">预约成功后，按发起人的说明加入活动微信群。微信群由每场活动的发起人建立和维护。</text></view>
+  <view class="language-switch">
+    <button class="{{locale === 'zh' ? 'active' : ''}}" data-language="zh" bindtap="changeLanguage">中文</button>
+    <button class="{{locale === 'en' ? 'active' : ''}}" data-language="en" bindtap="changeLanguage">English</button>
+  </view>
+  <view class="philosophy-head">
+    <image class="scene" src="/images/meeting-sky.jpg" mode="aspectFill" aria-hidden="true" />
+    <text class="eyebrow">OUR BEING</text>
+    <text class="title">{{t['我们的存在']}}</text>
+    <text class="slogan">{{t['与世界同在']}}</text>
+  </view>
+  <view class="presence">
+    <text>{{presence ? presence.people : '—'}} {{t['在线交流人数']}}</text>
+    <text>{{presence ? presence.groups : '—'}} {{t['在线交流组数']}}</text>
+    <text wx:if="{{!presence}}" class="hint">{{t['暂不可用']}}</text>
+    <view class="presence-help">
+      <button class="quiet" bindtap="togglePresenceHelp" aria-expanded="{{showPresenceHelp}}">{{t['统计说明']}}</button>
+      <text wx:if="{{showPresenceHelp}}" class="hint">{{t['约每 30 秒更新；仅统计平台前台活动，不包含外部聊天软件的在线人数。']}}</text>
+    </view>
+  </view>
+  <view class="intro">
+    <text class="eyebrow">{{t['全球共读共话']}}</text>
+    <view class="heading">{{t['把一本书，']}}<view>{{t['读成一次相遇。']}}</view></view>
+    <view class="lead">{{t['从一段共读、一场对话开始。带着问题来，也带着自己的生活来。']}}</view>
+    <button class="primary" bindtap="create">{{t['发起一次相遇']}}</button>
+    <text class="hint">{{t['欢迎世界各地的你，也欢迎生活在中国的国际朋友。']}}</text>
+  </view>
+  <view class="filters">
+    <button class="filter" bindtap="chooseCity">{{cityName || t['所有城市']}}</button>
+    <picker class="filter" range="{{[t['全部语言'],'中文','English',t['中英双语']]}}" bindchange="languageTap">
+      <view class="picker">{{conversationLanguage === 'all' ? t['全部语言'] : conversationLanguage === 'zh' ? '中文' : conversationLanguage === 'en' ? 'English' : t['中英双语']}}</view>
+    </picker>
+  </view>
+  <view class="list-toolbar">
+    <view class="tabs">
+      <button class="{{scope === 'upcoming' ? 'active' : ''}}" data-scope="upcoming" bindtap="scopeTap">{{t['即将相遇']}}</button>
+      <button class="{{scope === 'past' ? 'active' : ''}}" data-scope="past" bindtap="scopeTap">{{t['往期相遇']}}</button>
+    </view>
+    <picker range="{{[t['全部形式'],t['线上'],t['线下']]}}" bindchange="formatTap">
+      <view class="format-picker">{{format === 'all' ? t['全部形式'] : format === 'online' ? t['线上'] : t['线下']}}</view>
+    </picker>
+  </view>
+  <view wx:if="{{error}}" class="error"><text>{{error}}</text><button bindtap="load">{{t['重新读取']}}</button></view>
+  <view wx:for="{{visible}}" wx:key="id" class="card" data-id="{{item.id}}" bindtap="open">
+    <text class="badge">{{t[item.statusLabel] || item.statusLabel}}</text>
+    <text class="card-title">{{item.title}}</text>
+    <text class="muted">{{item.book}}</text>
+    <text class="facts">{{item.timeLabel}} · {{timezone}}</text>
+    <text class="facts">{{item.location}} · {{item.booked}} / {{item.capacity}} {{t['人']}}</text>
+    <text class="hint">{{item.language === 'en' ? 'English' : item.language === 'bilingual' ? t['中英双语'] : '中文'}}</text>
+  </view>
+  <view wx:if="{{loading}}" class="empty">{{t['正在整理相遇…']}}</view>
+  <view wx:elif="{{!visible.length && !error}}" class="empty"><text class="heading">{{t['为下一次相遇，留一页空白']}}</text><text class="muted">{{t['这个范围里暂时没有活动。不妨从一本想读的书开始。']}}</text></view>
+  <button wx:if="{{nextOffset !== null}}" loading="{{loading}}" disabled="{{loading}}" bindtap="more">{{t['继续查看']}}</button>
+  <view class="section"><text class="muted">{{t['预约成功后，按发起人的说明加入本场交流。']}}</text></view>
 </view>

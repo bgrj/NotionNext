@@ -1,9 +1,14 @@
+import { useActivityLanguage } from './language'
 import { useCallback, useEffect, useState } from 'react'
-import { formatTime } from '@/apps/wuzai/miniprogram/common/activities'
+import {
+  localTime as formatTime,
+  timezone
+} from '@/apps/wuzai/miniprogram/common/global'
 import { activityRequest } from './client'
 import styles from './activities.module.css'
 
 export default function ActivityConversation({ event }) {
+  const { t, locale } = useActivityLanguage()
   const [messages, setMessages] = useState([])
   const [body, setBody] = useState('')
   const [error, setError] = useState('')
@@ -64,11 +69,13 @@ export default function ActivityConversation({ event }) {
       className={styles.conversation}
       aria-labelledby='activity-chat-title'
     >
-      <p className={styles.eyebrow}>只在这次相遇之中</p>
-      <h2 id='activity-chat-title'>活动交流群</h2>
+      <p className={styles.eyebrow}>{t('只在这次相遇之中')}</p>
+      <h2 id='activity-chat-title'>{t('活动交流群')}</h2>
       <p className={styles.muted}>
-        仅发起人和已预约者可进入。保留最近 100
-        条交流，长篇思考可以另存到自己的空间。
+        {' '}
+        {t(
+          '仅发起人和已预约者可进入。保留最近 100 条交流，长篇思考可以另存到自己的空间。'
+        )}{' '}
       </p>
       {error && (
         <p role='alert' className={styles.error}>
@@ -76,9 +83,11 @@ export default function ActivityConversation({ event }) {
         </p>
       )}
       {loading ? (
-        <p role='status'>正在读取交流…</p>
+        <p role='status'>{t('正在读取交流…')}</p>
       ) : !messages.length && !error ? (
-        <p className={styles.muted}>还没有人开口。带着一个问题来，也很好。</p>
+        <p className={styles.muted}>
+          {t('还没有人开口。带着一个问题来，也很好。')}
+        </p>
       ) : null}
       <ol className={styles.messages}>
         {messages.map(message => (
@@ -97,7 +106,7 @@ export default function ActivityConversation({ event }) {
             void send(e)
           }}
         >
-          <label htmlFor='activity-message'>写给一起参与的人</label>
+          <label htmlFor='activity-message'>{t('写给一起参与的人')}</label>
           <textarea
             id='activity-message'
             value={body}
@@ -108,13 +117,15 @@ export default function ActivityConversation({ event }) {
           />
           <div className={styles.actions}>
             <button className={styles.primary} disabled={busy || !body.trim()}>
-              {busy ? '发送中…' : '发送'}
+              {busy ? t('发送中…') : t('发送')}
             </button>
             <span className={styles.muted}>{body.length} / 500</span>
           </div>
         </form>
       ) : (
-        <p className={styles.muted}>交流已归档，或你的参与状态已改变。</p>
+        <p className={styles.muted}>
+          {t('交流已归档，或你的参与状态已改变。')}
+        </p>
       )}
     </section>
   )
