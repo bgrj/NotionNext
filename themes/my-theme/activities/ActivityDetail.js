@@ -38,6 +38,11 @@ export default function ActivityDetail({
       </button>
       <header className={styles.detailHeader}>
         <span className={styles.badge}>{t(event.statusLabel)}</span>
+        {event.demo && (
+          <p className={styles.demoLabel} role='note'>
+            {t('这是模拟活动，用于体验不同安排，不接受真实预约。')}
+          </p>
+        )}
         <p className={styles.eyebrow}>
           {event.kind === 'reading' ? t('一起共读') : t('一起交流')} ·{' '}
           {event.format === 'online' ? t('线上相遇') : t('线下相遇')}
@@ -50,8 +55,30 @@ export default function ActivityDetail({
         </p>
       </header>
       <dl className={styles.facts}>
-        <div><dt>{t('交流语言')}</dt><dd>{event.language === 'en' ? 'English' : event.language === 'bilingual' ? '中文 & English' : '中文'}</dd></div>
-        <div><dt>{t('交流渠道')}</dt><dd>{{site:t('站内交流'),wechat:'WeChat',qq:'QQ',telegram:'Telegram',whatsapp:'WhatsApp',line:'LINE',other:t('其他')}[event.channel || event.discussion] || t('其他')}</dd></div>
+        <div>
+          <dt>{t('交流语言')}</dt>
+          <dd>
+            {event.language === 'en'
+              ? 'English'
+              : event.language === 'bilingual'
+                ? '中文 & English'
+                : '中文'}
+          </dd>
+        </div>
+        <div>
+          <dt>{t('交流渠道')}</dt>
+          <dd>
+            {{
+              site: t('站内交流'),
+              wechat: 'WeChat',
+              qq: 'QQ',
+              telegram: 'Telegram',
+              whatsapp: 'WhatsApp',
+              line: 'LINE',
+              other: t('其他')
+            }[event.channel || event.discussion] || t('其他')}
+          </dd>
+        </div>
         <div>
           <dt>
             {t('本地时间')} · {timezone()}
@@ -67,6 +94,7 @@ export default function ActivityDetail({
         <div>
           <dt>{t('留出的名额')}</dt>
           <dd>
+            {event.demo ? t('模拟名额') + ' · ' : ''}
             {event.booked} / {event.capacity} {t('人已预约 · 还余')}{' '}
             {event.remaining} {t('位')}{' '}
           </dd>
@@ -83,19 +111,23 @@ export default function ActivityDetail({
       <div className={styles.reservationBar}>
         <div>
           <strong>
-            {event.isHost
-              ? t('你发起的相遇')
-              : event.reservation === 'confirmed'
-                ? t('已为你留好一个位置')
-                : event.reservation === 'cancelled'
-                  ? t('你已取消预约')
-                  : t('为一次认真的对话，留出时间')}
+            {event.demo
+              ? t('演示活动不接受真实预约。')
+              : event.isHost
+                ? t('你发起的相遇')
+                : event.reservation === 'confirmed'
+                  ? t('已为你留好一个位置')
+                  : event.reservation === 'cancelled'
+                    ? t('你已取消预约')
+                    : t('为一次认真的对话，留出时间')}
           </strong>
-          <p className={styles.muted}>
-            {event.discussion !== 'site'
-              ? t('预约后查看发起人的入群与参与说明。')
-              : t('预约成功后，就可以进入本场站内交流群。')}
-          </p>
+          {!event.demo && (
+            <p className={styles.muted}>
+              {event.discussion !== 'site'
+                ? t('预约后查看发起人的入群与参与说明。')
+                : t('预约成功后，就可以进入本场站内交流群。')}
+            </p>
+          )}
         </div>
         {event.canReserve ? (
           <button
@@ -106,7 +138,7 @@ export default function ActivityDetail({
             {' '}
             {t('预约这次相遇')}{' '}
           </button>
-        ) : !member && event.status === 'open' ? (
+        ) : !event.demo && !member && event.status === 'open' ? (
           <button className={styles.primary} onClick={onLogin}>
             {' '}
             {t('登录后预约')}{' '}

@@ -9,7 +9,7 @@ export default function PhilosophyNav({ active = 'our', onCreate }) {
     panel = useRef(null)
   useEffect(() => {
     if (!open) return
-    const previous = document.activeElement
+    const previous = plus.current || document.activeElement
     panel.current?.querySelector('button')?.focus()
     const key = event => {
       if (event.key === 'Escape') setOpen(false)
@@ -83,9 +83,13 @@ export default function PhilosophyNav({ active = 'our', onCreate }) {
                 </button>
               </>
             ) : (
-              <button type='button' onClick={() => choose('writing')}>
-                {t('我的空间')}
-              </button>
+              ['dao', 'shu', 'existence'].map(room => (
+                <button key={room} type='button' onClick={() => choose(room)}>
+                  {t(
+                    room === 'dao' ? '道' : room === 'shu' ? '术' : '我的存在'
+                  )}
+                </button>
+              ))
             )}
             <button
               type='button'

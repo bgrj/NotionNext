@@ -1,0 +1,2 @@
+.writing-card { padding:32rpx 0; border-bottom:1rpx solid var(--line); }
+.writing-card .body { display:block; line-height:1.9; }

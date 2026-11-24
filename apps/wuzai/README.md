@@ -8,10 +8,12 @@
 4. 确认文本检查权限、网站 Redis 服务正常；本目录本身不包含另一套数据库或历史数据迁移。
 5. 在 `settings.js` 填写真实支持邮箱，完善微信后台隐私指引、主体资料和服务类目，完成开发者工具和真机回归，再上传并提交审核。
 
-本版提供活动列表、详情、草稿与发布、预约与退出、活动通知、我的活动。微信活动使用发起人自建微信群，没有小程序内聊天。通知显示在详情页，尚未启用微信订阅推送。微信账号与网站账号独立，未做自动绑定。
+本版提供双语活动列表、全球城市选择、详情、草稿与发布、预约与退出、活动通知、我的活动及平台实时在线统计。交流渠道可选微信、QQ、Telegram、WhatsApp、LINE 等，群组由发起人建立和维护。通知显示在详情页，尚未启用微信订阅推送。微信账号与网站账号独立，未做自动绑定。
 
 `miniprogram/common/activities.js` 同时供网站后端使用，包含纯 JavaScript 业务规则。客户端云函数只信任微信服务端上下文中的身份，不信任页面传入的 OPENID。
 
-网站仓库中运行 `node scripts/check-wuzai-package.js` 检查源码；本机装有微信开发者工具时，可加 `--compiler-dir "<安装目录>/resources/app.asar.unpacked/node_modules/wcc-exec"`，由官方编译器校验全部五页 WXML 与 WXSS。WXML 的 `{{ }}` 内使用原始 `&&`，不要替换成 HTML 实体。独立仓库 `bgrj/Our-Being` 也提供同名检查脚本。
+网站仓库中运行 `node scripts/check-wuzai-package.js` 检查源码；本机装有微信开发者工具时，可加 `--compiler-dir "<安装目录>/resources/app.asar.unpacked/node_modules/wcc-exec"`，由官方编译器校验全部九页 WXML 与 WXSS。WXML 的 `{{ }}` 内使用原始 `&&`，不要替换成 HTML 实体。独立仓库 `bgrj/Our-Being` 也提供同名检查脚本。
+
+My Being 集中语言、称呼、城市及隐私设置。中央加号提供道、术、我的存在三类编辑器，默认私密，主动公开后可在网站活动页的公开创作中按类阅读。15 份固定日期的演示活动不接受真实预约或交流写入，模拟名额与真实在线统计分开。
 
 当前为可复制的原生源码包；静态检查通过不代表已上传云函数、完成微信真机验收或获得审核通过。完整设计与接口见网站仓库的 `docs/operations/our-beings-activities-2026-11-24.md`。

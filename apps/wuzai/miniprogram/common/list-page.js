@@ -20,13 +20,19 @@ module.exports = function listPage(mine) {
       city: '',
       cityName: '',
       conversationLanguage: 'all',
-      showPresenceHelp: false
+      showPresenceHelp: false,
+      kind: 'all',
+      mineSection: 'activities',
+      relation: 'all',
+      writings: [],
+      writingsLoading: false
     },
     onShow() {
       const city = wx.getStorageSync('ourbeing:city') || ''
       this.setData({ city, cityName: cityLabel(city, this.data.locale) })
       this.setData({ nickname: wx.getStorageSync('wuzai:nickname') || '' })
       this.load()
+      if (mine && auth.getSession()) this.loadWritings()
     },
     onPullDownRefresh() {
       this.load().finally(() => wx.stopPullDownRefresh())
@@ -37,6 +43,7 @@ module.exports = function listPage(mine) {
           loggedIn: false,
           loading: false,
           events: [],
+          writings: [],
           visible: [],
           nextOffset: null,
           error: ''
@@ -75,6 +82,18 @@ module.exports = function listPage(mine) {
     togglePresenceHelp() {
       this.setData({ showPresenceHelp: !this.data.showPresenceHelp })
     },
+    settings() { wx.navigateTo({ url: '/pages/settings/settings' }) },
+    sectionTap(e) { this.setData({ mineSection: e.currentTarget.dataset.section }); if (this.data.mineSection === 'writings') this.loadWritings() },
+    relationTap(e) { this.setData({ relation: e.currentTarget.dataset.relation }); this.filter() },
+    kindTap(e) { this.setData({ kind: e.currentTarget.dataset.kind }); this.filter() },
+    quickCreate(e) { wx.navigateTo({ url: '/pages/publish/publish?kind=' + e.currentTarget.dataset.kind }) },
+    compose(e) { wx.navigateTo({ url: '/pages/compose/compose?room=' + (e.currentTarget.dataset.room || 'existence') }) },
+    publicWritings() { wx.navigateTo({ url: '/pages/writings/writings' }) },
+    loadWritings() {
+      if (!auth.getSession()) return Promise.resolve()
+      this.setData({ writingsLoading: true, error: '' })
+      return request('writings').then(data => this.setData({ writings: data.writings.map(item => ({ ...item, timeLabel: localTime(item.createdAt) })) })).catch(error => this.setData({ error: error.message })).finally(() => this.setData({ writingsLoading: false }))
+    },
     formatTap(e) {
       this.setData({
         format: ['all', 'online', 'offline'][Number(e.detail.value)]
@@ -96,7 +115,7 @@ module.exports = function listPage(mine) {
           format: this.data.format,
           city: mine ? '' : this.data.city,
           language: this.data.conversationLanguage
-        })
+        }).filter(item => (this.data.kind === 'all' || item.kind === this.data.kind) && (!mine || this.data.relation === 'all' || (this.data.relation === 'host' ? item.isHost : this.data.relation === 'draft' ? item.state === 'draft' : item.reservation === 'confirmed')))
       })
     },
     open(e) {
@@ -112,7 +131,7 @@ module.exports = function listPage(mine) {
       this.setData({ loggingIn: true, error: '' })
       return auth
         .login()
-        .then(() => this.load())
+        .then(() => Promise.all([this.load(), this.loadWritings()]))
         .catch(error => this.setData({ error: error.message, loggedIn: false }))
         .finally(() => this.setData({ loggingIn: false }))
     },

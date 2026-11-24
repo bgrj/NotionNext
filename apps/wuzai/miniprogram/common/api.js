@@ -27,7 +27,7 @@ function call(action, input = {}) {
 }
 function request(action, input = {}) {
   const auth = require('./auth')
-  const ready = ['list', 'get', 'login', 'presenceStats'].includes(action)
+  const ready = ['list', 'get', 'login', 'presenceStats', 'publicWritings'].includes(action)
     ? Promise.resolve()
     : auth.login()
   return ready.then(() => call(action, input)).catch(error => {

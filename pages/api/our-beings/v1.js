@@ -6,9 +6,22 @@ import {
 } from '@/lib/activities/identity'
 import { fail } from '@/apps/wuzai/miniprogram/common/activities'
 import { activityPresence } from '@/lib/activities/presence'
+import { activityWritings } from '@/lib/activities/writings'
+import {
+  demoEvents,
+  getDemoEvent
+} from '@/apps/wuzai/miniprogram/common/demo-events'
 
 export const config = { api: { bodyParser: { sizeLimit: '16kb' } } }
-const READS = ['list', 'get', 'mine', 'messages', 'presenceStats']
+const READS = [
+  'list',
+  'get',
+  'mine',
+  'messages',
+  'presenceStats',
+  'writings',
+  'publicWritings'
+]
 const WRITES = [
   'create',
   'edit',
@@ -18,7 +31,8 @@ const WRITES = [
   'cancelEvent',
   'announce',
   'message',
-  'presence'
+  'presence',
+  'saveWriting'
 ]
 export default async function handler(req, res) {
   res.setHeader('Cache-Control', 'private, no-store')
@@ -51,9 +65,18 @@ export default async function handler(req, res) {
     const actor = await resolveActivityActor(req, redis)
     await limitActivityRequest(redis, actor, req)
     const service = createActivityService(redisActivityStore(redis))
-    const result = ['presence', 'presenceStats'].includes(action)
-      ? await activityPresence(redis, action, input, actor, service)
-      : await service(action, input, actor)
+    const demo = getDemoEvent(input.id)
+    if (demo && action !== 'get')
+      fail('demo_readonly', '演示活动不接受真实预约。', 409)
+    let result
+    if (demo) result = { event: demo }
+    else if (['writings', 'publicWritings', 'saveWriting'].includes(action))
+      result = await activityWritings(redis, action, input, actor)
+    else if (['presence', 'presenceStats'].includes(action))
+      result = await activityPresence(redis, action, input, actor, service)
+    else result = await service(action, input, actor)
+    if (action === 'list' && !Number(input.offset))
+      result.events = [...result.events, ...demoEvents()]
     return res.status(200).json({ version: 1, ...result })
   } catch (error) {
     const status = Number(error.status) || 503

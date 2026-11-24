@@ -10,6 +10,7 @@ import ActivityDetail from './ActivityDetail'
 import ActivityForm from './ActivityForm'
 import Presence from './Presence'
 import PhilosophyNav from './PhilosophyNav'
+import PublicWritings from './PublicWritings'
 import {
   CITIES,
   cityLabel,
@@ -34,6 +35,7 @@ export default function ActivityHub({
   const [format, setFormat] = useState('all')
   const [city, setCity] = useState('')
   const [conversationLanguage, setConversationLanguage] = useState('all')
+  const [kind, setKind] = useState('all')
   const [loading, setLoading] = useState(true)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState('')
@@ -139,7 +141,7 @@ export default function ActivityHub({
     format,
     city,
     language: conversationLanguage
-  })
+  }).filter(item => kind === 'all' || item.kind === kind)
   return (
     <div id='ob-hub-panel' className={styles.hub}>
       <PhilosophyNav onCreate={start} />
@@ -152,27 +154,25 @@ export default function ActivityHub({
       />
       {!id && !editing && (
         <>
-          <div className={styles.invitation}>
-            <div>
-              <p className={styles.eyebrow}>{t('全球共读共话')}</p>
-              <h2>
-                {' '}
-                {t('把一本书，')} <br /> {t('读成一次相遇。')}{' '}
-              </h2>
-              <p>
-                {' '}
-                {t('从一段共读、一场对话开始。')}{' '}
-                {t('带着问题来，也带着自己的生活来。')}{' '}
-              </p>
-              <button className={styles.primary} onClick={start}>
-                {' '}
-                {t('发起一次相遇')}{' '}
-              </button>
-            </div>
+          <div className={styles.entryActions}>
+            <button
+              type='button'
+              className={styles.primary}
+              onClick={() => start('reading')}
+            >
+              {t('发起共读')}
+            </button>
+            <button
+              type='button'
+              className={styles.secondary}
+              onClick={() => start('conversation')}
+            >
+              {t('发起共话')}
+            </button>
+            <a className={styles.secondary} href='#public-writings'>
+              {t('公开创作')}
+            </a>
           </div>
-          <p className={styles.muted}>
-            {t('欢迎世界各地的你，也欢迎生活在中国的国际朋友。')}
-          </p>
           <div className={styles.globalFilters}>
             <label>
               {t('城市')}
@@ -233,6 +233,22 @@ export default function ActivityHub({
                 <option value='offline'>{t('线下')}</option>
               </select>
             </label>
+          </div>
+          <div className={styles.tabs} aria-label={t('活动类型')}>
+            {[
+              ['all', '全部'],
+              ['reading', '共读'],
+              ['conversation', '共话']
+            ].map(([value, label]) => (
+              <button
+                key={value}
+                type='button'
+                aria-pressed={kind === value}
+                onClick={() => setKind(value)}
+              >
+                {t(label)}
+              </button>
+            ))}
           </div>
         </>
       )}
@@ -323,12 +339,16 @@ export default function ActivityHub({
                         <span className={styles.badge}>
                           {t(item.statusLabel)}
                         </span>
+                        {item.demo && (
+                          <span className={styles.demoLabel}>{t('演示')}</span>
+                        )}
                       </span>
                       <strong>{item.title}</strong>
                       <span className={styles.muted}>
                         {item.book || item.description.slice(0, 75)}
                       </span>
                       <span className={styles.cardBottom}>
+                        {item.demo ? t('模拟名额') + ' · ' : ''}
                         {item.location} · {item.booked} / {item.capacity}{' '}
                         {t('人')}{' '}
                         {item.isHost
@@ -383,6 +403,7 @@ export default function ActivityHub({
               {busy ? t('读取中…') : t('继续查看活动')}
             </button>
           )}
+          <PublicWritings />
           <details className={styles.howTo}>
             <summary>{t('如何参与')}</summary>
             <div className={styles.howItWorks}>

@@ -139,6 +139,8 @@
 }
 .tabs {
   display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
   gap: 1.25rem;
 }
 .tabs button {
@@ -685,6 +687,43 @@
 }
 .hub {
   scroll-margin-top: 80px;
+}
+.entryActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 16px 0 24px;
+}
+.entryActions > * {
+  flex: 1 1 120px;
+  text-align: center;
+}
+.demoLabel {
+  color: var(--accent, #926631);
+  font-size: 0.875rem;
+}
+.publicWritings {
+  margin-top: 48px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  scroll-margin-top: 96px;
+}
+.writingList {
+  display: grid;
+  gap: 16px;
+  margin-top: 24px;
+}
+.writing {
+  min-width: 0;
+  padding: 24px;
+  background: var(--paper);
+  border: 1px solid var(--line);
+  border-radius: var(--radius, 8px);
+}
+.writingBody {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-width: 72ch;
 }
 @media (max-width: 600px) {
   .invitation h2 br {

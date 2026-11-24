@@ -5,6 +5,7 @@ import {
   limitActivityRequest
 } from '@/lib/activities/identity'
 import { createActivityService } from '@/lib/activities/service'
+import { demoEvents } from '@/apps/wuzai/miniprogram/common/demo-events'
 jest.mock('@/lib/activities/redisStore', () => ({
   activityRedis: jest.fn(),
   redisActivityStore: jest.fn()
@@ -41,8 +42,39 @@ describe('versioned activity API boundary', () => {
       'Cache-Control',
       'private, no-store'
     )
-    expect(res.json).toHaveBeenCalledWith({ version: 1, events: [] })
+    const result = res.json.mock.calls[0][0]
+    expect(result.version).toBe(1)
+    expect(result.events).toHaveLength(15)
+    expect(
+      result.events.every(
+        item => item.demo && !item.canReserve && !item.canChat
+      )
+    ).toBe(true)
     expect(run).toHaveBeenCalledWith('list', {}, null)
+  })
+  test.each([
+    'reserve',
+    'publish',
+    'edit',
+    'message',
+    'announce',
+    'cancelEvent'
+  ])('demo %s cannot reach the real event service', async action => {
+    const res = response()
+    await handler(
+      { method: 'POST', body: { action, id: demoEvents()[0].id }, headers: {} },
+      res
+    )
+    expect(res.status).toHaveBeenCalledWith(409)
+    expect(run).not.toHaveBeenCalled()
+  })
+  test('later catalogue pages never repeat the demo catalogue', async () => {
+    const res = response()
+    await handler(
+      { method: 'GET', query: { action: 'list', offset: '40' }, headers: {} },
+      res
+    )
+    expect(res.json).toHaveBeenCalledWith({ version: 1, events: [] })
   })
   test('rejects mutating GET before reaching storage', async () => {
     const res = response()

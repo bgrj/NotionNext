@@ -20,8 +20,11 @@ function localizePage(page) {
     onShow(...args) {
       const locale = getLanguage()
       this.setData({ locale, t: words(locale), timezone: timezone() })
-      if (wx.setNavigationBarTitle)
-        wx.setNavigationBarTitle({ title: 'Our Being' })
+      if (wx.setNavigationBarTitle) {
+        const titles = { mine: 'My Being', settings: '设置', compose: '写下一段', writings: '公开创作', publish: '发起活动', detail: '活动详情', cities: '选择城市', privacy: '隐私与使用说明' }
+        const key = (this.route || '').split('/')[1]
+        wx.setNavigationBarTitle({ title: words(locale)[titles[key]] || titles[key] || 'Our Being' })
+      }
       const bar = typeof this.getTabBar === 'function' && this.getTabBar()
       if (bar) bar.setData({ locale, t: words(locale), current: this.route })
       presence.start(this)

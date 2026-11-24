@@ -3,7 +3,39 @@ page {
   background:var(--ground); color:var(--ink); font:32rpx/1.8 "PingFang SC","Microsoft YaHei",sans-serif;
 }
 view,input,textarea,button { box-sizing:border-box; }
-.page { padding:16rpx 32rpx calc(240rpx + env(safe-area-inset-bottom)); overflow-wrap:break-word; }
+.page { padding:24rpx 32rpx calc(240rpx + env(safe-area-inset-bottom)); overflow-wrap:break-word; }
+.home-page { padding-top:0; padding-left:0; padding-right:0; }
+.home-content { padding:0 32rpx; }
+.home-page .philosophy-head { margin:0; border-radius:0; height:340rpx; padding:48rpx 32rpx; }
+.home-page .philosophy-head .title { font-size:48rpx; }
+.home-page .philosophy-head .eyebrow { margin-bottom:12rpx; font-size:24rpx; }
+.home-page .philosophy-head .slogan { font-size:28rpx; margin-top:16rpx; }
+.head-settings { position:absolute; top:8rpx; left:24rpx; min-height:88rpx; margin:0; padding:16rpx; background:var(--paper); border-color:var(--line); font-size:26rpx; z-index:2; }
+.quick-actions { display:flex; gap:16rpx; padding:32rpx 0 16rpx; }
+.quick-actions button { flex:1; min-width:0; margin:0; padding:24rpx 8rpx; flex-direction:column; gap:8rpx; background:var(--paper); border:1rpx solid var(--line); border-radius:20rpx; font-size:26rpx; }
+.action-mark { font:42rpx/1.5 "Songti SC",serif; color:var(--accent); }
+.existence-mark { font-size:32rpx; line-height:1.97; }
+.segmented { display:flex; gap:8rpx; margin:24rpx 0; flex-wrap:wrap; }
+.segmented button { flex:1; margin:0; padding:12rpx 16rpx; font-size:26rpx; border:0; color:var(--muted); min-height:88rpx; }
+.segmented button.active { background:var(--paper); color:var(--accent); box-shadow:inset 0 0 0 1rpx var(--line); }
+.sign-in-row { display:flex; justify-content:space-between; gap:24rpx; align-items:center; padding:24rpx 0; border-bottom:1rpx solid var(--line); }
+.sign-in-row .heading { margin:0; }
+.sign-in-row button { flex-shrink:0; }
+.section-tabs { margin:24rpx 0 0; }
+.event-row { display:flex; gap:24rpx; padding:32rpx 0; border-bottom:1rpx solid var(--line); }
+.book-cover { width:168rpx; min-width:168rpx; min-height:228rpx; background:#e3dbc9; color:#3e4c42; border-left:8rpx solid #b1bca8; padding:16rpx 16rpx 12rpx; display:flex; flex-direction:column; justify-content:space-between; border-radius:4rpx 12rpx 12rpx 4rpx; }
+.conversation-cover { background:#e3d2bf; color:#5a4033; border-left-color:#caa581; }
+.cover-kind { font-size:22rpx; letter-spacing:4rpx; }
+.cover-title { font:30rpx/1.5 "Songti SC",serif; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
+.cover-brand { font-size:16rpx; letter-spacing:2rpx; }
+.event-summary { min-width:0; flex:1; }
+.event-summary .card-title { font-size:34rpx; line-height:1.5; margin:12rpx 0 16rpx; }
+.event-tags { display:flex; flex-wrap:wrap; gap:12rpx; align-items:center; }
+.event-tags .hint { margin:0; }
+.demo-tag { font-size:22rpx; color:var(--muted); border-bottom:1rpx dashed var(--muted); }
+.compact-presence { margin:0; padding:8rpx 0; align-items:center; gap:8rpx; justify-content:space-between; font-size:24rpx; }
+.compact-presence button.quiet { min-height:88rpx; padding:8rpx; font-size:24rpx; }
+.footer-note { text-align:center; padding:24rpx 0; }
 .eyebrow { color:var(--accent); font-size:26rpx; letter-spacing:3rpx; margin-bottom:16rpx; display:block; }
 .title { font:normal 52rpx/1.5 "Songti SC",serif; letter-spacing:2rpx; margin:16rpx 0 24rpx; display:block; }
 .heading { font:normal 38rpx/1.6 "Songti SC",serif; display:block; margin:16rpx 0; }

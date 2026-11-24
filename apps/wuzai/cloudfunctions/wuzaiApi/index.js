@@ -77,6 +77,7 @@ exports.main = async event => {
       'cancelReservation',
       'cancelEvent',
       'announce'
+      , 'writings', 'publicWritings', 'saveWriting'
     ]
     if (!allowed.includes(event.action))
       return { error: 'invalid_action', message: '暂不支持这个操作。' }
@@ -86,7 +87,7 @@ exports.main = async event => {
       !Array.isArray(event.input)
         ? { ...event.input }
         : {}
-    if (['create', 'edit', 'announce'].includes(event.action)) {
+    if (['create', 'edit', 'announce', 'saveWriting'].includes(event.action)) {
       const content = [
         input.title,
         input.description,

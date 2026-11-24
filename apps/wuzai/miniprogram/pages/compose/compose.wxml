@@ -1,0 +1,7 @@
+<view class="page">
+  <text class="eyebrow">MY BEING</text><text class="title">{{room === 'dao' ? t['道'] : room === 'shu' ? t['术'] : t['我的存在']}}</text>
+  <text class="muted">{{room === 'dao' ? t['写下一个问题，或一次理解。'] : room === 'shu' ? t['留下一种方法，或一次实践。'] : t['记录你正在经历的生活。']}}</text>
+  <view wx:if="{{error}}" class="error">{{error}}</view>
+  <view wx:if="{{saved}}" class="empty"><text class="heading">{{t['已保存']}}</text><text class="hint">{{public ? t['公开创作可在网站与小程序阅读。'] : t['只有当前账号可以查看。']}}</text><button class="primary" bindtap="back">{{t['回到我的空间']}}</button></view>
+  <block wx:else><label class="label">{{t['题目']}}</label><input value="{{title}}" data-field="title" bindinput="input" maxlength="80" disabled="{{busy}}" /><label class="label">{{t['正文']}}</label><textarea class="writing-body" value="{{body}}" data-field="body" bindinput="input" maxlength="4000" disabled="{{busy}}" auto-height /><text class="hint">{{body.length}} / 4000 · {{t['输入自动留在本机，保存后归入当前账号。']}}</text><view class="visibility"><text>{{t['公开这段创作']}}</text><switch checked="{{public}}" bindchange="visibility" disabled="{{busy}}" color="#926631" /></view><text class="hint">{{public ? t['公开创作可在网站与小程序阅读。'] : t['只有当前账号可以查看。']}}</text><button class="primary" loading="{{busy}}" disabled="{{busy}}" bindtap="save">{{public ? t['确认公开'] : t['保存为私密']}}</button></block>
+</view>

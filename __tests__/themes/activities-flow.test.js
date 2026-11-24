@@ -2,6 +2,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react'
 import ActivityHub from '@/themes/my-theme/activities/ActivityHub'
 import ActivityForm from '@/themes/my-theme/activities/ActivityForm'
 import ActivityDetail from '@/themes/my-theme/activities/ActivityDetail'
+import PhilosophyNav from '@/themes/my-theme/activities/PhilosophyNav'
+import PublicWritings from '@/themes/my-theme/activities/PublicWritings'
 import {
   ActivityLanguageProvider,
   LanguageSwitch
@@ -82,7 +84,67 @@ beforeEach(() => {
   mockSignedIn = false
   global.fetch = jest
     .fn()
-    .mockImplementation(() => reply({ events: [event], nextOffset: null }))
+    .mockImplementation(() =>
+      reply({ events: [event], nextOffset: null, writings: [] })
+    )
+})
+test('My Being create menu selects each actual writing room and returns focus', () => {
+  const choose = jest.fn()
+  render(<PhilosophyNav active='my' onCreate={choose} />)
+  const trigger = screen.getByRole('button', { name: '创建菜单 / Create' })
+  for (const [label, room] of [
+    ['道', 'dao'],
+    ['术', 'shu'],
+    ['我的存在', 'existence']
+  ]) {
+    fireEvent.click(trigger)
+    fireEvent.click(screen.getByRole('button', { name: label, exact: true }))
+    expect(choose).toHaveBeenLastCalledWith(room)
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(trigger).toHaveFocus()
+  }
+})
+test('demo details explicitly label simulated places and offer no reservation or login', () => {
+  render(
+    <ActivityDetail
+      event={{ ...event, demo: true, canReserve: false }}
+      onLogin={jest.fn()}
+    />
+  )
+  expect(screen.getByRole('note')).toHaveTextContent('模拟活动')
+  expect(screen.getByText(/模拟名额/)).toBeInTheDocument()
+  expect(screen.queryByRole('button', { name: /预约/ })).not.toBeInTheDocument()
+})
+test('public writing reads full text and filters the shared room categories', async () => {
+  global.fetch.mockImplementation(() =>
+    reply({
+      writings: [
+        {
+          id: 'a',
+          room: 'dao',
+          title: '一个问题',
+          body: '道的正文',
+          author: '读者',
+          createdAt: '2026-11-24T10:00:00Z',
+          public: true
+        },
+        {
+          id: 'b',
+          room: 'shu',
+          title: '一次实践',
+          body: '术的正文',
+          author: '读者',
+          createdAt: '2026-11-24T10:00:00Z',
+          public: true
+        }
+      ]
+    })
+  )
+  render(<PublicWritings />)
+  await screen.findByText('道的正文')
+  fireEvent.click(screen.getByRole('button', { name: '术', exact: true }))
+  expect(screen.getByText('术的正文')).toBeInTheDocument()
+  expect(screen.queryByText('道的正文')).not.toBeInTheDocument()
 })
 test('visitors can filter activities and receive a real login path before creating', async () => {
   render(<ActivityHub />)
@@ -90,7 +152,7 @@ test('visitors can filter activities and receive a real login path before creati
   fireEvent.click(screen.getByRole('button', { name: '往期相遇' }))
   expect(screen.queryByText(event.title)).not.toBeInTheDocument()
   fireEvent.click(screen.getByRole('button', { name: '即将相遇' }))
-  fireEvent.click(screen.getByRole('button', { name: '发起一次相遇' }))
+  fireEvent.click(screen.getByRole('button', { name: '发起共读' }))
   expect(screen.getByRole('link', { name: '登录 / 注册' })).toHaveAttribute(
     'href',
     expect.stringContaining('/sign-in')
@@ -105,7 +167,7 @@ test('signed-in people create a private draft before explicit publication', asyn
   )
   render(<ActivityHub />)
   await screen.findByText('为下一次相遇，留一页空白')
-  fireEvent.click(screen.getByRole('button', { name: '发起一次相遇' }))
+  fireEvent.click(screen.getByRole('button', { name: '发起共读' }))
   fireEvent.change(screen.getByLabelText('活动名称'), {
     target: { value: '一起读我与你' }
   })

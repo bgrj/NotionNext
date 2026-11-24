@@ -40,7 +40,7 @@ const profileFromBeing = being => {
   }
 }
 
-const BeingDesk = () => {
+const BeingDesk = ({ requestedRoom, onCreateHandled }) => {
   const { t, locale } = useActivityLanguage()
   const enabled = isClerkEnabled()
   const session = useClerkSession()
@@ -93,6 +93,21 @@ const BeingDesk = () => {
   }, [])
 
   const being = me || beingFromClerkUser(user)
+  useEffect(() => {
+    if (!requestedRoom) return
+    if (!isSignedIn) {
+      document.querySelector('.ob-auth__actions a')?.click()
+    } else if (being?.isAuthor) {
+      const room = BEING_ROOMS.find(item => item.id === requestedRoom)
+      if (room) window.location.assign(room.authorHref)
+    } else {
+      setDraft(previous => ({ ...previous, room: requestedRoom }))
+      const editor = document.getElementById('being-writing-room')
+      editor?.scrollIntoView({ block: 'center', behavior: 'smooth' })
+      editor?.focus()
+    }
+    onCreateHandled?.()
+  }, [requestedRoom, isSignedIn, being?.isAuthor, onCreateHandled])
   const rooms = useMemo(
     () =>
       BEING_ROOMS.map(room => ({
@@ -431,6 +446,7 @@ const BeingDesk = () => {
               {' '}
               {t('屋子')}{' '}
               <select
+                id='being-writing-room'
                 value={draft.room}
                 onChange={event =>
                   setDraft(prev => ({ ...prev, room: event.target.value }))
@@ -640,22 +656,17 @@ const BeingDesk = () => {
 }
 
 export default function LocalizedBeingDesk() {
+  const [requestedRoom, setRequestedRoom] = useState(null)
   return (
     <ActivityLanguageProvider>
       <div className={surface.surface}>
         <LanguageSwitch />
         <BeingMasthead personal />
-        <PhilosophyNav
-          active='my'
-          onCreate={() => {
-            const editor = document.querySelector('.ob-desk form textarea')
-            if (editor) {
-              editor.scrollIntoView({ block: 'center' })
-              editor.focus()
-            } else document.querySelector('.ob-auth__actions a')?.click()
-          }}
+        <PhilosophyNav active='my' onCreate={setRequestedRoom} />
+        <BeingDesk
+          requestedRoom={requestedRoom}
+          onCreateHandled={() => setRequestedRoom(null)}
         />
-        <BeingDesk />
       </div>
     </ActivityLanguageProvider>
   )

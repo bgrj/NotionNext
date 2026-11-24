@@ -1,0 +1,4 @@
+.settings-group { background:var(--paper); padding:24rpx 32rpx; margin-bottom:24rpx; border:1rpx solid var(--line); border-radius:24rpx; }
+.settings-group .label { margin-top:0; }
+.settings-row { justify-content:space-between; border:0; border-bottom:1rpx solid var(--line); border-radius:0; margin:0; padding:24rpx 0; }
+.settings-row:last-child { border-bottom:0; }

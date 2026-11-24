@@ -4,7 +4,7 @@
   <button class="tab {{current === 'pages/mine/mine' ? 'selected' : ''}}" data-page="mine/mine" bindtap="tab"><text>My Being</text><text class="slogan">{{t['与自我疏离']}}</text></button>
 </view>
 <view wx:if="{{open}}" class="mask" bindtap="close"><view class="sheet" catchtap="noop">
-  <block wx:if="{{current === 'pages/mine/mine'}}"><button data-action="name" bindtap="choose">{{t['我的称呼']}}</button><button data-action="privacy" bindtap="choose">{{t['隐私与使用说明']}}</button></block>
+  <block wx:if="{{current === 'pages/mine/mine'}}"><button data-action="dao" bindtap="choose">{{t['道']}}</button><button data-action="shu" bindtap="choose">{{t['术']}}</button><button data-action="existence" bindtap="choose">{{t['我的存在']}}</button></block>
   <block wx:else><button data-action="reading" bindtap="choose">{{t['发起共读']}}</button><button data-action="conversation" bindtap="choose">{{t['发起共话']}}</button><button data-action="cities" bindtap="choose">{{t['选择城市']}}</button></block>
   <button class="cancel" bindtap="close">{{t['取消']}}</button>
 </view></view>

@@ -27,7 +27,9 @@ Component({
     choose(event) {
       this.close()
       const action = event.currentTarget.dataset.action
-      if (action === 'privacy' || action === 'cities')
+      if (['dao', 'shu', 'existence'].includes(action)) {
+        wx.navigateTo({ url: '/pages/compose/compose?room=' + action })
+      } else if (action === 'privacy' || action === 'cities')
         wx.navigateTo({ url: `/pages/${action}/${action}` })
       else if (action === 'name') {
         const page = getCurrentPages().slice(-1)[0]

@@ -5,7 +5,10 @@
     "pages/publish/publish",
     "pages/mine/mine",
     "pages/privacy/privacy",
-    "pages/cities/cities"
+    "pages/cities/cities",
+    "pages/settings/settings",
+    "pages/compose/compose",
+    "pages/writings/writings"
   ],
   "darkmode": true,
   "themeLocation": "theme.json",

@@ -1,0 +1,7 @@
+<view class="page settings-page">
+  <text class="title">{{t['设置']}}</text>
+  <view class="settings-group"><text class="heading">{{t['界面语言']}}</text><view class="segmented"><button class="{{locale === 'zh' ? 'active' : ''}}" data-language="zh" bindtap="changeLanguage">中文</button><button class="{{locale === 'en' ? 'active' : ''}}" data-language="en" bindtap="changeLanguage">English</button></view></view>
+  <view class="settings-group"><label class="label">{{t['我的称呼']}}</label><input type="nickname" value="{{nickname}}" bindinput="input" maxlength="30" placeholder="{{t['共读时使用的称呼，可选']}}" /><button class="primary" bindtap="save">{{saved ? t['已保存'] : t['保存称呼']}}</button></view>
+  <view class="settings-group"><button class="settings-row" bindtap="chooseCity">{{t['选择城市']}}<text>›</text></button><button class="settings-row" bindtap="privacy">{{t['隐私与使用说明']}}<text>›</text></button><button class="settings-row" bindtap="copySite">{{t['复制网站链接']}}<text>›</text></button></view>
+  <view class="settings-group"><text class="heading">Our Being · 吾在</text><text class="muted">{{t['学习、思考、创作，与他人相遇。']}}</text><text class="hint">{{t['微信与网站账号目前独立，公开创作共用网站展示。']}}</text><text class="hint">{{t['主题跟随系统，时间按设备时区显示。']}}</text></view>
+</view>
