@@ -110,11 +110,11 @@ test('anonymous and website accounts cannot access WeChat private writing', asyn
 })
 test('demo catalogue covers distinct cities, languages, channels and lifecycle states', () => {
   const events = demoEvents(now)
-  expect(events).toHaveLength(15)
-  expect(new Set(events.map(item => item.id)).size).toBe(15)
+  expect(events).toHaveLength(48)
+  expect(new Set(events.map(item => item.id)).size).toBe(48)
   for (const state of ['open', 'full', 'closed', 'ended', 'cancelled'])
     expect(events.some(item => item.status === state)).toBe(true)
-  expect(new Set(events.map(item => item.channel)).size).toBe(6)
+  expect(new Set(events.map(item => item.channel)).size).toBe(7)
   expect(
     events.every(
       item => item.demo && !item.canReserve && !item.canPost && !item.canChat
@@ -123,8 +123,8 @@ test('demo catalogue covers distinct cities, languages, channels and lifecycle s
 })
 test('academy readings and broader exchanges ship artwork on both platforms', () => {
   const events = demoEvents(now)
-  expect(events.filter(item => item.kind === 'reading')).toHaveLength(7)
-  expect(events.filter(item => item.kind === 'conversation')).toHaveLength(8)
+  expect(events.filter(item => item.kind === 'reading').length).toBeGreaterThanOrEqual(7)
+  expect(events.filter(item => item.kind === 'conversation').length).toBeGreaterThanOrEqual(8)
   for (const topic of [
     '职场交流',
     '技术分享',

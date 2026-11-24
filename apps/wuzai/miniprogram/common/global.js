@@ -91,7 +91,7 @@ const CITIES = [
   ['Wellington', '惠灵顿', 'NZ']
 ].map(([name, zh, country]) => ({ id: name, name, zh, country }))
 function cityLabel(value, locale = 'zh') {
-  const city = CITIES.find(item => item.id === value)
+  const city = CITIES.find((item) => item.id === value)
   return city
     ? `${locale === 'en' ? city.name : city.zh} · ${city.country}`
     : value
@@ -99,14 +99,14 @@ function cityLabel(value, locale = 'zh') {
 function canonicalCity(value) {
   const query = String(value || '').trim()
   const match = CITIES.find(
-    city => city.id.toLowerCase() === query.toLowerCase() || city.zh === query
+    (city) => city.id.toLowerCase() === query.toLowerCase() || city.zh === query
   )
   return match?.id || query
 }
 function localTime(value, separator = '.') {
   const date = new Date(value)
   if (!Number.isFinite(date.getTime())) return ''
-  const pad = n => String(n).padStart(2, '0')
+  const pad = (n) => String(n).padStart(2, '0')
   return `${date.getFullYear()}${separator}${pad(date.getMonth() + 1)}${separator}${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`
 }
 function timezone() {
@@ -118,11 +118,26 @@ function timezone() {
 }
 function offsetLabel() {
   const offset = -new Date().getTimezoneOffset()
-  const pad = n => String(n).padStart(2, '0')
+  const pad = (n) => String(n).padStart(2, '0')
   return `UTC${offset >= 0 ? '+' : '-'}${pad(Math.floor(Math.abs(offset) / 60))}:${pad(Math.abs(offset) % 60)}`
 }
 function toInstant(value) {
   const date = new Date(value)
+  const local =
+    typeof value === 'string' &&
+    value.match(/^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2}))?$/)
+  if (
+    local &&
+    [
+      date.getFullYear(),
+      date.getMonth() + 1,
+      date.getDate(),
+      date.getHours(),
+      date.getMinutes(),
+      date.getSeconds()
+    ].some((part, index) => part !== Number(local[index + 1] || 0))
+  )
+    return ''
   return Number.isFinite(date.getTime()) ? date.toISOString() : ''
 }
 module.exports = {

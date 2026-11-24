@@ -1,6 +1,7 @@
 /* Shared by native WeChat pages and the website. No DOM, React, wx or secrets. */
 const VERSION = 1
 const { canonicalCity } = require('./global')
+const { normalizePlace, samePlace } = require('./places')
 const STATUS_LABELS = {
   draft: '草稿',
   open: '可预约',
@@ -29,6 +30,30 @@ function validId(id) {
   )
 }
 function iso(value) {
+  const parts =
+    typeof value === 'string' &&
+    value.match(
+      /^(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})(?::(\d{2})(?:\.\d{1,3})?)?(Z|[+-]\d{2}:\d{2})$/
+    )
+  if (
+    !parts ||
+    Number(parts[4]) > 23 ||
+    Number(parts[5]) > 59 ||
+    Number(parts[6] || 0) > 59
+  )
+    return ''
+  const calendar = new Date(`${parts[1]}-${parts[2]}-${parts[3]}T00:00:00Z`)
+  if (
+    calendar.getUTCFullYear() !== Number(parts[1]) ||
+    calendar.getUTCMonth() + 1 !== Number(parts[2]) ||
+    calendar.getUTCDate() !== Number(parts[3])
+  )
+    return ''
+  if (parts[7] !== 'Z') {
+    const offset = parts[7].slice(1).split(':').map(Number)
+    if (offset[0] > 14 || offset[1] > 59 || (offset[0] === 14 && offset[1]))
+      return ''
+  }
   if (
     typeof value !== 'string' ||
     !/(Z|[+-]\d{2}:\d{2})$/.test(value) ||
@@ -38,6 +63,12 @@ function iso(value) {
   return new Date(value).toISOString()
 }
 function normalizeInput(input = {}) {
+  let place
+  try {
+    place = normalizePlace(input.place)
+  } catch {
+    fail('invalid_place', '请重新选择有效的地图位置。')
+  }
   const startsAt = iso(input.startsAt)
   const endsAt = iso(input.endsAt)
   const deadline = iso(input.deadline || input.startsAt)
@@ -63,11 +94,16 @@ function normalizeInput(input = {}) {
   if (!['site', 'wechat', 'external'].includes(input.discussion))
     fail('invalid_discussion', '请选择交流方式。')
   const location = text(input.location, 160)
+  const city = canonicalCity(text(input.city, 160))
+  if (input.format === 'offline' && !city)
+    fail('invalid_city', '请填写城市、乡镇及所属国家或地区。')
   const joinInstructions = text(input.joinInstructions, 1000)
   if (!location) fail('invalid_location', '请填写城市、场地或线上参与方式。')
   if (input.discussion !== 'site' && !joinInstructions)
     fail('missing_group', '请填写预约后的交流群加入说明。')
   const timezone = text(input.timezone, 80) || 'Asia/Shanghai'
+  if (/^UTC[+-]14:(?!00)/.test(timezone))
+    fail('invalid_timezone', '请填写有效时区。')
   if (!/^UTC[+-](0\d|1[0-4]):[0-5]\d$/.test(timezone)) {
     try {
       if (typeof Intl !== 'undefined')
@@ -98,19 +134,20 @@ function normalizeInput(input = {}) {
             ? input.channel
             : 'other',
     location,
+    place: input.format === 'offline' ? place : null,
     joinInstructions,
     book: text(input.book, 120),
     kind: input.kind === 'conversation' ? 'conversation' : 'reading',
     timezone,
-    city: canonicalCity(text(input.city, 80)),
+    city,
     language: ['zh', 'en', 'bilingual'].includes(input.language)
       ? input.language
       : 'zh'
   }
 }
-const bookedCount = event =>
+const bookedCount = (event) =>
   Object.values(event.reservations || {}).filter(
-    value => value.status === 'confirmed'
+    (value) => value.status === 'confirmed'
   ).length
 const isHost = (event, actor) => Boolean(actor && event.hostId === actor.id)
 const isMember = (event, actor) =>
@@ -139,6 +176,7 @@ function publicEvent(event, actor, now = Date.now()) {
     kind: event.kind,
     format: event.format,
     location: event.location,
+    place: event.place || null,
     discussion: event.discussion,
     channel:
       event.channel || (event.discussion === 'wechat' ? 'wechat' : 'site'),
@@ -238,7 +276,7 @@ function changeEvent(event, action, input, actor, now = Date.now()) {
         fail('closed', '这场活动的交流已归档。', 409)
       const last = [...event.messages]
         .reverse()
-        .find(item => item.actorId === actor.id)
+        .find((item) => item.actorId === actor.id)
       if (last && now - Date.parse(last.at) < 3000)
         fail('too_fast', '稍等片刻，再发送下一条。', 429)
       event.messages = [
@@ -267,19 +305,26 @@ function formatTime(value) {
   const date = new Date(value)
   if (!Number.isFinite(date.getTime())) return ''
   const china = new Date(date.getTime() + 8 * 60 * 60 * 1000)
-  const pad = number => String(number).padStart(2, '0')
+  const pad = (number) => String(number).padStart(2, '0')
   return `${china.getUTCFullYear()}.${pad(china.getUTCMonth() + 1)}.${pad(china.getUTCDate())} ${pad(china.getUTCHours())}:${pad(china.getUTCMinutes())}`
 }
 function filterEvents(
   events,
-  { scope = 'upcoming', format = 'all', city = '', language = 'all' } = {}
+  {
+    scope = 'upcoming',
+    format = 'all',
+    city = '',
+    place = null,
+    language = 'all'
+  } = {}
 ) {
   const items = events.filter(
-    item =>
+    (item) =>
       (format === 'all' || item.format === format) &&
       (!city ||
         item.format === 'online' ||
         canonicalCity(item.city) === canonicalCity(city) ||
+        samePlace(item.place, place) ||
         (!item.city &&
           item.location?.toLowerCase().includes(city.toLowerCase()))) &&
       (language === 'all' ||

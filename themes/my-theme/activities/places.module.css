@@ -1,0 +1,108 @@
+.picker {
+  display: grid;
+  gap: 0.5rem;
+  min-width: 0;
+  font-size: inherit;
+}
+.search {
+  display: flex;
+  align-items: stretch;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.search input {
+  flex: 1;
+  min-width: 9rem;
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--line, var(--ob-line, #d9cdbd));
+  background: var(--paper, var(--ob-card, #fffdf8));
+  color: inherit;
+  font: inherit;
+}
+.search button,
+.links button,
+.links a {
+  padding: 0.6rem 0.8rem;
+  border: 1px solid var(--line, var(--ob-line, #d9cdbd));
+  background: var(--paper, var(--ob-card, #fffdf8));
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration: none;
+}
+.search button:disabled {
+  opacity: 0.5;
+}
+.picker small,
+.destination small {
+  display: block;
+  line-height: 1.7;
+  color: var(--muted, var(--ob-muted, #665b50));
+  overflow-wrap: anywhere;
+}
+.clear {
+  justify-self: start;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85em;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.results {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 20rem;
+  overflow: auto;
+  border: 1px solid var(--line, var(--ob-line, #d9cdbd));
+}
+.results li + li {
+  border-top: 1px solid var(--line, var(--ob-line, #d9cdbd));
+}
+.results button {
+  display: grid;
+  gap: 0.3rem;
+  width: 100%;
+  padding: 0.7rem;
+  text-align: left;
+  background: var(--paper, var(--ob-card, #fffdf8));
+  color: inherit;
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.results button:focus-visible,
+.results button:hover {
+  outline: 2px solid var(--ob-gold, #b48a4d);
+  outline-offset: -2px;
+}
+.results span {
+  font-size: 0.85em;
+  line-height: 1.7;
+}
+.destination {
+  margin: 1.5rem 0;
+  padding: 1rem;
+  border: 1px solid var(--line, var(--ob-line, #d9cdbd));
+  background: var(--paper, var(--ob-panel, #faf6ef));
+  overflow-wrap: anywhere;
+}
+.destination p {
+  line-height: 1.8;
+}
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.8rem 0;
+}
+.map {
+  width: 100%;
+  height: 260px;
+  border: 0;
+  margin: 0.5rem 0;
+}

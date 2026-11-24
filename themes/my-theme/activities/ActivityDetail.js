@@ -5,6 +5,7 @@ import {
   timezone
 } from '@/apps/wuzai/miniprogram/common/global'
 import ActivityConversation from './ActivityConversation'
+import DestinationMap from './DestinationMap'
 import styles from './activities.module.css'
 
 export default function ActivityDetail({
@@ -104,6 +105,7 @@ export default function ActivityDetail({
           <dd>{formatTime(event.deadline)}</dd>
         </div>
       </dl>
+      <DestinationMap event={event} />
       <section className={styles.description}>
         <h3>{t('关于这次相遇')}</h3>
         <p>{event.description}</p>
@@ -177,7 +179,7 @@ export default function ActivityDetail({
           </p>
         )}
         <ol>
-          {[...event.announcements].reverse().map(item => (
+          {[...event.announcements].reverse().map((item) => (
             <li key={item.id}>
               <time dateTime={item.at}>{formatTime(item.at)}</time>
               <p>{item.body}</p>
@@ -246,9 +248,9 @@ export default function ActivityDetail({
           )}
           {event.state === 'published' && (
             <form
-              onSubmit={e => {
+              onSubmit={(e) => {
                 e.preventDefault()
-                void onAction('announce', { body: notice }).then(saved => {
+                void onAction('announce', { body: notice }).then((saved) => {
                   if (saved) setNotice('')
                 })
               }}
@@ -259,7 +261,7 @@ export default function ActivityDetail({
               <textarea
                 id='activity-announcement'
                 value={notice}
-                onChange={e => setNotice(e.target.value)}
+                onChange={(e) => setNotice(e.target.value)}
                 maxLength={1000}
                 rows={3}
                 required

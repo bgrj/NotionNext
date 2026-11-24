@@ -1,15 +1,15 @@
 import { useActivityLanguage } from './language'
 import { useState } from 'react'
 import styles from './activities.module.css'
+import LocationPicker from './LocationPicker'
+import { isArea } from '@/apps/wuzai/miniprogram/common/places'
 import {
-  CITIES,
-  cityLabel,
   localTime as formatLocal,
   timezone,
   toInstant
 } from '@/apps/wuzai/miniprogram/common/global'
 
-const localTime = value =>
+const localTime = (value) =>
   value ? formatLocal(value, '-').replace(' ', 'T') : ''
 export default function ActivityForm({
   event,
@@ -18,7 +18,8 @@ export default function ActivityForm({
   onClose,
   kind = 'reading'
 }) {
-  const { t, locale } = useActivityLanguage()
+  const { t } = useActivityLanguage()
+  const [formError, setFormError] = useState('')
   const [draft, setDraft] = useState(() => ({
     title: event?.title || '',
     book: event?.book || '',
@@ -30,20 +31,45 @@ export default function ActivityForm({
     format: event?.format || 'online',
     kind: event?.kind || kind,
     city: event?.city || '',
+    place: event?.place || null,
     language: event?.language || 'bilingual',
     location: event?.location || '',
     discussion: event?.channel || event?.discussion || 'site',
     joinInstructions: event?.joinInstructions || ''
   }))
-  const change = e =>
-    setDraft(value => ({ ...value, [e.target.name]: e.target.value }))
-  const submit = e => {
+  const change = (e) => {
+    setFormError('')
+    setDraft((value) => ({
+      ...value,
+      [e.target.name]: e.target.value,
+      ...(e.target.name === 'location' && !isArea(value.place)
+        ? { place: null }
+        : {})
+    }))
+  }
+  const submit = (e) => {
     e.preventDefault()
+    const startsAt = toInstant(draft.startsAt)
+    const endsAt = toInstant(draft.endsAt)
+    const deadline = toInstant(draft.deadline || draft.startsAt)
+    if (
+      !startsAt ||
+      !endsAt ||
+      !deadline ||
+      endsAt <= startsAt ||
+      deadline > startsAt
+    ) {
+      setFormError(
+        t('请检查开始、结束和预约截止时间；夏令时跳过的时刻不可选。')
+      )
+      return
+    }
+    setFormError('')
     onSave({
       ...draft,
-      startsAt: toInstant(draft.startsAt),
-      endsAt: toInstant(draft.endsAt),
-      deadline: toInstant(draft.deadline || draft.startsAt),
+      startsAt,
+      endsAt,
+      deadline,
       timezone: timezone(),
       discussion:
         draft.discussion === 'site'
@@ -59,9 +85,14 @@ export default function ActivityForm({
     <form className={styles.form} onSubmit={submit}>
       <p className={styles.eyebrow}>{t('留一段时间，邀请彼此走近')}</p>
       <h2>{event ? t('编辑活动安排') : t('发起一次相遇')}</h2>
+      {formError && (
+        <p role='alert' className={styles.error}>
+          {formError}
+        </p>
+      )}
       <p className={styles.muted}>
         {' '}
-        {t('先保存为草稿，确认安排后再公开发布。所有时间均为北京时间。')}{' '}
+        {t('先保存为草稿，确认安排后再公开发布。时间按设备时区填写。')}{' '}
       </p>
       <label>
         {' '}
@@ -88,25 +119,18 @@ export default function ActivityForm({
             <option value='bilingual'>中文 &amp; English</option>
           </select>
         </label>
-        <label>
-          {t('城市')}
-          <input
-            name='city'
+        <div>
+          <label htmlFor='host-place'>{t('城市、乡镇与地图位置')}</label>
+          <LocationPicker
+            id='host-place'
             value={draft.city}
-            onChange={change}
-            list='host-cities'
-            maxLength={80}
+            place={draft.place}
             required={draft.format === 'offline'}
-            placeholder={t('其他城市')}
+            onChange={(city, place) =>
+              setDraft((value) => ({ ...value, city, place }))
+            }
           />
-        </label>
-        <datalist id='host-cities'>
-          {CITIES.map(city => (
-            <option key={city.id} value={city.id}>
-              {cityLabel(city.id, locale)}
-            </option>
-          ))}
-        </datalist>
+        </div>
         <label>
           {' '}
           {t('相遇的方式')}{' '}

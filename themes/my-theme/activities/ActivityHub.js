@@ -12,12 +12,8 @@ import ActivityForm from './ActivityForm'
 import Presence from './Presence'
 import PhilosophyNav from './PhilosophyNav'
 import PublicWritings from './PublicWritings'
-import {
-  CITIES,
-  cityLabel,
-  localTime,
-  timezone
-} from '@/apps/wuzai/miniprogram/common/global'
+import LocationPicker from './LocationPicker'
+import { localTime, timezone } from '@/apps/wuzai/miniprogram/common/global'
 import styles from './activities.module.css'
 
 export default function ActivityHub({
@@ -25,7 +21,7 @@ export default function ActivityHub({
   requestedKind,
   onCreateHandled
 }) {
-  const { t, locale } = useActivityLanguage()
+  const { t } = useActivityLanguage()
   const router = useRouter()
   const session = useClerkSession()
   const id =
@@ -35,6 +31,7 @@ export default function ActivityHub({
   const [scope, setScope] = useState('upcoming')
   const [format, setFormat] = useState('all')
   const [city, setCity] = useState('')
+  const [place, setPlace] = useState(null)
   const [conversationLanguage, setConversationLanguage] = useState('all')
   const [kind, setKind] = useState('all')
   const [loading, setLoading] = useState(true)
@@ -54,7 +51,7 @@ export default function ActivityHub({
     setEditing(null)
     setNextOffset(null)
     activityRequest(id ? 'get' : my ? 'mine' : 'list', id ? { id } : {})
-      .then(data => {
+      .then((data) => {
         if (!active) return
         if (data.event) setEvent(data.event)
         else {
@@ -63,7 +60,7 @@ export default function ActivityHub({
           setHasMore(data.nextOffset !== null)
         }
       })
-      .catch(err => {
+      .catch((err) => {
         if (active) {
           setError(err.message)
           if (err.code === 'unauthorized') setLogin(true)
@@ -76,7 +73,7 @@ export default function ActivityHub({
       active = false
     }
   }, [id, my, session.isSignedIn, refresh])
-  const open = selected => {
+  const open = (selected) => {
     setLogin(false)
     setEditing(null)
     const query = { ...router.query }
@@ -108,7 +105,7 @@ export default function ActivityHub({
       setBusy(false)
     }
   }
-  const start = kind => {
+  const start = (kind) => {
     if (!session.isSignedIn) setLogin(true)
     else {
       setEditing({ kind: kind === 'conversation' ? 'conversation' : 'reading' })
@@ -128,7 +125,7 @@ export default function ActivityHub({
       const data = await activityRequest(my ? 'mine' : 'list', {
         offset: nextOffset
       })
-      setEvents(rows => [...rows, ...data.events])
+      setEvents((rows) => [...rows, ...data.events])
       setNextOffset(data.nextOffset)
       setHasMore(data.nextOffset !== null)
     } catch (err) {
@@ -141,8 +138,9 @@ export default function ActivityHub({
     scope,
     format,
     city,
+    place,
     language: conversationLanguage
-  }).filter(item => kind === 'all' || item.kind === kind)
+  }).filter((item) => kind === 'all' || item.kind === kind)
   return (
     <div id='ob-hub-panel' className={styles.hub}>
       <PhilosophyNav onCreate={start} />
@@ -175,28 +173,25 @@ export default function ActivityHub({
             </a>
           </div>
           <div className={styles.globalFilters}>
-            <label>
-              {t('城市')}
-              <input
-                list='gathering-cities'
+            <div>
+              <label htmlFor='gathering-place'>
+                {t('城市、乡镇与地图位置')}
+              </label>
+              <LocationPicker
+                id='gathering-place'
                 value={city}
-                onChange={e => setCity(e.target.value)}
-                placeholder={t('所有城市')}
-                maxLength={80}
+                place={place}
+                onChange={(value, point) => {
+                  setCity(value)
+                  setPlace(point)
+                }}
               />
-            </label>
-            <datalist id='gathering-cities'>
-              {CITIES.map(item => (
-                <option key={item.id} value={item.id}>
-                  {cityLabel(item.id, locale)}
-                </option>
-              ))}
-            </datalist>
+            </div>
             <label>
               {t('交流语言')}
               <select
                 value={conversationLanguage}
-                onChange={e => setConversationLanguage(e.target.value)}
+                onChange={(e) => setConversationLanguage(e.target.value)}
               >
                 <option value='all'>{t('全部语言')}</option>
                 <option value='zh'>中文</option>
@@ -228,7 +223,10 @@ export default function ActivityHub({
             </div>
             <label className={styles.formatSelect}>
               <span className={styles.srOnly}>{t('活动形式')}</span>
-              <select value={format} onChange={e => setFormat(e.target.value)}>
+              <select
+                value={format}
+                onChange={(e) => setFormat(e.target.value)}
+              >
                 <option value='all'>{t('全部形式')}</option>
                 <option value='online'>{t('线上')}</option>
                 <option value='offline'>{t('线下')}</option>
@@ -258,7 +256,7 @@ export default function ActivityHub({
           <p>{error}</p>
           <button
             className={styles.textButton}
-            onClick={() => setRefresh(value => value + 1)}
+            onClick={() => setRefresh((value) => value + 1)}
           >
             {' '}
             {t('重新读取')}{' '}
@@ -298,7 +296,7 @@ export default function ActivityHub({
           event={editing.id ? editing : null}
           busy={busy}
           onClose={() => setEditing(null)}
-          onSave={input => act(editing.id ? 'edit' : 'create', input)}
+          onSave={(input) => act(editing.id ? 'edit' : 'create', input)}
         />
       ) : loading ? (
         <div className={styles.empty} role='status'>
@@ -320,7 +318,7 @@ export default function ActivityHub({
         <>
           {visible.length ? (
             <ul className={styles.cards}>
-              {visible.map(item => (
+              {visible.map((item) => (
                 <li key={item.id}>
                   <button className={styles.card} onClick={() => open(item.id)}>
                     <Image
@@ -439,7 +437,7 @@ export default function ActivityHub({
             <details className={styles.legacy}>
               <summary>{t('此前发布的活动介绍')}</summary>
               <ul>
-                {legacyEvents.map(item => (
+                {legacyEvents.map((item) => (
                   <li key={item.id}>
                     <SmartLink href={item.href}>{item.title}</SmartLink>
                   </li>

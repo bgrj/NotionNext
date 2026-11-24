@@ -1,1 +1,2 @@
 button{text-align:left;justify-content:flex-start}
+button text{display:block;white-space:normal;overflow-wrap:anywhere}button{height:auto;display:block;line-height:1.6;padding:18rpx 22rpx}.heading{display:block;margin-top:32rpx}.hint{line-height:1.7}

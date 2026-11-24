@@ -609,6 +609,7 @@
   gap: 1rem;
   margin: 16px 0 24px;
 }
+.globalFilters > div {flex: 2 1 300px;min-width: 0;max-width: 100%}
 .globalFilters label {
   display: flex;
   align-items: center;

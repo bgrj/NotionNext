@@ -24,10 +24,10 @@ function forward(url, payload, secret) {
           'X-Wuzai-Signature': signature
         }
       },
-      res => {
+      (res) => {
         let data = ''
         res.setEncoding('utf8')
-        res.on('data', part => {
+        res.on('data', (part) => {
           data += part
           if (data.length > 2000000)
             res.destroy(new Error('response_too_large'))
@@ -47,7 +47,7 @@ function forward(url, payload, secret) {
     req.end(body)
   })
 }
-exports.main = async event => {
+exports.main = async (event) => {
   try {
     const identity = cloud.getWXContext()
     const secret = process.env.WUZAI_MINI_BRIDGE_SECRET
@@ -67,6 +67,7 @@ exports.main = async event => {
       'login',
       'presence',
       'presenceStats',
+      'locations',
       'list',
       'get',
       'mine',
@@ -76,8 +77,10 @@ exports.main = async event => {
       'reserve',
       'cancelReservation',
       'cancelEvent',
-      'announce'
-      , 'writings', 'publicWritings', 'saveWriting'
+      'announce',
+      'writings',
+      'publicWritings',
+      'saveWriting'
     ]
     if (!allowed.includes(event.action))
       return { error: 'invalid_action', message: '暂不支持这个操作。' }
@@ -96,21 +99,32 @@ exports.main = async event => {
         input.city,
         input.joinInstructions,
         input.body,
+        ...Object.values(
+          input.place && typeof input.place === 'object' ? input.place : {}
+        ).filter((item) => typeof item === 'string'),
         event.nickname
       ]
-        .filter(item => typeof item === 'string')
+        .filter((item) => typeof item === 'string')
         .join('\n')
-      const review = await cloud.openapi.security.msgSecCheck({
-        openid: identity.OPENID,
-        scene: 2,
-        version: 2,
-        content
-      })
-      if (review.errCode || review.result?.suggest !== 'pass')
-        return {
-          error: 'content_review',
-          message: '请检查内容后再提交，或稍后重试。'
-        }
+      if (content.length > 10000)
+        return { error: 'content_too_long', message: '内容过长，请分次提交。' }
+      // The official v2 API accepts at most 2500 characters per request.
+      // Keep Unicode characters intact and overlap boundaries for context.
+      const characters = Array.from(content)
+      for (let offset = 0; offset < characters.length; offset += 2200) {
+        const review = await cloud.openapi.security.msgSecCheck({
+          openid: identity.OPENID,
+          scene: 2,
+          version: 2,
+          content: characters.slice(offset, offset + 2400).join('')
+        })
+        if (review.errCode || review.result?.suggest !== 'pass')
+          return {
+            error: 'content_review',
+            message: '请检查内容后再提交，或稍后重试。'
+          }
+        if (offset + 2400 >= characters.length) break
+      }
     }
     const payload = {
       ...(event.action === 'login' ? {} : input),
@@ -124,7 +138,11 @@ exports.main = async event => {
             : ''
       }
     }
-    const result = await forward(new URL('/api/our-beings/v1', origin), payload, secret)
+    const result = await forward(
+      new URL('/api/our-beings/v1', origin),
+      payload,
+      secret
+    )
     // Verify both WeChat identity and the website bridge before showing login success.
     if (event.action === 'login' && !result.error) {
       if (result.version !== 1) throw new Error('invalid_response')

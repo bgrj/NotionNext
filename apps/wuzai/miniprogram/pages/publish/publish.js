@@ -6,6 +6,7 @@ const {
 const { localizePage } = require('../../common/localize-page')
 const { request } = require('../../common/api')
 const { normalizeInput } = require('../../common/activities')
+const { isArea } = require('../../common/places')
 Page(
   localizePage({
     data: {
@@ -28,7 +29,8 @@ Page(
       description: '',
       capacity: '12',
       location: '',
-      joinInstructions: ''
+      joinInstructions: '',
+      place: null
     },
     onLoad(options) {
       this.id = options.id || ''
@@ -40,13 +42,14 @@ Page(
       if (!this.id) return
       this.setData({ loading: true })
       request('get', { id: this.id })
-        .then(data => {
+        .then((data) => {
           if (!data.event.isHost)
             throw new Error('只有发起人可以编辑这场活动。')
           if (data.event.discussion === 'site')
             throw new Error('请在网站编辑这场站内交流活动。')
           const item = data.event
-          const time = value => formatTime(value).replace(/\./g, '-').split(' ')
+          const time = (value) =>
+            formatTime(value).replace(/\./g, '-').split(' ')
           this.setData({
             ...item,
             date: time(item.startsAt)[0],
@@ -57,13 +60,33 @@ Page(
             deadlineTime: time(item.deadline)[1]
           })
         })
-        .catch(error =>
+        .catch((error) =>
           this.setData({ error: error.message, cannotEdit: true })
         )
         .finally(() => this.setData({ loading: false }))
     },
+    onShow() {
+      if (this.choosingPlace) {
+        this.choosingPlace = false
+        this.setData({
+          city: wx.getStorageSync('ourbeing:city') || '',
+          place: wx.getStorageSync('ourbeing:place') || null
+        })
+      }
+    },
+    choosePlace() {
+      this.choosingPlace = true
+      wx.navigateTo({ url: '/pages/cities/cities?mode=publish' })
+    },
     input(e) {
       this.setData({ [e.currentTarget.dataset.field]: e.detail.value })
+      if (e.currentTarget.dataset.field === 'city')
+        this.setData({ place: null })
+      if (
+        e.currentTarget.dataset.field === 'location' &&
+        !isArea(this.data.place)
+      )
+        this.setData({ place: null })
     },
     chooseLanguage(e) {
       this.setData({
@@ -111,10 +134,10 @@ Page(
         ...input,
         ...(this.id ? { id: this.id } : {})
       })
-        .then(data =>
+        .then((data) =>
           wx.redirectTo({ url: `/pages/detail/detail?id=${data.event.id}` })
         )
-        .catch(error => this.setData({ error: error.message }))
+        .catch((error) => this.setData({ error: error.message }))
         .finally(() => this.setData({ busy: false }))
     }
   })
