@@ -7,12 +7,14 @@ import {
 import { fail } from '@/apps/wuzai/miniprogram/common/activities'
 import { activityPresence } from '@/lib/activities/presence'
 import { activityWritings } from '@/lib/activities/writings'
+import { searchPlaces } from '@/lib/activities/places'
 import {
   demoEvents,
   getDemoEvent
 } from '@/apps/wuzai/miniprogram/common/demo-events'
 
-export const config = { api: { bodyParser: { sizeLimit: '16kb' } } }
+// Full activity fields plus map hierarchy can exceed 16 KB in UTF-8.
+export const config = { api: { bodyParser: { sizeLimit: '32kb' } } }
 const READS = [
   'list',
   'get',
@@ -20,7 +22,8 @@ const READS = [
   'messages',
   'presenceStats',
   'writings',
-  'publicWritings'
+  'publicWritings',
+  'locations'
 ]
 const WRITES = [
   'create',
@@ -70,6 +73,7 @@ export default async function handler(req, res) {
       fail('demo_readonly', '演示活动不接受真实预约。', 409)
     let result
     if (demo) result = { event: demo }
+    else if (action === 'locations') result = await searchPlaces(redis, input)
     else if (['writings', 'publicWritings', 'saveWriting'].includes(action))
       result = await activityWritings(redis, action, input, actor)
     else if (['presence', 'presenceStats'].includes(action))
