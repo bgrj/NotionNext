@@ -23,6 +23,8 @@ describe('our beings archive', () => {
     expect(isOurBeingsPath('/category/我们的存在')).toBe(true)
     expect(isOurBeingsPath('/our-beings')).toBe(true)
     expect(isOurBeingsPath('/our-beings/ourbeing')).toBe(true)
+    expect(isOurBeingsPath('/our-beings/me?tab=activities')).toBe(true)
+    expect(isOurBeingsPath('/our-beings/2026/09/27/o0')).toBe(false)
     expect(isOurBeingsPath('/category/我的存在')).toBe(false)
   })
 

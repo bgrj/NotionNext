@@ -37,7 +37,7 @@ import BeingLife from './components/BeingLife'
 import BeingDesk from './components/BeingDesk'
 import { LayoutSignIn, LayoutSignUp } from './components/OurBeingsAuth'
 import NoticeModal from './components/NoticeModal'
-import { EXISTENCE_CATEGORY, isExistenceCategory } from './existence'
+import { isExistenceCategory } from './existence'
 import {
   isOurBeingsAuthPath,
   isOurBeingsCategory,
@@ -101,14 +101,6 @@ const decodePath = asPath => {
   }
 }
 
-const isExistencePath = asPath => {
-  const path = decodePath(asPath)
-  return (
-    path === `/category/${EXISTENCE_CATEGORY}` ||
-    path.startsWith(`/category/${EXISTENCE_CATEGORY}/`)
-  )
-}
-
 /**
  * 基础布局 采用左右两侧布局，移动端使用顶部导航栏
  * @param props
@@ -129,8 +121,10 @@ const LayoutBase = props => {
     props.category === '道' ||
     decodePath(router.asPath) === '/category/道' ||
     decodePath(router.asPath).startsWith('/category/道/page/')
-  const existence = isExistencePath(router.asPath)
-  const ourBeings = isOurBeingsPath(router.asPath)
+  const existence = isExistenceCategory(props.category)
+  const ourBeings =
+    isOurBeingsCategory(props.category) ||
+    (!router.pathname.startsWith('/category/') && isOurBeingsPath(router.asPath))
   const auth = isOurBeingsAuthPath(router.asPath)
   const chromeLite = friendLinks || existence || ourBeings || auth
   const hexoArticleRouteLoading = siteConfig(
@@ -330,12 +324,11 @@ const LayoutIndex = props => {
  * @returns
  */
 const LayoutPostList = props => {
-  const router = useRouter()
   if (props.category === '道') return <DaoExplorer {...props} />
-  if (isExistenceCategory(props.category) || isExistencePath(router.asPath)) {
+  if (isExistenceCategory(props.category)) {
     return <ExistenceLife {...props} />
   }
-  if (isOurBeingsCategory(props.category) || isOurBeingsPath(router.asPath)) {
+  if (isOurBeingsCategory(props.category)) {
     return <OurBeingsIndex {...props} />
   }
   return (

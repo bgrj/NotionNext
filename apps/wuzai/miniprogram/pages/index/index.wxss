@@ -8,3 +8,6 @@
 .list-toolbar { display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:16rpx; border-block:1rpx solid var(--line); }
 .list-toolbar .tabs { border:0; margin:0; }
 .format-picker { min-height:88rpx; padding:16rpx 0; font-size:28rpx; color:var(--muted); display:flex; align-items:center; }
+
+.event-row-reverse { flex-direction:row-reverse; }
+.activity-artwork { width:168rpx; min-width:168rpx; height:236rpx; flex-shrink:0; border-radius:8rpx; background:var(--paper); }

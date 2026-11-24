@@ -1,6 +1,7 @@
 import { useActivityLanguage } from './language'
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Image from 'next/image'
 import SmartLink from '@/components/SmartLink'
 import { useClerkSession } from '@/components/ClerkSession'
 import { authHref } from '@/lib/beings/authNavigation'
@@ -322,19 +323,29 @@ export default function ActivityHub({
               {visible.map(item => (
                 <li key={item.id}>
                   <button className={styles.card} onClick={() => open(item.id)}>
-                    <span className={styles.cardDate}>
-                      {localTime(item.startsAt)
-                        .slice(5, 10)
-                        .replace('.', ' / ')}
-                      <small>
-                        {localTime(item.startsAt).slice(11)} · {timezone()}{' '}
-                      </small>
-                    </span>
+                    <Image
+                      className={styles.eventArtwork}
+                      src={
+                        '/assets/ourbeing/academy/' +
+                        (item.cover ||
+                          (item.kind === 'reading'
+                            ? 'reading.png'
+                            : 'life.png'))
+                      }
+                      width={160}
+                      height={224}
+                      unoptimized
+                      alt={(item.book || item.title) + ' · ' + t('活动封面')}
+                    />
                     <span className={styles.cardContent}>
                       <span className={styles.cardTop}>
                         <span className={styles.eyebrow}>
-                          {item.kind === 'reading' ? t('共读') : t('交流')} ·{' '}
-                          {item.format === 'online' ? t('线上') : t('线下')}
+                          {item.topic
+                            ? t(item.topic)
+                            : item.kind === 'reading'
+                              ? t('共读')
+                              : t('交流')}{' '}
+                          · {item.format === 'online' ? t('线上') : t('线下')}
                         </span>
                         <span className={styles.badge}>
                           {t(item.statusLabel)}
@@ -344,6 +355,9 @@ export default function ActivityHub({
                         )}
                       </span>
                       <strong>{item.title}</strong>
+                      <span className={styles.muted}>
+                        {localTime(item.startsAt)} · {timezone()}
+                      </span>
                       <span className={styles.muted}>
                         {item.book || item.description.slice(0, 75)}
                       </span>

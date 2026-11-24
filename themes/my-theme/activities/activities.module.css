@@ -179,14 +179,33 @@
 .card {
   width: 100%;
   display: grid;
-  grid-template-columns: 7.2rem 1fr;
+  grid-template-columns: 140px minmax(0, 1fr);
   text-align: left;
   background: transparent;
   color: inherit;
   border: 0;
   border-bottom: 1px solid var(--line, rgba(75, 57, 38, 0.16));
   padding: 1.7rem 0;
-  gap: 1.8rem;
+  gap: 24px;
+  align-items: start;
+}
+.eventArtwork {
+  width: 140px;
+  height: 196px;
+  object-fit: contain;
+  background: var(--paper);
+  border-radius: 8px;
+}
+.cards > li:nth-child(even) .card {
+  grid-template-columns: minmax(0, 1fr) 140px;
+}
+.cards > li:nth-child(even) .eventArtwork {
+  grid-column: 2;
+  grid-row: 1;
+}
+.cards > li:nth-child(even) .cardContent {
+  grid-column: 1;
+  grid-row: 1;
 }
 .card:hover strong {
   color: var(--accent, #926631);
@@ -216,9 +235,10 @@
 }
 .cardTop {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
+  gap: 8px;
 }
 .cardTop .eyebrow {
   margin: 0;
@@ -491,8 +511,15 @@
     margin-left: auto;
   }
   .card {
-    grid-template-columns: 1fr;
-    gap: 0.6rem;
+    grid-template-columns: 96px minmax(0, 1fr);
+    gap: 16px;
+  }
+  .cards > li:nth-child(even) .card {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+  .eventArtwork {
+    width: 96px;
+    height: 132px;
   }
   .cardDate {
     display: flex;

@@ -1,5 +1,6 @@
 <view class="page settings-page">
   <text class="title">{{t['设置']}}</text>
+  <view class="settings-group"><view class="account-row"><view><text class="heading">{{t['我的空间']}}</text><text class="hint">{{loggedIn ? t['已登录'] : t['登录后留住活动与创作。']}}</text></view><button wx:if="{{!loggedIn}}" class="primary" bindtap="login" loading="{{loggingIn}}" disabled="{{loggingIn}}">{{t['微信登录']}}</button></view><text wx:if="{{error}}" class="error">{{error}}</text></view>
   <view class="settings-group"><text class="heading">{{t['界面语言']}}</text><view class="segmented"><button class="{{locale === 'zh' ? 'active' : ''}}" data-language="zh" bindtap="changeLanguage">中文</button><button class="{{locale === 'en' ? 'active' : ''}}" data-language="en" bindtap="changeLanguage">English</button></view></view>
   <view class="settings-group"><label class="label">{{t['我的称呼']}}</label><input type="nickname" value="{{nickname}}" bindinput="input" maxlength="30" placeholder="{{t['共读时使用的称呼，可选']}}" /><button class="primary" bindtap="save">{{saved ? t['已保存'] : t['保存称呼']}}</button></view>
   <view class="settings-group"><button class="settings-row" bindtap="chooseCity">{{t['选择城市']}}<text>›</text></button><button class="settings-row" bindtap="privacy">{{t['隐私与使用说明']}}<text>›</text></button><button class="settings-row" bindtap="copySite">{{t['复制网站链接']}}<text>›</text></button></view>

@@ -1,5 +1,12 @@
 // Interface copy only. Reader writing and quoted sources retain their original language.
 const en = {
+  "职场交流": "Career exchange",
+  "技术分享": "Technology sharing",
+  "留学交流": "Studying abroad",
+  "移民交流": "Migration experiences",
+  "生活交流": "Life and work",
+  "活动封面": "Gathering artwork",
+  "已登录": "Signed in",
   "模拟名额": "Simulated places",
   "共话": "Conversations",
   "活动类型": "Gathering type",
@@ -516,7 +523,12 @@ const en = {
   '学习、思考、创作，与他人相遇。':
     'Learn, reflect, create. Meet another perspective.',
   '请填写有效时区。': 'Please choose a valid timezone.',
-  '请填写城市名称。': 'Enter a city name.'
+  '请填写城市名称。': 'Enter a city name.',
+  '创作与演示': 'Writing and demonstrations',
+  '创作默认私密，仅在你主动公开后，标题、全文和作者称呼才会展示在网站与小程序。':
+    'Writing is private by default. Its title, full text and author name appear on the website and mini program only after you publish it.',
+  '演示活动仅用于浏览体验，不能真实预约，也不计入真实活动统计。':
+    'Demo gatherings are read-only. They cannot be reserved and are excluded from real gathering counts.'
 }
 function language(value) {
   return String(value || '')

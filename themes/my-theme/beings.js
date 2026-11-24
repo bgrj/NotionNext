@@ -43,7 +43,7 @@ export const isOurBeingsPath = asPath => {
     path === `/category/${OUR_BEINGS_CATEGORY}` ||
     path.startsWith(`/category/${OUR_BEINGS_CATEGORY}/`) ||
     path === '/our-beings' ||
-    path.startsWith('/our-beings/')
+    /^\/our-beings\/[^/]+$/.test(path)
   )
 }
 

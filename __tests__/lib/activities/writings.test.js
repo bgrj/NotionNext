@@ -1,5 +1,7 @@
 import { activityWritings } from '@/lib/activities/writings'
 import { demoEvents } from '@/apps/wuzai/miniprogram/common/demo-events'
+import fs from 'node:fs'
+import path from 'node:path'
 
 const actor = {
   id: 'wx:app:person-one',
@@ -118,4 +120,35 @@ test('demo catalogue covers distinct cities, languages, channels and lifecycle s
       item => item.demo && !item.canReserve && !item.canPost && !item.canChat
     )
   ).toBe(true)
+})
+test('academy readings and broader exchanges ship artwork on both platforms', () => {
+  const events = demoEvents(now)
+  expect(events.filter(item => item.kind === 'reading')).toHaveLength(7)
+  expect(events.filter(item => item.kind === 'conversation')).toHaveLength(8)
+  for (const topic of [
+    '职场交流',
+    '技术分享',
+    '留学交流',
+    '移民交流',
+    '生活交流'
+  ])
+    expect(events.some(item => item.topic === topic)).toBe(true)
+  for (const item of events) {
+    expect(
+      fs.existsSync(
+        path.join(
+          process.cwd(),
+          'apps/wuzai/miniprogram/images/academy',
+          item.cover
+        )
+      )
+    ).toBe(true)
+    expect(
+      fs.existsSync(
+        path.join(process.cwd(), 'public/assets/ourbeing/academy', item.cover)
+      )
+    ).toBe(true)
+    if (item.kind === 'reading') expect(item.bookAuthor).toBeTruthy()
+  }
+  expect(JSON.stringify(events)).not.toMatch(/D:\\\\|z_library|z-library/)
 })

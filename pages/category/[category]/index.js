@@ -102,6 +102,8 @@ export async function getStaticPaths() {
     paths: categories.map(category => ({
       params: { category: category?.name }
     })),
-    fallback: true
+    // A cold category must render with its data. A fallback shell has no
+    // category on the server while the browser already knows its URL.
+    fallback: 'blocking'
   }
 }
