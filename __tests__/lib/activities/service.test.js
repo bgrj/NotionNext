@@ -52,6 +52,18 @@ function memoryStore() {
     }
   }
 }
+test('concurrent bookings never exceed six people including the organizer', async () => {
+  const execute = createActivityService(memoryStore(), () => NOW)
+  const data = { ...fields, gatheringVersion: 2, participantLimit: 6, language: 'zh', discussion: 'wechat', channel: 'wechat' }
+  const { event } = await execute('create', data, host)
+  await execute('publish', { id: event.id }, host)
+  const results = await Promise.allSettled(Array.from({length:12}, (_, index) => execute('reserve', { id: event.id }, { id:'wx:member-'+index, name:'存在者'+(index+2)+'号' })))
+  expect(results.filter(result => result.status === 'fulfilled')).toHaveLength(5)
+  const current = (await execute('get', { id: event.id }, host)).event
+  expect(current.participantCount).toBe(6)
+  expect(current.remaining).toBe(0)
+  expect(current.hostCandidates).toHaveLength(6)
+})
 describe('shared web and native WeChat activity service', () => {
   let execute, id, now
   beforeEach(async () => {

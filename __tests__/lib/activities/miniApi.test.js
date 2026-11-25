@@ -68,25 +68,30 @@ describe('native HTTPS API boundary', () => {
     expect(run).toHaveBeenCalledWith('list', {}, null)
     expect(res.json).toHaveBeenCalledWith({ version: 1, events: [] })
   })
-  test.each(['reserve', 'mine', 'profile', 'publish', 'saveWriting'])(
-    'anonymous %s cannot reach private service operations',
-    async action => {
-      const res = response()
-      await handler(
-        {
-          method: 'POST',
-          body: {
-            action,
-            input: { openid: 'forged', identity: { openId: 'forged' } }
-          },
-          headers: {}
+  test.each([
+    'reserve',
+    'mine',
+    'profile',
+    'publish',
+    'saveWriting',
+    'uploadCover'
+    , 'beginCompliance', 'acceptCompliance', 'reviewDescription'
+  ])('anonymous %s cannot reach private service operations', async action => {
+    const res = response()
+    await handler(
+      {
+        method: 'POST',
+        body: {
+          action,
+          input: { openid: 'forged', identity: { openId: 'forged' } }
         },
-        res
-      )
-      expect(res.status).toHaveBeenCalledWith(401)
-      expect(run).not.toHaveBeenCalled()
-    }
-  )
+        headers: {}
+      },
+      res
+    )
+    expect(res.status).toHaveBeenCalledWith(401)
+    expect(run).not.toHaveBeenCalled()
+  })
   test('a caller-supplied actor cannot replace the session identity', async () => {
     const actor = {
       id: 'wx:app:trusted',
@@ -107,6 +112,14 @@ describe('native HTTPS API boundary', () => {
       res
     )
     expect(run.mock.calls[0][2]).toBe(actor)
+  })
+  test('a confirmed checkbox without a server reading receipt cannot create an activity',async()=>{
+    resolveMiniActor.mockResolvedValue({id:'wx:test:member',name:'存在者1号'})
+    const res=response()
+    await handler({method:'POST',body:{action:'create',input:{confirmed:true}},headers:{}},res)
+    expect(res.status).toHaveBeenCalledWith(400)
+    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({error:'compliance_required'}))
+    expect(run).not.toHaveBeenCalled()
   })
   test('content rejection prevents writing', async () => {
     resolveMiniActor.mockResolvedValue({ id: 'wx:trusted' })
