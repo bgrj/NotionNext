@@ -1,6 +1,111 @@
 /* Shared destination model. Coordinates are stored as WGS84, never device GPS. */
+const { CITIES } = require('./global')
 const string = (value, max = 160) =>
   typeof value === 'string' ? value.trim().slice(0, max) : ''
+// Chinese ↔ Latin aliases for countries/cities Photon under-indexes in Chinese.
+const EXTRA_ALIASES = [
+  ['卢森堡', 'Luxembourg'],
+  ['比利时', 'Belgium'],
+  ['荷兰', 'Netherlands'],
+  ['瑞士', 'Switzerland'],
+  ['奥地利', 'Austria'],
+  ['葡萄牙', 'Portugal'],
+  ['西班牙', 'Spain'],
+  ['意大利', 'Italy'],
+  ['希腊', 'Greece'],
+  ['波兰', 'Poland'],
+  ['捷克', 'Czechia'],
+  ['匈牙利', 'Hungary'],
+  ['瑞典', 'Sweden'],
+  ['挪威', 'Norway'],
+  ['丹麦', 'Denmark'],
+  ['芬兰', 'Finland'],
+  ['爱尔兰', 'Ireland'],
+  ['冰岛', 'Iceland'],
+  ['俄罗斯', 'Russia'],
+  ['乌克兰', 'Ukraine'],
+  ['土耳其', 'Turkey'],
+  ['以色列', 'Israel'],
+  ['埃及', 'Egypt'],
+  ['南非', 'South Africa'],
+  ['巴西', 'Brazil'],
+  ['阿根廷', 'Argentina'],
+  ['智利', 'Chile'],
+  ['墨西哥', 'Mexico'],
+  ['加拿大', 'Canada'],
+  ['美国', 'United States'],
+  ['英国', 'United Kingdom'],
+  ['法国', 'France'],
+  ['德国', 'Germany'],
+  ['日本', 'Japan'],
+  ['韩国', 'South Korea'],
+  ['朝鲜', 'North Korea'],
+  ['印度', 'India'],
+  ['巴基斯坦', 'Pakistan'],
+  ['孟加拉', 'Bangladesh'],
+  ['尼泊尔', 'Nepal'],
+  ['斯里兰卡', 'Sri Lanka'],
+  ['越南', 'Vietnam'],
+  ['泰国', 'Thailand'],
+  ['缅甸', 'Myanmar'],
+  ['柬埔寨', 'Cambodia'],
+  ['老挝', 'Laos'],
+  ['马来西亚', 'Malaysia'],
+  ['印尼', 'Indonesia'],
+  ['印度尼西亚', 'Indonesia'],
+  ['菲律宾', 'Philippines'],
+  ['澳大利亚', 'Australia'],
+  ['新西兰', 'New Zealand'],
+  ['阿联酋', 'United Arab Emirates'],
+  ['沙特', 'Saudi Arabia'],
+  ['卡塔尔', 'Qatar']
+]
+function placeSearchQueries(query = '') {
+  const q = String(query || '').trim().replace(/\s+/g, ' ')
+  if (!q) return []
+  const variants = [q]
+  const lower = q.toLowerCase()
+  for (const city of CITIES) {
+    if (city.zh === q || city.name.toLowerCase() === lower) {
+      variants.push(city.name, city.zh)
+    }
+  }
+  for (const [zh, en] of EXTRA_ALIASES) {
+    if (q === zh || lower === en.toLowerCase()) variants.push(zh, en)
+  }
+  return [...new Set(variants.filter(Boolean))].slice(0, 3)
+}
+const PLACE_RANK = {
+  country: 0,
+  state: 1,
+  province: 1,
+  city: 2,
+  town: 2,
+  municipality: 2,
+  village: 3,
+  hamlet: 3,
+  suburb: 4,
+  district: 4,
+  administrative: 5
+}
+function rankPhotonFeature(feature, query) {
+  const p = feature?.properties || {}
+  const kind = p.osm_value || p.type || ''
+  const name = String(p.name || '').toLowerCase()
+  const q = String(query || '').toLowerCase()
+  let score = PLACE_RANK[kind] ?? 20
+  if (/embassy|diplomatic|consulate|memorial|artwork|bus_stop|station/.test(kind))
+    score += 40
+  if (name === q) score -= 8
+  else if (name.includes(q) || q.includes(name)) score -= 3
+  if (p.country && String(p.country).toLowerCase() === q) score -= 6
+  return score
+}
+function sortPhotonFeatures(features, query) {
+  return [...(features || [])].sort(
+    (a, b) => rankPhotonFeature(a, query) - rankPhotonFeature(b, query)
+  )
+}
 function normalizePlace(value) {
   if (value == null) return null
   if (typeof value !== 'object' || Array.isArray(value))
@@ -171,6 +276,8 @@ function wechatPoint(value) {
 module.exports = {
   normalizePlace,
   photonPlace,
+  placeSearchQueries,
+  sortPhotonFeatures,
   isArea,
   samePlace,
   mapLinks,

@@ -14,6 +14,7 @@ const qqApp =
 test.each([
   wechat,
   'Mozilla/5.0 MicroMessenger/8.0.49',
+  'Mozilla/5.0 MiniProgramEnv/Windows WindowsWechat/WMPF wechatdevtools',
   qqApp,
   'DingTalk/7.0',
   'Weibo/14',

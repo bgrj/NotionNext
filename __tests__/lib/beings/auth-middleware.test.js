@@ -89,3 +89,10 @@ test('wechat is not classified as a scraper', async () => {
   expect(result.status).not.toBe(403)
   expect(result.kind).toBe('next')
 })
+test('mini-program API skips Clerk even without a MicroMessenger user-agent', async () => {
+  const result = await middleware(
+    request('/api/our-beings/mini', 'wechatdevtools')
+  )
+  expect(result.kind).toBe('next')
+  expect(String(result.url || '')).not.toContain('accounts.dev')
+})

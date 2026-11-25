@@ -114,11 +114,51 @@ test('cached searches do not contact the geocoder again', async () => {
   ).toEqual(result.places)
   expect(fetcher).toHaveBeenCalledTimes(1)
   expect(redis.set).toHaveBeenCalledWith(
-    expect.stringContaining('wuzai:places:v1:'),
+    expect.stringContaining('wuzai:places:v2:'),
     expect.any(String),
     'EX',
     86400
   )
+})
+test('chinese country aliases also search the latin name for global places', async () => {
+  const redis = cache()
+  const luxembourg = {
+    geometry: { type: 'Point', coordinates: [6.1296, 49.8153] },
+    properties: {
+      name: 'Luxembourg',
+      country: 'Luxembourg',
+      countrycode: 'LU',
+      osm_type: 'R',
+      osm_id: 1,
+      osm_value: 'country'
+    }
+  }
+  const embassy = {
+    geometry: { type: 'Point', coordinates: [116.45, 39.94] },
+    properties: {
+      name: '卢森堡大使馆',
+      country: '中国',
+      countrycode: 'CN',
+      osm_type: 'N',
+      osm_id: 2,
+      osm_value: 'diplomatic'
+    }
+  }
+  const fetcher = jest
+    .fn()
+    .mockResolvedValueOnce(response({ features: [embassy] }))
+    .mockResolvedValueOnce(response({ features: [luxembourg] }))
+  const result = await searchPlaces(
+    redis,
+    { query: '卢森堡', language: 'zh' },
+    fetcher
+  )
+  expect(fetcher).toHaveBeenCalledTimes(2)
+  expect(result.places[0]).toMatchObject({
+    name: 'Luxembourg',
+    countryCode: 'LU',
+    kind: 'country'
+  })
 })
 test('global provider budget rejects a burst before issuing a second request', async () => {
   const redis = cache(),

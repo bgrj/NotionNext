@@ -173,6 +173,15 @@ const refuseContentScraper = (req: NextRequest) => {
 }
 
 /**
+ * Mini-program traffic authenticates with its own Bearer session and must not
+ * enter Clerk's browser handshake. DevTools UAs often omit MicroMessenger, so
+ * match the path instead of relying on user-agent alone.
+ */
+const isMiniProgramApi = (pathname: string) =>
+  pathname === '/api/our-beings/mini' ||
+  pathname.startsWith('/api/our-beings/mini/')
+
+/**
  * In-app browsers such as WeChat never enter Clerk's dev-browser handshake.
  * That handshake is a cross-site redirect their webview does not finish,
  * so the page otherwise never opens. Scripted clients are refused here.
@@ -180,6 +189,8 @@ const refuseContentScraper = (req: NextRequest) => {
 export default async function middleware(req: NextRequest, ev: any) {
   const scraped = refuseContentScraper(req)
   if (scraped) return scraped
+  const pathname = req.nextUrl?.pathname || ''
+  if (isMiniProgramApi(pathname)) return noAuthMiddleware(req, ev)
   const userAgent = readUserAgent(req)
   if (!publishableKey || (userAgent && isEmbeddedWebview(userAgent))) {
     return noAuthMiddleware(req, ev)
