@@ -102,6 +102,20 @@ describe('direct WeChat login without CloudBase', () => {
     expect(result.number).toBe(1)
     expect(result.name).toBe('存在者1号')
     expect(result.bio).toBe('hello')
+    expect(result.avatar).toBe('海')
+    const photo = '/api/our-beings/covers/' + 'ab'.repeat(32)
+    const kept = await updateMiniProfile(
+      redis,
+      { id: 'wx:wx-real-app:trusted-wechat-user', user },
+      { bio: 'hello', avatar: 'https://example.com/a.jpg' }
+    )
+    expect(kept.avatar).toBe('初')
+    const withPhoto = await updateMiniProfile(
+      redis,
+      { id: 'wx:wx-real-app:trusted-wechat-user', user: { ...user, avatar: photo } },
+      { bio: 'hello', avatar: photo }
+    )
+    expect(withPhoto.avatar).toBe(photo)
     expect(publicMiniUser({ ...user, openid: 'private' })).not.toHaveProperty(
       'openid'
     )

@@ -27,7 +27,12 @@ import {
   decorateMiniResult
 } from '@/lib/activities/miniStore'
 import { fail, requireActor } from '@/apps/wuzai/miniprogram/common/activities'
-import { saveMiniCover, requireMiniCover } from '@/lib/activities/miniCovers'
+import {
+  saveMiniCover,
+  saveMiniAvatar,
+  acceptedAvatar,
+  requireMiniCover
+} from '@/lib/activities/miniCovers'
 import { assertCredit, readCredit, recordBreach } from '@/lib/activities/credit'
 import { listSubjects, rememberSubject } from '@/lib/activities/subjects'
 
@@ -58,6 +63,7 @@ const ACTIONS = [
   'saveWriting',
   'checkUpload',
   'uploadCover',
+  'uploadAvatar',
   'reviewDescription',
   'beginCompliance',
   'acceptCompliance',
@@ -146,6 +152,11 @@ export default async function handler(req, res) {
         version: 1,
         cover: await saveMiniCover(redis, actor, input.image)
       })
+    if (action === 'uploadAvatar')
+      return res.status(200).json({
+        version: 1,
+        avatar: await saveMiniAvatar(redis, actor, input.image)
+      })
     if (['create', 'edit'].includes(action)) {
       input.gatheringVersion = 2
       await requireMiniCover(redis, input.cover)
@@ -166,11 +177,17 @@ export default async function handler(req, res) {
       )
     )
       await moderateMini(redis, actor, input)
-    if (action === 'updateProfile')
+    if (action === 'updateProfile') {
+      input.avatar = await acceptedAvatar(
+        redis,
+        actor.user.avatar,
+        input.avatar
+      )
       return res.status(200).json({
         version: 1,
         user: await updateMiniProfile(redis, actor, input)
       })
+    }
     if (action === 'checkUpload') {
       const data = JSON.parse(
         (await redis.get(uploadKey(actor, input.clientRequestId))) || 'null'

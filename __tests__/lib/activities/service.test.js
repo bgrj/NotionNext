@@ -206,13 +206,15 @@ describe('shared web and native WeChat activity service', () => {
   test('cancellation prevents further bookings and chat sends', async () => {
     await publish()
     await execute('reserve', { id }, reader)
+    await expect(execute('cancelEvent',{id},host)).rejects.toMatchObject({code:'revoke_blocked'})
+    await execute('cancelReservation',{id},reader)
     await execute('cancelEvent', { id }, host)
     await expect(
       execute('reserve', { id }, { ...reader, id: 'new-reader' })
     ).rejects.toMatchObject({ code: 'not_open' })
     await expect(
       execute('message', { id, body: '还有人吗' }, reader)
-    ).rejects.toMatchObject({ code: 'closed' })
+    ).rejects.toMatchObject({ code: 'forbidden' })
     expect(
       (await execute('get', { id })).event.announcements[0].body
     ).toContain('取消')

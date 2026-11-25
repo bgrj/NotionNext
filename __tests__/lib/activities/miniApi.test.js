@@ -4,6 +4,8 @@ import { activityRedis } from '@/lib/activities/redisStore'
 import { resolveMiniActor } from '@/lib/activities/miniIdentity'
 import { createActivityService } from '@/lib/activities/service'
 import { moderateMini } from '@/lib/activities/miniModeration'
+import { assertCredit } from '@/lib/activities/credit'
+jest.mock('@/lib/activities/credit',()=>({assertCredit:jest.fn(),readCredit:jest.fn(),recordBreach:jest.fn()}))
 jest.mock('@/lib/activities/redisStore', () => ({ activityRedis: jest.fn() }))
 jest.mock('@/lib/activities/identity', () => ({
   limitActivityRequest: jest.fn()
@@ -112,6 +114,15 @@ describe('native HTTPS API boundary', () => {
       res
     )
     expect(run.mock.calls[0][2]).toBe(actor)
+    expect(assertCredit).toHaveBeenCalledWith(expect.anything(),actor,'participate')
+  })
+  test('credit restrictions stop a reservation before the activity mutation',async()=>{
+    resolveMiniActor.mockResolvedValue({id:'wx:trusted'})
+    assertCredit.mockRejectedValueOnce(Object.assign(new Error('信用限制'),{code:'credit_restricted',status:403}))
+    const res=response()
+    await handler({method:'POST',body:{action:'reserve',input:{id:'event'}},headers:{}},res)
+    expect(res.status).toHaveBeenCalledWith(403)
+    expect(run).not.toHaveBeenCalled()
   })
   test('a confirmed checkbox without a server reading receipt cannot create an activity',async()=>{
     resolveMiniActor.mockResolvedValue({id:'wx:test:member',name:'存在者1号'})
