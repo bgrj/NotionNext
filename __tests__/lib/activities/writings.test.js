@@ -15,7 +15,7 @@ function memoryRedis() {
     indexes = new Map()
   return {
     eval: jest.fn(
-      async (
+      (
         _script,
         _count,
         key,
@@ -26,6 +26,7 @@ function memoryRedis() {
         id,
         isPublic
       ) => {
+        if (values.has(key)) return values.get(key)
         const ids = indexes.get(mine) || []
         if (ids.length >= 100) return 0
         values.set(key, body)
@@ -35,9 +36,9 @@ function memoryRedis() {
         return 1
       }
     ),
-    zrevrange: async (key, start, end) =>
+    zrevrange: (key, start, end) =>
       (indexes.get(key) || []).slice(start, end + 1),
-    mget: async keys => keys.map(key => values.get(key))
+    mget: keys => keys.map(key => values.get(key))
   }
 }
 test('writing defaults private; verified identity and server time override client fields', async () => {
@@ -87,6 +88,30 @@ test('explicit publication is readable without login and omits account identifie
     writings: [writing]
   })
   expect(JSON.stringify(writing)).not.toContain(actor.id)
+})
+
+test('lost responses and concurrent retries save one writing and return its original receipt', async () => {
+  const redis = memoryRedis()
+  const input = { room: 'dao', title: '重试保存', body: '只有一份内容', clientRequestId: 'writing-retry-123' }
+  const results = await Promise.all(Array.from({ length: 12 }, (_, index) =>
+    activityWritings(redis, 'saveWriting', input, actor, now + index)))
+  expect(new Set(results.map(result => result.writing.id)).size).toBe(1)
+  expect(new Set(results.map(result => result.writing.createdAt)).size).toBe(1)
+  expect((await activityWritings(redis, 'writings', {}, actor)).writings).toHaveLength(1)
+  const secondAccount = await activityWritings(redis, 'saveWriting', input, another, now)
+  expect(secondAccount.writing.id).not.toBe(results[0].writing.id)
+})
+test('reusing a save receipt cannot silently change text or publish private writing', async () => {
+  const redis = memoryRedis()
+  const input = { room: 'dao', title: '私密记录', body: '内容', clientRequestId: 'writing-private-123' }
+  await activityWritings(redis, 'saveWriting', input, actor, now)
+  await expect(activityWritings(redis, 'saveWriting', { ...input, public: true }, actor, now)).rejects.toMatchObject({ code: 'writing_conflict' })
+  expect((await activityWritings(redis, 'publicWritings', {}, null)).writings).toEqual([])
+})
+test.each(['true', null, 1])('non-boolean visibility is rejected: %p', async value => {
+  const redis = memoryRedis()
+  await expect(activityWritings(redis, 'saveWriting', { room: 'dao', title: '标题', body: '内容', public: value }, actor)).rejects.toMatchObject({ code: 'invalid_visibility' })
+  expect(redis.eval).not.toHaveBeenCalled()
 })
 test.each([
   [{ room: 'other', title: '标题', body: '内容' }, 'invalid_room'],

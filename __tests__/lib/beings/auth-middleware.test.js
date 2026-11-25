@@ -96,3 +96,8 @@ test('mini-program API skips Clerk even without a MicroMessenger user-agent', as
   expect(result.kind).toBe('next')
   expect(String(result.url || '')).not.toContain('accounts.dev')
 })
+test('uploaded mini-program covers skip the Clerk browser handshake', async () => {
+  const result = await middleware(request('/api/our-beings/covers/' + 'a'.repeat(64), 'wechatdevtools'))
+  expect(result.kind).toBe('next')
+  expect(String(result.url || '')).not.toContain('accounts.dev')
+})

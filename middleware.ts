@@ -179,7 +179,8 @@ const refuseContentScraper = (req: NextRequest) => {
  */
 const isMiniProgramApi = (pathname: string) =>
   pathname === '/api/our-beings/mini' ||
-  pathname.startsWith('/api/our-beings/mini/')
+  pathname.startsWith('/api/our-beings/mini/') ||
+  /^\/api\/our-beings\/covers\/[a-f0-9]{64}$/.test(pathname)
 
 /**
  * In-app browsers such as WeChat never enter Clerk's dev-browser handshake.

@@ -74,7 +74,9 @@ function normalizeInput(input = {}) {
   const deadline = iso(input.deadline || input.startsAt)
   const title = text(input.title, 81)
   const description = text(input.description, 4001)
-  const capacity = Number(input.capacity)
+  const gathering = input.gatheringVersion === 2
+  const participantLimit = Number(input.participantLimit)
+  const capacity = gathering ? participantLimit - 1 : Number(input.capacity)
   if (title.length < 2 || title.length > 80)
     fail('invalid_title', '请填写 2–80 字的活动名称。')
   if (!description || description.length > 4000)
@@ -89,6 +91,49 @@ function normalizeInput(input = {}) {
     fail('invalid_time', '请检查开始、结束和预约截止时间。')
   if (!Number.isInteger(capacity) || capacity < 1 || capacity > 500)
     fail('invalid_capacity', '名额需为 1–500 人。')
+  if (
+    gathering &&
+    (!Number.isInteger(participantLimit) ||
+      participantLimit < 2 ||
+      participantLimit > 6)
+  )
+    fail('invalid_capacity', '活动人数需为 2–6 人，包含发起人。')
+  if (gathering && Date.parse(deadline) !== Date.parse(startsAt) - 1800000)
+    fail('invalid_deadline', '预约须在活动开始前 30 分钟截止。')
+  if (gathering && !text(input.book, 400))
+    fail('invalid_topic', '请选择或填写活动主题。')
+  if (gathering && !['zh', 'en', 'de', 'ja', 'other'].includes(input.language))
+    fail('invalid_language', '请选择交流语言。')
+  if (
+    gathering &&
+    input.language === 'other' &&
+    !text(input.languageDetail, 80)
+  )
+    fail('invalid_language', '请填写交流语言。')
+  if (
+    gathering &&
+    input.format === 'online' &&
+    ![
+      'wechat',
+      'qq',
+      'line',
+      'whatsapp',
+      'telegram',
+      'tencent',
+      'dingtalk',
+      'other'
+    ].includes(input.channel)
+  )
+    fail('invalid_channel', '请选择线上平台。')
+  if (gathering && input.format === 'online' && input.discussion === 'site')
+    fail('invalid_discussion', '请选择线上平台并填写会议号或群组入口。')
+  if (
+    gathering &&
+    input.format === 'online' &&
+    input.channel === 'other' &&
+    !text(input.channelDetail, 80)
+  )
+    fail('invalid_channel', '请填写线上活动平台。')
   if (!['online', 'offline'].includes(input.format))
     fail('invalid_format', '请选择线上或线下。')
   if (!['site', 'wechat', 'external'].includes(input.discussion))
@@ -128,26 +173,44 @@ function normalizeInput(input = {}) {
         ? 'site'
         : input.discussion === 'wechat'
           ? 'wechat'
-          : ['wechat', 'qq', 'telegram', 'whatsapp', 'line', 'other'].includes(
-                input.channel
-              )
+          : [
+                'wechat',
+                'qq',
+                'telegram',
+                'whatsapp',
+                'line',
+                'tencent',
+                'dingtalk',
+                'other'
+              ].includes(input.channel)
             ? input.channel
             : 'other',
     location,
     place: input.format === 'offline' ? place : null,
     joinInstructions,
-    book: text(input.book, 120),
+    book: text(input.book, 400),
     kind: input.kind === 'conversation' ? 'conversation' : 'reading',
     timezone,
     city,
-    language: ['zh', 'en', 'bilingual'].includes(input.language)
+    ...(gathering
+      ? {
+          gatheringVersion: 2,
+          participantLimit,
+          languageDetail: text(input.languageDetail, 80),
+          channelDetail: text(input.channelDetail, 80),
+          facilitatorId: text(input.facilitatorId, 160) || 'organizer'
+        }
+      : {}),
+    language: ['zh', 'en', 'bilingual', 'de', 'ja', 'other'].includes(
+      input.language
+    )
       ? input.language
       : 'zh'
   }
 }
-const bookedCount = (event) =>
+const bookedCount = event =>
   Object.values(event.reservations || {}).filter(
-    (value) => value.status === 'confirmed'
+    value => value.status === 'confirmed'
   ).length
 const isHost = (event, actor) => Boolean(actor && event.hostId === actor.id)
 const isMember = (event, actor) =>
@@ -159,7 +222,12 @@ function eventStatus(event, now = Date.now()) {
   if (event.state !== 'published') return event.state
   if (Date.parse(event.endsAt) <= now) return 'ended'
   if (Date.parse(event.startsAt) <= now) return 'ongoing'
-  if (Date.parse(event.deadline) <= now) return 'closed'
+  if (
+    Date.parse(event.deadline) <= now ||
+    (event.gatheringVersion === 2 &&
+      Date.parse(event.startsAt) - 1800000 <= now)
+  )
+    return 'closed'
   return bookedCount(event) >= event.capacity ? 'full' : 'open'
 }
 function publicEvent(event, actor, now = Date.now()) {
@@ -190,6 +258,33 @@ function publicEvent(event, actor, now = Date.now()) {
     booked: bookedCount(event),
     remaining: Math.max(0, event.capacity - bookedCount(event)),
     hostName: event.hostName,
+    ...(event.gatheringVersion === 2
+      ? {
+          gatheringVersion: 2,
+          participantLimit: event.capacity + 1,
+          participantCount: bookedCount(event) + 1,
+          languageDetail: event.languageDetail || '',
+          channelDetail: event.channelDetail || '',
+          facilitatorId: event.facilitatorId || 'organizer',
+          facilitatorName: facilitatorName(event),
+          ...(owner
+            ? {
+                hostCandidates: [
+                  { id: 'organizer', name: event.hostName },
+                  ...Object.values(event.reservations || {})
+                    .filter(
+                      row =>
+                        row.status === 'confirmed' && row.name && row.memberId
+                    )
+                    .map(row => ({
+                      id: 'member:' + row.memberId,
+                      name: row.name
+                    }))
+                ]
+              }
+            : {})
+        }
+      : {}),
     state: event.state,
     status,
     statusLabel: STATUS_LABELS[status],
@@ -207,6 +302,27 @@ function publicEvent(event, actor, now = Date.now()) {
     updatedAt: event.updatedAt
   }
 }
+function facilitatorName(event) {
+  const member = Object.values(event.reservations || {}).find(
+    row =>
+      row.status === 'confirmed' &&
+      row.memberId &&
+      'member:' + row.memberId === event.facilitatorId
+  )
+  return member?.name || event.hostName
+}
+function validateFacilitator(event, id) {
+  if (
+    id !== 'organizer' &&
+    !Object.values(event.reservations || {}).some(
+      row =>
+        row.status === 'confirmed' &&
+        row.memberId &&
+        'member:' + row.memberId === id
+    )
+  )
+    fail('invalid_facilitator', '主持人只能是发起人或正式报名成员。')
+}
 function changeEvent(event, action, input, actor, now = Date.now()) {
   requireActor(actor)
   const at = new Date(now).toISOString()
@@ -214,9 +330,13 @@ function changeEvent(event, action, input, actor, now = Date.now()) {
   if (['edit', 'publish', 'cancelEvent', 'announce'].includes(action) && !owner)
     fail('forbidden', '只有发起人可以管理这场活动。', 403)
   if (action === 'edit') {
+    if (event.gatheringVersion === 2 && input.gatheringVersion !== 2)
+      fail('invalid_update', '请使用新版活动表单编辑这场活动。')
     if (['cancelled', 'ended', 'ongoing'].includes(eventStatus(event, now)))
       fail('closed', '活动开始或取消后，不能再更改安排。', 409)
     const fields = normalizeInput(input)
+    if (fields.gatheringVersion === 2)
+      validateFacilitator(event, fields.facilitatorId)
     if (
       Date.parse(fields.startsAt) <= now ||
       fields.capacity < bookedCount(event)
@@ -249,11 +369,28 @@ function changeEvent(event, action, input, actor, now = Date.now()) {
     if (event.reservations[actor.id]?.status === 'confirmed') return event
     if (eventStatus(event, now) !== 'open')
       fail('not_open', '本场活动已满额、截止或结束，请查看其他活动。', 409)
-    event.reservations[actor.id] = { status: 'confirmed', at }
+    event.reservations[actor.id] = {
+      status: 'confirmed',
+      at,
+      name: actor.name,
+      memberId: now.toString(36) + Math.random().toString(36).slice(2)
+    }
   } else if (action === 'cancelReservation') {
-    if (event.reservations[actor.id]?.status === 'confirmed')
+    if (event.reservations[actor.id]?.status === 'confirmed') {
+      if (
+        event.facilitatorId ===
+        'member:' + event.reservations[actor.id].memberId
+      )
+        event.facilitatorId = 'organizer'
       event.reservations[actor.id] = { status: 'cancelled', at }
+    }
   } else if (action === 'cancelEvent') {
+    if (bookedCount(event) > 0)
+      fail(
+        'revoke_blocked',
+        '已有其他成员报名，无法撤销，并已扣除 5 分信用。',
+        409
+      )
     if (event.state !== 'cancelled')
       event.announcements = [
         ...event.announcements,
@@ -276,7 +413,7 @@ function changeEvent(event, action, input, actor, now = Date.now()) {
         fail('closed', '这场活动的交流已归档。', 409)
       const last = [...event.messages]
         .reverse()
-        .find((item) => item.actorId === actor.id)
+        .find(item => item.actorId === actor.id)
       if (last && now - Date.parse(last.at) < 3000)
         fail('too_fast', '稍等片刻，再发送下一条。', 429)
       event.messages = [
@@ -305,7 +442,7 @@ function formatTime(value) {
   const date = new Date(value)
   if (!Number.isFinite(date.getTime())) return ''
   const china = new Date(date.getTime() + 8 * 60 * 60 * 1000)
-  const pad = (number) => String(number).padStart(2, '0')
+  const pad = number => String(number).padStart(2, '0')
   return `${china.getUTCFullYear()}.${pad(china.getUTCMonth() + 1)}.${pad(china.getUTCDate())} ${pad(china.getUTCHours())}:${pad(china.getUTCMinutes())}`
 }
 function filterEvents(
@@ -319,7 +456,7 @@ function filterEvents(
   } = {}
 ) {
   const items = events.filter(
-    (item) =>
+    item =>
       (format === 'all' || item.format === format) &&
       (!city ||
         item.format === 'online' ||
@@ -351,6 +488,7 @@ module.exports = {
   requireActor,
   validId,
   normalizeInput,
+  validateFacilitator,
   bookedCount,
   isHost,
   isMember,
