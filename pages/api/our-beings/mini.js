@@ -24,7 +24,8 @@ import {
   claimUpload,
   releaseUpload,
   uploadKey,
-  decorateMiniResult
+  decorateMiniResult,
+  listCarouselCovers
 } from '@/lib/activities/miniStore'
 import { fail, requireActor } from '@/apps/wuzai/miniprogram/common/activities'
 import {
@@ -43,7 +44,8 @@ const PUBLIC = [
   'locations',
   'presenceStats',
   'publicWritings',
-  'subjects'
+  'subjects',
+  'carousel'
 ]
 const ACTIONS = [
   ...PUBLIC,
@@ -165,6 +167,11 @@ export default async function handler(req, res) {
       return res
         .status(200)
         .json({ version: 1, subjects: await listSubjects(redis) })
+    if (action === 'carousel')
+      return res.status(200).json({
+        version: 1,
+        covers: await listCarouselCovers(redis)
+      })
     if (action === 'profile')
       return res.status(200).json({
         version: 1,
