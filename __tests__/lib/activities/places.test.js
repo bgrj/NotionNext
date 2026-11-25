@@ -154,11 +154,21 @@ test('chinese country aliases also search the latin name for global places', asy
     fetcher
   )
   expect(fetcher).toHaveBeenCalledTimes(2)
+  for (const [url] of fetcher.mock.calls) {
+    expect(String(url)).not.toMatch(/[?&]lang=zh\b/)
+  }
   expect(result.places[0]).toMatchObject({
     name: 'Luxembourg',
     countryCode: 'LU',
     kind: 'country'
   })
+})
+test('unsupported Photon languages fall back to default instead of failing', async () => {
+  const redis = cache()
+  const fetcher = jest.fn().mockResolvedValue(response({ features: [feature] }))
+  await searchPlaces(redis, { query: '周庄镇', language: 'zh-CN' }, fetcher)
+  const url = String(fetcher.mock.calls[0][0])
+  expect(url).not.toMatch(/[?&]lang=/)
 })
 test('global provider budget rejects a burst before issuing a second request', async () => {
   const redis = cache(),
