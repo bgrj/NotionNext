@@ -14,7 +14,7 @@ describe('visitor pause', () => {
   })
 
   test('pauses the rest of the site', () => {
-    for (const pathname of ['/sign-in', '/sign-up', '/our-beings', '/category/术', '/search', '/archive', '/ielts']) {
+    for (const pathname of ['/sign-in', '/sign-up', '/our-beings', '/category/术', '/search', '/archive']) {
       expect(visitorMayRead({ pathname }, true)).toBe(false)
     }
     expect(visitorMayRead({ post: { category: '术', type: 'Post' } }, true)).toBe(false)
@@ -29,7 +29,11 @@ describe('visitor pause', () => {
     expect(visitorMayFollowPath('/links')).toBe(true)
     expect(visitorMayFollowPath('/our-beings')).toBe(false)
     expect(visitorMayFollowPath('/sign-in')).toBe(false)
-    expect(visitorMayFollowPath('/our-beings/feedback-admin')).toBe(false)
+    expect(visitorMayRead({ pathname: '/ielts' }, true)).toBe(true)
+    expect(visitorMayRead({ pathname: '/ielts/' }, true)).toBe(true)
+    expect(visitorMayFollowPath('/ielts')).toBe(true)
+    expect(visitorMayFollowPath('/our-beings/feedback-admin')).toBe(true)
+    expect(visitorMayFollowPath('/our-beings/me')).toBe(false)
     expect(visitorMayFollowPath('/a-dao-essay', { dao: true })).toBe(true)
     expect(visitorMayFollowPath('/category/术', { dao: true })).toBe(false)
   })
