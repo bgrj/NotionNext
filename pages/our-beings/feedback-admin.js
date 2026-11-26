@@ -139,11 +139,13 @@ function AdminScan({ onSession, label = '微信扫码' }) {
       ) : null}
       <style jsx>{`
         .scan-open {
-          border-radius: 12px;
-          border: 1px solid #e3dbce;
-          background: #fffdf9;
-          color: #342c24;
-          padding: 10px 16px;
+          min-width: 11.5rem;
+          border-radius: 999px;
+          border: 1px solid #926631;
+          background: #926631;
+          color: #fffaf3;
+          padding: 12px 28px;
+          letter-spacing: 0.08em;
           cursor: pointer;
         }
         .scan-open:disabled {
@@ -194,7 +196,10 @@ function AdminScan({ onSession, label = '微信扫码' }) {
         img {
           width: 220px;
           height: 220px;
+          padding: 10px;
+          border-radius: 16px;
           background: #fff;
+          border: 1px solid #e3dbce;
         }
         p {
           margin: 0;
@@ -331,31 +336,35 @@ export default function FeedbackAdminPage() {
         <title>ourbeing小程序后台管理 · Our Being</title>
         <meta name='robots' content='noindex,nofollow' />
       </Head>
-      <main className='admin'>
-        <header className='top'>
-          <div>
-            <p className='eyebrow'>Our Being · 内部</p>
-            <h1>ourbeing小程序后台管理</h1>
-          </div>
-          {signedIn ? (
+      <main className={`admin${signedIn ? '' : ' gate-page'}`}>
+        {signedIn ? (
+          <header className='top'>
+            <div>
+              <p className='eyebrow'>Our Being · 内部</p>
+              <h1>ourbeing小程序后台管理</h1>
+            </div>
             <div className='top-actions'>
               <button type='button' className='ghost' onClick={signOut}>
                 退出
               </button>
             </div>
-          ) : null}
-        </header>
-
-        {!signedIn ? (
+          </header>
+        ) : (
           <div className='gate'>
             <section className='card login'>
-              <p className='hint'>只有你的微信可以扫码进入。手机确认后，这台电脑会打开后台。</p>
-              <div className='login-actions'>
-                <AdminScan onSession={acceptToken} label='微信扫码登录' />
-              </div>
+              <p className='eyebrow'>Our Being · 内部</p>
+              <h1>小程序后台</h1>
+              <p className='hint'>
+                只有你的微信可以进入。
+                <br />
+                扫码确认后，这台电脑会打开后台。
+              </p>
+              <AdminScan onSession={acceptToken} label='微信扫码登录' />
             </section>
           </div>
-        ) : (
+        )}
+
+        {signedIn ? (
           <div className='layout'>
             <section className='card list-pane'>
               <div className='toolbar'>
@@ -495,7 +504,7 @@ export default function FeedbackAdminPage() {
       </main>
       <style jsx>{`
         .admin {
-          min-height: 100vh;
+          min-height: 70vh;
           padding: 32px 20px 64px;
           background:
             radial-gradient(circle at top left, rgba(146, 102, 49, 0.08), transparent 40%),
@@ -545,15 +554,48 @@ export default function FeedbackAdminPage() {
           gap: 10px;
           align-items: center;
         }
+        .gate-page {
+          min-height: calc(100dvh - 11rem);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: 48px 20px 72px;
+          background: transparent;
+        }
         .gate {
-          max-width: 420px;
-          margin: 28px auto 0;
+          width: min(24rem, 100%);
         }
         .login {
           margin: 0;
-          padding: 28px;
+          padding: 40px 36px 36px;
           display: grid;
-          gap: 12px;
+          justify-items: center;
+          text-align: center;
+        }
+        .login .eyebrow {
+          margin-bottom: 14px;
+        }
+        .login h1 {
+          margin: 0 0 18px;
+          font-size: 36px;
+        }
+        .login .hint {
+          margin: 0 0 28px;
+          max-width: 16em;
+          font-size: 15px;
+          line-height: 1.9;
+        }
+        @media (max-width: 640px) {
+          .gate-page {
+            min-height: calc(100dvh - 8rem);
+            padding: 28px 16px 48px;
+          }
+          .login {
+            padding: 32px 22px 28px;
+          }
+          .login h1 {
+            font-size: 30px;
+          }
         }
         .layout {
           max-width: 1180px;
