@@ -76,7 +76,7 @@ describe('native HTTPS API boundary', () => {
     'profile',
     'publish',
     'saveWriting',
-    'uploadCover'
+    'uploadCover', 'submitFeedback'
     , 'beginCompliance', 'acceptCompliance', 'reviewDescription'
   ])('anonymous %s cannot reach private service operations', async action => {
     const res = response()
