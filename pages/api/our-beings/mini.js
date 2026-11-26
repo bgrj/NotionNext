@@ -37,6 +37,7 @@ import {
 import { assertCredit, readCredit, recordBreach } from '@/lib/activities/credit'
 import { listSubjects, rememberSubject } from '@/lib/activities/subjects'
 import { submitMiniFeedback } from '@/lib/activities/miniFeedback'
+import { mediaReadiness } from '@/lib/activities/miniPrivacy'
 
 export const config = { api: { bodyParser: { sizeLimit: '4500kb' } } }
 const PUBLIC = [
@@ -68,6 +69,7 @@ const ACTIONS = [
   'uploadCover',
   'uploadAvatar',
   'submitFeedback',
+  'mediaReadiness',
   'reviewDescription',
   'beginCompliance',
   'acceptCompliance',
@@ -124,6 +126,8 @@ export default async function handler(req, res) {
         .status(200)
         .json({ version: 1, ...(await loginMini(redis, input.code)) })
     if (!PUBLIC.includes(action)) requireActor(actor)
+    if (action === 'mediaReadiness')
+      return res.status(200).json({ version: 1, media: await mediaReadiness(redis) })
     if (action === 'submitFeedback')
       return res.status(200).json({ version: 1, feedback: await submitMiniFeedback(redis, actor, input) })
     if (action === 'beginCompliance')
