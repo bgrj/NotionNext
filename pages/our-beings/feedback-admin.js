@@ -355,9 +355,8 @@ export default function FeedbackAdminPage() {
               <p className='eyebrow'>Our Being · 内部</p>
               <h1>小程序后台</h1>
               <p className='hint'>
-                只有你的微信可以进入。
-                <br />
-                扫码确认后，这台电脑会打开后台。
+                <span>只有你的微信可以进入。</span>
+                <span>扫码确认后，电脑打开后台。</span>
               </p>
               <AdminScan onSession={acceptToken} label='微信扫码登录' />
             </section>
@@ -581,9 +580,12 @@ export default function FeedbackAdminPage() {
         }
         .login .hint {
           margin: 0 0 28px;
-          max-width: 16em;
           font-size: 15px;
           line-height: 1.9;
+        }
+        .login .hint span {
+          display: block;
+          white-space: nowrap;
         }
         @media (max-width: 640px) {
           .gate-page {
