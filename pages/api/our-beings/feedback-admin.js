@@ -1,15 +1,10 @@
 import { activityRedis } from '@/lib/activities/redisStore'
-import { adminKeyMatches, adminSessionValid } from '@/lib/activities/adminScan'
+import { adminSessionValid } from '@/lib/activities/adminScan'
 import {
   getMiniFeedback,
   listMiniFeedback,
   updateMiniFeedbackStatus
 } from '@/lib/activities/miniFeedback'
-
-function configuredToken() {
-  const token = process.env.WUZAI_FEEDBACK_ADMIN_TOKEN
-  return typeof token === 'string' && token.length >= 16 ? token : ''
-}
 
 function providedToken(req) {
   const header = req.headers.authorization || ''
@@ -23,9 +18,8 @@ function providedToken(req) {
 
 async function authorize(req, redis) {
   const actual = providedToken(req)
-  if (!actual) return false
-  if (actual.startsWith('scan_')) return adminSessionValid(redis, actual)
-  return adminKeyMatches(actual)
+  if (!actual?.startsWith('scan_')) return false
+  return adminSessionValid(redis, actual)
 }
 
 function sendError(res, error) {
@@ -44,14 +38,9 @@ export default async function handler(req, res) {
     res.setHeader('Allow', 'GET, PATCH, POST')
     return res.status(405).json({ error: 'method_not_allowed', message: '不支持的请求方式。' })
   }
-  if (!configuredToken())
-    return res.status(503).json({
-      error: 'admin_unconfigured',
-      message: '尚未配置 WUZAI_FEEDBACK_ADMIN_TOKEN。'
-    })
   const redis = activityRedis()
   if (!(await authorize(req, redis)))
-    return res.status(401).json({ error: 'unauthorized', message: '管理密钥不正确。' })
+    return res.status(401).json({ error: 'unauthorized', message: '请用你的微信扫码进入。' })
   try {
     if (req.method === 'GET') {
       if (req.query?.id)

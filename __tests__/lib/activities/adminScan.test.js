@@ -3,7 +3,9 @@ import {
   adminSessionValid,
   beginAdminScan,
   confirmAdminScan,
+  confirmAdminScanIfPending,
   confirmWebScan,
+  miniProgramAdminImage,
   readAdminScan
 } from '@/lib/activities/adminScan'
 
@@ -32,8 +34,8 @@ describe('admin wechat scan', () => {
   test('a webpage confirmation does not admit any WeChat account', async () => {
     const redis = memoryRedis()
     const scan = await beginAdminScan(redis)
-    expect(scan.url).toContain('/our-beings/feedback-scan?ticket=')
-    expect(scan.url).not.toContain('pages/admin-gate')
+    expect(scan.ticket).toMatch(/^[a-f0-9]{32}$/)
+    expect(scan.url).toBeUndefined()
     await expect(confirmWebScan(redis, scan.ticket)).rejects.toMatchObject({
       code: 'admin_wechat_denied',
       status: 403
@@ -59,5 +61,39 @@ describe('admin wechat scan', () => {
     const approved = await readAdminScan(redis, scan.ticket)
     expect(approved.status).toBe('approved')
     expect(await adminSessionValid(redis, approved.session)).toBe(true)
+  })
+
+  test('an ordinary activity id is not treated as an admin scan', async () => {
+    const redis = memoryRedis()
+    await expect(
+      confirmAdminScanIfPending(redis, {
+        ticket: 'a'.repeat(32),
+        openId: 'ownerOpenId_1'
+      })
+    ).resolves.toBeNull()
+  })
+
+  test('the mini-program code carries this ticket and not a webpage login', async () => {
+    const originalFetch = global.fetch
+    process.env.WUZAI_MINI_APP_ID = 'wx-real-app'
+    process.env.WUZAI_MINI_APP_SECRET = 'server-only-secret'
+    const jpeg = Uint8Array.from([0xff, 0xd8, 0xff, 0x00, 1, 2, 3, 4, 5])
+    global.fetch = jest.fn()
+      .mockResolvedValueOnce({ json: async () => ({ access_token: 'token-value' }) })
+      .mockResolvedValueOnce({
+        headers: { get: () => 'image/jpeg' },
+        arrayBuffer: async () => jpeg.buffer.slice(jpeg.byteOffset, jpeg.byteOffset + jpeg.byteLength)
+      })
+    const image = await miniProgramAdminImage('ab'.repeat(16))
+    expect(image.startsWith('data:image/jpeg;base64,')).toBe(true)
+    expect(image).not.toContain('server-only-secret')
+    const codeCall = fetch.mock.calls[1]
+    expect(codeCall[0]).toContain('/wxa/getwxacode?')
+    expect(JSON.parse(codeCall[1].body).path).toBe(
+      'pages/publish/publish?id=' + 'ab'.repeat(16)
+    )
+    delete process.env.WUZAI_MINI_APP_ID
+    delete process.env.WUZAI_MINI_APP_SECRET
+    global.fetch = originalFetch
   })
 })

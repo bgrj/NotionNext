@@ -52,41 +52,21 @@ describe('feedback admin api', () => {
     jest.clearAllMocks()
   })
 
-  test('rejects missing configuration and wrong tokens', async () => {
-    delete process.env.WUZAI_FEEDBACK_ADMIN_TOKEN
-    const unconfigured = response()
-    await handler({ method: 'GET', headers: {}, query: {} }, unconfigured)
-    expect(unconfigured.statusCode).toBe(503)
-
-    process.env.WUZAI_FEEDBACK_ADMIN_TOKEN = 'regression-admin-token'
+  test('rejects a management key even when one is still configured', async () => {
     const denied = response()
-    await handler({ method: 'GET', headers: { authorization: 'Bearer wrong-token-value!' }, query: {} }, denied)
-    expect(denied.statusCode).toBe(401)
-  })
-
-  test('lists and updates feedback with a valid bearer token', async () => {
-    const list = response()
     await handler({
       method: 'GET',
       headers: { authorization: 'Bearer regression-admin-token' },
-      query: { status: 'pending' }
-    }, list)
-    expect(list.statusCode).toBe(200)
-    expect(listMiniFeedback).toHaveBeenCalled()
-
-    const patch = response()
-    await handler({
-      method: 'PATCH',
-      headers: { authorization: 'Bearer regression-admin-token' },
-      body: { id: 'a'.repeat(32), status: 'paid', note: 'done' },
       query: {}
-    }, patch)
-    expect(patch.statusCode).toBe(200)
-    expect(updateMiniFeedbackStatus).toHaveBeenCalledWith({}, 'a'.repeat(32), {
-      status: 'paid',
-      note: 'done'
-    })
-    expect(getMiniFeedback).not.toHaveBeenCalled()
+    }, denied)
+    expect(denied.statusCode).toBe(401)
+    expect(denied.body.message).toBe('请用你的微信扫码进入。')
+    expect(listMiniFeedback).not.toHaveBeenCalled()
+
+    delete process.env.WUZAI_FEEDBACK_ADMIN_TOKEN
+    const stillDenied = response()
+    await handler({ method: 'GET', headers: {}, query: {} }, stillDenied)
+    expect(stillDenied.statusCode).toBe(401)
   })
 
   test('accepts a live wechat scan session', async () => {
@@ -104,5 +84,19 @@ describe('feedback admin api', () => {
     )
     expect(list.statusCode).toBe(200)
     expect(listMiniFeedback).toHaveBeenCalled()
+
+    const patch = response()
+    await handler({
+      method: 'PATCH',
+      headers: { authorization: 'Bearer scan_' + 'a'.repeat(43) },
+      body: { id: 'a'.repeat(32), status: 'paid', note: 'done' },
+      query: {}
+    }, patch)
+    expect(patch.statusCode).toBe(200)
+    expect(updateMiniFeedbackStatus).toHaveBeenCalledWith(
+      expect.anything(),
+      'a'.repeat(32),
+      { status: 'paid', note: 'done' }
+    )
   })
 })

@@ -38,6 +38,7 @@ import { assertCredit, readCredit, recordBreach } from '@/lib/activities/credit'
 import { listSubjects, rememberSubject } from '@/lib/activities/subjects'
 import { submitMiniFeedback } from '@/lib/activities/miniFeedback'
 import { deleteMiniDraft } from '@/lib/activities/miniDrafts'
+import { confirmAdminScanIfPending } from '@/lib/activities/adminScan'
 import { mediaReadiness } from '@/lib/activities/miniPrivacy'
 
 export const config = { api: { bodyParser: { sizeLimit: '4500kb' } } }
@@ -128,6 +129,17 @@ export default async function handler(req, res) {
         .status(200)
         .json({ version: 1, ...(await loginMini(redis, input.code)) })
     if (!PUBLIC.includes(action)) requireActor(actor)
+    if (action === 'get' && actor?.id?.startsWith(`wx:${process.env.WUZAI_MINI_APP_ID}:`)) {
+      const scan = await confirmAdminScanIfPending(redis, {
+        ticket: input.id,
+        openId: actor.id.slice(`wx:${process.env.WUZAI_MINI_APP_ID}:`.length)
+      })
+      if (scan)
+        return res.status(409).json({
+          error: 'admin_scan_confirmed',
+          message: '已确认。请回到电脑上的后台。'
+        })
+    }
     if (action === 'deleteDraft')
       return res.status(200).json({ version: 1, deleted: await deleteMiniDraft(redis, actor, input) })
     if (action === 'mediaReadiness')

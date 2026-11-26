@@ -1,7 +1,7 @@
 import Head from 'next/head'
 
 const MESSAGE =
-  '这个页面不能登录后台。网页确认分辨不出是哪一个微信，已经关闭，避免其他微信进入。请回到电脑，使用管理密钥。'
+  '这个网页不能核对微信号，所以不能在这里登录。请回到电脑，用你的微信扫描小程序码。'
 
 export default function FeedbackScanPage() {
 

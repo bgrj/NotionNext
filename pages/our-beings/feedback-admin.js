@@ -127,7 +127,7 @@ function AdminScan({ onSession, label = '微信扫码' }) {
               ×
             </button>
             <h3>微信扫码进入</h3>
-            <p>只有已绑定的微信可以扫码进入。这个网页确认已经关闭，任意微信点按钮都不能登录。请使用管理密钥。</p>
+            <p>用你的微信扫这个小程序码。手机上打开吾在后会显示「已确认」。其他微信不能进入。</p>
             {image ? <img src={image} alt='微信扫码登录二维码' /> : null}
             {message ? <p className={phase === 'error' ? 'scan-error' : ''}>{message}</p> : null}
             {phase === 'waiting' ? <p>等待手机确认…</p> : null}
@@ -224,7 +224,6 @@ function AdminScan({ onSession, label = '微信扫码' }) {
 
 export default function FeedbackAdminPage() {
   const [token, setToken] = useState('')
-  const [draftToken, setDraftToken] = useState('')
   const [status, setStatus] = useState('pending')
   const [items, setItems] = useState([])
   const [total, setTotal] = useState(0)
@@ -238,8 +237,8 @@ export default function FeedbackAdminPage() {
 
   useEffect(() => {
     const saved = sessionStorage.getItem(STORAGE_KEY) || ''
-    setToken(saved)
-    setDraftToken(saved)
+    if (saved.startsWith('scan_')) setToken(saved)
+    else sessionStorage.removeItem(STORAGE_KEY)
     setReady(true)
   }, [])
 
@@ -293,22 +292,9 @@ export default function FeedbackAdminPage() {
     setError('')
   }, [])
 
-  const signIn = event => {
-    event.preventDefault()
-    const value = draftToken.trim()
-    if (value.length < 16) {
-      setError('请输入至少 16 位管理密钥。')
-      return
-    }
-    sessionStorage.setItem(STORAGE_KEY, value)
-    setToken(value)
-    setError('')
-  }
-
   const signOut = () => {
     sessionStorage.removeItem(STORAGE_KEY)
     setToken('')
-    setDraftToken('')
     setItems([])
     setDetail(null)
     setSelectedId('')
@@ -353,7 +339,6 @@ export default function FeedbackAdminPage() {
           </div>
           {signedIn ? (
             <div className='top-actions'>
-              <AdminScan label='微信扫码' />
               <button type='button' className='ghost' onClick={signOut}>
                 退出
               </button>
@@ -363,24 +348,12 @@ export default function FeedbackAdminPage() {
 
         {!signedIn ? (
           <div className='gate'>
-            <form className='card login' onSubmit={signIn}>
-              <label htmlFor='admin-token'>管理密钥</label>
-              <input
-                id='admin-token'
-                type='password'
-                autoComplete='current-password'
-                value={draftToken}
-                onChange={event => setDraftToken(event.target.value)}
-                placeholder='管理密钥'
-              />
-              <p className='hint'>密钥仅保存在本机会话，不会写入页面源码。</p>
+            <section className='card login'>
+              <p className='hint'>只有你的微信可以扫码进入。手机确认后，这台电脑会打开后台。</p>
               <div className='login-actions'>
-                <button type='submit' className='primary'>
-                  进入后台
-                </button>
-                <AdminScan onSession={acceptToken} />
+                <AdminScan onSession={acceptToken} label='微信扫码登录' />
               </div>
-            </form>
+            </section>
           </div>
         ) : (
           <div className='layout'>
