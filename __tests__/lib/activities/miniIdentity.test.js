@@ -43,6 +43,7 @@ describe('direct WeChat login without CloudBase', () => {
     expect(result.user).toEqual({
       authenticated: true,
       platform: 'wechat',
+      signatureUnified: false,
       ...user
     })
     expect(JSON.stringify(result)).not.toMatch(
@@ -119,5 +120,26 @@ describe('direct WeChat login without CloudBase', () => {
     expect(publicMiniUser({ ...user, openid: 'private' })).not.toHaveProperty(
       'openid'
     )
+  })
+  test('one signature stores merged legacy content without truncation and can be explicitly cleared', async () => {
+    const actor = { id: 'wx:wx-real-app:trusted-wechat-user', user }
+    const signature = '箴言'.repeat(70) + '\n\n' + '介绍'.repeat(50)
+    const result = await updateMiniProfile(redis, actor, { signature, name: '伪造昵称', number: 999 })
+    expect(result).toMatchObject({ bio: signature, signatureUnified: true, number: 1, name: '存在者1号' })
+    const cleared = await updateMiniProfile(redis, { ...actor, user: { ...user, bio: signature, signatureUnified: true } }, { signature: '' })
+    expect(cleared).toMatchObject({ bio: '', signatureUnified: true })
+  })
+  test('avatar-only updates keep the accepted signature and its migration marker', async () => {
+    const bio = '已保存的签名'.repeat(30)
+    const result = await updateMiniProfile(redis,
+      { id: 'wx:wx-real-app:trusted-wechat-user', user: { ...user, bio, signatureUnified: true } }, { avatar: '海' })
+    expect(result).toMatchObject({ bio, signatureUnified: true, avatar: '海' })
+  })
+  test('invalid signatures are rejected without storing a partial profile', async () => {
+    const actor = { id: 'wx:wx-real-app:trusted-wechat-user', user }
+    for (const signature of [null, {}, '字'.repeat(281)]) {
+      await expect(updateMiniProfile(redis, actor, { signature })).rejects.toMatchObject({ code: 'invalid_profile' })
+    }
+    expect(redis.set).not.toHaveBeenCalled()
   })
 })

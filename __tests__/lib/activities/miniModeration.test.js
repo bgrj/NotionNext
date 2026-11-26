@@ -28,3 +28,9 @@ test('publication moderation also rejects a description even if the client skips
   wechatJson.mockResolvedValue({errcode:0,result:{suggest:'review',label:20006}})
   await expect(moderateMini(redis,actor,{description:'需要复核的活动说明'})).rejects.toMatchObject({code:'content_review',issues:expect.any(Array)})
 })
+
+test('the unified personal signature is checked before account storage', async () => {
+  wechatJson.mockResolvedValue({ errcode: 0, result: { suggest: 'risky', label: 20006 } })
+  await expect(moderateMini(redis, actor, { signature: '需要检查的个人签名' })).rejects.toMatchObject({ code: 'content_review' })
+  expect(wechatJson.mock.calls[0][1].body).toContain('需要检查的个人签名')
+})
