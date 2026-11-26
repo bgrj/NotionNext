@@ -272,15 +272,12 @@ test('paused category lists show the visitor notice instead of the post list', (
   expect(screen.queryByText('list')).toBeNull()
 })
 
-test('the home page shows the visitor pause instead of the hero', () => {
+test('the home page keeps its hero-only layout', () => {
   mockRouter.asPath = '/'
   mockRouter.route = '/'
   const { container } = render(<LayoutBase />)
-  expect(container.querySelector('#theme-my-theme')).not.toHaveClass(
-    'ob-home-only'
-  )
-  expect(screen.getByText('这里先停一停')).toBeTruthy()
-  expect(screen.queryByTestId('home-hero')).toBeNull()
+  expect(container.querySelector('#theme-my-theme')).toHaveClass('ob-home-only')
+  expect(container.querySelector('#wrapper')).toBeNull()
 })
 
 test.each(['/links', '/our-beings', '/sign-in'])(

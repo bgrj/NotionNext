@@ -1,13 +1,5 @@
-import { VISITOR_PAUSE } from '@/lib/site/visitorPause'
-
 /** Only public navigation records reach this component from the Notion menu. */
 export function settingsMenu(menu, openSections) {
-  if (VISITOR_PAUSE) {
-    return [
-      { href: '/category/道', title: '道' },
-      { href: '/links', title: '友情链接' }
-    ]
-  }
   const seen = new Set()
   const result = []
   const visit = items => {

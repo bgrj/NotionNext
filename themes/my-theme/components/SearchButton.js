@@ -1,5 +1,6 @@
 import { siteConfig } from '@/lib/config'
 import { useGlobal } from '@/lib/global'
+import { VISITOR_PAUSE } from '@/lib/site/visitorPause'
 import { useRouter } from 'next/router'
 import { useHexoGlobal } from '..'
 
@@ -13,6 +14,7 @@ export default function SearchButton(props) {
   const { searchModal } = useHexoGlobal()
 
   function handleSearch() {
+    if (VISITOR_PAUSE) return
     if (siteConfig('ALGOLIA_APP_ID')) {
       searchModal.current.openSearch()
     } else {

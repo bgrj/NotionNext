@@ -8,7 +8,6 @@ import CONFIG from '../config'
 import { UI_LANGUAGE_LABELS, uiLanguageOptions } from '../readingSettings'
 import { DEFAULT_OPEN_SECTIONS, openHomeSections } from '../homeSections'
 import { settingsMenu } from '../settingsMenu'
-import { VISITOR_PAUSE } from '@/lib/site/visitorPause'
 
 const AccountLinks = dynamic(() => import('./OurBeingsHeaderAuth'), {
   ssr: false
@@ -35,10 +34,9 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
   const available = openHomeSections(
     siteConfig('OURBEINGS_OPEN_SECTIONS', DEFAULT_OPEN_SECTIONS, CONFIG)
   )
-  const publicLinks =
-    VISITOR_PAUSE || siteConfig('CUSTOM_MENU', true)
-      ? settingsMenu(customMenu, available)
-      : []
+  const publicLinks = siteConfig('CUSTOM_MENU', true)
+    ? settingsMenu(customMenu, available)
+    : []
   const selectAppearance = dark => {
     if (!usesDefaultAppearance && Boolean(isDarkMode) === dark) return
     if (setDarkMode) setDarkMode(dark)
@@ -118,13 +116,7 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
             <div>
               <strong>{title}</strong>
               <p className='ob-settings-subtitle'>
-                {english
-                  ? VISITOR_PAUSE
-                    ? 'Appearance and language'
-                    : 'Appearance, language, account'
-                  : VISITOR_PAUSE
-                    ? '外观与语言'
-                    : '外观、语言与账户'}
+                {english ? 'Appearance, language, account' : '外观、语言与账户'}
               </p>
             </div>
             <button
@@ -207,12 +199,10 @@ export default function SiteSettings({ onOpenChange, customMenu } = {}) {
               </div>
             </nav>
           )}
-          {!VISITOR_PAUSE && (
-            <div className='ob-settings-group ob-settings-divided'>
-              <h2>{english ? 'Account' : '账户'}</h2>
-              <AccountLinks english={english} onNavigate={() => setOpen(false)} />
-            </div>
-          )}
+          <div className='ob-settings-group ob-settings-divided'>
+            <h2>{english ? 'Account' : '账户'}</h2>
+            <AccountLinks english={english} onNavigate={() => setOpen(false)} />
+          </div>
           <p className='ob-settings-hint ob-settings-device-note'>
             {english
               ? 'Preferences are saved on this device.'

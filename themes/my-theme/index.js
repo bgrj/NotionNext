@@ -33,7 +33,8 @@ import DaoReaderTools from './components/DaoReaderTools'
 import DaoReadingStyle from './daoReadingStyle'
 import { isDaoReadingPost } from './readingSettings'
 import VisitorPause from './components/VisitorPause'
-import { VISITOR_PAUSE, visitorMayRead } from '@/lib/site/visitorPause'
+import { visitorMayFollowPath, visitorMayRead } from '@/lib/site/visitorPause'
+import { FOOTER_FRIEND_LINKS } from './friendLinks'
 import OurBeingsIndex from './components/OurBeingsIndex'
 import BeingLife from './components/BeingLife'
 import BeingDesk from './components/BeingDesk'
@@ -113,8 +114,7 @@ const LayoutBase = props => {
   const { post, children, slotTop, className } = props
   const { onLoading, fullWidth } = useGlobal()
   const router = useRouter()
-  const showRandomButton =
-    !VISITOR_PAUSE && siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
+  const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
   const isArticleSlugPage = router.pathname === '/[prefix]/[slug]'
   const friendLinks = isFriendLinksView({
     asPath: router.asPath,
@@ -171,6 +171,38 @@ const LayoutBase = props => {
     siteConfig('HEXO_HOME_BANNER_ENABLE', null, CONFIG) ? (
     <Hero {...props} />
   ) : null
+
+  useEffect(() => {
+    const daoContext = Boolean(dao || daoReading)
+    const onClick = event => {
+      if (event.button || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey)
+        return
+      const link = event.target?.closest?.('a[href]')
+      if (!link) return
+      const href = link.getAttribute('href') || ''
+      if (!href || href.startsWith('#') || href.startsWith('mailto:')) return
+      let url
+      try {
+        url = new URL(href, 'https://ourbeings.com')
+      } catch {
+        return
+      }
+      const host = url.hostname.replace(/^www\./, '')
+      const internal = host === 'ourbeings.com' || host === 'ourbeings.cn'
+      if (!internal) {
+        const friend =
+          friendLinks ||
+          FOOTER_FRIEND_LINKS.some(item => url.href.startsWith(item.url))
+        if (friend) return
+      } else if (visitorMayFollowPath(url.pathname + url.search, { dao: daoContext })) {
+        return
+      }
+      event.preventDefault()
+      event.stopPropagation()
+    }
+    document.addEventListener('click', onClick, true)
+    return () => document.removeEventListener('click', onClick, true)
+  }, [dao, daoReading, friendLinks])
 
   // 只在「这一页真的渲染了头图」时用 pt-0；分类/标签/搜索等无头图页
   // 若仍看 HEXO_HOME_BANNER_ENABLE，会被固定顶栏挡住列表和分类标题。
@@ -316,7 +348,7 @@ const LayoutBase = props => {
         <Footer title={siteConfig('TITLE')} />
 
         {/* 首次访问公告弹窗：定位文案在 noticeContent.js；最近一篇跟站点 latestPosts 走 */}
-        {!VISITOR_PAUSE && <NoticeModal latestPosts={props.latestPosts} />}
+        <NoticeModal latestPosts={props.latestPosts} />
       </div>
     </ThemeGlobalHexo.Provider>
   )

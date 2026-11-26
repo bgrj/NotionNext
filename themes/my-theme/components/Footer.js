@@ -3,7 +3,6 @@ import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import CONFIG from '../config'
 import { FOOTER_FRIEND_LINKS } from '../friendLinks'
-import { VISITOR_PAUSE } from '@/lib/site/visitorPause'
 
 const WaveText = ({
   text,
@@ -822,32 +821,20 @@ const Footer = () => {
           </div>
 
           <div>
-            <SectionTitle>{VISITOR_PAUSE ? '开放' : '关于'}</SectionTitle>
+            <SectionTitle>关于</SectionTitle>
             <nav className='ob-nav'>
-              {VISITOR_PAUSE ? (
-                <>
-                  <FooterLink href='/category/道'>道</FooterLink>
-                  <FooterLink href={linksUrl} gold>
-                    友情链接
-                  </FooterLink>
-                </>
-              ) : (
-                <>
-                  <FooterLink href={aboutUrl}>About</FooterLink>
-                  <FooterLink href={copyrightUrl}>版权声明</FooterLink>
-                  {wechatAlbum && (
-                    <FooterLink href={wechatAlbum} external>
-                      公众号
-                    </FooterLink>
-                  )}
-                </>
+              <FooterLink href={aboutUrl}>About</FooterLink>
+              <FooterLink href={copyrightUrl}>版权声明</FooterLink>
+              {wechatAlbum && (
+                <FooterLink href={wechatAlbum} external>
+                  公众号
+                </FooterLink>
               )}
             </nav>
           </div>
 
           <div className='ob-east'>
             <div className='ob-east-cols'>
-              {!VISITOR_PAUSE && (
               <div>
                 <SectionTitle>为吾在发电</SectionTitle>
                 <div className='ob-nav'>
@@ -871,7 +858,6 @@ const Footer = () => {
                   )}
                 </div>
               </div>
-              )}
               <div>
                 <SectionTitle>友情链接</SectionTitle>
                 <div className='ob-nav'>

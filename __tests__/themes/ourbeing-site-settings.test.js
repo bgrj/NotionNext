@@ -144,7 +144,7 @@ test('outside pointer and focus close the panel', () => {
 test('navigation closes the panel', () => {
   render(<SiteSettings />)
   open()
-  fireEvent.click(screen.getByRole('link', { name: '道' }))
+  fireEvent.click(screen.getByRole('link', { name: '登录' }))
   expect(screen.queryByRole('dialog')).toBeNull()
 })
 
@@ -154,16 +154,8 @@ test('settings keep interface controls and leave the home plates on the page', (
   const dialog = screen.getByRole('dialog', { name: '网站设置' })
   expect(dialog).toHaveTextContent('外观模式')
   expect(dialog).toHaveTextContent('界面语言')
-  expect(dialog).not.toHaveTextContent('账户')
-  expect(screen.getByRole('link', { name: '道' })).toHaveAttribute(
-    'href',
-    '/category/道'
-  )
-  expect(screen.getByRole('link', { name: '友情链接' })).toHaveAttribute(
-    'href',
-    '/links'
-  )
-  for (const name of ['术', '我们的存在', '我的存在', '登录', '注册']) {
+  expect(dialog).toHaveTextContent('账户')
+  for (const name of ['道', '术', '我们的存在', '我的存在']) {
     expect(screen.queryByRole('link', { name })).toBeNull()
     expect(screen.queryByRole('button', { name })).toBeNull()
   }
@@ -199,41 +191,47 @@ test('Notion public menus appear without unpublished or all-category archive lin
     { title: '错误地址', href: 'https://%' }
   ]
   expect(settingsMenu(menu, ['dao']).map(x => x.title)).toEqual([
-    '道',
-    '友情链接'
+    '首页',
+    '意见反馈',
+    'ourbeing小程序后台管理'
   ])
   render(<SiteSettings customMenu={menu} />)
   open()
   expect(
     screen.getByRole('navigation', { name: '网站介绍' })
-  ).toHaveTextContent('道')
-  expect(screen.getByRole('link', { name: '友情链接' })).toHaveAttribute(
-    'href',
-    '/links'
-  )
-  expect(screen.queryByRole('link', { name: '意见反馈' })).toBeNull()
-  expect(screen.queryByRole('link', { name: 'ourbeing小程序后台管理' })).toBeNull()
-  expect(screen.queryByRole('link', { name: '登录' })).toBeNull()
+  ).toHaveTextContent('意见反馈')
+  expect(
+    screen.getByRole('link', { name: 'ourbeing小程序后台管理' })
+  ).toHaveAttribute('href', '/our-beings/feedback-admin')
   expect(screen.queryByRole('link', { name: '后台' })).toBeNull()
 })
 
 test.each([false, true])(
-  'visitor pause hides login and signup (Clerk enabled: %s)',
+  'guests keep separate login and signup links (Clerk enabled: %s)',
   enabled => {
     mockClerkEnabled = enabled
     render(<SiteSettings />)
     open()
-    expect(screen.queryByRole('link', { name: '登录' })).toBeNull()
-    expect(screen.queryByRole('link', { name: '注册' })).toBeNull()
+    expect(screen.getByRole('link', { name: '登录' })).toHaveAttribute(
+      'href',
+      '/sign-in'
+    )
+    expect(screen.getByRole('link', { name: '注册' })).toHaveAttribute(
+      'href',
+      '/sign-up'
+    )
   }
 )
 
-test('visitor pause hides the profile entry', () => {
+test('authenticated visitors retain the profile entry', () => {
   mockClerkEnabled = true
   mockSignedIn = true
   render(<SiteSettings />)
   open()
-  expect(screen.queryByRole('link', { name: '我的档案' })).toBeNull()
+  expect(screen.getByRole('link', { name: '我的档案' })).toHaveAttribute(
+    'href',
+    '/our-beings/me'
+  )
   expect(screen.queryByRole('link', { name: '登录' })).toBeNull()
 })
 

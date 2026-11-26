@@ -1,4 +1,4 @@
-import { visitorMayRead } from '@/lib/site/visitorPause'
+import { visitorMayFollowPath, visitorMayRead } from '@/lib/site/visitorPause'
 
 describe('visitor pause', () => {
   test('keeps Dao, friend links, and the owner admin door', () => {
@@ -14,12 +14,24 @@ describe('visitor pause', () => {
   })
 
   test('pauses the rest of the site', () => {
-    for (const pathname of ['/', '/sign-in', '/sign-up', '/our-beings', '/category/术', '/search', '/archive', '/ielts']) {
+    for (const pathname of ['/sign-in', '/sign-up', '/our-beings', '/category/术', '/search', '/archive', '/ielts']) {
       expect(visitorMayRead({ pathname }, true)).toBe(false)
     }
     expect(visitorMayRead({ post: { category: '术', type: 'Post' } }, true)).toBe(false)
     expect(visitorMayRead({ category: '我的存在' }, true)).toBe(false)
     expect(visitorMayRead({ pathname: '/category/道术' }, true)).toBe(false)
+  })
+
+  test('keeps the original home, and only follows Dao, friend links, and Dao articles', () => {
+    expect(visitorMayRead({ pathname: '/' }, true)).toBe(true)
+    expect(visitorMayFollowPath('/', { dao: false })).toBe(true)
+    expect(visitorMayFollowPath('/category/道')).toBe(true)
+    expect(visitorMayFollowPath('/links')).toBe(true)
+    expect(visitorMayFollowPath('/our-beings')).toBe(false)
+    expect(visitorMayFollowPath('/sign-in')).toBe(false)
+    expect(visitorMayFollowPath('/our-beings/feedback-admin')).toBe(false)
+    expect(visitorMayFollowPath('/a-dao-essay', { dao: true })).toBe(true)
+    expect(visitorMayFollowPath('/category/术', { dao: true })).toBe(false)
   })
 
   test('reopens every page when the pause is off', () => {
