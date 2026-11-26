@@ -33,5 +33,12 @@ export function settingsMenu(menu, openSections) {
     }
   }
   visit(menu)
+  const adminHref = '/our-beings/feedback-admin'
+  if (!seen.has(adminHref)) {
+    result.push({
+      href: adminHref,
+      title: 'ourbeing小程序后台管理'
+    })
+  }
   return result.filter(item => item.title)
 }

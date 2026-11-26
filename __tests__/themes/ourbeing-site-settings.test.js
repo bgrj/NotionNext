@@ -192,13 +192,17 @@ test('Notion public menus appear without unpublished or all-category archive lin
   ]
   expect(settingsMenu(menu, ['dao']).map(x => x.title)).toEqual([
     '首页',
-    '意见反馈'
+    '意见反馈',
+    'ourbeing小程序后台管理'
   ])
   render(<SiteSettings customMenu={menu} />)
   open()
   expect(
     screen.getByRole('navigation', { name: '网站介绍' })
   ).toHaveTextContent('意见反馈')
+  expect(
+    screen.getByRole('link', { name: 'ourbeing小程序后台管理' })
+  ).toHaveAttribute('href', '/our-beings/feedback-admin')
   expect(screen.queryByRole('link', { name: '后台' })).toBeNull()
 })
 

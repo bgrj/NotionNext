@@ -153,14 +153,14 @@ export default function FeedbackAdminPage() {
   return (
     <>
       <Head>
-        <title>公测反馈管理 · Our Being</title>
+        <title>ourbeing小程序后台管理 · Our Being</title>
         <meta name='robots' content='noindex,nofollow' />
       </Head>
       <main className='admin'>
         <header className='top'>
           <div>
             <p className='eyebrow'>Our Being · 内部</p>
-            <h1>公测反馈管理</h1>
+            <h1>ourbeing小程序后台管理</h1>
           </div>
           {signedIn ? (
             <button type='button' className='ghost' onClick={signOut}>
