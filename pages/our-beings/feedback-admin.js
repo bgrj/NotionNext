@@ -127,7 +127,11 @@ function AdminScan({ onSession, label = '微信扫码' }) {
               ×
             </button>
             <h3>微信扫码进入</h3>
-            <p>用你的微信扫这个小程序码。手机上打开吾在后会显示「已确认」。其他微信不能进入。</p>
+            <p>
+              <span>用你的微信扫这个小程序码。</span>
+              <span>手机上会显示「已确认」。</span>
+              <span>其他微信不能进入。</span>
+            </p>
             {image ? <img src={image} alt='微信扫码登录二维码' /> : null}
             {message ? <p className={phase === 'error' ? 'scan-error' : ''}>{message}</p> : null}
             {phase === 'waiting' ? <p>等待手机确认…</p> : null}
@@ -205,7 +209,10 @@ function AdminScan({ onSession, label = '微信扫码' }) {
           margin: 0;
           color: #766a5f;
           font-size: 13px;
-          line-height: 1.6;
+          line-height: 1.7;
+        }
+        p span {
+          display: block;
         }
         .scan-error {
           color: #8d3b32;
