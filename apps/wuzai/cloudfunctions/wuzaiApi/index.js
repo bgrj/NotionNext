@@ -63,6 +63,25 @@ exports.main = async (event) => {
         message: '活动服务暂未就绪，请稍后再来。'
       }
     if (!/^https:\/\//.test(origin)) throw new Error('invalid_origin')
+    if (event.action === 'confirmAdminScan') {
+      const ticket =
+        typeof event.input?.ticket === 'string' ? event.input.ticket : ''
+      if (!/^[a-f0-9]{32}$/.test(ticket))
+        return { error: 'invalid_ticket', message: '这个二维码已经失效。' }
+      return await forward(
+        new URL('/api/our-beings/feedback-admin-scan', origin),
+        {
+          action: 'confirm',
+          ticket,
+          identity: {
+            appId: identity.APPID,
+            openId: identity.OPENID,
+            name: ''
+          }
+        },
+        secret
+      )
+    }
     const allowed = [
       'login',
       'presence',

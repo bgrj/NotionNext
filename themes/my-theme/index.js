@@ -32,6 +32,8 @@ import DaoArticleHero from './components/DaoArticleHero'
 import DaoReaderTools from './components/DaoReaderTools'
 import DaoReadingStyle from './daoReadingStyle'
 import { isDaoReadingPost } from './readingSettings'
+import VisitorPause from './components/VisitorPause'
+import { VISITOR_PAUSE, visitorMayRead } from '@/lib/site/visitorPause'
 import OurBeingsIndex from './components/OurBeingsIndex'
 import BeingLife from './components/BeingLife'
 import BeingDesk from './components/BeingDesk'
@@ -111,11 +113,18 @@ const LayoutBase = props => {
   const { post, children, slotTop, className } = props
   const { onLoading, fullWidth } = useGlobal()
   const router = useRouter()
-  const showRandomButton = siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
+  const showRandomButton =
+    !VISITOR_PAUSE && siteConfig('HEXO_MENU_RANDOM', false, CONFIG)
   const isArticleSlugPage = router.pathname === '/[prefix]/[slug]'
   const friendLinks = isFriendLinksView({
     asPath: router.asPath,
     slug: post?.slug || slugFromRouter(router)
+  })
+  const paused = !visitorMayRead({
+    pathname: router.asPath,
+    post,
+    category: props.category,
+    friendLinks
   })
   const dao =
     props.category === '道' ||
@@ -133,15 +142,19 @@ const LayoutBase = props => {
     CONFIG
   )
   const showArticleSwitchPlaceholder =
-    hexoArticleRouteLoading && isArticleSlugPage && onLoading && !chromeLite
+    !paused &&
+    hexoArticleRouteLoading &&
+    isArticleSlugPage &&
+    onLoading &&
+    !chromeLite
   // 所有文章共用全宽布局，不依赖分类、slug 或 Notion 的 fullWidth 开关。
-  const articleLayout = Boolean(post) && !chromeLite
+  const articleLayout = Boolean(post) && !chromeLite && !paused
   const daoReading = articleLayout && isDaoReadingPost(post)
   const wideMain = fullWidth || chromeLite || articleLayout || dao
   const listWithoutSidebar = !post && !chromeLite && !fullWidth && !dao
   const drawerRight = useRef(null)
 
-  const headerSlot = chromeLite ? null : post ? (
+  const headerSlot = paused || chromeLite ? null : post ? (
     daoReading ? (
       <DaoArticleHero
         {...props}
@@ -235,7 +248,9 @@ const LayoutBase = props => {
               <div
                 className={`${className || ''} w-full min-w-0 ${wideMain ? '' : listWithoutSidebar ? 'max-w-5xl' : 'max-w-4xl'} h-full ${chromeLite ? '' : 'overflow-x-hidden'}`}
               >
-                {showArticleSwitchPlaceholder ? (
+                {paused ? (
+                  <VisitorPause />
+                ) : showArticleSwitchPlaceholder ? (
                   <ArticleSwitchPlaceholder />
                 ) : (
                   <Transition
@@ -262,14 +277,14 @@ const LayoutBase = props => {
           </main>
         )}
 
-        {!chromeLite && (
+        {!chromeLite && !paused && (
           <div className='ob-article-toc block'>
             <TocDrawer post={post} cRef={drawerRight} targetRef={tocRef} />
           </div>
         )}
 
         {/* 悬浮菜单 */}
-        {daoReading ? (
+        {!paused && daoReading ? (
           <DaoReaderTools
             key={post.id || post.slug}
             articleId={post.id}
@@ -288,7 +303,7 @@ const LayoutBase = props => {
                 : undefined
             }
           />
-        ) : (
+        ) : paused ? null : (
           <div className='ob-reading-tools'>
             <RightFloatArea floatSlot={floatSlot} />
           </div>
@@ -301,7 +316,7 @@ const LayoutBase = props => {
         <Footer title={siteConfig('TITLE')} />
 
         {/* 首次访问公告弹窗：定位文案在 noticeContent.js；最近一篇跟站点 latestPosts 走 */}
-        <NoticeModal latestPosts={props.latestPosts} />
+        {!VISITOR_PAUSE && <NoticeModal latestPosts={props.latestPosts} />}
       </div>
     </ThemeGlobalHexo.Provider>
   )

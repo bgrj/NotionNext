@@ -88,4 +88,21 @@ describe('feedback admin api', () => {
     })
     expect(getMiniFeedback).not.toHaveBeenCalled()
   })
+
+  test('accepts a live wechat scan session', async () => {
+    activityRedis.mockReturnValue({
+      get: jest.fn(async () => 'owner-openid')
+    })
+    const list = response()
+    await handler(
+      {
+        method: 'GET',
+        headers: { authorization: 'Bearer scan_' + 'a'.repeat(43) },
+        query: {}
+      },
+      list
+    )
+    expect(list.statusCode).toBe(200)
+    expect(listMiniFeedback).toHaveBeenCalled()
+  })
 })

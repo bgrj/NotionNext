@@ -24,6 +24,7 @@ import dynamic from 'next/dynamic'
 import { DESK_HREF, isClerkEnabled } from '@/themes/my-theme/beings'
 import { ClerkSessionBridge, ClerkSessionProvider } from '@/components/ClerkSession'
 import { isEmbeddedWebview } from '@/lib/security/visitorAccess'
+import { VISITOR_PAUSE } from '@/lib/site/visitorPause'
 // import { ClerkProvider } from '@clerk/nextjs'
 const ClerkProvider = dynamic(() =>
   import('@clerk/nextjs').then(m => m.ClerkProvider)
@@ -50,6 +51,7 @@ const MyApp = ({ Component, pageProps }) => {
   const notionTheme = pageProps?.NOTION_CONFIG?.THEME
   const configTheme = BLOG.THEME
   const theme = useMemo(() => {
+    if (VISITOR_PAUSE) return 'my-theme'
     return queryTheme || notionTheme || configTheme
   }, [queryTheme, notionTheme, configTheme])
 

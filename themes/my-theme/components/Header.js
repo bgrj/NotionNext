@@ -3,6 +3,7 @@ import throttle from 'lodash.throttle'
 import SmartLink from '@/components/SmartLink'
 import HeaderCommunity from './HeaderCommunity'
 import SiteSettings from './SiteSettings'
+import { VISITOR_PAUSE } from '@/lib/site/visitorPause'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef, useState } from 'react'
 
@@ -94,7 +95,7 @@ const Header = ({ siteInfo, customMenu }) => {
               {siteInfo?.title || siteConfig('TITLE')}
             </SmartLink>
             <div className='ob-nav-right'>
-              <HeaderCommunity />
+              {!VISITOR_PAUSE && <HeaderCommunity />}
               <SiteSettings
                 customMenu={customMenu}
                 onOpenChange={handleSettingsOpen}

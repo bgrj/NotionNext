@@ -1,0 +1,5 @@
+<view class="page">
+  <view class="title">后台确认</view>
+  <view class="text">{{message}}</view>
+  <button wx:if="{{status === 'ready' || status === 'working'}}" disabled="{{status === 'working'}}" bindtap="confirm">确认进入</button>
+</view>

@@ -165,6 +165,11 @@ test.each(['道', '术', '我的存在', '我们的存在'])(
   category => {
     if (category === '术') mockRouter.asPath = '/technology/2026/10/23/test'
     const { container } = render(article(postFor(category)))
+    if (category !== '道') {
+      expect(screen.getByText('这里先停一停')).toBeTruthy()
+      expect(container.querySelector('.ob-article-body')).toBeNull()
+      return
+    }
     expect(container.querySelector('#theme-my-theme')).toHaveClass(
       'ob-article-layout'
     )
@@ -203,13 +208,19 @@ test('Dao posts use the reading masthead while other article layouts stay indepe
   expect(other.container.querySelector('#theme-my-theme')).not.toHaveClass(
     'ob-dao-reading'
   )
-  expect(screen.getByTestId('post-hero')).toBeTruthy()
+  expect(screen.getByText('这里先停一停')).toBeTruthy()
+  expect(screen.queryByTestId('post-hero')).toBeNull()
 })
 
 test.each(['道', '术'])(
   'the %s TOC can open and close without a desktop-hidden ancestor',
   category => {
     const { container } = render(article(postFor(category)))
+    if (category !== '道') {
+      expect(screen.getByText('这里先停一停')).toBeTruthy()
+      expect(container.querySelector('.ob-article-toc')).toBeNull()
+      return
+    }
     const button =
       category === '道'
         ? container.querySelector('.ob-reading-contents')
@@ -233,6 +244,11 @@ test.each(['道', '术'])(
   'locked %s articles keep the shell without rendering protected content',
   category => {
     const { container } = render(article(postFor(category), { lock: true }))
+    if (category !== '道') {
+      expect(screen.getByText('这里先停一停')).toBeTruthy()
+      expect(screen.queryByTestId('article-lock')).toBeNull()
+      return
+    }
     expect(container.querySelector('#theme-my-theme')).toHaveClass(
       'ob-article-layout'
     )
@@ -241,7 +257,7 @@ test.each(['道', '术'])(
   }
 )
 
-test('category lists retain their constrained layout', () => {
+test('paused category lists show the visitor notice instead of the post list', () => {
   mockRouter.asPath = '/category/术'
   mockRouter.route = '/category/[category]'
   const { container } = render(
@@ -249,20 +265,22 @@ test('category lists retain their constrained layout', () => {
       <div>list</div>
     </LayoutBase>
   )
+  expect(screen.getByText('这里先停一停')).toBeTruthy()
   expect(container.querySelector('#theme-my-theme')).not.toHaveClass(
     'ob-article-layout'
   )
-  expect(container.querySelector('#container-inner > div')).toHaveClass(
-    'max-w-5xl'
-  )
+  expect(screen.queryByText('list')).toBeNull()
 })
 
-test('the home page keeps its hero-only layout', () => {
+test('the home page shows the visitor pause instead of the hero', () => {
   mockRouter.asPath = '/'
   mockRouter.route = '/'
   const { container } = render(<LayoutBase />)
-  expect(container.querySelector('#theme-my-theme')).toHaveClass('ob-home-only')
-  expect(container.querySelector('#wrapper')).toBeNull()
+  expect(container.querySelector('#theme-my-theme')).not.toHaveClass(
+    'ob-home-only'
+  )
+  expect(screen.getByText('这里先停一停')).toBeTruthy()
+  expect(screen.queryByTestId('home-hero')).toBeNull()
 })
 
 test.each(['/links', '/our-beings', '/sign-in'])(
@@ -281,7 +299,7 @@ test.each(['/links', '/our-beings', '/sign-in'])(
 // Optional local-only HTML fixture for viewport checks using the actual rendered shell/CSS.
 if (process.env.ARTICLE_WIDTH_FIXTURE) {
   test('export viewport fixture', () => {
-    render(article(postFor('术')))
+    render(article(postFor('道')))
     const fs = require('fs')
     fs.writeFileSync(
       process.env.ARTICLE_WIDTH_FIXTURE,
@@ -295,7 +313,7 @@ if (process.env.ARTICLE_WIDTH_FIXTURE) {
 }
 
 test('article content is visible on first render without waiting for entry animation', () => {
-  const { container } = render(article(postFor('术')))
+  const { container } = render(article(postFor('道')))
   expect(
     container
       .querySelector('.ob-article-card')

@@ -1,5 +1,5 @@
-import { timingSafeEqual } from 'node:crypto'
 import { activityRedis } from '@/lib/activities/redisStore'
+import { adminKeyMatches, adminSessionValid } from '@/lib/activities/adminScan'
 import {
   getMiniFeedback,
   listMiniFeedback,
@@ -21,15 +21,11 @@ function providedToken(req) {
   return ''
 }
 
-function authorize(req) {
-  const expected = configuredToken()
+async function authorize(req, redis) {
   const actual = providedToken(req)
-  if (!expected || !actual || expected.length !== actual.length) return false
-  try {
-    return timingSafeEqual(Buffer.from(expected), Buffer.from(actual))
-  } catch {
-    return false
-  }
+  if (!actual) return false
+  if (actual.startsWith('scan_')) return adminSessionValid(redis, actual)
+  return adminKeyMatches(actual)
 }
 
 function sendError(res, error) {
@@ -53,10 +49,10 @@ export default async function handler(req, res) {
       error: 'admin_unconfigured',
       message: '尚未配置 WUZAI_FEEDBACK_ADMIN_TOKEN。'
     })
-  if (!authorize(req))
+  const redis = activityRedis()
+  if (!(await authorize(req, redis)))
     return res.status(401).json({ error: 'unauthorized', message: '管理密钥不正确。' })
   try {
-    const redis = activityRedis()
     if (req.method === 'GET') {
       if (req.query?.id)
         return res.status(200).json({ feedback: await getMiniFeedback(redis, req.query.id) })

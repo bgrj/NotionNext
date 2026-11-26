@@ -1,5 +1,5 @@
 import Head from 'next/head'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const STORAGE_KEY = 'ourbeing:feedback-admin-token'
 const STATUS_OPTIONS = [
@@ -37,6 +37,145 @@ async function api(token, path, options = {}) {
   if (!response.ok)
     throw new Error(data.message || data.error || '请求失败，请稍后重试。')
   return data
+}
+
+function AdminScan({ token, purpose, onSession }) {
+  const [phase, setPhase] = useState('idle')
+  const [image, setImage] = useState('')
+  const [message, setMessage] = useState('')
+  const ticket = useRef('')
+  const onSessionRef = useRef(onSession)
+  onSessionRef.current = onSession
+
+  useEffect(() => {
+    if (phase !== 'waiting' || !ticket.current) return undefined
+    let stopped = false
+    const timer = setInterval(async () => {
+      try {
+        const response = await fetch(
+          `/api/our-beings/feedback-admin-scan?ticket=${ticket.current}`
+        )
+        const data = await response.json().catch(() => ({}))
+        if (stopped) return
+        if (data.status === 'approved' && data.session) {
+          stopped = true
+          clearInterval(timer)
+          onSessionRef.current?.(data.session)
+          return
+        }
+        if (data.status === 'bound') {
+          stopped = true
+          clearInterval(timer)
+          setPhase('done')
+          setMessage('已绑定这台微信。以后可以扫码进入。')
+          return
+        }
+        if (data.status === 'expired' || !response.ok) {
+          stopped = true
+          clearInterval(timer)
+          setPhase('error')
+          setMessage(data.message || '二维码已过期，请重新生成。')
+        }
+      } catch {
+        /* The next poll retries until the ticket expires. */
+      }
+    }, 2000)
+    return () => {
+      stopped = true
+      clearInterval(timer)
+    }
+  }, [phase])
+
+  const start = async () => {
+    setPhase('loading')
+    setMessage('')
+    setImage('')
+    try {
+      const response = await fetch('/api/our-beings/feedback-admin-scan', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          ...(token ? { Authorization: `Bearer ${token}` } : {})
+        },
+        body: JSON.stringify({ action: purpose === 'bind' ? 'bind' : 'start' })
+      })
+      const data = await response.json().catch(() => ({}))
+      if (!response.ok) throw new Error(data.message || '暂时无法生成二维码。')
+      if (data.unbound) {
+        setPhase('unbound')
+        setMessage(data.message)
+        return
+      }
+      ticket.current = data.ticket
+      setImage(data.image || '')
+      setPhase('waiting')
+    } catch (err) {
+      setPhase('error')
+      setMessage(err.message)
+    }
+  }
+
+  return (
+    <section className='card scan'>
+      <h3>{purpose === 'bind' ? '绑定微信扫码' : '微信扫码进入'}</h3>
+      <p className='hint'>
+        {purpose === 'bind'
+          ? '用你的微信扫码并在手机上确认。绑定后，这台微信可以进入后台。'
+          : '用已绑定的微信扫描小程序码，并在手机上确认。二维码不含管理密钥。'}
+      </p>
+      {image ? (
+        <img src={`data:image/jpeg;base64,${image}`} alt='进入后台的微信小程序码' />
+      ) : null}
+      {message ? <p className={phase === 'error' ? 'error' : 'hint'}>{message}</p> : null}
+      {phase === 'waiting' ? <p className='hint'>等待手机确认…</p> : null}
+      <button type='button' className='primary' onClick={start} disabled={phase === 'loading'}>
+        {phase === 'loading' ? '正在生成…' : image ? '重新生成' : '生成微信小程序码'}
+      </button>
+      <style jsx>{`
+        section {
+          background: #fffdf9;
+          border: 1px solid #e3dbce;
+          border-radius: 18px;
+          box-shadow: 0 12px 32px rgba(52, 44, 36, 0.06);
+          padding: 28px;
+          display: grid;
+          gap: 12px;
+        }
+        h3 {
+          margin: 0;
+          font-size: 15px;
+          letter-spacing: 0.08em;
+        }
+        img {
+          width: 220px;
+          height: 220px;
+          margin: 0 auto;
+          background: #fff;
+        }
+        p {
+          margin: 0;
+          color: #766a5f;
+          font-size: 13px;
+          line-height: 1.6;
+        }
+        .error {
+          color: #8d3b32;
+        }
+        button {
+          border-radius: 12px;
+          border: 1px solid #926631;
+          background: #926631;
+          color: #fffaf3;
+          padding: 10px 16px;
+          cursor: pointer;
+        }
+        button:disabled {
+          opacity: 0.55;
+          cursor: wait;
+        }
+      `}</style>
+    </section>
+  )
 }
 
 export default function FeedbackAdminPage() {
@@ -104,6 +243,12 @@ export default function FeedbackAdminPage() {
     loadList(token, status)
   }, [ready, token, status, loadList])
 
+  const acceptToken = useCallback(value => {
+    sessionStorage.setItem(STORAGE_KEY, value)
+    setToken(value)
+    setError('')
+  }, [])
+
   const signIn = event => {
     event.preventDefault()
     const value = draftToken.trim()
@@ -170,22 +315,29 @@ export default function FeedbackAdminPage() {
         </header>
 
         {!signedIn ? (
-          <form className='card login' onSubmit={signIn}>
-            <label htmlFor='admin-token'>管理密钥</label>
-            <input
-              id='admin-token'
-              type='password'
-              autoComplete='current-password'
-              value={draftToken}
-              onChange={event => setDraftToken(event.target.value)}
-              placeholder='WUZAI_FEEDBACK_ADMIN_TOKEN'
-            />
-            <p className='hint'>密钥仅保存在本机会话，不会写入页面源码。</p>
-            <button type='submit' className='primary'>
-              进入后台
-            </button>
-          </form>
+          <div className='gate'>
+            <form className='card login' onSubmit={signIn}>
+              <label htmlFor='admin-token'>管理密钥</label>
+              <input
+                id='admin-token'
+                type='password'
+                autoComplete='current-password'
+                value={draftToken}
+                onChange={event => setDraftToken(event.target.value)}
+                placeholder='管理密钥'
+              />
+              <p className='hint'>密钥仅保存在本机会话，不会写入页面源码。</p>
+              <button type='submit' className='primary'>
+                进入后台
+              </button>
+            </form>
+            <AdminScan purpose='enter' onSession={acceptToken} />
+          </div>
         ) : (
+          <>
+          <div className='bind-wrap'>
+            <AdminScan token={token} purpose='bind' />
+          </div>
           <div className='layout'>
             <section className='card list-pane'>
               <div className='toolbar'>
@@ -319,6 +471,7 @@ export default function FeedbackAdminPage() {
               )}
             </section>
           </div>
+          </>
         )}
 
         {error ? <p className='error' role='alert'>{error}</p> : null}
@@ -368,9 +521,15 @@ export default function FeedbackAdminPage() {
           border-radius: 18px;
           box-shadow: 0 12px 32px rgba(52, 44, 36, 0.06);
         }
-        .login {
+        .gate,
+        .bind-wrap {
           max-width: 420px;
-          margin: 48px auto 0;
+          margin: 28px auto 0;
+          display: grid;
+          gap: 16px;
+        }
+        .login {
+          margin: 0;
           padding: 28px;
           display: grid;
           gap: 12px;
