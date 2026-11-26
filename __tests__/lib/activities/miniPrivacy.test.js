@@ -5,13 +5,14 @@ import { wechatJson } from '@/lib/activities/miniIdentity'
 jest.mock('@/lib/activities/miniModeration', () => ({ accessToken: jest.fn() }))
 jest.mock('@/lib/activities/miniIdentity', () => ({ MINI_PREFIX: 'test:', wechatJson: jest.fn() }))
 const database = () => ({ get: jest.fn().mockResolvedValue(null), set: jest.fn() })
-test('develop and release declarations are compared without returning owner data or credentials', async () => {
+test('third-party commit declarations are compared without returning owner data or credentials', async () => {
   const redis = database()
   process.env.WUZAI_MINI_APP_ID = 'wx5e2090025edf9077'
   accessToken.mockResolvedValue('private-token')
   wechatJson.mockResolvedValueOnce({ code_exist: 1, privacy_list: ['UserInfo'], setting_list: [{ privacy_key: 'UserInfo', privacy_label: '头像', privacy_text: '展示头像' }], owner_setting: { contact_email: 'private@example.com' } })
     .mockResolvedValueOnce({ code_exist: 1, privacy_list: ['UserInfo', 'Album'], setting_list: [{ privacy_key: 'UserInfo', privacy_text: '' }] })
   const result = await mediaReadiness(redis)
+  expect(result.scope).toBe('third_party_commit')
   expect(result.versions[0].declared).toEqual([{ key: 'UserInfo', label: '头像' }])
   expect(result.versions[1].missingDescriptions).toEqual(['UserInfo', 'Album'])
   expect(wechatJson.mock.calls.map(row => JSON.parse(row[1].body).privacy_ver)).toEqual([1, 2])
@@ -47,4 +48,19 @@ test('nested privacy settings are recognized while owner details stay excluded',
   expect(result.versions[0].available).toBe(true)
   expect(result.versions[0].declared).toEqual([{ key: 'UserInfo', label: '' }])
   expect(JSON.stringify(result)).not.toContain('contact_phone')
+})
+
+test.each([0, undefined])('unverified commit code %s cannot diagnose native IDE privacy declarations', async codeExist => {
+  const redis = database()
+  accessToken.mockResolvedValue('token')
+  wechatJson.mockResolvedValue({ errcode: 0, code_exist: codeExist, privacy_list: [], setting_list: [], update_time: 0 })
+  const result = await mediaReadiness(redis)
+  expect(result.versions).toHaveLength(2)
+  for (const version of result.versions) {
+    expect(version.available).toBe(false)
+    expect(version.reason).toBe('third_party_commit_not_verified')
+    expect(version).not.toHaveProperty('declared')
+    expect(version).not.toHaveProperty('missingDescriptions')
+  }
+  expect(redis.set).not.toHaveBeenCalled()
 })
