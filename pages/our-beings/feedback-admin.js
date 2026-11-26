@@ -127,7 +127,7 @@ function AdminScan({ onSession, label = '微信扫码' }) {
               ×
             </button>
             <h3>微信扫码进入</h3>
-            <p>用微信扫这个码，在打开的页面上点确认。码里没有管理密钥。</p>
+            <p>只有已绑定的微信可以扫码进入。这个网页确认已经关闭，任意微信点按钮都不能登录。请使用管理密钥。</p>
             {image ? <img src={image} alt='微信扫码登录二维码' /> : null}
             {message ? <p className={phase === 'error' ? 'scan-error' : ''}>{message}</p> : null}
             {phase === 'waiting' ? <p>等待手机确认…</p> : null}

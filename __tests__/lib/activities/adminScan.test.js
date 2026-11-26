@@ -2,6 +2,7 @@
 import {
   adminSessionValid,
   beginAdminScan,
+  confirmAdminScan,
   confirmWebScan,
   readAdminScan
 } from '@/lib/activities/adminScan'
@@ -28,22 +29,35 @@ function memoryRedis() {
 }
 
 describe('admin wechat scan', () => {
-  test('a phone confirmation admits the computer that showed the code', async () => {
+  test('a webpage confirmation does not admit any WeChat account', async () => {
     const redis = memoryRedis()
     const scan = await beginAdminScan(redis)
     expect(scan.url).toContain('/our-beings/feedback-scan?ticket=')
     expect(scan.url).not.toContain('pages/admin-gate')
-    await confirmWebScan(redis, scan.ticket)
-    const approved = await readAdminScan(redis, scan.ticket)
-    expect(approved.status).toBe('approved')
-    expect(approved.session).toMatch(/^scan_[A-Za-z0-9_-]{43}$/)
-    expect(await adminSessionValid(redis, approved.session)).toBe(true)
+    await expect(confirmWebScan(redis, scan.ticket)).rejects.toMatchObject({
+      code: 'admin_wechat_denied',
+      status: 403
+    })
+    expect((await readAdminScan(redis, scan.ticket)).status).toBe('pending')
   })
 
-  test('an expired ticket cannot be confirmed', async () => {
+  test('only the bound WeChat identity can admit the computer', async () => {
     const redis = memoryRedis()
-    await expect(confirmWebScan(redis, 'a'.repeat(32))).rejects.toMatchObject({
-      code: 'invalid_ticket'
-    })
+    const owner = 'ownerOpenId_1'
+    const bind = await beginAdminScan(redis)
+    const raw = await redis.get('wuzai:admin-scan:ticket:' + bind.ticket)
+    const record = JSON.parse(raw)
+    record.purpose = 'bind'
+    await redis.set('wuzai:admin-scan:ticket:' + bind.ticket, JSON.stringify(record))
+    await confirmAdminScan(redis, { ticket: bind.ticket, openId: owner })
+
+    const scan = await beginAdminScan(redis)
+    await expect(
+      confirmAdminScan(redis, { ticket: scan.ticket, openId: 'someoneElse_2' })
+    ).rejects.toMatchObject({ code: 'admin_wechat_denied', status: 403 })
+    await confirmAdminScan(redis, { ticket: scan.ticket, openId: owner })
+    const approved = await readAdminScan(redis, scan.ticket)
+    expect(approved.status).toBe('approved')
+    expect(await adminSessionValid(redis, approved.session)).toBe(true)
   })
 })
