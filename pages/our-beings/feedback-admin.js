@@ -361,10 +361,6 @@ export default function FeedbackAdminPage() {
             <section className='card login'>
               <p className='eyebrow'>Our Being · 内部</p>
               <h1>小程序后台</h1>
-              <p className='hint'>
-                <span>只有你的微信可以进入。</span>
-                <span>扫码确认后，电脑打开后台。</span>
-              </p>
               <AdminScan onSession={acceptToken} label='微信扫码登录' />
             </section>
           </div>
@@ -582,17 +578,8 @@ export default function FeedbackAdminPage() {
           margin-bottom: 14px;
         }
         .login h1 {
-          margin: 0 0 18px;
-          font-size: 36px;
-        }
-        .login .hint {
           margin: 0 0 28px;
-          font-size: 15px;
-          line-height: 1.9;
-        }
-        .login .hint span {
-          display: block;
-          white-space: nowrap;
+          font-size: 36px;
         }
         @media (max-width: 640px) {
           .gate-page {
