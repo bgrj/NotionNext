@@ -516,6 +516,22 @@ const getSEOMeta = (props, router, locale) => {
         slug: 'category',
         type: 'website'
       }
+    case '/our-beings/feedback-admin':
+      return {
+        title: 'ourbeing小程序后台管理 · Our Being',
+        description: '内部管理',
+        image: `${siteInfo?.pageCover}`,
+        slug: 'our-beings/feedback-admin',
+        type: 'website'
+      }
+    case '/our-beings/feedback-scan':
+      return {
+        title: '确认进入后台 · Our Being',
+        description: '确认后，电脑上的后台会打开。',
+        image: `${siteInfo?.pageCover}`,
+        slug: 'our-beings/feedback-scan',
+        type: 'website'
+      }
     default:
       const category = Array.isArray(post?.category)
         ? post?.category?.[0]
