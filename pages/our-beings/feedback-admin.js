@@ -498,7 +498,7 @@ export default function FeedbackAdminPage() {
               )}
             </section>
           </div>
-        )}
+        ) : null}
 
         {error ? <p className='error' role='alert'>{error}</p> : null}
       </main>
