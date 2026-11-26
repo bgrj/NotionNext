@@ -39,3 +39,12 @@ test('an unknown response shape cannot be mistaken for an empty valid declaratio
   expect(JSON.stringify(result)).not.toContain('never-return')
   expect(redis.set).not.toHaveBeenCalled()
 })
+test('nested privacy settings are recognized while owner details stay excluded', async () => {
+  const redis = database()
+  accessToken.mockResolvedValue('token')
+  wechatJson.mockResolvedValue({ errcode: 0, privacy_info: { code_exist: 1, setting_list: [{ privacy_key: 'UserInfo', privacy_text: 'show photo' }] }, owner_setting: { contact_phone: 'private' } })
+  const result = await mediaReadiness(redis)
+  expect(result.versions[0].available).toBe(true)
+  expect(result.versions[0].declared).toEqual([{ key: 'UserInfo', label: '' }])
+  expect(JSON.stringify(result)).not.toContain('contact_phone')
+})
