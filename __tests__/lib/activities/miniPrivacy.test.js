@@ -30,3 +30,12 @@ test('cached checks make no WeChat request and unavailable versions are never ca
   expect(result.versions.every(row => !row.available)).toBe(true)
   expect(redis.set).not.toHaveBeenCalled()
 })
+test('an unknown response shape cannot be mistaken for an empty valid declaration', async () => {
+  const redis = database()
+  accessToken.mockResolvedValue('token')
+  wechatJson.mockResolvedValue({ errcode: 0, privacy_info: { private_contact: 'never-return' } })
+  const result = await mediaReadiness(redis)
+  expect(result.versions[0]).toEqual({ version: 1, available: false, reason: 'unexpected_response', responseFields: ['errcode', 'privacy_info'] })
+  expect(JSON.stringify(result)).not.toContain('never-return')
+  expect(redis.set).not.toHaveBeenCalled()
+})
