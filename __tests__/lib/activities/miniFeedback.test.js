@@ -9,6 +9,7 @@ import {
   listMiniFeedback,
   submitMiniFeedback,
   updateMiniFeedbackStatus,
+  summarizeFeedback,
   validateFeedback
 } from '@/lib/activities/miniFeedback'
 const actor = { id: 'wx:app:owner', user: { number: 7 } }
@@ -126,13 +127,24 @@ test('screenshots are decoded, metadata stripped, resized and kept out of public
   expect(result.screenshots).toBeUndefined()
   expect(result.alipayCode).toBeUndefined()
 })
-test('invalid data and images cannot be saved; quotas fail explicitly', async () => {
+test('description-only feedback is accepted without a screenshot, collection code or severity choice', async () => {
+  const redis = database()
+  const result = await submitMiniFeedback(redis, actor, { description: '页面卡住', clientRequestId: 'feedback-description-only-123' })
+  expect(result).toMatchObject({ status: 'pending', rewardFen: 500 })
+  const stored = JSON.parse(redis.rows.get(feedbackKey(result.id)))
+  expect(stored).toMatchObject({ description: '页面卡住', alipayCode: '', screenshots: [], severity: 'minor' })
+  expect(summarizeFeedback(stored).hasAlipayCode).toBe(false)
+  expect((await listMiniFeedback(redis)).items[0].screenshotCount).toBe(0)
+  expect((await getMiniFeedback(redis, result.id)).alipayCode).toBe('')
+})
+
+test('blank descriptions and invalid supplied images cannot be saved; quotas fail explicitly', async () => {
   const redis = database()
   const code = await alipayCode()
   const input = { description: '打开首页之后点击活动封面，等待一分钟仍然不能进入详情页面。',
     alipayCode: code, severity: 'major', clientRequestId: 'feedback-test-123456', screenshots: [] }
   await expect(submitMiniFeedback(redis, null, input)).rejects.toMatchObject({ status: 401 })
-  for (const patch of [{ description: '短' }, { alipayCode: '' }, { alipayCode: 'not-base64' }, { severity: 'forged' }, { clientRequestId: '../id' }, { screenshots: Array(5).fill('a') }, { screenshots: ['https://example.com/private.png'] }])
+  for (const patch of [{ description: '' }, { description: ' \n ' }, { description: 'a'.repeat(2001) }, { alipayCode: 'not-base64' }, { alipayCode: 123 }, { severity: 'forged' }, { clientRequestId: '../id' }, { screenshots: null }, { screenshots: Array(5).fill('a') }, { screenshots: ['https://example.com/private.png'] }])
     expect(() => validateFeedback({ ...input, ...patch })).toThrow()
   await expect(submitMiniFeedback(redis, actor, { ...input, screenshots: [Buffer.from('invalid').toString('base64')] }))
     .rejects.toMatchObject({ code: 'invalid_feedback_image' })
@@ -141,6 +153,14 @@ test('invalid data and images cannot be saved; quotas fail explicitly', async ()
   expect(redis.eval).not.toHaveBeenCalled()
   redis.eval.mockResolvedValue('limited')
   await expect(submitMiniFeedback(redis, actor, input)).rejects.toMatchObject({ code: 'feedback_limit', status: 429 })
+})
+
+test('omitted and empty optional fields produce the same retry receipt', async () => {
+  const redis = database()
+  const input = { description: '点击后没有反应', clientRequestId: 'feedback-optional-retry-123' }
+  const first = await submitMiniFeedback(redis, actor, input)
+  expect(await submitMiniFeedback(redis, actor, { ...input, alipayCode: '', screenshots: [], severity: 'minor' })).toEqual(first)
+  expect(redis.rows.size).toBe(1)
 })
 test('admin can list, open and update feedback without exposing images in the list', async () => {
   const redis = database()
