@@ -1,5 +1,7 @@
 /** @jest-environment node */
 import sharp from 'sharp'
+import { verifiedBugKey, rewardOwner } from '@/lib/activities/membershipRewards'
+import { rewardRedis } from '@/test-support/activities/rewardRedis'
 import {
   feedbackIndex,
   feedbackKey,
@@ -19,6 +21,7 @@ function database() {
   const rows = new Map()
   const index = []
   const ttl = new Map()
+  const rewardDb = rewardRedis()
   return {
     rows,
     get: jest.fn(async key => rows.get(key) || null),
@@ -35,6 +38,12 @@ function database() {
       return 'OK'
     }),
     eval: jest.fn(async (_script, _count, key, _quota, _index, value, _retention, now, id) => {
+      if (_script.includes('feedback-review-v2')) {
+        rewardDb.rows.set(key, rows.get(key))
+        const result = await rewardDb.eval(_script, _count, key, _quota, _index, value, _retention, now, id)
+        rows.set(key, rewardDb.rows.get(key))
+        return result
+      }
       if (!rows.has(key)) {
         rows.set(key, value)
         ttl.set(key, 90 * 86400)
@@ -59,6 +68,35 @@ test('feedback uses authenticated identity, a fixed pending reward, and a privat
   expect(row.contact).toBeUndefined()
   expect(JSON.stringify(result)).not.toContain(code)
   expect(redis.eval.mock.calls[0]).toContain(90 * 86400)
+})
+
+test('re-reviewing the same bug never inflates its membership contribution, and invalidation removes it', async () => {
+  const db = rewardRedis()
+  const owner = rewardOwner(actor)
+  const id = 'c'.repeat(32)
+  db.rows.set(feedbackKey(id), JSON.stringify({ id, owner, severity: 'minor', status: 'pending' }))
+  await updateMiniFeedbackStatus(db, id, { status: 'reviewed' })
+  await updateMiniFeedbackStatus(db, id, { status: 'paid' })
+  expect(await db.scard(verifiedBugKey(owner))).toBe(1)
+  await updateMiniFeedbackStatus(db, id, { status: 'duplicate' })
+  expect(await db.scard(verifiedBugKey(owner))).toBe(0)
+  await updateMiniFeedbackStatus(db, id, { status: 'rejected' })
+  expect(await db.scard(verifiedBugKey(owner))).toBe(0)
+})
+
+test('suggestions never count; previously accepted bug IDs survive image retention expiry', async () => {
+  const db = rewardRedis()
+  const owner = rewardOwner(actor)
+  const id = 'd'.repeat(32)
+  db.rows.set(feedbackKey(id), JSON.stringify({ id, owner, severity: 'suggestion', status: 'pending' }))
+  await updateMiniFeedbackStatus(db, id, { status: 'paid' })
+  expect(await db.scard(verifiedBugKey(owner))).toBe(0)
+  db.rows.set(feedbackKey(id), JSON.stringify({ id, owner, severity: 'major', status: 'reviewed' }))
+  db.reports.push(id)
+  const { readAnnualMembership } = require('@/lib/activities/annualMembership')
+  await readAnnualMembership(db, actor)
+  db.rows.delete(feedbackKey(id))
+  expect((await readAnnualMembership(db, actor)).offers.find(offer => offer.id === 'beta').count).toBe(1)
 })
 test('a lost-response retry returns the same receipt and never stores another reward', async () => {
   const redis = database()
@@ -119,6 +157,6 @@ test('admin can list, open and update feedback without exposing images in the li
   const updated = await updateMiniFeedbackStatus(redis, created.id, { status: 'paid', note: '已转账' })
   expect(updated).toMatchObject({ status: 'paid', note: '已转账' })
   expect(updated.statusLabel).toBe('已发奖')
-  expect(redis.set).toHaveBeenCalled()
+  expect(JSON.parse(redis.rows.get(feedbackKey(created.id)))).toMatchObject({ status: 'paid', note: '已转账' })
   expect(feedbackIndex).toContain('feedback-index')
 })

@@ -39,12 +39,12 @@ import { listSubjects, rememberSubject } from '@/lib/activities/subjects'
 import { submitMiniFeedback } from '@/lib/activities/miniFeedback'
 import { deleteMiniDraft } from '@/lib/activities/miniDrafts'
 import { confirmAdminScanIfPending } from '@/lib/activities/adminScan'
+import { readAnnualMembership, assertAnnualMember, claimAnnualMembership } from '@/lib/activities/annualMembership'
 import { mediaReadiness } from '@/lib/activities/miniPrivacy'
 
 export const config = { api: { bodyParser: { sizeLimit: '4500kb' } } }
 const PUBLIC = [
   'list',
-  'get',
   'locations',
   'presenceStats',
   'publicWritings',
@@ -55,6 +55,9 @@ const ACTIONS = [
   ...PUBLIC,
   'login',
   'profile',
+  'get',
+  'membership',
+  'claimMembership',
   'updateProfile',
   'mine',
   'create',
@@ -140,6 +143,10 @@ export default async function handler(req, res) {
           message: '已确认。请回到电脑上的后台。'
         })
     }
+    if (action === 'membership')
+      return res.status(200).json({ version: 1, membership: await readAnnualMembership(redis, actor) })
+    if (action === 'claimMembership')
+      return res.status(200).json({ version: 1, ...(await claimAnnualMembership(redis, actor, input)) })
     if (action === 'deleteDraft')
       return res.status(200).json({ version: 1, deleted: await deleteMiniDraft(redis, actor, input) })
     if (action === 'mediaReadiness')
@@ -257,6 +264,11 @@ export default async function handler(req, res) {
     const service = createActivityService(
       miniActivityStore(redis, action, input, actor, ticket)
     )
+    if (action === 'publish' || action === 'reserve') await assertAnnualMember(redis, actor)
+    if (action === 'edit') {
+      const current = await service('get', { id: input.id }, actor)
+      if (current.event?.state === 'published') await assertAnnualMember(redis, actor)
+    }
     if (action === 'create' || action === 'publish')
       await assertCredit(redis, actor, 'publish')
     if (action === 'reserve') await assertCredit(redis, actor, 'participate')

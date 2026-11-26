@@ -5,6 +5,8 @@ import { resolveMiniActor } from '@/lib/activities/miniIdentity'
 import { createActivityService } from '@/lib/activities/service'
 import { moderateMini } from '@/lib/activities/miniModeration'
 import { assertCredit } from '@/lib/activities/credit'
+import { assertAnnualMember } from '@/lib/activities/annualMembership'
+jest.mock('@/lib/activities/annualMembership', () => ({ readAnnualMembership: jest.fn(), assertAnnualMember: jest.fn(), claimAnnualMembership: jest.fn() }))
 jest.mock('@/lib/activities/credit',()=>({assertCredit:jest.fn(),readCredit:jest.fn(),recordBreach:jest.fn()}))
 jest.mock('@/lib/activities/redisStore', () => ({ activityRedis: jest.fn() }))
 jest.mock('@/lib/activities/identity', () => ({
@@ -41,6 +43,7 @@ describe('native HTTPS API boundary', () => {
     activityRedis.mockReturnValue({})
     resolveMiniActor.mockResolvedValue(null)
     createActivityService.mockReturnValue(run)
+    assertAnnualMember.mockReset()
   })
   test('capabilities explains the HTTPS transport without exposing credentials or using CloudBase', async () => {
     process.env.WUZAI_MINI_APP_SECRET = 'private-value'
@@ -70,13 +73,21 @@ describe('native HTTPS API boundary', () => {
     expect(run).toHaveBeenCalledWith('list', {}, null)
     expect(res.json).toHaveBeenCalledWith({ version: 1, events: [] })
   })
+  test('an authenticated non-member cannot reserve even if the client bypasses the membership page', async () => {
+    resolveMiniActor.mockResolvedValue({ id: 'owner' })
+    assertAnnualMember.mockRejectedValue(Object.assign(new Error('会员未开通'), { code: 'membership_required', status: 402 }))
+    const res = response()
+    await handler({ method: 'POST', headers: {}, body: { action: 'reserve', input: { id: 'any', active: true, priceFen: 1 } } }, res)
+    expect(res.status).toHaveBeenCalledWith(402)
+    expect(run).not.toHaveBeenCalled()
+  })
   test.each([
-    'reserve',
+    'reserve', 'get', 'membership', 'claimMembership',
     'mine',
     'profile',
     'publish',
     'saveWriting',
-    'uploadCover', 'submitFeedback', 'mediaReadiness'
+    'uploadCover', 'submitFeedback', 'mediaReadiness', 'deleteDraft'
     , 'beginCompliance', 'acceptCompliance', 'reviewDescription'
   ])('anonymous %s cannot reach private service operations', async action => {
     const res = response()
