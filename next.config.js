@@ -351,15 +351,6 @@ const nextConfig = {
             ]
           },
           {
-            source: '/assets/ourbeing/:path*',
-            headers: [
-              {
-                key: 'Cache-Control',
-                value: 'public, max-age=31536000, immutable'
-              }
-            ]
-          },
-          {
             source: '/vendor/fontawesome/:path*',
             headers: [
               {
