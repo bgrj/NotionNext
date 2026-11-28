@@ -1,0 +1,1540 @@
+{
+  "version": "curated-20261128-v2",
+  "count": 36,
+  "generated": false,
+  "assets": [
+    {
+      "file": "capital-1.jpg",
+      "series": "capital",
+      "title": "资本论",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "marx-vuillier"
+      ],
+      "sources": [
+        {
+          "id": "marx-vuillier",
+          "commons": "File:Karl Marx by Gaston Vuillier.jpg",
+          "author": "Gaston Vuillier (1845–1915)",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "subject": "卡尔·马克思",
+          "series": [
+            "capital",
+            "human-thought"
+          ],
+          "medium": "1883年人物版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AKarl_Marx_by_Gaston_Vuillier.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/marx-vuillier.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 50366,
+      "sha256": "83429eb009d8237b17c98eff21449d1dc5906a719f2b792a94236edfb48d3e7c"
+    },
+    {
+      "file": "capital-2.jpg",
+      "series": "capital",
+      "title": "资本论",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "iron-coal"
+      ],
+      "sources": [
+        {
+          "id": "iron-coal",
+          "commons": "File:William Bell Scott - Iron and Coal.jpg",
+          "author": "William Bell Scott",
+          "subject": "工业生产与劳动者",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AWilliam_Bell_Scott_-_Iron_and_Coal.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/iron-coal.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 39682,
+      "sha256": "8469beacdad8868b37fdc45bdaab9e10e67b92e845e219579a6f3a19d72c3659"
+    },
+    {
+      "file": "capital-3.jpg",
+      "series": "capital",
+      "title": "资本论",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "marx-collier"
+      ],
+      "sources": [
+        {
+          "id": "marx-collier",
+          "commons": "File:Karl Marx by John Collier.jpg",
+          "author": "John Collier",
+          "subject": "卡尔·马克思油画肖像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AKarl_Marx_by_John_Collier.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/marx-collier.img",
+          "series": [],
+          "medium": "既有人物绘画／版画"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 18236,
+      "sha256": "71318855fcd023bc85b8034ed27706abd412b6d380f9ea056c0443d3197b02bc"
+    },
+    {
+      "file": "hanshu-1.jpg",
+      "series": "hanshu",
+      "title": "汉书",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "ban-gu"
+      ],
+      "sources": [
+        {
+          "id": "ban-gu",
+          "commons": "File:Ban Gu.jpg",
+          "author": "《晩笑堂竹荘畫傳》1921年刊本，绘者待考",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "subject": "班固",
+          "series": [
+            "hanshu",
+            "biography"
+          ],
+          "medium": "古籍人物绘画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ABan_Gu.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/ban-gu.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 37149,
+      "sha256": "ad15e4a1fa92052e565e2d9ee0d6042930ffb7d8ab4555c2d74530d165f99c9c"
+    },
+    {
+      "file": "hanshu-2.jpg",
+      "series": "hanshu",
+      "title": "汉书",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "han-chariots"
+      ],
+      "sources": [
+        {
+          "id": "han-chariots",
+          "commons": "File:Eastern Han Fresco Tomb- 9 Chariots, 70+ Men & 50 Horses 04.jpg",
+          "author": "汉代壁画，作者不详；复现图：Gary Todd",
+          "subject": "汉代人物与车马",
+          "license": "CC0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AEastern_Han_Fresco_Tomb-_9_Chariots%2C_70%2B_Men_%26_50_Horses_04.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/han-chariots.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 17739,
+      "sha256": "b64c684f36eb7664cdb63626810a80e07d1aff91253fedafbc1e302010c7fb63"
+    },
+    {
+      "file": "hanshu-3.jpg",
+      "series": "hanshu",
+      "title": "汉书",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "han-figures"
+      ],
+      "sources": [
+        {
+          "id": "han-figures",
+          "commons": "File:Fresco from a Western Han Dynasty Tomb in Sian, Shensi.jpg",
+          "author": "汉代墓室壁画，作者不详",
+          "subject": "汉代人物绘画",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AFresco_from_a_Western_Han_Dynasty_Tomb_in_Sian%2C_Shensi.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/han-figures.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 30759,
+      "sha256": "a455b1eac24f9b39f7adf4d835475b50a9ec3d241d3efdcfabe4d76d7bcc975e"
+    },
+    {
+      "file": "lunyu-1.jpg",
+      "series": "lunyu",
+      "title": "论语",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "confucius-mayuan"
+      ],
+      "sources": [
+        {
+          "id": "confucius-mayuan",
+          "commons": "File:Ma Yuan-Confucius.png",
+          "author": "马远（传）",
+          "subject": "孔子人物画",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AMa_Yuan-Confucius.png",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/confucius-mayuan.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 19044,
+      "sha256": "ad24d5495fb805ec87283fb8e7894e563b3e83550da0436f120b478f97c9129c"
+    },
+    {
+      "file": "lunyu-2.jpg",
+      "series": "lunyu",
+      "title": "论语",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "confucius-disciples"
+      ],
+      "sources": [
+        {
+          "id": "confucius-disciples",
+          "commons": "File:Confucius Portrait, Kongzi (Confucius) Family Mansion, Qufu (13044361055).jpg",
+          "author": "原画作者不详；复现图：Xiquinho Silva",
+          "subject": "孔子与弟子绘画",
+          "license": "CC0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AConfucius_Portrait%2C_Kongzi_(Confucius)_Family_Mansion%2C_Qufu_(13044361055).jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/confucius-disciples.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 28742,
+      "sha256": "c972ddafa4330de8952a9a5bbc61a9b2e6d623e460954dac3359e482939214ff"
+    },
+    {
+      "file": "lunyu-3.jpg",
+      "series": "lunyu",
+      "title": "论语",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "confucius-seated"
+      ],
+      "sources": [
+        {
+          "id": "confucius-seated",
+          "commons": "File:Confucius Portrait, Kongzi (Confucius) Family Mansion, Qufu (13044702754).jpg",
+          "author": "原画作者不详；复现：Xiquinho Silva",
+          "subject": "孔子端坐人物画",
+          "license": "CC0",
+          "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AConfucius_Portrait%2C_Kongzi_(Confucius)_Family_Mansion%2C_Qufu_(13044702754).jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/confucius-seated.img",
+          "series": [],
+          "medium": "既有人物绘画／版画"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 28386,
+      "sha256": "1ff746d78c33dab5e04788d67eab90e5ff3a4a646c4e0b7b3d8f47c5c337c29e"
+    },
+    {
+      "file": "xianwen-1.jpg",
+      "series": "xianwen",
+      "title": "增广贤文",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "boatbuilders"
+      ],
+      "sources": [
+        {
+          "id": "boatbuilders",
+          "commons": "File:Szene aus China Bootsbauer c1780.jpg",
+          "author": "作者不详，约1780年",
+          "subject": "造船工人的劳动与日常生活",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ASzene_aus_China_Bootsbauer_c1780.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/boatbuilders.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 30156,
+      "sha256": "7185f423a59ea5e7103154e7689b751e0a9ee49a171761ea61d5c3de96e62fa2"
+    },
+    {
+      "file": "xianwen-2.jpg",
+      "series": "xianwen",
+      "title": "增广贤文",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "blacksmith"
+      ],
+      "sources": [
+        {
+          "id": "blacksmith",
+          "commons": "File:Szene aus China Schmied c1780.jpg",
+          "author": "作者不详，约1780年",
+          "subject": "铁匠的劳动与日常生活",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ASzene_aus_China_Schmied_c1780.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/blacksmith.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 31035,
+      "sha256": "d1467262f0985b3861eb9d0a43898956ea8bede47b17a18b63d2e022bd6cc1a7"
+    },
+    {
+      "file": "xianwen-3.jpg",
+      "series": "xianwen",
+      "title": "增广贤文",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "peddler"
+      ],
+      "sources": [
+        {
+          "id": "peddler",
+          "commons": "File:The Knickknack Peddler2.jpg",
+          "author": "苏汉臣",
+          "subject": "《货郎图》：市井生活与人物交往",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AThe_Knickknack_Peddler2.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/peddler.img",
+          "series": [],
+          "medium": "既有人物绘画／版画"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 46132,
+      "sha256": "0ab6c1e1ce2f9419374c751e7fbeec8b9e237f107a1373e15253eff9e5165477"
+    },
+    {
+      "file": "biography-1.jpg",
+      "series": "biography",
+      "title": "人物传",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "sima-qian"
+      ],
+      "sources": [
+        {
+          "id": "sima-qian",
+          "commons": "File:Si maqian.jpg",
+          "author": "原画作者不详",
+          "subject": "司马迁肖像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ASi_maqian.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/sima-qian.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 28544,
+      "sha256": "d03ae2235f8daeb2599b30fb70413fa92486304e42b2b3ed73af1576ae94bad0"
+    },
+    {
+      "file": "biography-2.jpg",
+      "series": "biography",
+      "title": "人物传",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "li-bai"
+      ],
+      "sources": [
+        {
+          "id": "li-bai",
+          "commons": "File:唐名臣像-14-唐翰林供奉李白.jpg",
+          "author": "《唐名臣像》",
+          "subject": "李白肖像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3A%E5%94%90%E5%90%8D%E8%87%A3%E5%83%8F-14-%E5%94%90%E7%BF%B0%E6%9E%97%E4%BE%9B%E5%A5%89%E6%9D%8E%E7%99%BD.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/li-bai.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 19870,
+      "sha256": "6f86474b2662cef87403089b5661e70dec2b3bc416434326d6dee7c6cf4fb582"
+    },
+    {
+      "file": "biography-3.jpg",
+      "series": "biography",
+      "title": "人物传",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "su-shi"
+      ],
+      "sources": [
+        {
+          "id": "su-shi",
+          "commons": "File:Song dynasty poet Su Shi.jpg",
+          "author": "原画作者不详",
+          "subject": "苏轼人物画",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ASong_dynasty_poet_Su_Shi.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/su-shi.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 22725,
+      "sha256": "1554e32c367d80239f1779b78ba4190ea1da30fb651b96ac5302968a08a0bc73"
+    },
+    {
+      "file": "human-thought-1.jpg",
+      "series": "human-thought",
+      "title": "人类思想史",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "athens"
+      ],
+      "sources": [
+        {
+          "id": "athens",
+          "commons": "File:La scuola di Atene.jpg",
+          "author": "Raphael",
+          "subject": "柏拉图、亚里士多德与古代哲学群像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ALa_scuola_di_Atene.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/athens.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 29218,
+      "sha256": "4512c37272d6982660fba43f5a1d9281f28e82a7aaba6e3bc0abfc0c326ece92"
+    },
+    {
+      "file": "human-thought-2.jpg",
+      "series": "human-thought",
+      "title": "人类思想史",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "descartes"
+      ],
+      "sources": [
+        {
+          "id": "descartes",
+          "commons": "File:Frans Hals - Portret van René Descartes.jpg",
+          "author": "Frans Hals（传）",
+          "subject": "笛卡尔肖像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AFrans_Hals_-_Portret_van_Ren%C3%A9_Descartes.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/descartes.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 21461,
+      "sha256": "a110ba8828894addcdb994f4a8bbca94ca364de36e4cb689ced281e8fb6f9ff8"
+    },
+    {
+      "file": "human-thought-3.jpg",
+      "series": "human-thought",
+      "title": "人类思想史",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "voltaire-frederick"
+      ],
+      "sources": [
+        {
+          "id": "voltaire-frederick",
+          "commons": "File:Friedrich II. von Preußen und Voltaire.jpg",
+          "author": "Pierre Charles Baquoy，依 Nicolas André Monsiau 原画；复现图：James Steakley",
+          "subject": "伏尔泰与腓特烈二世的思想交流",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AFriedrich_II._von_Preu%C3%9Fen_und_Voltaire.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/voltaire-frederick.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 47128,
+      "sha256": "e6bad63166c6c3c034d614eaa51b68dd979d38c4bbbdc11fc8d60f9ac88e7984"
+    },
+    {
+      "file": "chinese-thought-1.jpg",
+      "series": "chinese-thought",
+      "title": "中国思想史",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "laozi-buffalo"
+      ],
+      "sources": [
+        {
+          "id": "laozi-buffalo",
+          "commons": "File:Lao Zi by Ikarashi Shunmei.jpg",
+          "author": "Igarashi Shunmei",
+          "subject": "老子骑牛人物绘画",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ALao_Zi_by_Ikarashi_Shunmei.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/laozi-buffalo.img",
+          "series": [],
+          "medium": "既有人物绘画／版画"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 43801,
+      "sha256": "8cd58f25bccd325cf09387b5320b11bbf06d17197ad0b34a518d0cb3d18326c3"
+    },
+    {
+      "file": "chinese-thought-2.jpg",
+      "series": "chinese-thought",
+      "title": "中国思想史",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "seven-worthies"
+      ],
+      "sources": [
+        {
+          "id": "seven-worthies",
+          "commons": "File:SevenWorthies.JPG",
+          "author": "原画作者不详",
+          "subject": "竹林七贤，魏晋人物场景",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ASevenWorthies.JPG",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/seven-worthies.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 31648,
+      "sha256": "bdea7904cef6b2ff10823ac5d1340650e0b6db2a4f0e8ef65db1d4ce83a2921f"
+    },
+    {
+      "file": "chinese-thought-3.jpg",
+      "series": "chinese-thought",
+      "title": "中国思想史",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "wang-yangming"
+      ],
+      "sources": [
+        {
+          "id": "wang-yangming",
+          "commons": "File:蔡世新 王阳明肖像轴.jpg",
+          "author": "蔡世新",
+          "subject": "王阳明肖像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3A%E8%94%A1%E4%B8%96%E6%96%B0_%E7%8E%8B%E9%98%B3%E6%98%8E%E8%82%96%E5%83%8F%E8%BD%B4.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/wang-yangming.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 8336,
+      "sha256": "719d689853cff3fb9d33ed123d74d916d8c9f443f5884f187a5f1946548e9ca4"
+    },
+    {
+      "file": "arendt-1.jpg",
+      "series": "arendt",
+      "title": "汉娜·阿伦特",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "arendt-albarluque"
+      ],
+      "sources": [
+        {
+          "id": "arendt-albarluque",
+          "commons": "File:Hannah Arendt - Retrato.png",
+          "author": "Albarluque",
+          "license": "CC BY-SA 3.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/3.0/",
+          "subject": "汉娜·阿伦特",
+          "series": [
+            "arendt"
+          ],
+          "medium": "2014年数字人物绘画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AHannah_Arendt_-_Retrato.png",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/arendt-albarluque.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 10544,
+      "sha256": "b10aad423829b23908020505d074c4f94638eb054c9d88ad00839abc24f5f8e7"
+    },
+    {
+      "file": "arendt-2.jpg",
+      "series": "arendt",
+      "title": "汉娜·阿伦特",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "public-carriage"
+      ],
+      "sources": [
+        {
+          "id": "public-carriage",
+          "commons": "File:Honoré Daumier - The Third-class Carriage - WGA5964.jpg",
+          "author": "Honoré Daumier",
+          "subject": "普通人在公共车厢中的共同生活",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AHonor%C3%A9_Daumier_-_The_Third-class_Carriage_-_WGA5964.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/public-carriage.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 23070,
+      "sha256": "dbaffc4d470faec3642c4505a993ade1b750dc5fa17d6effc5f4f41758afe48f"
+    },
+    {
+      "file": "arendt-3.jpg",
+      "series": "arendt",
+      "title": "汉娜·阿伦特",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "jury"
+      ],
+      "sources": [
+        {
+          "id": "jury",
+          "commons": "File:The Jury (1861).jpg",
+          "author": "John Morgan",
+          "subject": "法庭中的审判与责任",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AThe_Jury_(1861).jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/jury.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 11738,
+      "sha256": "c740ec2e9c7ee7796e98fd782307e0e4e536688699c3d3ae1fcbff83d544dc76"
+    },
+    {
+      "file": "wittgenstein-1.jpg",
+      "series": "wittgenstein",
+      "title": "维特根斯坦",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "wittgenstein-tonnis"
+      ],
+      "sources": [
+        {
+          "id": "wittgenstein-tonnis",
+          "commons": "File:Ludwig Wittgenstein, Pencil on board.jpg",
+          "author": "Christiaan Tonnis",
+          "license": "CC BY-SA 2.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/2.0/",
+          "subject": "路德维希·维特根斯坦",
+          "series": [
+            "wittgenstein",
+            "human-thought"
+          ],
+          "medium": "1985年铅笔画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ALudwig_Wittgenstein%2C_Pencil_on_board.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/wittgenstein-tonnis.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 24301,
+      "sha256": "efa10de75e821c64a9aba7e7dbed276ac52719e0aaab8f4c934a1c0dad798ace"
+    },
+    {
+      "file": "wittgenstein-2.jpg",
+      "series": "wittgenstein",
+      "title": "维特根斯坦",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "tractatus-cube"
+      ],
+      "sources": [
+        {
+          "id": "tractatus-cube",
+          "commons": "File:Tractatus-p145.jpg",
+          "author": "Ludwig Wittgenstein",
+          "subject": "《逻辑哲学论》立体结构插图",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ATractatus-p145.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/tractatus-cube.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 13631,
+      "sha256": "1e9f0663e8f1df0d3acd5b4c3d093a1b00ac554596ead03d2b32ffcfda47161b"
+    },
+    {
+      "file": "wittgenstein-3.jpg",
+      "series": "wittgenstein",
+      "title": "维特根斯坦",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "tractatus-cylinder"
+      ],
+      "sources": [
+        {
+          "id": "tractatus-cylinder",
+          "commons": "File:Tractatus-p161-1.jpg",
+          "author": "Ludwig Wittgenstein",
+          "subject": "《逻辑哲学论》结构示意插图",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ATractatus-p161-1.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/tractatus-cylinder.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 9971,
+      "sha256": "b2188cb9da181982a107441c66cb05136e67544bfd1b5f62c7711162c98b4b04"
+    },
+    {
+      "file": "luxun-1.jpg",
+      "series": "luxun",
+      "title": "鲁迅",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "luxun-liqun"
+      ],
+      "sources": [
+        {
+          "id": "luxun-liqun",
+          "commons": "File:\"Portrait of Lu Xun\" by Li Qun 1936.jpg",
+          "author": "Li Qun / 力群",
+          "license": "CC BY-SA 4.0",
+          "licenseUrl": "https://creativecommons.org/licenses/by-sa/4.0/",
+          "subject": "鲁迅",
+          "series": [
+            "luxun",
+            "biography",
+            "chinese-thought"
+          ],
+          "medium": "1936年木刻肖像",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3A%22Portrait_of_Lu_Xun%22_by_Li_Qun_1936.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/luxun-liqun.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 51190,
+      "sha256": "901c83c13d9e1c769c158d56ec23c2505776ff38137837c088873acc05ee54ca"
+    },
+    {
+      "file": "luxun-2.jpg",
+      "series": "luxun",
+      "title": "鲁迅",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "luxun-tao"
+      ],
+      "sources": [
+        {
+          "id": "luxun-tao",
+          "commons": "File:Luxun xiang 1926.jpg",
+          "author": "陶元庆",
+          "subject": "1926年鲁迅绘画肖像",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ALuxun_xiang_1926.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/luxun-tao.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 47537,
+      "sha256": "533d198504c81cb15162e9545cebb62f44d759c34510ff0b612427b8d932066c"
+    },
+    {
+      "file": "luxun-3.jpg",
+      "series": "luxun",
+      "title": "鲁迅",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "luxun-wildgrass"
+      ],
+      "sources": [
+        {
+          "id": "luxun-wildgrass",
+          "commons": "File:《野草》第一版封面.jpg",
+          "author": "《野草》初版装帧",
+          "subject": "鲁迅《野草》文学主题",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3A%E3%80%8A%E9%87%8E%E8%8D%89%E3%80%8B%E7%AC%AC%E4%B8%80%E7%89%88%E5%B0%81%E9%9D%A2.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/luxun-wildgrass.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 20346,
+      "sha256": "d813def267c0b0008ab182045b6e3f8155c0781467eafa398fe0e930869e16fa"
+    },
+    {
+      "file": "seven-up-1.jpg",
+      "series": "seven-up",
+      "title": "人生七年",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "children-dance"
+      ],
+      "sources": [
+        {
+          "id": "children-dance",
+          "commons": "File:Dancing children, by Helen Sophia O'Hara.jpg",
+          "author": "Helen Sophia O'Hara",
+          "subject": "童年阶段意象：跳舞的儿童",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3ADancing_children%2C_by_Helen_Sophia_O'Hara.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/children-dance.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "使用各年龄阶段的绘画意象，不宣称画中人物为纪录片受访者。",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 13637,
+      "sha256": "0e76c77c6f85e51793948a7bd403c554ffbd9039d98b10d6c1a22ac85c3c658f"
+    },
+    {
+      "file": "seven-up-2.jpg",
+      "series": "seven-up",
+      "title": "人生七年",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "young-couple"
+      ],
+      "sources": [
+        {
+          "id": "young-couple",
+          "commons": "File:Ford Madox Brown, The last of England.jpg",
+          "author": "Ford Madox Brown",
+          "subject": "成年阶段意象：年轻夫妇与迁徙",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AFord_Madox_Brown%2C_The_last_of_England.jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/young-couple.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "使用各年龄阶段的绘画意象，不宣称画中人物为纪录片受访者。",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 42275,
+      "sha256": "948d91ee0c40d2597a4d16921001808e51f51fc4bf2c9ab7dc4d121187fe4877"
+    },
+    {
+      "file": "seven-up-3.jpg",
+      "series": "seven-up",
+      "title": "人生七年",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "old-couple"
+      ],
+      "sources": [
+        {
+          "id": "old-couple",
+          "commons": "File:Old couple (4702517).jpg",
+          "author": "British School / 作者不详",
+          "subject": "老年阶段意象：年长夫妇",
+          "license": "Public domain",
+          "licenseUrl": "https://creativecommons.org/publicdomain/mark/1.0/",
+          "series": [],
+          "medium": "既有绘画／版画",
+          "sourcePage": "https://commons.wikimedia.org/wiki/File%3AOld_couple_(4702517).jpg",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/old-couple.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "使用各年龄阶段的绘画意象，不宣称画中人物为纪录片受访者。",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 37318,
+      "sha256": "53a062e690575778ffdf026ddb0779fd4dcecee9e3f34a0e39360d30b231a7d9"
+    },
+    {
+      "file": "friends-1.jpg",
+      "series": "friends",
+      "title": "老友记",
+      "label": "轮播图1",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "friends-vang"
+      ],
+      "sources": [
+        {
+          "id": "friends-vang",
+          "url": "https://www.lhsdoi.com/wp-content/uploads/2020/12/unnamed-900x594.jpg",
+          "sourcePage": "https://www.lhsdoi.com/20652/opinion/your-favorite-sitcom-characters-are-evil/",
+          "author": "Paige Vang",
+          "subject": "老友记六人群像，2020年手绘",
+          "license": "来源未声明开放许可",
+          "licenseUrl": "https://www.lhsdoi.com/20652/opinion/your-favorite-sitcom-characters-are-evil/",
+          "series": [
+            "friends"
+          ],
+          "medium": "既有网络人物插画",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/friends-vang.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 20225,
+      "sha256": "e6d4ad8505a194f06ab65a19dc2e4878f67bd5e06886abf190cd5f7200ccc895"
+    },
+    {
+      "file": "friends-2.jpg",
+      "series": "friends",
+      "title": "老友记",
+      "label": "轮播图2",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "friends-funkee"
+      ],
+      "sources": [
+        {
+          "id": "friends-funkee",
+          "url": "https://pbs.twimg.com/media/Ec45F8bVcAMcyPP.jpg",
+          "sourcePage": "https://x.com/funkee_potato/status/1283026860721311745",
+          "author": "funkee_potato",
+          "subject": "老友记六人在Central Perk，2020年插画",
+          "license": "来源未声明开放许可",
+          "licenseUrl": "https://x.com/funkee_potato/status/1283026860721311745",
+          "series": [
+            "friends"
+          ],
+          "medium": "既有网络人物插画",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/friends-funkee.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 27256,
+      "sha256": "771290045ac0d8db8033877bf1373ce060fe61dfe1a05c3ba415985e270c877f"
+    },
+    {
+      "file": "friends-3.jpg",
+      "series": "friends",
+      "title": "老友记",
+      "label": "轮播图3",
+      "sourceType": "web-illustration",
+      "version": "curated-20261128-v2",
+      "sourceIds": [
+        "friends-upbeatles"
+      ],
+      "sources": [
+        {
+          "id": "friends-upbeatles",
+          "url": "https://upbeatles.nl/app/uploads/2022/12/588ef862-f92b-482c-b2ff-45e5b00baea9-1024x683.png",
+          "sourcePage": "https://upbeatles.nl/quiz/friends-quiz/",
+          "author": "原作者未标注；刊载：Upbeatles",
+          "subject": "老友记六人在咖啡馆的插画，2022年刊载",
+          "license": "来源未声明开放许可",
+          "licenseUrl": "https://upbeatles.nl/quiz/friends-quiz/",
+          "series": [
+            "friends"
+          ],
+          "medium": "既有网络人物插画",
+          "local": "wuzai/cover-library/curated-20261128-v2/originals/friends-upbeatles.img"
+        }
+      ],
+      "composition": "complete-artwork",
+      "status": "selected",
+      "note": "",
+      "adjustments": "3:4米白画布；原画等比完整保留；四边至少8%安全边距；不添加标题；保留原画署名。",
+      "visualReview": {
+        "date": "2026-11-28",
+        "review": "已逐项查看36幅联系表：核对人物、专题关联、保留原图构图及署名。",
+        "sheets": [
+          "curated-sheet-0.jpg",
+          "curated-sheet-12.jpg",
+          "curated-sheet-24.jpg"
+        ]
+      },
+      "width": 480,
+      "height": 640,
+      "bytes": 33548,
+      "sha256": "1d7b96dd3c37f48ab54a2e11f853d505b1b96fbed8f30849183c47ec35fc0880"
+    }
+  ]
+}
