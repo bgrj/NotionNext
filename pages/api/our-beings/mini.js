@@ -39,26 +39,32 @@ import { listSubjects, rememberSubject } from '@/lib/activities/subjects'
 import { submitMiniFeedback } from '@/lib/activities/miniFeedback'
 import { deleteMiniDraft } from '@/lib/activities/miniDrafts'
 import { confirmAdminScanIfPending } from '@/lib/activities/adminScan'
-import { readAnnualMembership, assertAnnualMember, claimAnnualMembership } from '@/lib/activities/annualMembership'
+import { readAnnualMembership, publicAnnualMembership, assertAnnualMember, claimAnnualMembership } from '@/lib/activities/annualMembership'
+import { syncClientState } from '@/lib/activities/miniAdmin'
+import { downloadCoverImage } from '@/lib/activities/miniCoverImport'
 import { mediaReadiness } from '@/lib/activities/miniPrivacy'
+import { publicProfile, updatePublicTime } from '@/lib/activities/miniPublicProfiles'
 
 export const config = { api: { bodyParser: { sizeLimit: '4500kb' } } }
 const PUBLIC = [
   'list',
+  'get',
+  'membership',
   'locations',
   'presenceStats',
   'publicWritings',
   'subjects',
-  'carousel'
+  'carousel',
+  'publicProfile'
 ]
 const ACTIONS = [
   ...PUBLIC,
   'login',
   'profile',
-  'get',
-  'membership',
   'claimMembership',
   'updateProfile',
+  'updatePublicTime',
+  'syncClientState',
   'mine',
   'create',
   'edit',
@@ -73,6 +79,7 @@ const ACTIONS = [
   'saveWriting',
   'checkUpload',
   'uploadCover',
+  'importCover',
   'uploadAvatar',
   'submitFeedback',
   'mediaReadiness',
@@ -132,6 +139,8 @@ export default async function handler(req, res) {
         .status(200)
         .json({ version: 1, ...(await loginMini(redis, input.code)) })
     if (!PUBLIC.includes(action)) requireActor(actor)
+    if (action === 'publicProfile') return res.status(200).json({ version: 1, ...(await publicProfile(redis, input)) })
+    if (action === 'updatePublicTime') return res.status(200).json({ version: 1, ...(await updatePublicTime(redis, actor, input)) })
     if (action === 'get' && actor?.id?.startsWith(`wx:${process.env.WUZAI_MINI_APP_ID}:`)) {
       const scan = await confirmAdminScanIfPending(redis, {
         ticket: input.id,
@@ -143,8 +152,9 @@ export default async function handler(req, res) {
           message: '已确认。请回到电脑上的后台。'
         })
     }
+    if (action === 'syncClientState') return res.status(200).json({ version: 1, ...(await syncClientState(redis, actor, input)) })
     if (action === 'membership')
-      return res.status(200).json({ version: 1, membership: await readAnnualMembership(redis, actor) })
+      return res.status(200).json({ version: 1, membership: actor ? await readAnnualMembership(redis, actor) : publicAnnualMembership() })
     if (action === 'claimMembership')
       return res.status(200).json({ version: 1, ...(await claimAnnualMembership(redis, actor, input)) })
     if (action === 'deleteDraft')
@@ -180,6 +190,10 @@ export default async function handler(req, res) {
       input.complianceVersion = consent.version
       input.complianceAcceptedAt = new Date(consent.acceptedAt).toISOString()
     }
+    if (action === 'importCover') {
+      const bytes = await downloadCoverImage(input.url)
+      return res.status(200).json({ version: 1, cover: await saveMiniCover(redis, actor, bytes.toString('base64')) })
+    }
     if (action === 'uploadCover')
       return res.status(200).json({
         version: 1,
@@ -206,7 +220,7 @@ export default async function handler(req, res) {
     if (action === 'profile')
       return res.status(200).json({
         version: 1,
-        user: publicMiniUser(actor.user),
+        user: publicMiniUser(actor.user, actor.id),
         credit: await readCredit(redis, actor.id)
       })
     if (
@@ -216,7 +230,7 @@ export default async function handler(req, res) {
     )
       await moderateMini(redis, actor, input)
     if (action === 'updateProfile') {
-      input.avatar = await acceptedAvatar(
+      if (Object.prototype.hasOwnProperty.call(input, 'avatar')) input.avatar = await acceptedAvatar(
         redis,
         actor.user.avatar,
         input.avatar

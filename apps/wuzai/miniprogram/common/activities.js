@@ -21,7 +21,7 @@ function fail(code, message, status = 400) {
 }
 function requireActor(actor) {
   if (!actor || !actor.id)
-    fail('unauthorized', '请先登录，再参与这次相遇。', 401)
+    fail('unauthorized', '请登录后继续操作。', 401)
 }
 function validId(id) {
   return (
@@ -396,7 +396,7 @@ function changeEvent(event, action, input, actor, now = Date.now()) {
         ...event.announcements,
         {
           id: event.nextSequence++,
-          body: '发起人已取消本场活动。感谢你为相遇留出的时间。',
+          body: '发起人已取消此活动。',
           at
         }
       ].slice(-30)
@@ -469,7 +469,7 @@ function filterEvents(
         item.language === 'bilingual') &&
       (scope === 'mine' ||
         (scope === 'past'
-          ? ['ended', 'cancelled'].includes(item.status)
+          ? item.status === 'ended'
           : !['ended', 'cancelled', 'draft'].includes(item.status)))
   )
   return items.sort((a, b) =>

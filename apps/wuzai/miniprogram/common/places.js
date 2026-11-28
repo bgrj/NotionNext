@@ -2,6 +2,13 @@
 const { CITIES } = require('./global')
 const string = (value, max = 160) =>
   typeof value === 'string' ? value.trim().slice(0, max) : ''
+// Keep searches and displayed addresses in Chinese/English, including Latin accents.
+function supportedPlaceText(value) {
+  return typeof value === 'string' && !!value.trim() && !/[^\u0020-\u024f\u2000-\u206f\u3000-\u303f\u3400-\u9fff\uff00-\uffef]/.test(value)
+}
+function displayPlaceText(value) {
+  return String(value || '').split(/\s*·\s*/).filter(supportedPlaceText).join(' · ')
+}
 // Chinese ↔ Latin aliases for countries/cities Photon under-indexes in Chinese.
 const EXTRA_ALIASES = [
   ['卢森堡', 'Luxembourg'],
@@ -64,6 +71,8 @@ function placeSearchQueries(query = '') {
   const q = String(query || '').trim().replace(/\s+/g, ' ')
   if (!q) return []
   const variants = [q]
+  if (/老挝国家博物馆|\blaos? national museum\b|\bnational museum (?:of )?laos\b/i.test(q))
+    return ['Lao National Museum', 'Lao National Museum Vientiane', 'National Museum Laos']
   const lower = q.toLowerCase()
   for (const city of CITIES) {
     if (city.zh === q || city.name.toLowerCase() === lower) {
@@ -71,6 +80,7 @@ function placeSearchQueries(query = '') {
     }
   }
   for (const [zh, en] of EXTRA_ALIASES) {
+    if (q.includes(zh)) variants.push(q.replace(zh, en))
     if (q === zh || lower === en.toLowerCase()) variants.push(zh, en)
   }
   return [...new Set(variants.filter(Boolean))].slice(0, 3)
@@ -94,6 +104,10 @@ function rankPhotonFeature(feature, query) {
   const name = String(p.name || '').toLowerCase()
   const q = String(query || '').toLowerCase()
   let score = PLACE_RANK[kind] ?? 20
+  if (/museum|博物馆|gallery|美术馆|restaurant|餐厅|cafe|咖啡/.test(q)) {
+    if (PLACE_RANK[kind] !== undefined) score += 60
+    if (/museum|gallery|restaurant|cafe/.test(kind)) score -= 25
+  }
   if (/embassy|diplomatic|consulate|memorial|artwork|bus_stop|station/.test(kind))
     score += 40
   if (name === q) score -= 8
@@ -144,11 +158,12 @@ function photonPlace(feature) {
   if (feature?.geometry?.type !== 'Point') return null
   const p = feature.properties || {},
     coordinates = feature.geometry.coordinates || []
+  const clean = value => supportedPlaceText(value) ? value.trim() : ''
   const name =
-    [p.name, p.street, p.housenumber].filter(Boolean).join(' ') || p.city
+    [p['name:en'] || p.name, p.street, p.housenumber].map(clean).filter(Boolean).join(' ') || clean(p.city)
   const label = [
     ...new Set(
-      [name, p.district, p.city, p.county, p.state, p.country].filter(Boolean)
+      [name, p.district, p.city, p.county, p.state, p.country].map(clean).filter(Boolean)
     )
   ].join(' · ')
   try {
@@ -158,11 +173,11 @@ function photonPlace(feature) {
       latitude: coordinates[1],
       longitude: coordinates[0],
       id: `${p.osm_type || ''}:${p.osm_id || ''}`,
-      country: p.country,
+      country: clean(p.country),
       countryCode: String(p.countrycode || '').toUpperCase(),
-      state: p.state,
-      county: p.county,
-      locality: p.city || p.district || name,
+      state: clean(p.state),
+      county: clean(p.county),
+      locality: clean(p.city) || clean(p.district) || clean(p.state),
       kind: p.osm_value || p.type || 'place'
     })
   } catch {
@@ -274,6 +289,8 @@ function wechatPoint(value) {
   }
 }
 module.exports = {
+  supportedPlaceText,
+  displayPlaceText,
   normalizePlace,
   photonPlace,
   placeSearchQueries,
